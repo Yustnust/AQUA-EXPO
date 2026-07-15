@@ -1,9 +1,10 @@
 // ============================================================
 // 文件: FC11_State_S1_Inlet.stl
 // 功能: S1上缸进水 (VW2=1)
-// Story: AQEX-6 状态机骨架 + AQEX-7 阀门诊断(已集成)
+// Story: AQEX-6 状态机骨架 + AQEX-7 阀门诊断(已集成) + AQEX-8 节奏纠偏(已集成二次校正)
 // 说明: 开阀A进水，调用FC30阀A诊断(差值法+延时验证)
 //       诊断结果VW266: 0进行中/1正常完成/2故障
+//       诊断正常完成 → 调用FC40二次校正(模式1) → 更新VD_T_Rolling → 转S2
 // ============================================================
 
 // 符号说明:
@@ -55,23 +56,46 @@ LD     SM0.0
 CALL   FC30:V ValveA_Diag
 
 
-NETWORK 3: 检查阀A诊断结果
+NETWORK 3: 检查阀A诊断结果 + 二次校正(Story1.4) + 转S2
 // VW266=0 进行中，继续等待
-// VW266=1 正常完成(进水达标+延时验证通过)，转S2
+// VW266=1 正常完成 → 二次校正 → 转S2
 // VW266=2 故障(FC30已转S_ERROR)，本周期结束
 LD     SM0.0
-LPS
-// 诊断正常完成 → 转S2
-AW=    VW266, 1
-R      T37, 1                     // 停S1计时
-// 记录S1实测时长
-MOVD   T37, VD70                  // VD_S1_Actual
-// 状态转移 S1→S2
-MOVB   2, VB2
+AW=    VW266, 1                    // 诊断正常完成?
+JMP    nS1DiagOK                   // 是 → 跳转处理
+JMP    nS1CheckEnd                 // 否 → 结束本NETWORK
+
+nS1DiagOK:
+LD     SM0.0
+R      T37, 1                      // 停S1计时
+MOVD   T37, VD70                   // 记录S1实测时长 VD_S1_Actual
+// 【Story1.4】二次校正(7.3): 用S1实测值重核S2/S3.5目标
+// Available' = CycleSetpoint×60 + S6_Rolling - S5_Elapsed(已含S1耗时)
+LD     SM0.0
+MOVR   VD20, VD150                 // VD_CycleSetpoint(min)
+*R     60.0, VD150                 // →秒
++R     VD116, VD150                // + VD_S6_Rolling
+-R     VD178, VD150                // - VD_S5_Elapsed = Available'
+// Needed' = S2_Target(预规划已定) + S3_Estimate + RestTime_Target(预规划已定)
+MOVR   VD120, VD154                // VD_S2_Target
++R     VD174, VD154                // + VD_S3_Estimate
++R     VD124, VD154                // + VD_RestTime_Target = Needed'
+MOVW   1, VW182                    // 模式=1(二次校正)
+CALL   FC40:V RhythmCorrection
+// 更新VD_T_Rolling(取标称值,7.5): S1实测+S2标称+S3估算+S3.5标称
+LD     SM0.0
+MOVR   VD70, VD112                 // VD_S1_Actual
++R     VD28, VD112                 // + VD_PreMixTime(S2标称)
++R     VD174, VD112                // + VD_S3_Estimate
++R     VD36, VD112                 // + VD_RestTime(S3.5标称) = 新VD_T_Rolling
+// 二次校正非人工介入(4) → 转S2
+LD     SM0.0
+AW<>   VW184, 4
+MOVB   2, VB2                      // 状态转移 S1→S2
 MOVB   0, VB3
-// 【预留】二次校正接口 - S1完成后触发纠偏(Story 1.4)
-// CALL FC40:PreMixCorrection
-LPP
+
+nS1CheckEnd:
+LBL    nS1CheckEnd
 
 
 // 注: 漫溢保护、差值法计量、延时验证、内漏检测、开关到位诊断
