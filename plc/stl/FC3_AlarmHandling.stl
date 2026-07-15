@@ -1,122 +1,425 @@
 // ============================================================
 // 文件: FC3_AlarmHandling.stl
 // 功能: 报警处理（每周期调用）
-// Story: AQEX-6 状态机骨架（详细逻辑由Story 1.6填充）
-// 说明: 扫描报警字，计算最高优先级报警码写入VW6；
-//       管理报警声音/灯光输出；处理消音/确认命令
+// Story: AQEX-6 状态机骨架 + AQEX-10 报警分级与消音/消光逻辑(详细实现)
+// 说明: 优先级链计算VW6 + 消音(I2.1/V0.4) + 消光(V0.3确认)
+//       自动恢复模式(V200.0=0时一般故障级条件消失自动复位)
+//       高优先级(漫溢/节奏滞后/继电器故障)强制人工确认,不受模式影响
 // ============================================================
 
-NETWORK 1: 计算最高优先级报警码写入VW6
-// 优先级：99(安全继电器) > 10系列(漫溢) > 20系列(节奏滞后) > 30~90系列(一般)
+// 符号说明:
+// VW6   : 当前最高优先级未确认报警码(0=无,99=继电器故障,10~14漫溢,20~21节奏,30~66一般)
+// V200.0: M_AlarmAckMode 报警确认模式(0=自动恢复,1=人工确认)
+// Q0.7  : 报警声音(FC2/FC19置位,FC3管理消音)
+// Q1.0  : 报警灯光(FC3统一管理,避免双写冲突)
+// I2.1  : 就地消音按钮(常开点动)
+// V0.3  : CMD_AckAlarm HMI报警确认命令
+// V0.4  : CMD_Mute HMI消音命令
+// V1.3  : STA_AlarmAckDone 报警确认握手
+// V1.4  : STA_MuteDone 消音握手
+// M11.1 : M_Sound_Latched 声音已消音标志(新报警时清,实现重鸣)
+// M11.2 : M_PrevAlarm 上一周期有报警标志(新报警检测用)
 
-// 最高级：安全继电器故障
-LD     V300.5                      // M_Alarm_SafetyRelay
-MOVB   99, VB6
-MOVB   0, VB7
-JMP    nAlarmCodeDone
 
-// 漫溢级：上缸/下缸漫溢、NC阀动作、急停
-LD     V300.0                      // M_Alarm_Overflow_AHigh
-O      V300.1                      // M_Alarm_Overflow_BHigh
-O      V300.2                      // M_Alarm_NCValve_Top
-O      V300.3                      // M_Alarm_NCValve_Bottom
-O      V300.4                      // M_EStop_Latch
-MOVB   10, VB6
-MOVB   0, VB7
-JMP    nAlarmCodeDone
+NETWORK 1: 优先级链计算VW6(最高优先级未确认报警码)
+// 优先级: 99 > 10~14 > 20 > 21 > 30~36 > 40~47 > 60~66
+// 用LD压栈+条件JMP实现,JMP nAlarmCodeDone跳到末尾
 
-// 节奏滞后级：严重滞后
-LD     V300.6                      // M_Alarm_ScheduleLag
-MOVB   20, VB6
-MOVB   0, VB7
-JMP    nAlarmCodeDone
+// 最高级: 安全继电器故障
+LD     V300.5
+JMP    nCode99
 
-// 节奏滞后提示（一般级）
-LD     V300.7                      // M_Alarm_ScheduleLag_Warn
-MOVB   21, VB6
-MOVB   0, VB7
-JMP    nAlarmCodeDone
+// 漫溢级(10~14)
+LD     V300.0
+JMP    nCode10
+LD     V300.1
+JMP    nCode11
+LD     V300.2
+JMP    nCode12
+LD     V300.3
+JMP    nCode13
+LD     V300.4
+JMP    nCode14
 
-// 阀A类一般故障(V301.0~V301.6)
+// 节奏滞后级(20~21)
+LD     V300.6
+JMP    nCode20
+LD     V300.7
+JMP    nCode21
+
+// 阀A类(30~36)
 LD     V301.0
-O      V301.1
-O      V301.2
-O      V301.3
-O      V301.4
-O      V301.5
-O      V301.6
-MOVB   30, VB6
-MOVB   0, VB7
-JMP    nAlarmCodeDone
+JMP    nCode30
+LD     V301.1
+JMP    nCode31
+LD     V301.2
+JMP    nCode32
+LD     V301.3
+JMP    nCode33
+LD     V301.4
+JMP    nCode34
+LD     V301.5
+JMP    nCode35
+LD     V301.6
+JMP    nCode36
 
-// 阀B/C/泵类一般故障(V302.0~V302.7)
+// 阀B/C/泵类(40~47)
 LD     V302.0
-O      V302.1
-O      V302.2
-O      V302.3
-O      V302.4
-O      V302.5
-O      V302.6
-O      V302.7
-MOVB   40, VB6
-MOVB   0, VB7
-JMP    nAlarmCodeDone
+JMP    nCode40
+LD     V302.1
+JMP    nCode41
+LD     V302.2
+JMP    nCode42
+LD     V302.3
+JMP    nCode43
+LD     V302.4
+JMP    nCode44
+LD     V302.5
+JMP    nCode45
+LD     V302.6
+JMP    nCode46
+LD     V302.7
+JMP    nCode47
 
-// 其他一般故障(V303.0~V303.6)
+// 其他(60~66)
 LD     V303.0
-O      V303.1
-O      V303.2
-O      V303.3
-O      V303.4
-O      V303.5
-O      V303.6
-MOVB   60, VB6
-MOVB   0, VB7
-JMP    nAlarmCodeDone
+JMP    nCode60
+LD     V303.1
+JMP    nCode61
+LD     V303.2
+JMP    nCode62
+LD     V303.3
+JMP    nCode63
+LD     V303.4
+JMP    nCode64
+LD     V303.5
+JMP    nCode65
+LD     V303.6
+JMP    nCode66
 
 // 无报警
 LD     SM0.0
-MOVB   0, VB6
-MOVB   0, VB7
+MOVW   0, VW6
+JMP    nAlarmCodeDone
 
-LBL    nAlarmCodeDone
+// 报警码赋值
+nCode99:  MOVW 99, VW6
+          JMP nAlarmCodeDone
+nCode10:  MOVW 10, VW6
+          JMP nAlarmCodeDone
+nCode11:  MOVW 11, VW6
+          JMP nAlarmCodeDone
+nCode12:  MOVW 12, VW6
+          JMP nAlarmCodeDone
+nCode13:  MOVW 13, VW6
+          JMP nAlarmCodeDone
+nCode14:  MOVW 14, VW6
+          JMP nAlarmCodeDone
+nCode20:  MOVW 20, VW6
+          JMP nAlarmCodeDone
+nCode21:  MOVW 21, VW6
+          JMP nAlarmCodeDone
+nCode30:  MOVW 30, VW6
+          JMP nAlarmCodeDone
+nCode31:  MOVW 31, VW6
+          JMP nAlarmCodeDone
+nCode32:  MOVW 32, VW6
+          JMP nAlarmCodeDone
+nCode33:  MOVW 33, VW6
+          JMP nAlarmCodeDone
+nCode34:  MOVW 34, VW6
+          JMP nAlarmCodeDone
+nCode35:  MOVW 35, VW6
+          JMP nAlarmCodeDone
+nCode36:  MOVW 36, VW6
+          JMP nAlarmCodeDone
+nCode40:  MOVW 40, VW6
+          JMP nAlarmCodeDone
+nCode41:  MOVW 41, VW6
+          JMP nAlarmCodeDone
+nCode42:  MOVW 42, VW6
+          JMP nAlarmCodeDone
+nCode43:  MOVW 43, VW6
+          JMP nAlarmCodeDone
+nCode44:  MOVW 44, VW6
+          JMP nAlarmCodeDone
+nCode45:  MOVW 45, VW6
+          JMP nAlarmCodeDone
+nCode46:  MOVW 46, VW6
+          JMP nAlarmCodeDone
+nCode47:  MOVW 47, VW6
+          JMP nAlarmCodeDone
+nCode60:  MOVW 60, VW6
+          JMP nAlarmCodeDone
+nCode61:  MOVW 61, VW6
+          JMP nAlarmCodeDone
+nCode62:  MOVW 62, VW6
+          JMP nAlarmCodeDone
+nCode63:  MOVW 63, VW6
+          JMP nAlarmCodeDone
+nCode64:  MOVW 64, VW6
+          JMP nAlarmCodeDone
+nCode65:  MOVW 65, VW6
+          JMP nAlarmCodeDone
+nCode66:  MOVW 66, VW6
+
+nAlarmCodeDone:
 
 
-NETWORK 2: 报警输出管理
-// 有活动报警时：声音+灯光开
-// 消音命令(V0.4)只关声音，不关灯光、不清报警
-LD     VW6                         // VW6≠0表示有报警
-LPS
+NETWORK 2: 报警输出管理(灯光常亮 + 新报警声音重鸣)
+// 有活动报警(VW6≠0) → 灯光Q1.0常亮
+// 新报警(VW6由0变非0) → 清M_Sound_Latched,声音重鸣
+LD     VW6
 AW<>   VW6, 0
-S      Q0.7, 1                     // 报警声音开
-S      Q1.0, 1                     // 报警灯光开
-LPP
+S      Q1.0, 1                       // 灯光常亮
 
-// 消音处理：V0.4上升沿→关声音
-LD     V0.4                        // CMD_Mute
-EU                                 // 上升沿
-R      Q0.7, 1                     // 只关声音
-S      V1.4, 1                     // STA_MuteDone握手
+// 新报警检测: 本周期VW6≠0 且 上一周期M11.2=0(无报警) → 新报警
+LD     VW6
+AW<>   VW6, 0
+AN     M11.2                         // 上一周期无报警 → 新报警
+R      M11.1, 1                      // 清消音标志(新报警重鸣)
 
+// 声音管理: 有报警且未消音 → 声音开
+LD     VW6
+AW<>   VW6, 0
+AN     M11.1                         // 未消音
+S      Q0.7, 1                       // 声音开
 
-NETWORK 3: 报警确认处理（骨架）
-// V0.3上升沿→报警确认，仅在根本原因消失后清除灯光
-// 详细逻辑(漫溢/节奏强制人工确认)由Story 1.6补充
-LD     V0.3                        // CMD_AckAlarm
-EU
-S      V1.3, 1                     // STA_AlarmAckDone握手
-// 若报警已消除(VW6=0)，关灯光
-LD     V0.4
-A      VW6
-LPS
+// 自动恢复模式: VW6=0且自动模式 → 自动消光
+LD     VW6
 AW=    VW6, 0
-R      Q1.0, 1                     // 根本原因消失，关灯光
-LPP
+AN     V200.0                        // M_AlarmAckMode=0(自动模式)
+R      Q1.0, 1                       // 无报警自动消光
+R      Q0.7, 1                       // 无报警关声音
+R      M11.1, 1                      // 清消音标志
+
+// 更新上一周期报警标志
+LD     VW6
+AW<>   VW6, 0
+=      M11.2                         // 记录本周期有报警(供下周期新报警检测)
 
 
-// 注: 报警日志记录、二次确认、自动恢复/人工确认模式由Story 1.6补充
+NETWORK 3: 消音处理(I2.1就地按钮 OR V0.4 HMI命令)
+// 消音源: I2.1上升沿 OR V0.4上升沿
+LD     I2.1
+EU
+LD     V0.4
+EU
+OLD                                 // 两者任一上升沿
+R      Q0.7, 1                       // 关声音
+S      M11.1, 1                      // 置消音标志(新报警时清)
+S      V1.4, 1                       // STA_MuteDone握手
+R      V0.4, 1                       // 清HMI消音命令
+// 注: 消音只关声音,灯光Q1.0和报警位保持;新报警(VW6变化)时M11.1清,声音重鸣
+
+
+NETWORK 4: 报警确认处理(V0.3 HMI确认 → 条件消失才消光+清锁存)
+// V0.3上升沿 = HMI报警确认命令(高优先级HMI侧二次确认,PLC只收V0.3)
+// 确认规则: V0.3上升沿后,逐个检查报警位条件,条件消失的复位报警位,再由NETWORK1重算VW6
+LD     V0.3
+EU
+S      V1.3, 1                       // STA_AlarmAckDone握手
+R      V0.3, 1                       // 清确认命令
+
+// 漫溢级: 条件消失才复位(液位计高位=OFF)
+LD     V300.0                        // 上缸漫溢
+AN     I0.5                          // 液位计A-高位已OFF
+R      V300.0, 1                     // 复位
+LD     V300.1                        // 下缸漫溢
+AN     I0.7                          // 液位计B-高位已OFF
+R      V300.1, 1
+// NC阀动作: 由人工确认复位(无DI直接条件,保持锁存需HMI强制,此处不自动复位)
+// 急停V300.4/继电器故障V300.5: 由FC19系统复位按钮/HMI高权限确认处理,FC3不碰
+
+// 节奏滞后级: 条件消失(新一轮开始)由FC40重置,FC3不直接处理
+// 但V0.3确认时,若V300.6/7已由FC40清除,NETWORK1会重算VW6
+
+// 一般故障级: 条件消失则复位
+// 阀A类
+LD     V301.0                        // 阀A关后仍有流
+AN     I0.0                          // 流量开关A已OFF
+R      V301.0, 1
+LD     V301.1                        // 阀A内漏
+AN     I0.0                          // 流量开关A已OFF
+R      V301.1, 1
+LD     V301.2                        // 阀A关到位超时
+A      I1.4                          // 阀A关到位反馈已ON
+R      V301.2, 1
+LD     V301.3                        // 阀A关到位但仍有流
+AN     I0.0                          // 流量开关A已OFF
+R      V301.3, 1
+LD     V301.4                        // 阀A开到位超时
+A      I1.3                          // 阀A开到位反馈已ON
+R      V301.4, 1
+LD     V301.5                        // 阀A开到位但无流
+A      I0.0                          // 流量开关A已ON
+R      V301.5, 1
+LD     V301.6                        // S5触发S1时上缸≠空
+AN     V1.6                          // 上缸已=空
+R      V301.6, 1
+
+// 阀B/C类
+LD     V302.0                        // 阀B诊断异常
+A      I0.1                          // 流量开关B=ON(已恢复)
+O
+A      I0.6                          // 或液位计A-低位=ON
+R      V302.0, 1
+LD     V302.1                        // 阀B开到位超时
+A      I1.5
+R      V302.1, 1
+LD     V302.2                        // 阀B开到位但无流
+A      I0.1
+R      V302.2, 1
+LD     V302.3                        // 阀B关到位超时
+A      I1.6
+R      V302.3, 1
+LD     V302.4                        // 阀B关到位但仍有流
+AN     I0.1
+R      V302.4, 1
+LD     V302.5                        // 阀C诊断异常
+A      I0.2
+O
+A      I1.0
+R      V302.5, 1
+LD     V302.6                        // 阀C开到位超时
+A      I1.7
+R      V302.6, 1
+LD     V302.7                        // 阀C开到位但无流
+A      I0.2
+R      V302.7, 1
+
+// 其他类
+LD     V303.0                        // 阀C关到位超时
+A      I2.0
+R      V303.0, 1
+LD     V303.1                        // 阀C关到位但仍有流
+AN     I0.2
+R      V303.1, 1
+LD     V303.2                        // 潜水泵1超时无流
+A      I0.3                          // 流量开关泵1=ON(已恢复)
+R      V303.2, 1
+LD     V303.3                        // 潜水泵2超时无流
+A      I0.4
+R      V303.3, 1
+LD     V303.4                        // 注射泵通讯异常
+AW=    VW4, 0                        // 状态码=0(空闲正常)
+R      V303.4, 1
+LD     V303.5                        // RTC时钟丢失
+R      V303.5, 1                     // 由HMI校时后手动确认清除
+LD     V303.6                        // 流量开关瞬时异常
+R      V303.6, 1                     // 瞬时异常,确认即清除
+
+// 注: 报警位复位后,下一周期NETWORK1重算VW6;若VW6=0,NETWORK2自动消光
+// 注: 漫溢级(V300.2/3 NC阀)、急停(V300.4)、继电器故障(V300.5)不由FC3复位
+//      由FC19系统复位按钮/HMI高权限确认处理
+
+
+NETWORK 5: 自动恢复模式(M_AlarmAckMode=0时一般故障级条件消失自动复位)
+// 自动模式: V200.0=0时,一般故障级报警位条件消失自动R复位
+// 漫溢/节奏滞后/继电器故障不受此模式影响,保持锁存
+LD     V200.0                        // M_AlarmAckMode
+NOT                                     // =0(自动模式)时执行后续
+
+// 阀A类自动复位(条件消失)
+LD     V301.0
+AN     I0.0
+R      V301.0, 1
+LD     V301.1
+AN     I0.0
+R      V301.1, 1
+LD     V301.2
+A      I1.4
+R      V301.2, 1
+LD     V301.3
+AN     I0.0
+R      V301.3, 1
+LD     V301.4
+A      I1.3
+R      V301.4, 1
+LD     V301.5
+A      I0.0
+R      V301.5, 1
+LD     V301.6
+AN     V1.6
+R      V301.6, 1
+
+// 阀B/C类自动复位
+LD     V302.0
+A      I0.1
+O
+A      I0.6
+R      V302.0, 1
+LD     V302.1
+A      I1.5
+R      V302.1, 1
+LD     V302.2
+A      I0.1
+R      V302.2, 1
+LD     V302.3
+A      I1.6
+R      V302.3, 1
+LD     V302.4
+AN     I0.1
+R      V302.4, 1
+LD     V302.5
+A      I0.2
+O
+A      I1.0
+R      V302.5, 1
+LD     V302.6
+A      I1.7
+R      V302.6, 1
+LD     V302.7
+A      I0.2
+R      V302.7, 1
+
+// 其他类自动复位
+LD     V303.0
+A      I2.0
+R      V303.0, 1
+LD     V303.1
+AN     I0.2
+R      V303.1, 1
+LD     V303.2
+A      I0.3
+R      V303.2, 1
+LD     V303.3
+A      I0.4
+R      V303.3, 1
+LD     V303.4
+AW=    VW4, 0
+R      V303.4, 1
+LD     V303.6
+R      V303.6, 1                     // 瞬时异常自动清除
+// V303.5(RTC丢失)不自动清除,需HMI校时后确认
+
+// 注: 漫溢(V300.0~3)、急停(V300.4)、继电器故障(V300.5)、节奏滞后(V300.6/7)不在此处理
+// 注: 自动复位后下一周期NETWORK1重算VW6,NETWORK2自动消光
+
+
+NETWORK 6: 报警日志(新报警触发时写入,简化版)
+// 新报警: 本周期VW6≠0 且 上一周期M11.2=0
+// 简化: 仅记录报警码和时间戳到固定位置(完整环形缓冲区由HMI侧轮询读取)
+LD     VW6
+AW<>   VW6, 0
+AN     M11.2                         // 上一周期无报警 → 新报警
+EU
+READ_RTC VB500                       // 时间戳写入VB500~507
+MOVB   VW6, VB509                    // 报警码(低字节)
+MOVB   1, VB510                      // 动作=1(触发)
+MOVB   1, VB508                      // 单元编号=1(本PLC)
+// 注: 完整环形缓冲区(6条×16字节)用指针AR1实现,本简化版固定VB500起
+// 注: 详细历史记录由HMI侧存储,PLC仅保留最新一条供HMI轮询
 
 
 // ============================================================
 // 文件结束
+// 说明:
+//   1. FC3每周期调用,负责报警码计算+输出管理+确认处理+自动恢复+日志
+//   2. 报警位置位由各FC(FC2/FC30~32/FC40等)负责,FC3只复位
+//   3. Q1.0灯光由FC3统一管理,FC2/FC19不操作Q1.0(避免双写)
+//   4. Q0.7声音由FC2/FC19置位(急停/故障态),FC3管理消音+新报警重鸣
+//   5. 编址修正: M_AlarmAckMode=V200.0(避VD124冲突),SafetyRelayAck=V0.7(避V0.5冲突)
+//   6. 高优先级(漫溢/节奏滞后/继电器故障)强制人工确认,不受M_AlarmAckMode影响
+//   7. NETWORK4/5的报警位复位条件需与各FC置位条件严格对应(现场调试时核实)
 // ============================================================
