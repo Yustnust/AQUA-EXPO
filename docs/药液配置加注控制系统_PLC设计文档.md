@@ -144,6 +144,14 @@
 | VD_Dose_Steps【v6新增】 | 本轮加药目标步数 = VD_Vol_Target ÷ VD_StepResolution，写入注射泵抽液/排液寄存器 |
 | M_Pump_Status【v6新增】 | 注射泵状态码轮询结果（映射自Modbus寄存器41001），用于判断抽/排液动作完成或故障 |
 | VD_FlowMeter_Snapshot【v8新增】 | 阀A开启瞬间的流量计"计量值"快照，用于差值法计算本次进水量（该流量计无清零功能，见第二章说明） |
+| M_InitDone（V304.0）【Story1.7新增】 | 初始化完成标志（断电保持，首次成功初始化后置1；=0冷启动，=1断电恢复） |
+| VW252【Story1.2修复】 | S2计时T38的PT转换值（VD_S2_Target×10，由FC12进入时计算写入，100ms时基） |
+| VW254【Story1.2修复】 | S3.5计时T39的PT转换值（VD_RestTime_Target×10，由FC14进入时计算写入，100ms时基） |
+| VW278【校验修复】 | 阀A T50超时PT转换值（VD_Timeout_ValveA×10，由FC11计算写入，FC30读取，与FC32 VW270隔离） |
+| VW280【校验修复】 | 阀A T51延时验证PT转换值（VD_Delay_ValveA_Verify×10，由FC11计算写入，FC30读取） |
+| VW282【校验修复】 | 潜水泵1 T44超时PT转换值（VD_Timeout_Pump1×10，由FC12计算写入） |
+| VW284【校验修复】 | 潜水泵2 T45超时PT转换值（VD_Timeout_Pump2×10，由FC12计算写入） |
+| VD290/VD292/VD294/VD296【校验修复】 | 运算中间变量（避免修改HMI设定参数：VD290=VD48运算/VD292=VD120运算/VD294=VD124运算/VD296=VD58/62运算） |
 
 ---
 

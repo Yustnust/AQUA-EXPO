@@ -179,19 +179,20 @@ DTR    AC0, AC0
 MOVW   4, VW198                    // 步骤=4(BCD转秒完成)
 
 
-NETWORK 6: VD_S5_Elapsed重算(仅下缸=满时)
+NETWORK 6: VD_S5_Elapsed重算(仅保持S5且下缸=满时)
 // VD_S5_Elapsed = VD_RTC_Now_Sec - VD_DT10_Sec
-// 仅V1.7=1(下缸满)时重算;下缸空时保持0
+// P7修复: 加 VW2==6 条件,仅在确认保持S5时才重算
+//         (避免V1.7=1但VW2已转S_ERROR时错误重算)
 LD     V1.7                        // 下缸=满
-MOVR   VD186, VD178                // VD_S5_Elapsed = RTC秒
+AW=    VW2, 6                      // 且状态机=S5(字比较,与栈顶AND)
+MOVR   VD186, VD178                // 满足:VD_S5_Elapsed = RTC秒
 -R     VD190, VD178                // - DT10秒 = 断电期间经过秒数
 MOVW   5, VW198                    // 步骤=5(Elapsed重算完成)
 JMP    nStateRecover
 
-// 下缸=空时VD_S5_Elapsed=0
-LD     V1.7
-NOT
-MOVR   0.0, VD178                  // 下缸空,Elapsed=0
+// 下缸=空 或 非S5 时VD_S5_Elapsed=0(条件不满足,不执行上面JMP,走这里)
+LD     SM0.0
+MOVR   0.0, VD178                  // Elapsed=0
 MOVW   5, VW198
 
 
