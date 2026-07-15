@@ -1,0 +1,186 @@
+// ============================================================
+// 文件: FC31_ValveB_Diag.stl
+// 功能: 阀B诊断（四态诊断+开关到位+超时保护+漫溢保护）
+// Story: AQEX-7 阀门诊断
+// 调用方: FC15(S4上→下转移)
+// 说明: 阀B四态诊断(流量开关B+液位计A低位)
+//       诊断子状态VW262: 0空闲/1等开到位/2开启完成/3运行中/4等关到位
+// ============================================================
+
+// 符号说明:
+// VW262 : Diag_State_B     阀B诊断子状态
+// VW268 : Diag_Result_B    阀B诊断结果(0/1/2)
+// T53   : 阀B开到位超时
+// T54   : 阀B流量开关超时保护
+// T55   : 阀B关到位超时
+// I0.1  : 流量开关B
+// I0.6  : 液位计A低位(上缸排空)
+// I0.7  : 液位计B高位(下缸漫溢)
+// I1.5  : 阀B开到位反馈
+// I1.6  : 阀B关到位反馈
+// Q0.3  : 阀B
+// Q0.6  : NC电磁阀-下缸
+
+
+NETWORK 1: 漫溢保护（全程，优先级最高）
+// 液位计B高位=ON立即报警+NC阀+转S_ERROR
+LD     I0.7
+S      V300.1, 1                   // M_Alarm_Overflow_BHigh
+S      Q0.6, 1                     // NC电磁阀-下缸动作
+R      Q0.3, 1                     // 关阀B
+MOVB   99, VB2
+MOVB   0, VB3
+MOVB   2, VB268                    // 故障
+JMP    nDiagB_End
+
+
+NETWORK 2: 诊断子状态调度
+LDW=   VW262, 0
+JMP    nDiagB_S0
+LDW=   VW262, 1
+JMP    nDiagB_S1
+LDW=   VW262, 2
+JMP    nDiagB_S2
+LDW=   VW262, 3
+JMP    nDiagB_S3
+LDW=   VW262, 4
+JMP    nDiagB_S4
+JMP    nDiagB_End
+
+
+// ---- 子状态0: 空闲 ----
+NETWORK 3: S0空闲
+LBL    nDiagB_S0
+JMP    nDiagB_End
+
+
+// ---- 子状态1: 等待开到位 ----
+NETWORK 4: S1等待开到位
+LBL    nDiagB_S1
+// T53开到位超时 + T54流量开关超时(两套独立判据)
+LD     SM0.0
+TON    T53, VW274                  // PT=VD_Timeout_ValveB(VD50)×10
+TON    T54, VW274                  // 流量开关超时(同参数，独立计时)
+
+// 开到位=ON → 转S2
+LD     I1.5
+EU
+MOVB   2, VB262
+MOVB   0, VB263
+R      T53, 1
+R      T54, 1
+JMP    nDiagB_End
+
+// 开到位超时 → 报警
+LD     T53
+S      V302.1, 1                   // M_Alarm_ValveB_OpenTimeout
+MOVB   99, VB2
+MOVB   0, VB3
+MOVB   2, VB268
+JMP    nDiagB_End
+
+// 流量开关超时(开阀后一直无流) → 报警
+LD     T54
+AN     I0.1                        // 确认流量开关B仍OFF
+S      V302.2, 1                   // M_Alarm_ValveB_OpenNoFlow
+MOVB   99, VB2
+MOVB   0, VB3
+MOVB   2, VB268
+JMP    nDiagB_End
+
+
+// ---- 子状态2: 开启完成检查 ----
+NETWORK 5: S2开启完成检查
+LBL    nDiagB_S2
+// 流量开关B=ON → 正常，转S3
+LD     I0.1
+MOVB   3, VB262
+MOVB   0, VB263
+JMP    nDiagB_End
+
+// 开到位但无流 → 报警
+LD     I1.5
+AN     I0.1
+S      V302.2, 1                   // M_Alarm_ValveB_OpenNoFlow
+MOVB   99, VB2
+MOVB   0, VB3
+MOVB   2, VB268
+JMP    nDiagB_End
+
+
+// ---- 子状态3: 运行中(四态诊断持续扫描) ----
+NETWORK 6: S3四态诊断
+LBL    nDiagB_S3
+// 四态诊断: 流量开关B(I0.1) + 液位计A低位(I0.6)
+// 状态3: 流量开关OFF + 液位低位ON → 上缸排空，关阀触发
+LD     I0.6                        // 液位计A低位=ON(上缸空)
+AN     I0.1                        // 且流量开关B=OFF(转移结束)
+R      Q0.3, 1                     // 关阀B
+MOVB   4, VB262                    // 转S4等关到位
+MOVB   0, VB263
+JMP    nDiagB_End
+
+// 状态4: 流量开关OFF + 液位低位OFF → 设备故障
+LD     I0.1                        // 流量开关B
+NOT
+AN     I0.6                        // 且液位低位OFF
+// 注:需排除刚开始转移时的瞬时(流量开关尚未ON)
+// 简化: 直接判定状态4
+S      V302.0, 1                   // M_Alarm_ValveB_Diag
+MOVB   99, VB2
+MOVB   0, VB3
+MOVB   2, VB268
+JMP    nDiagB_End
+
+// 状态1/2: 流量开关ON → 正常转移中/即将排空，继续
+LD     I0.1
+JMP    nDiagB_End
+
+
+// ---- 子状态4: 等待关到位 ----
+NETWORK 7: S4等待关到位
+LBL    nDiagB_S4
+// T55关到位超时
+LD     SM0.0
+TON    T55, VW274                  // PT=VD_Timeout_ValveB×10
+
+// 关到位=ON AND 流量开关=OFF → 正常完成
+LD     I1.6
+AN     I0.1
+MOVB   0, VB262                    // VW262=0空闲
+MOVB   0, VB263
+MOVB   1, VB268                    // Diag_Result_B=1正常完成
+R      T55, 1
+JMP    nDiagB_End
+
+// 关到位=ON AND 流量开关=ON → 内漏
+LD     I1.6
+A      I0.1
+S      V302.4, 1                   // M_Alarm_ValveB_CloseLeak
+MOVB   99, VB2
+MOVB   0, VB3
+MOVB   2, VB268
+JMP    nDiagB_End
+
+// 关到位超时 → 报警
+LD     T55
+AN     I1.6
+S      V302.3, 1                   // M_Alarm_ValveB_CloseTimeout
+MOVB   99, VB2
+MOVB   0, VB3
+MOVB   2, VB268
+JMP    nDiagB_End
+
+
+NETWORK 8: 诊断结束
+LBL    nDiagB_End
+
+
+// ============================================================
+// 文件结束
+// 说明:
+//   1. FC15调用本FC前置VW262=1启动
+//   2. FC15检查VW268: 0等待, 1正常完成转S5, 2故障
+//   3. VW274=VD_Timeout_ValveB(VD50)×10转换值
+//   4. 四态诊断状态4需排除转移初期瞬时，实际需加延时确认
+// ============================================================

@@ -1,59 +1,77 @@
 // ============================================================
 // 文件: FC17_State_S6_Drain.stl
 // 功能: S6下缸排水 (VW2=7)
-// Story: AQEX-6 状态机骨架
-// 说明: 开阀C排空下缸，排空检测，更新VD_S6_Rolling
-//       阀C四态诊断由Story 1.3补充
+// Story: AQEX-6 状态机骨架 + AQEX-7 阀门诊断(已集成)
+// 说明: 开阀C排水，调用FC32阀C诊断(四态诊断+开关到位+超时)
+//       诊断结果VW270: 0进行中/1正常完成/2故障
 // ============================================================
 
-NETWORK 1: S6进入动作
-LD     SM0.0
-S      Q0.4, 1                     // 阀C开
+// 符号说明:
+// VW264 : Diag_State_C  阀C诊断子状态
+// VW270 : Diag_Result_C 阀C诊断结果
+// VW276 : VD_Timeout_ValveC×10 转换值(供FC32用)
+
+
+NETWORK 1: S6首次进入动作
+LD     M10.7                        // S6首次进入脉冲
+EU
+LPS
+// 开启阀C
+S      Q0.4, 1
+// 启动S6计时器
 R      T42, 1
-TON    T42, 32767                  // S6计时(记录VD_S6_Actual)
+TON    T42, 32767
+// 启动阀C诊断: 置诊断子状态=1
+MOVB   1, VB264
+MOVB   0, VB265
+// 清诊断结果
+MOVW   0, VW270
+// 计算VD_Timeout_ValveC(VD54)×10转换值
+MOVR   VD54, VD286
+*R     10.0, VD286
+ROUND  VD286, AC0
+MOVW   AC0, VW276
+LPP
 
 
-NETWORK 2: 阀C开启超时检测（骨架）
-LD     Q0.4
-AN     I0.2                        // 流量开关C未到
-TON    T48, +300                   // 临时30s超时
-LD     T48
-S      V302.6, 1                   // M_Alarm_ValveC_OpenTimeout
-MOVB   99, VB2
-MOVB   0, VB3
+NETWORK 2: 调用阀C诊断FC32
+// FC32内部处理四态诊断+开关到位+超时(阀C无漫溢保护)
+LD     SM0.0
+CALL   FC32:V ValveC_Diag
 
 
-NETWORK 3: 排空完成检测
-// I1.0(液位计B低位)=ON AND I0.2(流量开关C)=OFF → 排空完成
-LD     I1.0                        // 下缸已排空
-AN     I0.2                        // 且无流量
-R      Q0.4, 1                    // 关阀C
+NETWORK 3: 检查阀C诊断结果
+LD     SM0.0
+LPS
+// 诊断正常完成 → 排水完成处理
+AW=    VW270, 1
+R      T42, 1                     // 停S6计时
 // 记录S6实测时长
 MOVD   T42, VD78                  // VD_S6_Actual
-// 更新VD_S6_Rolling(滚动平均，简化为直接覆盖)
-MOVR   VD78, VD116                // VD_S6_Rolling = 本轮S6实测
+// 更新VD_S6_Rolling(滚动实测)
+MOVR   VD78, VD116                // VD_S6_Rolling
 // 置下缸状态=空
 R      V1.7, 1
+LPP
 
 
 NETWORK 4: 排水后状态转移
-// 若实验未结束(在换水周期内) → 返回S5
-// 若实验已结束 → 转S7
-// 用M10.6标志实验结束状态(由S5转S7时置位，这里判断)
+// 若实验未结束(换水周期内) → 返回S5
+// 若实验已结束(M10.6标志) → 转S7
 LD     SM0.0
 LPS
-AN     M10.6                       // 实验未结束(换水周期内)
+AN     M10.6                       // 实验未结束
 MOVB   6, VB2                     // 返回S5
 MOVB   0, VB3
 LPP
 
 LD     M10.6                       // 实验已结束
-R      M10.6, 1                   // 清标志
+R      M10.6, 1
 MOVB   8, VB2                     // 转S7
 MOVB   0, VB3
 
 
-// 注: 阀C四态诊断、内漏检测由Story 1.3补充
+// 注: 四态诊断、开关到位、超时保护全部由FC32统一处理
 // 注: VD_S6_Rolling滚动平均算法(非直接覆盖)由Story 1.4细化
 
 

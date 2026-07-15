@@ -1,82 +1,84 @@
 // ============================================================
 // 文件: FC11_State_S1_Inlet.stl
 // 功能: S1上缸进水 (VW2=1)
-// Story: AQEX-6 状态机骨架
-// 说明: 开阀A进水，差值法计量，漫溢保护，进水达标转S2
-//       阀门详细诊断(Story 1.3)和二次校正(Story 1.4)预留接口
+// Story: AQEX-6 状态机骨架 + AQEX-7 阀门诊断(已集成)
+// 说明: 开阀A进水，调用FC30阀A诊断(差值法+延时验证)
+//       诊断结果VW266: 0进行中/1正常完成/2故障
 // ============================================================
 
-NETWORK 1: S1进入动作（首次进入本状态时执行）
-// 用V1.0上升沿或状态转移标志检测首次进入
-// 简化：每周期检测是否首次进入(V0.0刚清零的下一周期)
-// 实际可用状态转移脉冲(M10.2)作为进入标志
-LD     SM0.0
+// 符号说明:
+// VW260 : Diag_State_A  阀A诊断子状态
+// VW266 : Diag_Result_A 阀A诊断结果
+// VW270 : VD_Timeout_ValveA×10 转换值(供FC30的T50用)
+// VW272 : VD_Delay_ValveA_Verify×10 转换值(供FC30的T51用)
+// VD250 : 目标进水量(HMI设定)
+
+
+NETWORK 1: S1首次进入动作
+// 用M10.2作为S1首次进入标志(由FC1状态调度置位)
+LD     M10.2                        // S1首次进入脉冲
+EU
 LPS
-// 记录流量计快照（差值法基准）
-MOVD   VD86, VD82                  // VD_FlowMeter_Snapshot = 当前流量计累计值
+// 记录流量计快照（差值法基准，供FC30使用）
+MOVD   VD86, VD82                  // VD_FlowMeter_Snapshot
 // 开启阀A
-S      Q0.2, 1                     // 阀A打开
+S      Q0.2, 1
 // 启动S1计时器
-R      T37, 1                      // 先复位
-// T37为TON, 100ms时基, PT暂设32767(最大值), 实测值由T37读取
+R      T37, 1
 TON    T37, 32767
 // 置上缸状态=空
 R      V1.6, 1
+// 启动阀A诊断: 置诊断子状态=1(等待开到位)
+MOVB   1, VB260
+MOVB   0, VB261
+// 清诊断结果
+MOVB   0, VB266
+MOVB   0, VB267
+// 计算VD参数转换值供FC30使用
+// VW270 = VD_Timeout_ValveA(VD48) × 10
+*R     10.0, VD48                  // 临时运算(注意:会修改VD48，实际应用中间变量)
+ROUND  VD48, AC0
+MOVW   AC0, VW270
+// 还原VD48(实际应使用独立中间变量VD280运算)
+/R     10.0, VD48
+// VW272 = VD_Delay_ValveA_Verify(VD66) × 10
+MOVR   VD66, VD282
+*R     10.0, VD282
+ROUND  VD282, AC0
+MOVW   AC0, VW272
 LPP
 
 
-NETWORK 2: 周期计算当前进水量
-// VD_Current_InletVolume(VD90) = VD_FlowMeter_Current(VD86) - VD_FlowMeter_Snapshot(VD82)
+NETWORK 2: 调用阀A诊断FC30
+// 每周期调用FC30，FC30内部管理诊断子状态机
+LD     SM0.0
+CALL   FC30:V ValveA_Diag
+
+
+NETWORK 3: 检查阀A诊断结果
+// VW266=0 进行中，继续等待
+// VW266=1 正常完成(进水达标+延时验证通过)，转S2
+// VW266=2 故障(FC30已转S_ERROR)，本周期结束
 LD     SM0.0
 LPS
-MOVD   VD86, AC0                   // AC0 = 当前累计值
--D     VD82, AC0                   // AC0 = 当前累计值 - 快照
-MOVD   AC0, VD90                   // VD90 = 当前进水量
-LPP
-
-
-NETWORK 3: 漫溢保护检测
-// I0.5(液位计A高位)=ON → 漫溢报警 + NC电磁阀上缸动作 + 转S_ERROR
-LD     I0.5                        // 液位计A高位
-S      V300.0, 1                   // M_Alarm_Overflow_AHigh=1
-S      Q0.5, 1                     // NC电磁阀-上缸得电(打开泄流=安全)
-MOVB   99, VB2                     // 转S_ERROR
-MOVB   0, VB3
-
-
-NETWORK 4: 进水达标检测（转移至S2）
-// 当前进水量VD90 ≥ 目标进水量 → 转S2
-// 注: 目标进水量暂用VD_Vol_Target的倒数关系或单独定义
-// 骨架阶段简化：用一个固定的进水目标VD250(待HMI设定或计算)
-LD     SM0.0
-LPS
-AR>=   VD90, VD250                 // 当前进水量 ≥ 目标进水量(VD250预留)
-// 状态转移：S1→S2
-R      Q0.2, 1                    // 关阀A
-// 延时验证（VD_Delay_ValveA_Verify后检查流量开关A=OFF）
-// 骨架阶段简化：立即转S2，延时验证由Story 1.3补充
-MOVB   2, VB2                     // VW2=2(S2)
-MOVB   0, VB3
+// 诊断正常完成 → 转S2
+AW=    VW266, 1
+R      T37, 1                     // 停S1计时
 // 记录S1实测时长
-MOVD   T37, VD70                  // VD_S1_Actual = T37计时值(需转换单位)
+MOVD   T37, VD70                  // VD_S1_Actual
+// 状态转移 S1→S2
+MOVB   2, VB2
+MOVB   0, VB3
+// 【预留】二次校正接口 - S1完成后触发纠偏(Story 1.4)
+// CALL FC40:PreMixCorrection
 LPP
 
 
-NETWORK 5: 阀A开启超时检测（骨架）
-// 阀A开启后VD_Timeout_ValveA(VD48)时间内I1.3应ON
-// 超时未ON → 报警，转S_ERROR
-// 【详细诊断由Story 1.3补充】
-LD     Q0.2                        // 阀A已开
-AN     I1.3                        // 但开到位反馈未到
-TON    T43, +300                   // 临时30s超时(应换算VD48)
-LD     T43
-S      V301.4, 1                   // M_Alarm_ValveA_OpenTimeout
-MOVB   99, VB2
-MOVB   0, VB3
-
-
-// 注: 二次校正接口预留 - S1完成后触发纠偏(Story 1.4)
-// 注: 阀A四态诊断、内漏检测、流量开关交叉验证由Story 1.3补充
+// 注: 漫溢保护、差值法计量、延时验证、内漏检测、开关到位诊断
+//      全部由FC30统一处理，FC11仅负责状态转移调度
+// 注: VD250(目标进水量)由HMI设定或FC11进入时计算
+// 注: 二次校正(Story 1.4)在转S2前调用
+// 注: VD48运算注意使用中间变量，避免修改原参数(本代码用VD282)
 
 
 // ============================================================

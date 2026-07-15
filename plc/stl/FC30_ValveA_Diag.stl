@@ -1,0 +1,210 @@
+// ============================================================
+// 文件: FC30_ValveA_Diag.stl
+// 功能: 阀A诊断（差值法计量+延时验证4项并行+漫溢保护）
+// Story: AQEX-7 阀门诊断
+// 调用方: FC11(S1上缸进水)
+// 说明: 阀A不使用四态诊断，采用差值法+延时验证
+//       诊断子状态VW260: 0空闲/1等开到位/2开启完成/3运行中/5关闭后验证
+// ============================================================
+
+// 符号说明:
+// VW260 : Diag_State_A     阀A诊断子状态
+// VW266 : Diag_Result_A    阀A诊断结果(0进行中/1正常/2故障)
+// VD260 : VD_FlowMeter_CloseSnapshot  阀A关阀瞬间流量计快照
+// VD264 : VD_FlowMeter_CloseDelta     阀A关阀后流量计差值
+// VD250 : 目标进水量(HMI设定)
+// T50   : 阀A开到位超时
+// T51   : 阀A关阀后延时验证
+// I0.0  : 流量开关A
+// I0.5  : 液位计A高位(漫溢)
+// I1.3  : 阀A开到位反馈
+// I1.4  : 阀A关到位反馈
+// Q0.2  : 阀A
+// Q0.5  : NC电磁阀-上缸
+
+
+NETWORK 1: 漫溢保护（全程，优先级最高）
+// 无论诊断子状态如何，液位计A高位=ON立即报警+NC阀+转S_ERROR
+LD     I0.5
+S      V300.0, 1                   // M_Alarm_Overflow_AHigh
+S      Q0.5, 1                     // NC电磁阀-上缸动作(安全)
+R      Q0.2, 1                     // 关阀A
+MOVB   99, VB2                     // 转S_ERROR
+MOVB   0, VB3
+MOVB   2, VB266                    // Diag_Result_A=2故障
+JMP    nDiagA_End
+
+
+NETWORK 2: 诊断子状态调度
+// 根据VW260调用对应处理
+LDW=   VW260, 0
+JMP    nDiagA_S0
+LDW=   VW260, 1
+JMP    nDiagA_S1
+LDW=   VW260, 2
+JMP    nDiagA_S2
+LDW=   VW260, 3
+JMP    nDiagA_S3
+LDW=   VW260, 5
+JMP    nDiagA_S5
+JMP    nDiagA_End
+
+
+// ---- 子状态0: 空闲 ----
+NETWORK 3: S0空闲
+LBL    nDiagA_S0
+// 等待FC11触发置VW260=1
+JMP    nDiagA_End
+
+
+// ---- 子状态1: 等待开到位 ----
+NETWORK 4: S1等待开到位
+LBL    nDiagA_S1
+// T50超时计时(PT=VD_Timeout_ValveA×10, 暂用VW270存转换值)
+LD     SM0.0
+TON    T50, VW270                  // PT由FC11或本FC计算VD48×10
+
+// 开到位反馈=ON → 转S2
+LD     I1.3
+EU
+MOVB   2, VB260                    // VW260=2
+MOVB   0, VB261
+R      T50, 1                      // 复位超时计时
+JMP    nDiagA_End
+
+// 开到位超时 → 报警转S_ERROR
+LD     T50
+S      V301.4, 1                   // M_Alarm_ValveA_OpenTimeout
+MOVB   99, VB2
+MOVB   0, VB3
+MOVB   2, VB266
+JMP    nDiagA_End
+
+
+// ---- 子状态2: 开启完成检查 ----
+NETWORK 5: S2开启完成检查
+LBL    nDiagA_S2
+// 流量开关A=ON → 正常有流，转S3运行中
+LD     I0.0
+MOVB   3, VB260                    // VW260=3运行中
+MOVB   0, VB261
+JMP    nDiagA_End
+
+// 流量开关A=OFF(开到位但无流) → 报警
+// 加2s延时确认避免瞬时波动
+LD     I1.3                        // 开到位已ON
+AN     I0.0                        // 但无流量
+TON    T52, 20                     // 2s确认(20×100ms)
+LD     T52
+S      V301.5, 1                   // M_Alarm_ValveA_OpenNoFlow
+MOVB   99, VB2
+MOVB   0, VB3
+MOVB   2, VB266
+JMP    nDiagA_End
+
+
+// ---- 子状态3: 运行中(差值法持续计量) ----
+NETWORK 6: S3运行中-持续计算进水量
+LBL    nDiagA_S3
+// VD_Current_InletVolume(VD90) = VD86(当前累计) - VD82(开启快照)
+LD     SM0.0
+MOVD   VD86, AC0
+-D     VD82, AC0
+MOVD   AC0, VD90                   // 当前进水量
+
+// 进水量达标 → 下达关阀，转S5(延时验证)
+LD     SM0.0
+LPS
+AR>=   VD90, VD250                 // 当前进水量 ≥ 目标进水量
+R      Q0.2, 1                     // 关阀A
+// 快照关阀瞬间流量计累计值(用于内漏检测)
+MOVD   VD86, VD260                 // VD_FlowMeter_CloseSnapshot
+// 置子状态5(关闭后验证)
+MOVB   5, VB260
+MOVB   0, VB261
+R      T52, 1                      // 复位确认计时
+LPP
+JMP    nDiagA_End
+
+
+// ---- 子状态5: 关闭后延时验证(4项并行) ----
+NETWORK 7: S5延时验证启动
+LBL    nDiagA_S5
+// T51延时验证计时(PT=VD_Delay_ValveA_Verify×10, 暂用VW272存转换值)
+LD     SM0.0
+TON    T51, VW272                  // PT=VD66×10
+
+// 持续计算关阀后流量计差值(内漏判断)
+LD     SM0.0
+MOVD   VD86, AC0
+-D     VD260, AC0                  // 当前累计 - 关阀快照
+MOVD   AC0, VD264                  // VD_FlowMeter_CloseDelta
+
+
+NETWORK 8: S5延时到达后4项并行校验
+// 仅当T51延时到达后执行校验
+LD     T51                         // 延时到达
+LPS
+
+// 校验1: 关后仍有流(流量开关A=ON)
+A      I0.0
+S      V301.0, 1                   // M_Alarm_ValveA_CloseFlow
+
+// 校验2: 内漏(流量计差值>阈值0.1L)
+// 阈值暂定0.1L=100ml，现场整定
+LPS
+AR>    VD264, 0.1                  // 差值>0.1L(流量计仍增长)
+S      V301.1, 1                   // M_Alarm_ValveA_Leak
+LPP
+
+// 校验3: 关到位反馈超时(I1.4=OFF)
+AN     I1.4
+S      V301.2, 1                   // M_Alarm_ValveA_CloseTimeout
+
+// 校验4: 关到位但仍有流(交叉验证)
+A      I1.4                        // 关到位已ON
+A      I0.0                        // 但流量开关仍有流
+S      V301.3, 1                   // M_Alarm_ValveA_CloseLeak
+LPP
+
+
+NETWORK 9: S5校验结果判定
+LD     T51
+LPS
+// 4项全通过: 流量开关OFF AND 差值不增 AND 关到位ON
+AN     I0.0                        // 流量开关A=OFF
+AR<=   VD264, 0.1                  // 差值≤0.1L(不增长)
+A      I1.4                        // 关到位=ON
+// 诊断正常完成
+MOVB   0, VB260                    // VW260=0空闲
+MOVB   0, VB261
+MOVB   1, VB266                    // Diag_Result_A=1正常完成
+R      T51, 1                      // 复位延时计时
+JMP    nDiagA_End
+LPP
+
+// 任一项报警 → 转S_ERROR
+LD     T51
+A      V301.0                      // 任一报警标志
+O      V301.1
+O      V301.2
+O      V301.3
+MOVB   99, VB2
+MOVB   0, VB3
+MOVB   2, VB266                    // 故障
+JMP    nDiagA_End
+
+
+NETWORK 10: 诊断结束
+LBL    nDiagA_End
+
+
+// ============================================================
+// 文件结束
+// 说明:
+//   1. FC11调用本FC前需置VW260=1启动诊断
+//   2. FC11检查VW266: 0=进行中等待, 1=正常完成转S2, 2=故障(已转S_ERROR)
+//   3. VD250(目标进水量)由FC11或HMI设定
+//   4. VW270/VW272为VD参数转换值，由FC11计算或本FC内部计算
+//   5. 内漏阈值0.1L为初值，需现场整定
+// ============================================================
