@@ -1,0 +1,122 @@
+// ============================================================
+// 文件: FC3_AlarmHandling.stl
+// 功能: 报警处理（每周期调用）
+// Story: AQEX-6 状态机骨架（详细逻辑由Story 1.6填充）
+// 说明: 扫描报警字，计算最高优先级报警码写入VW6；
+//       管理报警声音/灯光输出；处理消音/确认命令
+// ============================================================
+
+NETWORK 1: 计算最高优先级报警码写入VW6
+// 优先级：99(安全继电器) > 10系列(漫溢) > 20系列(节奏滞后) > 30~90系列(一般)
+
+// 最高级：安全继电器故障
+LD     V300.5                      // M_Alarm_SafetyRelay
+MOVB   99, VB6
+MOVB   0, VB7
+JMP    nAlarmCodeDone
+
+// 漫溢级：上缸/下缸漫溢、NC阀动作、急停
+LD     V300.0                      // M_Alarm_Overflow_AHigh
+O      V300.1                      // M_Alarm_Overflow_BHigh
+O      V300.2                      // M_Alarm_NCValve_Top
+O      V300.3                      // M_Alarm_NCValve_Bottom
+O      V300.4                      // M_EStop_Latch
+MOVB   10, VB6
+MOVB   0, VB7
+JMP    nAlarmCodeDone
+
+// 节奏滞后级：严重滞后
+LD     V300.6                      // M_Alarm_ScheduleLag
+MOVB   20, VB6
+MOVB   0, VB7
+JMP    nAlarmCodeDone
+
+// 节奏滞后提示（一般级）
+LD     V300.7                      // M_Alarm_ScheduleLag_Warn
+MOVB   21, VB6
+MOVB   0, VB7
+JMP    nAlarmCodeDone
+
+// 阀A类一般故障(V301.0~V301.6)
+LD     V301.0
+O      V301.1
+O      V301.2
+O      V301.3
+O      V301.4
+O      V301.5
+O      V301.6
+MOVB   30, VB6
+MOVB   0, VB7
+JMP    nAlarmCodeDone
+
+// 阀B/C/泵类一般故障(V302.0~V302.7)
+LD     V302.0
+O      V302.1
+O      V302.2
+O      V302.3
+O      V302.4
+O      V302.5
+O      V302.6
+O      V302.7
+MOVB   40, VB6
+MOVB   0, VB7
+JMP    nAlarmCodeDone
+
+// 其他一般故障(V303.0~V303.6)
+LD     V303.0
+O      V303.1
+O      V303.2
+O      V303.3
+O      V303.4
+O      V303.5
+O      V303.6
+MOVB   60, VB6
+MOVB   0, VB7
+JMP    nAlarmCodeDone
+
+// 无报警
+LD     SM0.0
+MOVB   0, VB6
+MOVB   0, VB7
+
+LBL    nAlarmCodeDone
+
+
+NETWORK 2: 报警输出管理
+// 有活动报警时：声音+灯光开
+// 消音命令(V0.4)只关声音，不关灯光、不清报警
+LD     VW6                         // VW6≠0表示有报警
+LPS
+AW<>   VW6, 0
+S      Q0.7, 1                     // 报警声音开
+S      Q1.0, 1                     // 报警灯光开
+LPP
+
+// 消音处理：V0.4上升沿→关声音
+LD     V0.4                        // CMD_Mute
+EU                                 // 上升沿
+R      Q0.7, 1                     // 只关声音
+S      V1.4, 1                     // STA_MuteDone握手
+
+
+NETWORK 3: 报警确认处理（骨架）
+// V0.3上升沿→报警确认，仅在根本原因消失后清除灯光
+// 详细逻辑(漫溢/节奏强制人工确认)由Story 1.6补充
+LD     V0.3                        // CMD_AckAlarm
+EU
+S      V1.3, 1                     // STA_AlarmAckDone握手
+// 若报警已消除(VW6=0)，关灯光
+LD     V0.4
+A      VW6
+LPS
+AW=    VW6, 0
+R      Q1.0, 1                     // 根本原因消失，关灯光
+LPP
+
+
+// 注: 报警日志记录、二次确认、自动恢复/人工确认模式由Story 1.6补充
+
+
+// ============================================================
+// 文件结束
+// ============================================================

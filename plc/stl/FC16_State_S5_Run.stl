@@ -1,0 +1,89 @@
+// ============================================================
+// 文件: FC16_State_S5_Run.stl
+// 功能: S5实验运行中 (VW2=6)
+// Story: AQEX-6 状态机骨架
+// 说明: 按换水周期循环，累计实验时长，触发纠偏预规划(Story 1.4)
+// ============================================================
+
+NETWORK 1: S5进入动作 - 首次进入触发预规划
+// S5上升沿触发纠偏预规划(Story 1.4填充)
+// 用M10.5作为S5首次进入标志
+LD     SM0.0
+LPS
+AN     M10.5                       // 首次进入(S5标志未置位)
+S      M10.5, 1                    // 置S5已进入标志
+// 【预留】调用FC30:PrePlan纠偏预规划(Story 1.4)
+// CALL FC30
+LPP
+
+// 启动换水周期计时(对比VD_CycleSetpoint)
+LD     SM0.0
+R      T41, 1
+// VD_CycleSetpoint(VD20)为REAL分钟，T41为100ms时基
+// PT=VD_CycleSetpoint×600(分钟→100ms)
+// 简化：用VD256存放转换值
+TON    T41, VW256                  // 暂用WORD，若超32767需改用计数器组合
+
+
+NETWORK 2: 实验时长累加（仅下缸=满期间）
+// VD_ExperimentDuration_Accum(VD96)每周期累加
+// 简化：用T47作为1分钟基准计时器，每分钟VD96+1
+LD     V1.7                        // 下缸=满
+R      T47, 1
+TON    T47, 600                    // 60秒(600×100ms)
+LD     T47                         // 1分钟到
+INCB   VB96                        // VD_ExperimentDuration_Accum累加(简化为字节，实际需REAL)
+
+
+NETWORK 3: 换水周期到达 - 启动新一轮
+// T41≥VD_CycleSetpoint AND 上缸状态=空 → 转S1新一轮进水
+LD     T41                         // 换水周期到
+A      V1.6                        // 检查上缸状态
+LPS
+AN     V1.6                        // 上缸=空(正常)
+R      T41, 1                     // 复位周期计时
+R      M10.5, 1                   // 清S5标志(下轮重新触发预规划)
+MOVB   1, VB2                     // VW2=1(S1)
+MOVB   0, VB3
+// 实验轮次+1
+INCB   VB8
+LPP
+
+// 换水周期到但上缸≠空 → 异常(比节奏滞后更严重)
+LD     T41
+A      V1.6                        // 上缸=满(异常，说明上一轮S4未排空)
+S      V301.6, 1                   // M_Alarm_ValveA_S1Start
+MOVB   99, VB2
+MOVB   0, VB3
+
+
+NETWORK 4: 实验时长达标 - 转S7实验结束
+// VD_ExperimentDuration_Accum ≥ VD_ExperimentTarget → 实验结束
+LD     SM0.0
+LPS
+AR>=   VD96, VD24                  // 累计时长 ≥ 目标时长
+R      T41, 1                     // 停周期计时
+R      M10.5, 1                   // 清S5标志
+MOVB   8, VB2                     // VW2=8(S7)
+MOVB   0, VB3
+LPP
+
+
+NETWORK 5: HMI手动停止命令
+LD     V0.2                        // CMD_Stop
+EU
+R      T41, 1
+R      M10.5, 1
+MOVB   8, VB2                     // VW2=8(S7)
+MOVB   0, VB3
+S      V1.2, 1                    // STA_StopAck握手
+R      V0.2, 1                    // 清停止命令
+
+
+// 注: 纠偏预规划详细算法由Story 1.4填充
+// 注: 实验时长累加的REAL运算和单位转换需细化
+
+
+// ============================================================
+// 文件结束
+// ============================================================
