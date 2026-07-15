@@ -60,9 +60,9 @@ JMP    nDiagA_End
 // ---- 子状态1: 等待开到位 ----
 NETWORK 4: S1等待开到位
 LBL    nDiagA_S1
-// T50超时计时(PT=VD_Timeout_ValveA×10, 暂用VW270存转换值)
+// T50超时计时(PT=VD_Timeout_ValveA×10, 用VW278存转换值,已修正避FC32 VW270冲突)
 LD     SM0.0
-TON    T50, VW270                  // PT由FC11或本FC计算VD48×10
+TON    T50, VW278                  // PT由FC11计算VD48×10写入VW278
 
 // 开到位反馈=ON → 转S2
 LD     I1.3
@@ -130,9 +130,9 @@ JMP    nDiagA_End
 // ---- 子状态5: 关闭后延时验证(4项并行) ----
 NETWORK 7: S5延时验证启动
 LBL    nDiagA_S5
-// T51延时验证计时(PT=VD_Delay_ValveA_Verify×10, 暂用VW272存转换值)
+// T51延时验证计时(PT=VD_Delay_ValveA_Verify×10, 用VW280存转换值,已修正避FC32冲突)
 LD     SM0.0
-TON    T51, VW272                  // PT=VD66×10
+TON    T51, VW280                  // PT=VD66×10,由FC11写入VW280
 
 // 持续计算关阀后流量计差值(内漏判断)
 LD     SM0.0
@@ -205,6 +205,6 @@ LBL    nDiagA_End
 //   1. FC11调用本FC前需置VW260=1启动诊断
 //   2. FC11检查VW266: 0=进行中等待, 1=正常完成转S2, 2=故障(已转S_ERROR)
 //   3. VD250(目标进水量)由FC11或HMI设定
-//   4. VW270/VW272为VD参数转换值，由FC11计算或本FC内部计算
+//   4. VW278/VW280为VD参数转换值(阀A专用,与FC32 VW270诊断结果隔离),由FC11计算写入
 //   5. 内漏阈值0.1L为初值，需现场整定
 // ============================================================
