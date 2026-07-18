@@ -7,16 +7,16 @@
 
 // 符号说明:
 // VW254 : VD_RestTime_Target×10 转换值(100ms时基,供T39用)
-// VD294 : VD124运算中间变量(避免修改VD_RestTime_Target)
+// VD340 : VD124运算中间变量(避免修改VD_RestTime_Target)
 
 NETWORK 1: S3.5进入动作 - 启动计时
 // A2修复: 原骨架标注"待Story1.4补充转换",FC40只输出REAL秒到VD124,
 //         从未写入VW254导致T39计时失效。现补转换逻辑。
 // VW254 = VD_RestTime_Target(VD124) × 10 (REAL秒→100ms时基)
 LD     SM0.0
-MOVR   VD124, VD294                // 复制到中间变量(避免修改VD_RestTime_Target)
-*R     10.0, VD294
-ROUND  VD294, AC0
+MOVR   VD124, VD340                // 复制到中间变量(避免修改VD_RestTime_Target)
+*R     10.0, VD340
+ROUND  VD340, AC0
 MOVW   AC0, VW254                  // VW254 = VD124×10
 R      T39, 1
 TON    T39, VW254                  // PT=VD_RestTime_Target×10(100ms时基)
@@ -33,5 +33,5 @@ MOVB   0, VB3
 // 文件结束
 // 说明:
 //   1. A2修复: VW254由VD124×10转换写入(原骨架遗漏,导致T39计时失效)
-//   2. VD294为运算中间变量,不污染HMI设定参数
+//   2. VD340为运算中间变量,不污染HMI设定参数
 // ============================================================

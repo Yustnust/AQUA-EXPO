@@ -10,9 +10,9 @@
 // 符号说明:
 // VW260 : Diag_State_A     阀A诊断子状态
 // VW266 : Diag_Result_A    阀A诊断结果(0进行中/1正常/2故障)
-// VD260 : VD_FlowMeter_CloseSnapshot  阀A关阀瞬间流量计快照
-// VD264 : VD_FlowMeter_CloseDelta     阀A关阀后流量计差值
-// VD250 : 目标进水量(HMI设定)
+// VD308 : VD_FlowMeter_CloseSnapshot  阀A关阀瞬间流量计快照
+// VD312 : VD_FlowMeter_CloseDelta     阀A关阀后流量计差值
+// VD316 : 目标进水量(HMI设定)
 // T50   : 阀A开到位超时
 // T51   : 阀A关阀后延时验证
 // I0.0  : 流量开关A
@@ -27,6 +27,7 @@ NETWORK 1: 漫溢保护（全程，优先级最高）
 // 无论诊断子状态如何，液位计A高位=ON立即报警+NC阀+转S_ERROR
 LD     I0.5
 S      V300.0, 1                   // M_Alarm_Overflow_AHigh
+S      V300.2, 1                   // M_Alarm_NCValve_Top(NC阀上缸动作报警,漫溢风险级)
 S      Q0.5, 1                     // NC电磁阀-上缸动作(安全)
 R      Q0.2, 1                     // 关阀A
 MOVB   99, VB2                     // 转S_ERROR
@@ -115,10 +116,10 @@ MOVD   AC0, VD90                   // 当前进水量
 // 进水量达标 → 下达关阀，转S5(延时验证)
 LD     SM0.0
 LPS
-AR>=   VD90, VD250                 // 当前进水量 ≥ 目标进水量
+AR>=   VD90, VD316                 // 当前进水量 ≥ 目标进水量
 R      Q0.2, 1                     // 关阀A
 // 快照关阀瞬间流量计累计值(用于内漏检测)
-MOVD   VD86, VD260                 // VD_FlowMeter_CloseSnapshot
+MOVD   VD86, VD308                 // VD_FlowMeter_CloseSnapshot
 // 置子状态5(关闭后验证)
 MOVB   5, VB260
 MOVB   0, VB261
@@ -137,8 +138,8 @@ TON    T51, VW280                  // PT=VD66×10,由FC11写入VW280
 // 持续计算关阀后流量计差值(内漏判断)
 LD     SM0.0
 MOVD   VD86, AC0
--D     VD260, AC0                  // 当前累计 - 关阀快照
-MOVD   AC0, VD264                  // VD_FlowMeter_CloseDelta
+-D     VD308, AC0                  // 当前累计 - 关阀快照
+MOVD   AC0, VD312                  // VD_FlowMeter_CloseDelta
 
 
 NETWORK 8: S5延时到达后4项并行校验
@@ -153,7 +154,7 @@ S      V301.0, 1                   // M_Alarm_ValveA_CloseFlow
 // 校验2: 内漏(流量计差值>阈值0.1L)
 // 阈值暂定0.1L=100ml，现场整定
 LPS
-AR>    VD264, 0.1                  // 差值>0.1L(流量计仍增长)
+AR>    VD312, 0.1                  // 差值>0.1L(流量计仍增长)
 S      V301.1, 1                   // M_Alarm_ValveA_Leak
 LPP
 
@@ -173,7 +174,7 @@ LD     T51
 LPS
 // 4项全通过: 流量开关OFF AND 差值不增 AND 关到位ON
 AN     I0.0                        // 流量开关A=OFF
-AR<=   VD264, 0.1                  // 差值≤0.1L(不增长)
+AR<=   VD312, 0.1                  // 差值≤0.1L(不增长)
 A      I1.4                        // 关到位=ON
 // 诊断正常完成
 MOVB   0, VB260                    // VW260=0空闲
@@ -204,7 +205,7 @@ LBL    nDiagA_End
 // 说明:
 //   1. FC11调用本FC前需置VW260=1启动诊断
 //   2. FC11检查VW266: 0=进行中等待, 1=正常完成转S2, 2=故障(已转S_ERROR)
-//   3. VD250(目标进水量)由FC11或HMI设定
+//   3. VD316(目标进水量)由FC11或HMI设定
 //   4. VW278/VW280为VD参数转换值(阀A专用,与FC32 VW270诊断结果隔离),由FC11计算写入
 //   5. 内漏阈值0.1L为初值，需现场整定
 // ============================================================
