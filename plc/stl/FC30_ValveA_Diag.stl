@@ -63,7 +63,7 @@ NETWORK 4: S1等待开到位
 LBL    nDiagA_S1
 // T50超时计时(PT=VD_Timeout_ValveA×10, 用VW278存转换值,已修正避FC32 VW270冲突)
 LD     SM0.0
-TON    T50, VW278                  // PT由FC11计算VD48×10写入VW278
+TON    T50, VW278                  // PT由FC11计算VD358×10写入VW278
 
 // 开到位反馈=ON → 转S2
 LD     I1.3

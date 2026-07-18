@@ -21,16 +21,16 @@ VW6_AlarmCode,WORD,VW6,R,是,"当前最高优先级未确认报警码(0=无报�
 VW8_RoundCount,WORD,VW8,R,是,"当前实验轮次计数(每完成S1→S6累加1)",1
 VD_C_Set,REAL,VD10,RW,是,"目标浓度设定值(%)",4
 VD_C_Stock,REAL,VD14,RW,是,"母液浓度(人工配置后录入)(%)",4
-VD_StepResolution,REAL,VD18,RW,是,"注射泵单步分辨率(µL/步,5ml进样器默认0.2083)",4
-VD_CycleSetpoint,REAL,VD20,RW,是,"换水周期设定值(min)",4
+VD_StepResolution,REAL,VD350,RW,是,"注射泵单步分辨率(µL/步,5ml进样器默认0.2083;原VD18,AQEX-36迁移)",4
+VD_CycleSetpoint,REAL,VD354,RW,是,"换水周期设定值(min;原VD20,AQEX-36迁移)",4
 VD_ExperimentTarget,REAL,VD24,RW,是,"实验时长目标设定值(min)",4
 VD_PreMixTime,REAL,VD28,RW,是,"潜水泵预循环标称时长S2(s)",4
 VD_PreMixTime_MinSafe,REAL,VD32,RW,是,"S2压缩下限(纠偏第1层最低安全值)(s)",4
 VD_RestTime,REAL,VD36,RW,是,"静止等候标称时长S3.5(s)",4
 VD_RestTime_Min,REAL,VD40,RW,是,"静止等候压缩下限(纠偏第0层最低值)(s)",4
 VD_CycleExtend_Max,REAL,VD44,RW,是,"换水周期顺延最大允许幅度(纠偏第2层上限)(min)",4
-VD_Timeout_ValveA,REAL,VD48,RW,是,"阀A动作超时保护时长(s)",4
-VD_Timeout_ValveB,REAL,VD50,RW,是,"阀B动作超时保护时长(s)",4
+VD_Timeout_ValveA,REAL,VD358,RW,是,"阀A动作超时保护时长(s;原VD48,AQEX-36迁移)",4
+VD_Timeout_ValveB,REAL,VD362,RW,是,"阀B动作超时保护时长(s;原VD50,AQEX-36迁移)",4
 VD_Timeout_ValveC,REAL,VD54,RW,是,"阀C动作超时保护时长(s)",4
 VD_Timeout_Pump1,REAL,VD58,RW,是,"潜水泵1动作超时保护时长(s)",4
 VD_Timeout_Pump2,REAL,VD62,RW,是,"潜水泵2动作超时保护时长(s)",4
@@ -42,8 +42,8 @@ VD_FlowMeter_Snapshot,DWORD,VD82,R,是,"阀A开启瞬间流量计计量值快照
 VD_FlowMeter_Current,DWORD,VD86,R,是,"流量计当前计量值(累计,无清零,差值法)(轮询读取)",7
 VD_Current_InletVolume,REAL,VD90,R,是,"本次进水量(=VD86-VD82)(L)",2
 VD_FlowRate_Instant,REAL,VD94,R,是,"瞬时流速(映射自Modbus 0x0017,仅监测)(L/min)",2
-VD_ExperimentDuration_Accum,REAL,VD96,R,是,"实验时长累加值(仅下缸=满期间累加)(min)",1
-VD_Vol_Target,REAL,VD98,R,是,"本轮目标抽取母液体积(=VD_C_Set×进水量/VD_C_Stock)(µL)",2
+VD_ExperimentDuration_Accum,REAL,VD366,R,是,"实验时长累加值(仅下缸=满期间累加)(min;原VD96,AQEX-36迁移)",1
+VD_Vol_Target,REAL,VD370,R,是,"本轮目标抽取母液体积(=VD_C_Set×进水量/VD_C_Stock)(µL;原VD98,AQEX-36迁移)",2
 VD_Dose_Steps,REAL,VD102,R,是,"本轮加药目标步数(=VD_Vol_Target/VD_StepResolution,写入40006/40007)(步)",2
 VD_T_Default,REAL,VD104,R,是,"T初始默认值(首轮无历史数据时使用)(s)",6
 VD_S6_Default,REAL,VD108,R,是,"S6排水时长初始默认值(首轮使用)(s)",6

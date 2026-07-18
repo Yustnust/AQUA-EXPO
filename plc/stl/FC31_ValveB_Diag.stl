@@ -60,7 +60,7 @@ NETWORK 4: S1等待开到位
 LBL    nDiagB_S1
 // T53开到位超时 + T54流量开关超时(两套独立判据)
 LD     SM0.0
-TON    T53, VW274                  // PT=VD_Timeout_ValveB(VD50)×10
+TON    T53, VW274                  // PT=VD_Timeout_ValveB(VD362)×10
 TON    T54, VW274                  // 流量开关超时(同参数，独立计时)
 
 // 开到位=ON → 转S2
@@ -182,6 +182,6 @@ LBL    nDiagB_End
 // 说明:
 //   1. FC15调用本FC前置VW262=1启动
 //   2. FC15检查VW268: 0等待, 1正常完成转S5, 2故障
-//   3. VW274=VD_Timeout_ValveB(VD50)×10转换值
+//   3. VW274=VD_Timeout_ValveB(VD362)×10转换值
 //   4. 四态诊断状态4需排除转移初期瞬时，实际需加延时确认
 // ============================================================

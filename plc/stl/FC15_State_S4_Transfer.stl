@@ -30,8 +30,8 @@ MOVB   0, VB263
 // 清诊断结果
 MOVB   0, VB268
 MOVB   0, VB269
-// 计算VD_Timeout_ValveB(VD50)×10转换值
-MOVR   VD50, VD324
+// 计算VD_Timeout_ValveB(VD362)×10转换值
+MOVR   VD362, VD324
 *R     10.0, VD324
 ROUND  VD324, AC0
 MOVW   AC0, VW274

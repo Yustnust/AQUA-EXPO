@@ -12,7 +12,7 @@
 // VW266 : Diag_Result_A 阀A诊断结果
 // VW278 : VD_Timeout_ValveA×10 转换值(供FC30的T50用,已修正避FC32冲突)
 // VW280 : VD_Delay_ValveA_Verify×10 转换值(供FC30的T51用)
-// VD332 : VD48运算中间变量(避免修改HMI参数VD48)
+// VD332 : VD358运算中间变量(避免修改HMI参数VD358)
 // VD250 : 目标进水量(HMI设定)
 
 
@@ -36,9 +36,9 @@ MOVB   0, VB261
 // 清诊断结果
 MOVB   0, VB266
 MOVB   0, VB267
-// 计算VD参数转换值供FC30使用(已修正:用独立中间变量VD332,不修改HMI参数VD48)
-// VW278 = VD_Timeout_ValveA(VD48) × 10
-MOVR   VD48, VD332                  // 复制到中间变量(避免修改HMI设定值)
+// 计算VD参数转换值供FC30使用(已修正:用独立中间变量VD332,不修改HMI参数VD358)
+// VW278 = VD_Timeout_ValveA(VD358) × 10
+MOVR   VD358, VD332                  // 复制到中间变量(避免修改HMI设定值)
 *R     10.0, VD332
 ROUND  VD332, AC0
 MOVW   AC0, VW278
@@ -72,7 +72,7 @@ MOVD   T37, VD70                   // 记录S1实测时长 VD_S1_Actual
 // 【Story1.4】二次校正(7.3): 用S1实测值重核S2/S3.5目标
 // Available' = CycleSetpoint×60 + S6_Rolling - S5_Elapsed(已含S1耗时)
 LD     SM0.0
-MOVR   VD20, VD150                 // VD_CycleSetpoint(min)
+MOVR   VD354, VD150                 // VD_CycleSetpoint(min)
 *R     60.0, VD150                 // →秒
 +R     VD116, VD150                // + VD_S6_Rolling
 -R     VD178, VD150                // - VD_S5_Elapsed = Available'
@@ -102,7 +102,7 @@ LBL    nS1CheckEnd
 //      全部由FC30统一处理，FC11仅负责状态转移调度
 // 注: VD250(目标进水量)由HMI设定或FC11进入时计算
 // 注: 二次校正(Story 1.4)在转S2前调用
-// 注: VD48运算已改用独立中间变量VD332,不再修改HMI设定参数
+// 注: VD358运算已改用独立中间变量VD332,不再修改HMI设定参数
 // 注: 断电恢复由FC0统一处理,VW2=1(S1阀A动作中断)时FC0转S_ERROR
 
 

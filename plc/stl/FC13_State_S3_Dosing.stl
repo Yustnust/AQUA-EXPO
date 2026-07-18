@@ -14,9 +14,9 @@ LPS
 *R     VD10, VD90                  // VD_C_Set × VD_Current_InletVolume (暂用浮点近似)
 // 实际需除以VD_C_Stock(VD14)，骨架简化
 /R     VD14, AC0                   // ÷ VD_C_Stock
-MOVR   AC0, VD98                   // VD_Vol_Target
+MOVR   AC0, VD370                   // VD_Vol_Target
 // 计算目标步数
-/R     VD18, AC0                   // ÷ VD_StepResolution
+/R     VD350, AC0                   // ÷ VD_StepResolution
 ROUND  AC0, AC0                    // 取整
 MOVR   AC0, VD102                  // VD_Dose_Steps
 LPP
