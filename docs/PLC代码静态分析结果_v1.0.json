@@ -1,0 +1,1895 @@
+{
+  "summary": {
+    "stl_files": 20,
+    "var_defs": 58,
+    "var_refs": 711,
+    "issues_total": 225,
+    "issues_severe": 3,
+    "issues_warning": 59,
+    "issues_info": 163
+  },
+  "issues": [
+    {
+      "severity": "严重",
+      "category": "VD编址冲突",
+      "fc_name": "全局",
+      "line_no": 0,
+      "message": "VD18(VB18~VB21) 与 VD20(VB20~VB23) 地址重叠",
+      "detail": "VD18引用: ['FC13_State_S3_Dosing:L19(VD18)']\nVD20引用: ['FC11_State_S1_Inlet:L75(VD20)', 'FC16_State_S5_Run:L83(VD20)', 'FC16_State_S5_Run:L36(VD20)']\n重叠字节: VB20~VB21"
+    },
+    {
+      "severity": "严重",
+      "category": "VD编址冲突",
+      "fc_name": "全局",
+      "line_no": 0,
+      "message": "VD48(VB48~VB51) 与 VD50(VB50~VB53) 地址重叠",
+      "detail": "VD48引用: ['FC11_State_S1_Inlet:L41(VD48)']\nVD50引用: ['FC15_State_S4_Transfer:L34(VD50)']\n重叠字节: VB50~VB51"
+    },
+    {
+      "severity": "严重",
+      "category": "VD编址冲突",
+      "fc_name": "全局",
+      "line_no": 0,
+      "message": "VD96(VB96~VB99) 与 VD98(VB98~VB101) 地址重叠",
+      "detail": "VD96引用: ['FC16_State_S5_Run:L97(VD96)', 'FC16_State_S5_Run:L76(VD96)']\nVD98引用: ['FC13_State_S3_Dosing:L17(VD98)']\n重叠字节: VB98~VB99"
+    },
+    {
+      "severity": "提示",
+      "category": "对齐建议",
+      "fc_name": "FC0_SysInit",
+      "line_no": 57,
+      "message": "VD地址非4字节对齐: VD178(地址178)",
+      "detail": "VD建议从4倍数字节地址起始(非强制)"
+    },
+    {
+      "severity": "提示",
+      "category": "对齐建议",
+      "fc_name": "FC0_SysInit",
+      "line_no": 125,
+      "message": "VD地址非4字节对齐: VD178(地址178)",
+      "detail": "VD建议从4倍数字节地址起始(非强制)"
+    },
+    {
+      "severity": "提示",
+      "category": "对齐建议",
+      "fc_name": "FC0_SysInit",
+      "line_no": 139,
+      "message": "VD地址非4字节对齐: VD186(地址186)",
+      "detail": "VD建议从4倍数字节地址起始(非强制)"
+    },
+    {
+      "severity": "提示",
+      "category": "对齐建议",
+      "fc_name": "FC0_SysInit",
+      "line_no": 145,
+      "message": "VD地址非4字节对齐: VD186(地址186)",
+      "detail": "VD建议从4倍数字节地址起始(非强制)"
+    },
+    {
+      "severity": "提示",
+      "category": "对齐建议",
+      "fc_name": "FC0_SysInit",
+      "line_no": 151,
+      "message": "VD地址非4字节对齐: VD186(地址186)",
+      "detail": "VD建议从4倍数字节地址起始(非强制)"
+    },
+    {
+      "severity": "提示",
+      "category": "对齐建议",
+      "fc_name": "FC0_SysInit",
+      "line_no": 156,
+      "message": "VD地址非4字节对齐: VD186(地址186)",
+      "detail": "VD建议从4倍数字节地址起始(非强制)"
+    },
+    {
+      "severity": "提示",
+      "category": "对齐建议",
+      "fc_name": "FC0_SysInit",
+      "line_no": 161,
+      "message": "VD地址非4字节对齐: VD190(地址190)",
+      "detail": "VD建议从4倍数字节地址起始(非强制)"
+    },
+    {
+      "severity": "提示",
+      "category": "对齐建议",
+      "fc_name": "FC0_SysInit",
+      "line_no": 167,
+      "message": "VD地址非4字节对齐: VD190(地址190)",
+      "detail": "VD建议从4倍数字节地址起始(非强制)"
+    },
+    {
+      "severity": "提示",
+      "category": "对齐建议",
+      "fc_name": "FC0_SysInit",
+      "line_no": 173,
+      "message": "VD地址非4字节对齐: VD190(地址190)",
+      "detail": "VD建议从4倍数字节地址起始(非强制)"
+    },
+    {
+      "severity": "提示",
+      "category": "对齐建议",
+      "fc_name": "FC0_SysInit",
+      "line_no": 178,
+      "message": "VD地址非4字节对齐: VD190(地址190)",
+      "detail": "VD建议从4倍数字节地址起始(非强制)"
+    },
+    {
+      "severity": "提示",
+      "category": "对齐建议",
+      "fc_name": "FC0_SysInit",
+      "line_no": 188,
+      "message": "VD地址非4字节对齐: VD186(地址186)",
+      "detail": "VD建议从4倍数字节地址起始(非强制)"
+    },
+    {
+      "severity": "提示",
+      "category": "对齐建议",
+      "fc_name": "FC0_SysInit",
+      "line_no": 188,
+      "message": "VD地址非4字节对齐: VD178(地址178)",
+      "detail": "VD建议从4倍数字节地址起始(非强制)"
+    },
+    {
+      "severity": "提示",
+      "category": "对齐建议",
+      "fc_name": "FC0_SysInit",
+      "line_no": 189,
+      "message": "VD地址非4字节对齐: VD190(地址190)",
+      "detail": "VD建议从4倍数字节地址起始(非强制)"
+    },
+    {
+      "severity": "提示",
+      "category": "对齐建议",
+      "fc_name": "FC0_SysInit",
+      "line_no": 189,
+      "message": "VD地址非4字节对齐: VD178(地址178)",
+      "detail": "VD建议从4倍数字节地址起始(非强制)"
+    },
+    {
+      "severity": "提示",
+      "category": "对齐建议",
+      "fc_name": "FC0_SysInit",
+      "line_no": 195,
+      "message": "VD地址非4字节对齐: VD178(地址178)",
+      "detail": "VD建议从4倍数字节地址起始(非强制)"
+    },
+    {
+      "severity": "提示",
+      "category": "对齐建议",
+      "fc_name": "FC11_State_S1_Inlet",
+      "line_no": 25,
+      "message": "VD地址非4字节对齐: VD86(地址86)",
+      "detail": "VD建议从4倍数字节地址起始(非强制)"
+    },
+    {
+      "severity": "提示",
+      "category": "对齐建议",
+      "fc_name": "FC11_State_S1_Inlet",
+      "line_no": 25,
+      "message": "VD地址非4字节对齐: VD82(地址82)",
+      "detail": "VD建议从4倍数字节地址起始(非强制)"
+    },
+    {
+      "severity": "提示",
+      "category": "对齐建议",
+      "fc_name": "FC11_State_S1_Inlet",
+      "line_no": 46,
+      "message": "VD地址非4字节对齐: VD66(地址66)",
+      "detail": "VD建议从4倍数字节地址起始(非强制)"
+    },
+    {
+      "severity": "提示",
+      "category": "对齐建议",
+      "fc_name": "FC11_State_S1_Inlet",
+      "line_no": 71,
+      "message": "VD地址非4字节对齐: VD70(地址70)",
+      "detail": "VD建议从4倍数字节地址起始(非强制)"
+    },
+    {
+      "severity": "提示",
+      "category": "对齐建议",
+      "fc_name": "FC11_State_S1_Inlet",
+      "line_no": 75,
+      "message": "VD地址非4字节对齐: VD150(地址150)",
+      "detail": "VD建议从4倍数字节地址起始(非强制)"
+    },
+    {
+      "severity": "提示",
+      "category": "对齐建议",
+      "fc_name": "FC11_State_S1_Inlet",
+      "line_no": 76,
+      "message": "VD地址非4字节对齐: VD150(地址150)",
+      "detail": "VD建议从4倍数字节地址起始(非强制)"
+    },
+    {
+      "severity": "提示",
+      "category": "对齐建议",
+      "fc_name": "FC11_State_S1_Inlet",
+      "line_no": 77,
+      "message": "VD地址非4字节对齐: VD150(地址150)",
+      "detail": "VD建议从4倍数字节地址起始(非强制)"
+    },
+    {
+      "severity": "提示",
+      "category": "对齐建议",
+      "fc_name": "FC11_State_S1_Inlet",
+      "line_no": 78,
+      "message": "VD地址非4字节对齐: VD178(地址178)",
+      "detail": "VD建议从4倍数字节地址起始(非强制)"
+    },
+    {
+      "severity": "提示",
+      "category": "对齐建议",
+      "fc_name": "FC11_State_S1_Inlet",
+      "line_no": 78,
+      "message": "VD地址非4字节对齐: VD150(地址150)",
+      "detail": "VD建议从4倍数字节地址起始(非强制)"
+    },
+    {
+      "severity": "提示",
+      "category": "对齐建议",
+      "fc_name": "FC11_State_S1_Inlet",
+      "line_no": 80,
+      "message": "VD地址非4字节对齐: VD154(地址154)",
+      "detail": "VD建议从4倍数字节地址起始(非强制)"
+    },
+    {
+      "severity": "提示",
+      "category": "对齐建议",
+      "fc_name": "FC11_State_S1_Inlet",
+      "line_no": 81,
+      "message": "VD地址非4字节对齐: VD174(地址174)",
+      "detail": "VD建议从4倍数字节地址起始(非强制)"
+    },
+    {
+      "severity": "提示",
+      "category": "对齐建议",
+      "fc_name": "FC11_State_S1_Inlet",
+      "line_no": 81,
+      "message": "VD地址非4字节对齐: VD154(地址154)",
+      "detail": "VD建议从4倍数字节地址起始(非强制)"
+    },
+    {
+      "severity": "提示",
+      "category": "对齐建议",
+      "fc_name": "FC11_State_S1_Inlet",
+      "line_no": 82,
+      "message": "VD地址非4字节对齐: VD154(地址154)",
+      "detail": "VD建议从4倍数字节地址起始(非强制)"
+    },
+    {
+      "severity": "提示",
+      "category": "对齐建议",
+      "fc_name": "FC11_State_S1_Inlet",
+      "line_no": 87,
+      "message": "VD地址非4字节对齐: VD70(地址70)",
+      "detail": "VD建议从4倍数字节地址起始(非强制)"
+    },
+    {
+      "severity": "提示",
+      "category": "对齐建议",
+      "fc_name": "FC11_State_S1_Inlet",
+      "line_no": 89,
+      "message": "VD地址非4字节对齐: VD174(地址174)",
+      "detail": "VD建议从4倍数字节地址起始(非强制)"
+    },
+    {
+      "severity": "提示",
+      "category": "对齐建议",
+      "fc_name": "FC12_State_S2_PreMix",
+      "line_no": 34,
+      "message": "VD地址非4字节对齐: VD58(地址58)",
+      "detail": "VD建议从4倍数字节地址起始(非强制)"
+    },
+    {
+      "severity": "提示",
+      "category": "对齐建议",
+      "fc_name": "FC12_State_S2_PreMix",
+      "line_no": 47,
+      "message": "VD地址非4字节对齐: VD62(地址62)",
+      "detail": "VD建议从4倍数字节地址起始(非强制)"
+    },
+    {
+      "severity": "提示",
+      "category": "对齐建议",
+      "fc_name": "FC13_State_S3_Dosing",
+      "line_no": 14,
+      "message": "VD地址非4字节对齐: VD10(地址10)",
+      "detail": "VD建议从4倍数字节地址起始(非强制)"
+    },
+    {
+      "severity": "提示",
+      "category": "对齐建议",
+      "fc_name": "FC13_State_S3_Dosing",
+      "line_no": 14,
+      "message": "VD地址非4字节对齐: VD90(地址90)",
+      "detail": "VD建议从4倍数字节地址起始(非强制)"
+    },
+    {
+      "severity": "提示",
+      "category": "对齐建议",
+      "fc_name": "FC13_State_S3_Dosing",
+      "line_no": 16,
+      "message": "VD地址非4字节对齐: VD14(地址14)",
+      "detail": "VD建议从4倍数字节地址起始(非强制)"
+    },
+    {
+      "severity": "提示",
+      "category": "对齐建议",
+      "fc_name": "FC13_State_S3_Dosing",
+      "line_no": 17,
+      "message": "VD地址非4字节对齐: VD98(地址98)",
+      "detail": "VD建议从4倍数字节地址起始(非强制)"
+    },
+    {
+      "severity": "提示",
+      "category": "对齐建议",
+      "fc_name": "FC13_State_S3_Dosing",
+      "line_no": 19,
+      "message": "VD地址非4字节对齐: VD18(地址18)",
+      "detail": "VD建议从4倍数字节地址起始(非强制)"
+    },
+    {
+      "severity": "提示",
+      "category": "对齐建议",
+      "fc_name": "FC13_State_S3_Dosing",
+      "line_no": 21,
+      "message": "VD地址非4字节对齐: VD102(地址102)",
+      "detail": "VD建议从4倍数字节地址起始(非强制)"
+    },
+    {
+      "severity": "提示",
+      "category": "对齐建议",
+      "fc_name": "FC13_State_S3_Dosing",
+      "line_no": 32,
+      "message": "VD地址非4字节对齐: VD102(地址102)",
+      "detail": "VD建议从4倍数字节地址起始(非强制)"
+    },
+    {
+      "severity": "提示",
+      "category": "对齐建议",
+      "fc_name": "FC15_State_S4_Transfer",
+      "line_no": 34,
+      "message": "VD地址非4字节对齐: VD50(地址50)",
+      "detail": "VD建议从4倍数字节地址起始(非强制)"
+    },
+    {
+      "severity": "提示",
+      "category": "对齐建议",
+      "fc_name": "FC15_State_S4_Transfer",
+      "line_no": 54,
+      "message": "VD地址非4字节对齐: VD74(地址74)",
+      "detail": "VD建议从4倍数字节地址起始(非强制)"
+    },
+    {
+      "severity": "提示",
+      "category": "对齐建议",
+      "fc_name": "FC15_State_S4_Transfer",
+      "line_no": 70,
+      "message": "VD地址非4字节对齐: VD178(地址178)",
+      "detail": "VD建议从4倍数字节地址起始(非强制)"
+    },
+    {
+      "severity": "提示",
+      "category": "对齐建议",
+      "fc_name": "FC16_State_S5_Run",
+      "line_no": 28,
+      "message": "VD地址非4字节对齐: VD178(地址178)",
+      "detail": "VD建议从4倍数字节地址起始(非强制)"
+    },
+    {
+      "severity": "提示",
+      "category": "对齐建议",
+      "fc_name": "FC16_State_S5_Run",
+      "line_no": 36,
+      "message": "VD地址非4字节对齐: VD150(地址150)",
+      "detail": "VD建议从4倍数字节地址起始(非强制)"
+    },
+    {
+      "severity": "提示",
+      "category": "对齐建议",
+      "fc_name": "FC16_State_S5_Run",
+      "line_no": 37,
+      "message": "VD地址非4字节对齐: VD150(地址150)",
+      "detail": "VD建议从4倍数字节地址起始(非强制)"
+    },
+    {
+      "severity": "提示",
+      "category": "对齐建议",
+      "fc_name": "FC16_State_S5_Run",
+      "line_no": 38,
+      "message": "VD地址非4字节对齐: VD150(地址150)",
+      "detail": "VD建议从4倍数字节地址起始(非强制)"
+    },
+    {
+      "severity": "提示",
+      "category": "对齐建议",
+      "fc_name": "FC16_State_S5_Run",
+      "line_no": 39,
+      "message": "VD地址非4字节对齐: VD178(地址178)",
+      "detail": "VD建议从4倍数字节地址起始(非强制)"
+    },
+    {
+      "severity": "提示",
+      "category": "对齐建议",
+      "fc_name": "FC16_State_S5_Run",
+      "line_no": 39,
+      "message": "VD地址非4字节对齐: VD150(地址150)",
+      "detail": "VD建议从4倍数字节地址起始(非强制)"
+    },
+    {
+      "severity": "提示",
+      "category": "对齐建议",
+      "fc_name": "FC16_State_S5_Run",
+      "line_no": 44,
+      "message": "VD地址非4字节对齐: VD150(地址150)",
+      "detail": "VD建议从4倍数字节地址起始(非强制)"
+    },
+    {
+      "severity": "提示",
+      "category": "对齐建议",
+      "fc_name": "FC16_State_S5_Run",
+      "line_no": 49,
+      "message": "VD地址非4字节对齐: VD154(地址154)",
+      "detail": "VD建议从4倍数字节地址起始(非强制)"
+    },
+    {
+      "severity": "提示",
+      "category": "对齐建议",
+      "fc_name": "FC16_State_S5_Run",
+      "line_no": 85,
+      "message": "VD地址非4字节对齐: VD178(地址178)",
+      "detail": "VD建议从4倍数字节地址起始(非强制)"
+    },
+    {
+      "severity": "提示",
+      "category": "对齐建议",
+      "fc_name": "FC17_State_S6_Drain",
+      "line_no": 30,
+      "message": "VD地址非4字节对齐: VD54(地址54)",
+      "detail": "VD建议从4倍数字节地址起始(非强制)"
+    },
+    {
+      "severity": "提示",
+      "category": "对齐建议",
+      "fc_name": "FC17_State_S6_Drain",
+      "line_no": 50,
+      "message": "VD地址非4字节对齐: VD78(地址78)",
+      "detail": "VD建议从4倍数字节地址起始(非强制)"
+    },
+    {
+      "severity": "提示",
+      "category": "对齐建议",
+      "fc_name": "FC17_State_S6_Drain",
+      "line_no": 52,
+      "message": "VD地址非4字节对齐: VD78(地址78)",
+      "detail": "VD建议从4倍数字节地址起始(非强制)"
+    },
+    {
+      "severity": "提示",
+      "category": "对齐建议",
+      "fc_name": "FC30_ValveA_Diag",
+      "line_no": 111,
+      "message": "VD地址非4字节对齐: VD86(地址86)",
+      "detail": "VD建议从4倍数字节地址起始(非强制)"
+    },
+    {
+      "severity": "提示",
+      "category": "对齐建议",
+      "fc_name": "FC30_ValveA_Diag",
+      "line_no": 112,
+      "message": "VD地址非4字节对齐: VD82(地址82)",
+      "detail": "VD建议从4倍数字节地址起始(非强制)"
+    },
+    {
+      "severity": "提示",
+      "category": "对齐建议",
+      "fc_name": "FC30_ValveA_Diag",
+      "line_no": 113,
+      "message": "VD地址非4字节对齐: VD90(地址90)",
+      "detail": "VD建议从4倍数字节地址起始(非强制)"
+    },
+    {
+      "severity": "提示",
+      "category": "对齐建议",
+      "fc_name": "FC30_ValveA_Diag",
+      "line_no": 118,
+      "message": "VD地址非4字节对齐: VD90(地址90)",
+      "detail": "VD建议从4倍数字节地址起始(非强制)"
+    },
+    {
+      "severity": "提示",
+      "category": "对齐建议",
+      "fc_name": "FC30_ValveA_Diag",
+      "line_no": 121,
+      "message": "VD地址非4字节对齐: VD86(地址86)",
+      "detail": "VD建议从4倍数字节地址起始(非强制)"
+    },
+    {
+      "severity": "提示",
+      "category": "对齐建议",
+      "fc_name": "FC30_ValveA_Diag",
+      "line_no": 139,
+      "message": "VD地址非4字节对齐: VD86(地址86)",
+      "detail": "VD建议从4倍数字节地址起始(非强制)"
+    },
+    {
+      "severity": "提示",
+      "category": "对齐建议",
+      "fc_name": "FC40_RhythmCorrection",
+      "line_no": 30,
+      "message": "VD地址非4字节对齐: VD162(地址162)",
+      "detail": "VD建议从4倍数字节地址起始(非强制)"
+    },
+    {
+      "severity": "提示",
+      "category": "对齐建议",
+      "fc_name": "FC40_RhythmCorrection",
+      "line_no": 31,
+      "message": "VD地址非4字节对齐: VD162(地址162)",
+      "detail": "VD建议从4倍数字节地址起始(非强制)"
+    },
+    {
+      "severity": "提示",
+      "category": "对齐建议",
+      "fc_name": "FC40_RhythmCorrection",
+      "line_no": 33,
+      "message": "VD地址非4字节对齐: VD166(地址166)",
+      "detail": "VD建议从4倍数字节地址起始(非强制)"
+    },
+    {
+      "severity": "提示",
+      "category": "对齐建议",
+      "fc_name": "FC40_RhythmCorrection",
+      "line_no": 34,
+      "message": "VD地址非4字节对齐: VD166(地址166)",
+      "detail": "VD建议从4倍数字节地址起始(非强制)"
+    },
+    {
+      "severity": "提示",
+      "category": "对齐建议",
+      "fc_name": "FC40_RhythmCorrection",
+      "line_no": 36,
+      "message": "VD地址非4字节对齐: VD170(地址170)",
+      "detail": "VD建议从4倍数字节地址起始(非强制)"
+    },
+    {
+      "severity": "提示",
+      "category": "对齐建议",
+      "fc_name": "FC40_RhythmCorrection",
+      "line_no": 37,
+      "message": "VD地址非4字节对齐: VD170(地址170)",
+      "detail": "VD建议从4倍数字节地址起始(非强制)"
+    },
+    {
+      "severity": "提示",
+      "category": "对齐建议",
+      "fc_name": "FC40_RhythmCorrection",
+      "line_no": 42,
+      "message": "VD地址非4字节对齐: VD150(地址150)",
+      "detail": "VD建议从4倍数字节地址起始(非强制)"
+    },
+    {
+      "severity": "提示",
+      "category": "对齐建议",
+      "fc_name": "FC40_RhythmCorrection",
+      "line_no": 42,
+      "message": "VD地址非4字节对齐: VD154(地址154)",
+      "detail": "VD建议从4倍数字节地址起始(非强制)"
+    },
+    {
+      "severity": "提示",
+      "category": "对齐建议",
+      "fc_name": "FC40_RhythmCorrection",
+      "line_no": 50,
+      "message": "VD地址非4字节对齐: VD154(地址154)",
+      "detail": "VD建议从4倍数字节地址起始(非强制)"
+    },
+    {
+      "severity": "提示",
+      "category": "对齐建议",
+      "fc_name": "FC40_RhythmCorrection",
+      "line_no": 50,
+      "message": "VD地址非4字节对齐: VD158(地址158)",
+      "detail": "VD建议从4倍数字节地址起始(非强制)"
+    },
+    {
+      "severity": "提示",
+      "category": "对齐建议",
+      "fc_name": "FC40_RhythmCorrection",
+      "line_no": 51,
+      "message": "VD地址非4字节对齐: VD150(地址150)",
+      "detail": "VD建议从4倍数字节地址起始(非强制)"
+    },
+    {
+      "severity": "提示",
+      "category": "对齐建议",
+      "fc_name": "FC40_RhythmCorrection",
+      "line_no": 51,
+      "message": "VD地址非4字节对齐: VD158(地址158)",
+      "detail": "VD建议从4倍数字节地址起始(非强制)"
+    },
+    {
+      "severity": "提示",
+      "category": "对齐建议",
+      "fc_name": "FC40_RhythmCorrection",
+      "line_no": 54,
+      "message": "VD地址非4字节对齐: VD158(地址158)",
+      "detail": "VD建议从4倍数字节地址起始(非强制)"
+    },
+    {
+      "severity": "提示",
+      "category": "对齐建议",
+      "fc_name": "FC40_RhythmCorrection",
+      "line_no": 54,
+      "message": "VD地址非4字节对齐: VD162(地址162)",
+      "detail": "VD建议从4倍数字节地址起始(非强制)"
+    },
+    {
+      "severity": "提示",
+      "category": "对齐建议",
+      "fc_name": "FC40_RhythmCorrection",
+      "line_no": 59,
+      "message": "VD地址非4字节对齐: VD158(地址158)",
+      "detail": "VD建议从4倍数字节地址起始(非强制)"
+    },
+    {
+      "severity": "提示",
+      "category": "对齐建议",
+      "fc_name": "FC40_RhythmCorrection",
+      "line_no": 60,
+      "message": "VD地址非4字节对齐: VD162(地址162)",
+      "detail": "VD建议从4倍数字节地址起始(非强制)"
+    },
+    {
+      "severity": "提示",
+      "category": "对齐建议",
+      "fc_name": "FC40_RhythmCorrection",
+      "line_no": 61,
+      "message": "VD地址非4字节对齐: VD158(地址158)",
+      "detail": "VD建议从4倍数字节地址起始(非强制)"
+    },
+    {
+      "severity": "提示",
+      "category": "对齐建议",
+      "fc_name": "FC40_RhythmCorrection",
+      "line_no": 67,
+      "message": "VD地址非4字节对齐: VD158(地址158)",
+      "detail": "VD建议从4倍数字节地址起始(非强制)"
+    },
+    {
+      "severity": "提示",
+      "category": "对齐建议",
+      "fc_name": "FC40_RhythmCorrection",
+      "line_no": 77,
+      "message": "VD地址非4字节对齐: VD158(地址158)",
+      "detail": "VD建议从4倍数字节地址起始(非强制)"
+    },
+    {
+      "severity": "提示",
+      "category": "对齐建议",
+      "fc_name": "FC40_RhythmCorrection",
+      "line_no": 77,
+      "message": "VD地址非4字节对齐: VD166(地址166)",
+      "detail": "VD建议从4倍数字节地址起始(非强制)"
+    },
+    {
+      "severity": "提示",
+      "category": "对齐建议",
+      "fc_name": "FC40_RhythmCorrection",
+      "line_no": 82,
+      "message": "VD地址非4字节对齐: VD158(地址158)",
+      "detail": "VD建议从4倍数字节地址起始(非强制)"
+    },
+    {
+      "severity": "提示",
+      "category": "对齐建议",
+      "fc_name": "FC40_RhythmCorrection",
+      "line_no": 83,
+      "message": "VD地址非4字节对齐: VD166(地址166)",
+      "detail": "VD建议从4倍数字节地址起始(非强制)"
+    },
+    {
+      "severity": "提示",
+      "category": "对齐建议",
+      "fc_name": "FC40_RhythmCorrection",
+      "line_no": 84,
+      "message": "VD地址非4字节对齐: VD158(地址158)",
+      "detail": "VD建议从4倍数字节地址起始(非强制)"
+    },
+    {
+      "severity": "提示",
+      "category": "对齐建议",
+      "fc_name": "FC40_RhythmCorrection",
+      "line_no": 90,
+      "message": "VD地址非4字节对齐: VD158(地址158)",
+      "detail": "VD建议从4倍数字节地址起始(非强制)"
+    },
+    {
+      "severity": "提示",
+      "category": "对齐建议",
+      "fc_name": "FC40_RhythmCorrection",
+      "line_no": 99,
+      "message": "VD地址非4字节对齐: VD158(地址158)",
+      "detail": "VD建议从4倍数字节地址起始(非强制)"
+    },
+    {
+      "severity": "提示",
+      "category": "对齐建议",
+      "fc_name": "FC40_RhythmCorrection",
+      "line_no": 99,
+      "message": "VD地址非4字节对齐: VD170(地址170)",
+      "detail": "VD建议从4倍数字节地址起始(非强制)"
+    },
+    {
+      "severity": "提示",
+      "category": "对齐建议",
+      "fc_name": "FC40_RhythmCorrection",
+      "line_no": 111,
+      "message": "VD地址非4字节对齐: VD158(地址158)",
+      "detail": "VD建议从4倍数字节地址起始(非强制)"
+    },
+    {
+      "severity": "警告",
+      "category": "跨FC写入冲突",
+      "fc_name": "全局",
+      "line_no": 0,
+      "message": "变量 VB2 被 17 个FC写入: ['FC0_SysInit', 'FC10_State_S0_Init', 'FC11_State_S1_Inlet', 'FC12_State_S2_PreMix', 'FC13_State_S3_Dosing', 'FC14_State_S35_Rest', 'FC15_State_S4_Transfer', 'FC16_State_S5_Run', 'FC17_State_S6_Drain', 'FC18_State_S7_End', 'FC19_State_Error', 'FC1_StateDispatcher', 'FC2_EStopHandling', 'FC30_ValveA_Diag', 'FC31_ValveB_Diag', 'FC32_ValveC_Diag', 'FC40_RhythmCorrection']",
+      "detail": "同一变量被多个FC写入可能导致时序冲突,需确认调用顺序与互斥性"
+    },
+    {
+      "severity": "警告",
+      "category": "跨FC写入冲突",
+      "fc_name": "全局",
+      "line_no": 0,
+      "message": "变量 VB3 被 16 个FC写入: ['FC0_SysInit', 'FC10_State_S0_Init', 'FC11_State_S1_Inlet', 'FC12_State_S2_PreMix', 'FC13_State_S3_Dosing', 'FC14_State_S35_Rest', 'FC15_State_S4_Transfer', 'FC16_State_S5_Run', 'FC17_State_S6_Drain', 'FC18_State_S7_End', 'FC19_State_Error', 'FC1_StateDispatcher', 'FC2_EStopHandling', 'FC30_ValveA_Diag', 'FC31_ValveB_Diag', 'FC32_ValveC_Diag']",
+      "detail": "同一变量被多个FC写入可能导致时序冲突,需确认调用顺序与互斥性"
+    },
+    {
+      "severity": "警告",
+      "category": "跨FC写入冲突",
+      "fc_name": "全局",
+      "line_no": 0,
+      "message": "变量 V1.6 被 5 个FC写入: ['FC0_SysInit', 'FC11_State_S1_Inlet', 'FC12_State_S2_PreMix', 'FC15_State_S4_Transfer', 'FC19_State_Error']",
+      "detail": "同一变量被多个FC写入可能导致时序冲突,需确认调用顺序与互斥性"
+    },
+    {
+      "severity": "警告",
+      "category": "跨FC写入冲突",
+      "fc_name": "全局",
+      "line_no": 0,
+      "message": "变量 V1.7 被 4 个FC写入: ['FC0_SysInit', 'FC15_State_S4_Transfer', 'FC17_State_S6_Drain', 'FC19_State_Error']",
+      "detail": "同一变量被多个FC写入可能导致时序冲突,需确认调用顺序与互斥性"
+    },
+    {
+      "severity": "警告",
+      "category": "跨FC写入冲突",
+      "fc_name": "全局",
+      "line_no": 0,
+      "message": "变量 V300.4 被 3 个FC写入: ['FC0_SysInit', 'FC19_State_Error', 'FC2_EStopHandling']",
+      "detail": "同一变量被多个FC写入可能导致时序冲突,需确认调用顺序与互斥性"
+    },
+    {
+      "severity": "警告",
+      "category": "跨FC写入冲突",
+      "fc_name": "全局",
+      "line_no": 0,
+      "message": "变量 VB6 被 3 个FC写入: ['FC0_SysInit', 'FC19_State_Error', 'FC2_EStopHandling']",
+      "detail": "同一变量被多个FC写入可能导致时序冲突,需确认调用顺序与互斥性"
+    },
+    {
+      "severity": "警告",
+      "category": "跨FC写入冲突",
+      "fc_name": "全局",
+      "line_no": 0,
+      "message": "变量 VB7 被 3 个FC写入: ['FC0_SysInit', 'FC19_State_Error', 'FC2_EStopHandling']",
+      "detail": "同一变量被多个FC写入可能导致时序冲突,需确认调用顺序与互斥性"
+    },
+    {
+      "severity": "警告",
+      "category": "跨FC写入冲突",
+      "fc_name": "全局",
+      "line_no": 0,
+      "message": "变量 V1.0 被 3 个FC写入: ['FC0_SysInit', 'FC10_State_S0_Init', 'FC18_State_S7_End']",
+      "detail": "同一变量被多个FC写入可能导致时序冲突,需确认调用顺序与互斥性"
+    },
+    {
+      "severity": "警告",
+      "category": "跨FC写入冲突",
+      "fc_name": "全局",
+      "line_no": 0,
+      "message": "变量 VD178 被 4 个FC写入: ['FC0_SysInit', 'FC11_State_S1_Inlet', 'FC15_State_S4_Transfer', 'FC16_State_S5_Run']",
+      "detail": "同一变量被多个FC写入可能导致时序冲突,需确认调用顺序与互斥性"
+    },
+    {
+      "severity": "警告",
+      "category": "跨FC写入冲突",
+      "fc_name": "全局",
+      "line_no": 0,
+      "message": "变量 V303.5 被 2 个FC写入: ['FC0_SysInit', 'FC3_AlarmHandling']",
+      "detail": "同一变量被多个FC写入可能导致时序冲突,需确认调用顺序与互斥性"
+    },
+    {
+      "severity": "警告",
+      "category": "跨FC写入冲突",
+      "fc_name": "全局",
+      "line_no": 0,
+      "message": "变量 VB260 被 2 个FC写入: ['FC11_State_S1_Inlet', 'FC30_ValveA_Diag']",
+      "detail": "同一变量被多个FC写入可能导致时序冲突,需确认调用顺序与互斥性"
+    },
+    {
+      "severity": "警告",
+      "category": "跨FC写入冲突",
+      "fc_name": "全局",
+      "line_no": 0,
+      "message": "变量 VB261 被 2 个FC写入: ['FC11_State_S1_Inlet', 'FC30_ValveA_Diag']",
+      "detail": "同一变量被多个FC写入可能导致时序冲突,需确认调用顺序与互斥性"
+    },
+    {
+      "severity": "警告",
+      "category": "跨FC写入冲突",
+      "fc_name": "全局",
+      "line_no": 0,
+      "message": "变量 VB266 被 2 个FC写入: ['FC11_State_S1_Inlet', 'FC30_ValveA_Diag']",
+      "detail": "同一变量被多个FC写入可能导致时序冲突,需确认调用顺序与互斥性"
+    },
+    {
+      "severity": "警告",
+      "category": "跨FC写入冲突",
+      "fc_name": "全局",
+      "line_no": 0,
+      "message": "变量 VD150 被 3 个FC写入: ['FC11_State_S1_Inlet', 'FC16_State_S5_Run', 'FC40_RhythmCorrection']",
+      "detail": "同一变量被多个FC写入可能导致时序冲突,需确认调用顺序与互斥性"
+    },
+    {
+      "severity": "警告",
+      "category": "跨FC写入冲突",
+      "fc_name": "全局",
+      "line_no": 0,
+      "message": "变量 VD116 被 3 个FC写入: ['FC11_State_S1_Inlet', 'FC16_State_S5_Run', 'FC17_State_S6_Drain']",
+      "detail": "同一变量被多个FC写入可能导致时序冲突,需确认调用顺序与互斥性"
+    },
+    {
+      "severity": "警告",
+      "category": "跨FC写入冲突",
+      "fc_name": "全局",
+      "line_no": 0,
+      "message": "变量 VD154 被 2 个FC写入: ['FC11_State_S1_Inlet', 'FC16_State_S5_Run']",
+      "detail": "同一变量被多个FC写入可能导致时序冲突,需确认调用顺序与互斥性"
+    },
+    {
+      "severity": "警告",
+      "category": "跨FC写入冲突",
+      "fc_name": "全局",
+      "line_no": 0,
+      "message": "变量 VD124 被 2 个FC写入: ['FC11_State_S1_Inlet', 'FC40_RhythmCorrection']",
+      "detail": "同一变量被多个FC写入可能导致时序冲突,需确认调用顺序与互斥性"
+    },
+    {
+      "severity": "警告",
+      "category": "跨FC写入冲突",
+      "fc_name": "全局",
+      "line_no": 0,
+      "message": "变量 VW182 被 2 个FC写入: ['FC11_State_S1_Inlet', 'FC16_State_S5_Run']",
+      "detail": "同一变量被多个FC写入可能导致时序冲突,需确认调用顺序与互斥性"
+    },
+    {
+      "severity": "警告",
+      "category": "跨FC写入冲突",
+      "fc_name": "全局",
+      "line_no": 0,
+      "message": "变量 V303.2 被 2 个FC写入: ['FC12_State_S2_PreMix', 'FC3_AlarmHandling']",
+      "detail": "同一变量被多个FC写入可能导致时序冲突,需确认调用顺序与互斥性"
+    },
+    {
+      "severity": "警告",
+      "category": "跨FC写入冲突",
+      "fc_name": "全局",
+      "line_no": 0,
+      "message": "变量 V303.3 被 2 个FC写入: ['FC12_State_S2_PreMix', 'FC3_AlarmHandling']",
+      "detail": "同一变量被多个FC写入可能导致时序冲突,需确认调用顺序与互斥性"
+    },
+    {
+      "severity": "警告",
+      "category": "跨FC写入冲突",
+      "fc_name": "全局",
+      "line_no": 0,
+      "message": "变量 VD90 被 2 个FC写入: ['FC13_State_S3_Dosing', 'FC30_ValveA_Diag']",
+      "detail": "同一变量被多个FC写入可能导致时序冲突,需确认调用顺序与互斥性"
+    },
+    {
+      "severity": "警告",
+      "category": "跨FC写入冲突",
+      "fc_name": "全局",
+      "line_no": 0,
+      "message": "变量 V303.4 被 2 个FC写入: ['FC13_State_S3_Dosing', 'FC3_AlarmHandling']",
+      "detail": "同一变量被多个FC写入可能导致时序冲突,需确认调用顺序与互斥性"
+    },
+    {
+      "severity": "警告",
+      "category": "跨FC写入冲突",
+      "fc_name": "全局",
+      "line_no": 0,
+      "message": "变量 VB262 被 2 个FC写入: ['FC15_State_S4_Transfer', 'FC31_ValveB_Diag']",
+      "detail": "同一变量被多个FC写入可能导致时序冲突,需确认调用顺序与互斥性"
+    },
+    {
+      "severity": "警告",
+      "category": "跨FC写入冲突",
+      "fc_name": "全局",
+      "line_no": 0,
+      "message": "变量 VB263 被 2 个FC写入: ['FC15_State_S4_Transfer', 'FC31_ValveB_Diag']",
+      "detail": "同一变量被多个FC写入可能导致时序冲突,需确认调用顺序与互斥性"
+    },
+    {
+      "severity": "警告",
+      "category": "跨FC写入冲突",
+      "fc_name": "全局",
+      "line_no": 0,
+      "message": "变量 VB268 被 2 个FC写入: ['FC15_State_S4_Transfer', 'FC31_ValveB_Diag']",
+      "detail": "同一变量被多个FC写入可能导致时序冲突,需确认调用顺序与互斥性"
+    },
+    {
+      "severity": "警告",
+      "category": "跨FC写入冲突",
+      "fc_name": "全局",
+      "line_no": 0,
+      "message": "变量 V301.6 被 2 个FC写入: ['FC16_State_S5_Run', 'FC3_AlarmHandling']",
+      "detail": "同一变量被多个FC写入可能导致时序冲突,需确认调用顺序与互斥性"
+    },
+    {
+      "severity": "警告",
+      "category": "跨FC写入冲突",
+      "fc_name": "全局",
+      "line_no": 0,
+      "message": "变量 VB264 被 2 个FC写入: ['FC17_State_S6_Drain', 'FC32_ValveC_Diag']",
+      "detail": "同一变量被多个FC写入可能导致时序冲突,需确认调用顺序与互斥性"
+    },
+    {
+      "severity": "警告",
+      "category": "跨FC写入冲突",
+      "fc_name": "全局",
+      "line_no": 0,
+      "message": "变量 VB265 被 2 个FC写入: ['FC17_State_S6_Drain', 'FC32_ValveC_Diag']",
+      "detail": "同一变量被多个FC写入可能导致时序冲突,需确认调用顺序与互斥性"
+    },
+    {
+      "severity": "警告",
+      "category": "跨FC写入冲突",
+      "fc_name": "全局",
+      "line_no": 0,
+      "message": "变量 VW270 被 2 个FC写入: ['FC17_State_S6_Drain', 'FC32_ValveC_Diag']",
+      "detail": "同一变量被多个FC写入可能导致时序冲突,需确认调用顺序与互斥性"
+    },
+    {
+      "severity": "警告",
+      "category": "跨FC写入冲突",
+      "fc_name": "全局",
+      "line_no": 0,
+      "message": "变量 V300.5 被 2 个FC写入: ['FC19_State_Error', 'FC2_EStopHandling']",
+      "detail": "同一变量被多个FC写入可能导致时序冲突,需确认调用顺序与互斥性"
+    },
+    {
+      "severity": "警告",
+      "category": "跨FC写入冲突",
+      "fc_name": "全局",
+      "line_no": 0,
+      "message": "变量 V300.0 被 2 个FC写入: ['FC30_ValveA_Diag', 'FC3_AlarmHandling']",
+      "detail": "同一变量被多个FC写入可能导致时序冲突,需确认调用顺序与互斥性"
+    },
+    {
+      "severity": "警告",
+      "category": "跨FC写入冲突",
+      "fc_name": "全局",
+      "line_no": 0,
+      "message": "变量 V301.4 被 2 个FC写入: ['FC30_ValveA_Diag', 'FC3_AlarmHandling']",
+      "detail": "同一变量被多个FC写入可能导致时序冲突,需确认调用顺序与互斥性"
+    },
+    {
+      "severity": "警告",
+      "category": "跨FC写入冲突",
+      "fc_name": "全局",
+      "line_no": 0,
+      "message": "变量 V301.5 被 2 个FC写入: ['FC30_ValveA_Diag', 'FC3_AlarmHandling']",
+      "detail": "同一变量被多个FC写入可能导致时序冲突,需确认调用顺序与互斥性"
+    },
+    {
+      "severity": "警告",
+      "category": "跨FC写入冲突",
+      "fc_name": "全局",
+      "line_no": 0,
+      "message": "变量 V301.0 被 2 个FC写入: ['FC30_ValveA_Diag', 'FC3_AlarmHandling']",
+      "detail": "同一变量被多个FC写入可能导致时序冲突,需确认调用顺序与互斥性"
+    },
+    {
+      "severity": "警告",
+      "category": "跨FC写入冲突",
+      "fc_name": "全局",
+      "line_no": 0,
+      "message": "变量 V301.1 被 2 个FC写入: ['FC30_ValveA_Diag', 'FC3_AlarmHandling']",
+      "detail": "同一变量被多个FC写入可能导致时序冲突,需确认调用顺序与互斥性"
+    },
+    {
+      "severity": "警告",
+      "category": "跨FC写入冲突",
+      "fc_name": "全局",
+      "line_no": 0,
+      "message": "变量 V301.2 被 2 个FC写入: ['FC30_ValveA_Diag', 'FC3_AlarmHandling']",
+      "detail": "同一变量被多个FC写入可能导致时序冲突,需确认调用顺序与互斥性"
+    },
+    {
+      "severity": "警告",
+      "category": "跨FC写入冲突",
+      "fc_name": "全局",
+      "line_no": 0,
+      "message": "变量 V301.3 被 2 个FC写入: ['FC30_ValveA_Diag', 'FC3_AlarmHandling']",
+      "detail": "同一变量被多个FC写入可能导致时序冲突,需确认调用顺序与互斥性"
+    },
+    {
+      "severity": "警告",
+      "category": "跨FC写入冲突",
+      "fc_name": "全局",
+      "line_no": 0,
+      "message": "变量 V300.1 被 2 个FC写入: ['FC31_ValveB_Diag', 'FC3_AlarmHandling']",
+      "detail": "同一变量被多个FC写入可能导致时序冲突,需确认调用顺序与互斥性"
+    },
+    {
+      "severity": "警告",
+      "category": "跨FC写入冲突",
+      "fc_name": "全局",
+      "line_no": 0,
+      "message": "变量 V302.1 被 2 个FC写入: ['FC31_ValveB_Diag', 'FC3_AlarmHandling']",
+      "detail": "同一变量被多个FC写入可能导致时序冲突,需确认调用顺序与互斥性"
+    },
+    {
+      "severity": "警告",
+      "category": "跨FC写入冲突",
+      "fc_name": "全局",
+      "line_no": 0,
+      "message": "变量 V302.2 被 2 个FC写入: ['FC31_ValveB_Diag', 'FC3_AlarmHandling']",
+      "detail": "同一变量被多个FC写入可能导致时序冲突,需确认调用顺序与互斥性"
+    },
+    {
+      "severity": "警告",
+      "category": "跨FC写入冲突",
+      "fc_name": "全局",
+      "line_no": 0,
+      "message": "变量 V302.0 被 2 个FC写入: ['FC31_ValveB_Diag', 'FC3_AlarmHandling']",
+      "detail": "同一变量被多个FC写入可能导致时序冲突,需确认调用顺序与互斥性"
+    },
+    {
+      "severity": "警告",
+      "category": "跨FC写入冲突",
+      "fc_name": "全局",
+      "line_no": 0,
+      "message": "变量 V302.4 被 2 个FC写入: ['FC31_ValveB_Diag', 'FC3_AlarmHandling']",
+      "detail": "同一变量被多个FC写入可能导致时序冲突,需确认调用顺序与互斥性"
+    },
+    {
+      "severity": "警告",
+      "category": "跨FC写入冲突",
+      "fc_name": "全局",
+      "line_no": 0,
+      "message": "变量 V302.3 被 2 个FC写入: ['FC31_ValveB_Diag', 'FC3_AlarmHandling']",
+      "detail": "同一变量被多个FC写入可能导致时序冲突,需确认调用顺序与互斥性"
+    },
+    {
+      "severity": "警告",
+      "category": "跨FC写入冲突",
+      "fc_name": "全局",
+      "line_no": 0,
+      "message": "变量 V302.6 被 2 个FC写入: ['FC32_ValveC_Diag', 'FC3_AlarmHandling']",
+      "detail": "同一变量被多个FC写入可能导致时序冲突,需确认调用顺序与互斥性"
+    },
+    {
+      "severity": "警告",
+      "category": "跨FC写入冲突",
+      "fc_name": "全局",
+      "line_no": 0,
+      "message": "变量 V302.7 被 2 个FC写入: ['FC32_ValveC_Diag', 'FC3_AlarmHandling']",
+      "detail": "同一变量被多个FC写入可能导致时序冲突,需确认调用顺序与互斥性"
+    },
+    {
+      "severity": "警告",
+      "category": "跨FC写入冲突",
+      "fc_name": "全局",
+      "line_no": 0,
+      "message": "变量 V302.5 被 2 个FC写入: ['FC32_ValveC_Diag', 'FC3_AlarmHandling']",
+      "detail": "同一变量被多个FC写入可能导致时序冲突,需确认调用顺序与互斥性"
+    },
+    {
+      "severity": "警告",
+      "category": "跨FC写入冲突",
+      "fc_name": "全局",
+      "line_no": 0,
+      "message": "变量 V303.1 被 2 个FC写入: ['FC32_ValveC_Diag', 'FC3_AlarmHandling']",
+      "detail": "同一变量被多个FC写入可能导致时序冲突,需确认调用顺序与互斥性"
+    },
+    {
+      "severity": "警告",
+      "category": "跨FC写入冲突",
+      "fc_name": "全局",
+      "line_no": 0,
+      "message": "变量 V303.0 被 2 个FC写入: ['FC32_ValveC_Diag', 'FC3_AlarmHandling']",
+      "detail": "同一变量被多个FC写入可能导致时序冲突,需确认调用顺序与互斥性"
+    },
+    {
+      "severity": "提示",
+      "category": "未使用变量",
+      "fc_name": "全局",
+      "line_no": 0,
+      "message": "变量 VD194(VD_RTC_DT_Diff) 定义但未在STL中引用",
+      "detail": "来源: FC0_SysInit.stl"
+    },
+    {
+      "severity": "提示",
+      "category": "未使用变量",
+      "fc_name": "全局",
+      "line_no": 0,
+      "message": "变量 VD250(目标进水量(HMI设定)) 定义但未在STL中引用",
+      "detail": "来源: FC11_State_S1_Inlet.stl"
+    },
+    {
+      "severity": "提示",
+      "category": "未使用变量",
+      "fc_name": "全局",
+      "line_no": 0,
+      "message": "变量 VW8(实验轮次计数) 定义但未在STL中引用",
+      "detail": "来源: OB1_MAIN.stl"
+    },
+    {
+      "severity": "提示",
+      "category": "未定义变量",
+      "fc_name": "FC0_SysInit",
+      "line_no": 37,
+      "message": "变量 VB2 在STL中引用但变量表/注释未定义",
+      "detail": "FC: FC0_SysInit, 行: 37"
+    },
+    {
+      "severity": "提示",
+      "category": "未定义变量",
+      "fc_name": "FC0_SysInit",
+      "line_no": 38,
+      "message": "变量 VB3 在STL中引用但变量表/注释未定义",
+      "detail": "FC: FC0_SysInit, 行: 38"
+    },
+    {
+      "severity": "提示",
+      "category": "未定义变量",
+      "fc_name": "FC0_SysInit",
+      "line_no": 48,
+      "message": "变量 VW300 在STL中引用但变量表/注释未定义",
+      "detail": "FC: FC0_SysInit, 行: 48"
+    },
+    {
+      "severity": "提示",
+      "category": "未定义变量",
+      "fc_name": "FC0_SysInit",
+      "line_no": 49,
+      "message": "变量 VB6 在STL中引用但变量表/注释未定义",
+      "detail": "FC: FC0_SysInit, 行: 49"
+    },
+    {
+      "severity": "提示",
+      "category": "未定义变量",
+      "fc_name": "FC0_SysInit",
+      "line_no": 50,
+      "message": "变量 VB7 在STL中引用但变量表/注释未定义",
+      "detail": "FC: FC0_SysInit, 行: 50"
+    },
+    {
+      "severity": "提示",
+      "category": "未定义变量",
+      "fc_name": "FC0_SysInit",
+      "line_no": 54,
+      "message": "变量 VB8 在STL中引用但变量表/注释未定义",
+      "detail": "FC: FC0_SysInit, 行: 54"
+    },
+    {
+      "severity": "提示",
+      "category": "未定义变量",
+      "fc_name": "FC0_SysInit",
+      "line_no": 55,
+      "message": "变量 VB9 在STL中引用但变量表/注释未定义",
+      "detail": "FC: FC0_SysInit, 行: 55"
+    },
+    {
+      "severity": "提示",
+      "category": "未定义变量",
+      "fc_name": "FC0_SysInit",
+      "line_no": 68,
+      "message": "变量 VB900 在STL中引用但变量表/注释未定义",
+      "detail": "FC: FC0_SysInit, 行: 68"
+    },
+    {
+      "severity": "提示",
+      "category": "未定义变量",
+      "fc_name": "FC0_SysInit",
+      "line_no": 73,
+      "message": "变量 VB10 在STL中引用但变量表/注释未定义",
+      "detail": "FC: FC0_SysInit, 行: 73"
+    },
+    {
+      "severity": "提示",
+      "category": "未定义变量",
+      "fc_name": "FC0_SysInit",
+      "line_no": 87,
+      "message": "变量 VB901 在STL中引用但变量表/注释未定义",
+      "detail": "FC: FC0_SysInit, 行: 87"
+    },
+    {
+      "severity": "提示",
+      "category": "未定义变量",
+      "fc_name": "FC0_SysInit",
+      "line_no": 88,
+      "message": "变量 VB11 在STL中引用但变量表/注释未定义",
+      "detail": "FC: FC0_SysInit, 行: 88"
+    },
+    {
+      "severity": "提示",
+      "category": "未定义变量",
+      "fc_name": "FC0_SysInit",
+      "line_no": 94,
+      "message": "变量 VB902 在STL中引用但变量表/注释未定义",
+      "detail": "FC: FC0_SysInit, 行: 94"
+    },
+    {
+      "severity": "提示",
+      "category": "未定义变量",
+      "fc_name": "FC0_SysInit",
+      "line_no": 95,
+      "message": "变量 VB12 在STL中引用但变量表/注释未定义",
+      "detail": "FC: FC0_SysInit, 行: 95"
+    },
+    {
+      "severity": "提示",
+      "category": "未定义变量",
+      "fc_name": "FC0_SysInit",
+      "line_no": 101,
+      "message": "变量 VB903 在STL中引用但变量表/注释未定义",
+      "detail": "FC: FC0_SysInit, 行: 101"
+    },
+    {
+      "severity": "提示",
+      "category": "未定义变量",
+      "fc_name": "FC0_SysInit",
+      "line_no": 102,
+      "message": "变量 VB13 在STL中引用但变量表/注释未定义",
+      "detail": "FC: FC0_SysInit, 行: 102"
+    },
+    {
+      "severity": "提示",
+      "category": "未定义变量",
+      "fc_name": "FC0_SysInit",
+      "line_no": 108,
+      "message": "变量 VB904 在STL中引用但变量表/注释未定义",
+      "detail": "FC: FC0_SysInit, 行: 108"
+    },
+    {
+      "severity": "提示",
+      "category": "未定义变量",
+      "fc_name": "FC0_SysInit",
+      "line_no": 109,
+      "message": "变量 VB14 在STL中引用但变量表/注释未定义",
+      "detail": "FC: FC0_SysInit, 行: 109"
+    },
+    {
+      "severity": "提示",
+      "category": "未定义变量",
+      "fc_name": "FC0_SysInit",
+      "line_no": 115,
+      "message": "变量 VB905 在STL中引用但变量表/注释未定义",
+      "detail": "FC: FC0_SysInit, 行: 115"
+    },
+    {
+      "severity": "提示",
+      "category": "未定义变量",
+      "fc_name": "FC0_SysInit",
+      "line_no": 116,
+      "message": "变量 VB15 在STL中引用但变量表/注释未定义",
+      "detail": "FC: FC0_SysInit, 行: 116"
+    },
+    {
+      "severity": "提示",
+      "category": "未定义变量",
+      "fc_name": "FC11_State_S1_Inlet",
+      "line_no": 25,
+      "message": "变量 VD86 在STL中引用但变量表/注释未定义",
+      "detail": "FC: FC11_State_S1_Inlet, 行: 25"
+    },
+    {
+      "severity": "提示",
+      "category": "未定义变量",
+      "fc_name": "FC11_State_S1_Inlet",
+      "line_no": 25,
+      "message": "变量 VD82 在STL中引用但变量表/注释未定义",
+      "detail": "FC: FC11_State_S1_Inlet, 行: 25"
+    },
+    {
+      "severity": "提示",
+      "category": "未定义变量",
+      "fc_name": "FC11_State_S1_Inlet",
+      "line_no": 34,
+      "message": "变量 VB260 在STL中引用但变量表/注释未定义",
+      "detail": "FC: FC11_State_S1_Inlet, 行: 34"
+    },
+    {
+      "severity": "提示",
+      "category": "未定义变量",
+      "fc_name": "FC11_State_S1_Inlet",
+      "line_no": 35,
+      "message": "变量 VB261 在STL中引用但变量表/注释未定义",
+      "detail": "FC: FC11_State_S1_Inlet, 行: 35"
+    },
+    {
+      "severity": "提示",
+      "category": "未定义变量",
+      "fc_name": "FC11_State_S1_Inlet",
+      "line_no": 37,
+      "message": "变量 VB266 在STL中引用但变量表/注释未定义",
+      "detail": "FC: FC11_State_S1_Inlet, 行: 37"
+    },
+    {
+      "severity": "提示",
+      "category": "未定义变量",
+      "fc_name": "FC11_State_S1_Inlet",
+      "line_no": 38,
+      "message": "变量 VB267 在STL中引用但变量表/注释未定义",
+      "detail": "FC: FC11_State_S1_Inlet, 行: 38"
+    },
+    {
+      "severity": "提示",
+      "category": "未定义变量",
+      "fc_name": "FC11_State_S1_Inlet",
+      "line_no": 41,
+      "message": "变量 VD48 在STL中引用但变量表/注释未定义",
+      "detail": "FC: FC11_State_S1_Inlet, 行: 41"
+    },
+    {
+      "severity": "提示",
+      "category": "未定义变量",
+      "fc_name": "FC11_State_S1_Inlet",
+      "line_no": 46,
+      "message": "变量 VD66 在STL中引用但变量表/注释未定义",
+      "detail": "FC: FC11_State_S1_Inlet, 行: 46"
+    },
+    {
+      "severity": "提示",
+      "category": "未定义变量",
+      "fc_name": "FC11_State_S1_Inlet",
+      "line_no": 46,
+      "message": "变量 VD320 在STL中引用但变量表/注释未定义",
+      "detail": "FC: FC11_State_S1_Inlet, 行: 46"
+    },
+    {
+      "severity": "提示",
+      "category": "未定义变量",
+      "fc_name": "FC11_State_S1_Inlet",
+      "line_no": 71,
+      "message": "变量 VD70 在STL中引用但变量表/注释未定义",
+      "detail": "FC: FC11_State_S1_Inlet, 行: 71"
+    },
+    {
+      "severity": "提示",
+      "category": "未定义变量",
+      "fc_name": "FC11_State_S1_Inlet",
+      "line_no": 75,
+      "message": "变量 VD20 在STL中引用但变量表/注释未定义",
+      "detail": "FC: FC11_State_S1_Inlet, 行: 75"
+    },
+    {
+      "severity": "提示",
+      "category": "未定义变量",
+      "fc_name": "FC11_State_S1_Inlet",
+      "line_no": 77,
+      "message": "变量 VD116 在STL中引用但变量表/注释未定义",
+      "detail": "FC: FC11_State_S1_Inlet, 行: 77"
+    },
+    {
+      "severity": "提示",
+      "category": "未定义变量",
+      "fc_name": "FC11_State_S1_Inlet",
+      "line_no": 81,
+      "message": "变量 VD174 在STL中引用但变量表/注释未定义",
+      "detail": "FC: FC11_State_S1_Inlet, 行: 81"
+    },
+    {
+      "severity": "提示",
+      "category": "未定义变量",
+      "fc_name": "FC11_State_S1_Inlet",
+      "line_no": 88,
+      "message": "变量 VD28 在STL中引用但变量表/注释未定义",
+      "detail": "FC: FC11_State_S1_Inlet, 行: 88"
+    },
+    {
+      "severity": "提示",
+      "category": "未定义变量",
+      "fc_name": "FC11_State_S1_Inlet",
+      "line_no": 90,
+      "message": "变量 VD36 在STL中引用但变量表/注释未定义",
+      "detail": "FC: FC11_State_S1_Inlet, 行: 90"
+    },
+    {
+      "severity": "提示",
+      "category": "未定义变量",
+      "fc_name": "FC12_State_S2_PreMix",
+      "line_no": 34,
+      "message": "变量 VD58 在STL中引用但变量表/注释未定义",
+      "detail": "FC: FC12_State_S2_PreMix, 行: 34"
+    },
+    {
+      "severity": "提示",
+      "category": "未定义变量",
+      "fc_name": "FC12_State_S2_PreMix",
+      "line_no": 37,
+      "message": "变量 VW282 在STL中引用但变量表/注释未定义",
+      "detail": "FC: FC12_State_S2_PreMix, 行: 37"
+    },
+    {
+      "severity": "提示",
+      "category": "未定义变量",
+      "fc_name": "FC12_State_S2_PreMix",
+      "line_no": 47,
+      "message": "变量 VD62 在STL中引用但变量表/注释未定义",
+      "detail": "FC: FC12_State_S2_PreMix, 行: 47"
+    },
+    {
+      "severity": "提示",
+      "category": "未定义变量",
+      "fc_name": "FC12_State_S2_PreMix",
+      "line_no": 50,
+      "message": "变量 VW284 在STL中引用但变量表/注释未定义",
+      "detail": "FC: FC12_State_S2_PreMix, 行: 50"
+    },
+    {
+      "severity": "提示",
+      "category": "未定义变量",
+      "fc_name": "FC13_State_S3_Dosing",
+      "line_no": 14,
+      "message": "变量 VD10 在STL中引用但变量表/注释未定义",
+      "detail": "FC: FC13_State_S3_Dosing, 行: 14"
+    },
+    {
+      "severity": "提示",
+      "category": "未定义变量",
+      "fc_name": "FC13_State_S3_Dosing",
+      "line_no": 14,
+      "message": "变量 VD90 在STL中引用但变量表/注释未定义",
+      "detail": "FC: FC13_State_S3_Dosing, 行: 14"
+    },
+    {
+      "severity": "提示",
+      "category": "未定义变量",
+      "fc_name": "FC13_State_S3_Dosing",
+      "line_no": 16,
+      "message": "变量 VD14 在STL中引用但变量表/注释未定义",
+      "detail": "FC: FC13_State_S3_Dosing, 行: 16"
+    },
+    {
+      "severity": "提示",
+      "category": "未定义变量",
+      "fc_name": "FC13_State_S3_Dosing",
+      "line_no": 17,
+      "message": "变量 VD98 在STL中引用但变量表/注释未定义",
+      "detail": "FC: FC13_State_S3_Dosing, 行: 17"
+    },
+    {
+      "severity": "提示",
+      "category": "未定义变量",
+      "fc_name": "FC13_State_S3_Dosing",
+      "line_no": 19,
+      "message": "变量 VD18 在STL中引用但变量表/注释未定义",
+      "detail": "FC: FC13_State_S3_Dosing, 行: 19"
+    },
+    {
+      "severity": "提示",
+      "category": "未定义变量",
+      "fc_name": "FC13_State_S3_Dosing",
+      "line_no": 21,
+      "message": "变量 VD102 在STL中引用但变量表/注释未定义",
+      "detail": "FC: FC13_State_S3_Dosing, 行: 21"
+    },
+    {
+      "severity": "提示",
+      "category": "未定义变量",
+      "fc_name": "FC13_State_S3_Dosing",
+      "line_no": 33,
+      "message": "变量 VW204 在STL中引用但变量表/注释未定义",
+      "detail": "FC: FC13_State_S3_Dosing, 行: 33"
+    },
+    {
+      "severity": "提示",
+      "category": "未定义变量",
+      "fc_name": "FC13_State_S3_Dosing",
+      "line_no": 34,
+      "message": "变量 VW206 在STL中引用但变量表/注释未定义",
+      "detail": "FC: FC13_State_S3_Dosing, 行: 34"
+    },
+    {
+      "severity": "提示",
+      "category": "未定义变量",
+      "fc_name": "FC15_State_S4_Transfer",
+      "line_no": 28,
+      "message": "变量 VB262 在STL中引用但变量表/注释未定义",
+      "detail": "FC: FC15_State_S4_Transfer, 行: 28"
+    },
+    {
+      "severity": "提示",
+      "category": "未定义变量",
+      "fc_name": "FC15_State_S4_Transfer",
+      "line_no": 29,
+      "message": "变量 VB263 在STL中引用但变量表/注释未定义",
+      "detail": "FC: FC15_State_S4_Transfer, 行: 29"
+    },
+    {
+      "severity": "提示",
+      "category": "未定义变量",
+      "fc_name": "FC15_State_S4_Transfer",
+      "line_no": 31,
+      "message": "变量 VB268 在STL中引用但变量表/注释未定义",
+      "detail": "FC: FC15_State_S4_Transfer, 行: 31"
+    },
+    {
+      "severity": "提示",
+      "category": "未定义变量",
+      "fc_name": "FC15_State_S4_Transfer",
+      "line_no": 32,
+      "message": "变量 VB269 在STL中引用但变量表/注释未定义",
+      "detail": "FC: FC15_State_S4_Transfer, 行: 32"
+    },
+    {
+      "severity": "提示",
+      "category": "未定义变量",
+      "fc_name": "FC15_State_S4_Transfer",
+      "line_no": 34,
+      "message": "变量 VD50 在STL中引用但变量表/注释未定义",
+      "detail": "FC: FC15_State_S4_Transfer, 行: 34"
+    },
+    {
+      "severity": "提示",
+      "category": "未定义变量",
+      "fc_name": "FC15_State_S4_Transfer",
+      "line_no": 34,
+      "message": "变量 VD324 在STL中引用但变量表/注释未定义",
+      "detail": "FC: FC15_State_S4_Transfer, 行: 34"
+    },
+    {
+      "severity": "提示",
+      "category": "未定义变量",
+      "fc_name": "FC15_State_S4_Transfer",
+      "line_no": 54,
+      "message": "变量 VD74 在STL中引用但变量表/注释未定义",
+      "detail": "FC: FC15_State_S4_Transfer, 行: 54"
+    },
+    {
+      "severity": "提示",
+      "category": "未定义变量",
+      "fc_name": "FC15_State_S4_Transfer",
+      "line_no": 66,
+      "message": "变量 VB906 在STL中引用但变量表/注释未定义",
+      "detail": "FC: FC15_State_S4_Transfer, 行: 66"
+    },
+    {
+      "severity": "提示",
+      "category": "未定义变量",
+      "fc_name": "FC15_State_S4_Transfer",
+      "line_no": 66,
+      "message": "变量 VB16 在STL中引用但变量表/注释未定义",
+      "detail": "FC: FC15_State_S4_Transfer, 行: 66"
+    },
+    {
+      "severity": "提示",
+      "category": "未定义变量",
+      "fc_name": "FC15_State_S4_Transfer",
+      "line_no": 67,
+      "message": "变量 VB908 在STL中引用但变量表/注释未定义",
+      "detail": "FC: FC15_State_S4_Transfer, 行: 67"
+    },
+    {
+      "severity": "提示",
+      "category": "未定义变量",
+      "fc_name": "FC15_State_S4_Transfer",
+      "line_no": 67,
+      "message": "变量 VB17 在STL中引用但变量表/注释未定义",
+      "detail": "FC: FC15_State_S4_Transfer, 行: 67"
+    },
+    {
+      "severity": "提示",
+      "category": "未定义变量",
+      "fc_name": "FC16_State_S5_Run",
+      "line_no": 76,
+      "message": "变量 VD96 在STL中引用但变量表/注释未定义",
+      "detail": "FC: FC16_State_S5_Run, 行: 76"
+    },
+    {
+      "severity": "提示",
+      "category": "未定义变量",
+      "fc_name": "FC16_State_S5_Run",
+      "line_no": 97,
+      "message": "变量 VD24 在STL中引用但变量表/注释未定义",
+      "detail": "FC: FC16_State_S5_Run, 行: 97"
+    },
+    {
+      "severity": "提示",
+      "category": "未定义变量",
+      "fc_name": "FC17_State_S6_Drain",
+      "line_no": 25,
+      "message": "变量 VB264 在STL中引用但变量表/注释未定义",
+      "detail": "FC: FC17_State_S6_Drain, 行: 25"
+    },
+    {
+      "severity": "提示",
+      "category": "未定义变量",
+      "fc_name": "FC17_State_S6_Drain",
+      "line_no": 26,
+      "message": "变量 VB265 在STL中引用但变量表/注释未定义",
+      "detail": "FC: FC17_State_S6_Drain, 行: 26"
+    },
+    {
+      "severity": "提示",
+      "category": "未定义变量",
+      "fc_name": "FC17_State_S6_Drain",
+      "line_no": 30,
+      "message": "变量 VD54 在STL中引用但变量表/注释未定义",
+      "detail": "FC: FC17_State_S6_Drain, 行: 30"
+    },
+    {
+      "severity": "提示",
+      "category": "未定义变量",
+      "fc_name": "FC17_State_S6_Drain",
+      "line_no": 30,
+      "message": "变量 VD328 在STL中引用但变量表/注释未定义",
+      "detail": "FC: FC17_State_S6_Drain, 行: 30"
+    },
+    {
+      "severity": "提示",
+      "category": "未定义变量",
+      "fc_name": "FC17_State_S6_Drain",
+      "line_no": 50,
+      "message": "变量 VD78 在STL中引用但变量表/注释未定义",
+      "detail": "FC: FC17_State_S6_Drain, 行: 50"
+    },
+    {
+      "severity": "提示",
+      "category": "未定义变量",
+      "fc_name": "FC3_AlarmHandling",
+      "line_no": 407,
+      "message": "变量 VB500 在STL中引用但变量表/注释未定义",
+      "detail": "FC: FC3_AlarmHandling, 行: 407"
+    },
+    {
+      "severity": "提示",
+      "category": "未定义变量",
+      "fc_name": "FC3_AlarmHandling",
+      "line_no": 408,
+      "message": "变量 VB509 在STL中引用但变量表/注释未定义",
+      "detail": "FC: FC3_AlarmHandling, 行: 408"
+    },
+    {
+      "severity": "提示",
+      "category": "未定义变量",
+      "fc_name": "FC3_AlarmHandling",
+      "line_no": 409,
+      "message": "变量 VB510 在STL中引用但变量表/注释未定义",
+      "detail": "FC: FC3_AlarmHandling, 行: 409"
+    },
+    {
+      "severity": "提示",
+      "category": "未定义变量",
+      "fc_name": "FC3_AlarmHandling",
+      "line_no": 410,
+      "message": "变量 VB508 在STL中引用但变量表/注释未定义",
+      "detail": "FC: FC3_AlarmHandling, 行: 410"
+    },
+    {
+      "severity": "提示",
+      "category": "未定义变量",
+      "fc_name": "FC40_RhythmCorrection",
+      "line_no": 31,
+      "message": "变量 VD40 在STL中引用但变量表/注释未定义",
+      "detail": "FC: FC40_RhythmCorrection, 行: 31"
+    },
+    {
+      "severity": "提示",
+      "category": "未定义变量",
+      "fc_name": "FC40_RhythmCorrection",
+      "line_no": 34,
+      "message": "变量 VD32 在STL中引用但变量表/注释未定义",
+      "detail": "FC: FC40_RhythmCorrection, 行: 34"
+    },
+    {
+      "severity": "提示",
+      "category": "未定义变量",
+      "fc_name": "FC40_RhythmCorrection",
+      "line_no": 36,
+      "message": "变量 VD44 在STL中引用但变量表/注释未定义",
+      "detail": "FC: FC40_RhythmCorrection, 行: 36"
+    },
+    {
+      "severity": "提示",
+      "category": "未定义变量",
+      "fc_name": "FC40_RhythmCorrection",
+      "line_no": 70,
+      "message": "变量 VB184 在STL中引用但变量表/注释未定义",
+      "detail": "FC: FC40_RhythmCorrection, 行: 70"
+    },
+    {
+      "severity": "提示",
+      "category": "未定义变量",
+      "fc_name": "FC4_ModbusPolling",
+      "line_no": 27,
+      "message": "变量 VW250 在STL中引用但变量表/注释未定义",
+      "detail": "FC: FC4_ModbusPolling, 行: 27"
+    },
+    {
+      "severity": "警告",
+      "category": "参数区写入",
+      "fc_name": "FC11_State_S1_Inlet",
+      "line_no": 25,
+      "message": "FC直接写入HMI参数区 VD82(VD82)",
+      "detail": "VD10~VD140为HMI设定参数区,FC直接写入可能覆盖操作员设定"
+    },
+    {
+      "severity": "警告",
+      "category": "参数区写入",
+      "fc_name": "FC11_State_S1_Inlet",
+      "line_no": 71,
+      "message": "FC直接写入HMI参数区 VD70(VD70)",
+      "detail": "VD10~VD140为HMI设定参数区,FC直接写入可能覆盖操作员设定"
+    },
+    {
+      "severity": "警告",
+      "category": "参数区写入",
+      "fc_name": "FC13_State_S3_Dosing",
+      "line_no": 14,
+      "message": "FC直接写入HMI参数区 VD10(VD10)",
+      "detail": "VD10~VD140为HMI设定参数区,FC直接写入可能覆盖操作员设定"
+    },
+    {
+      "severity": "警告",
+      "category": "参数区写入",
+      "fc_name": "FC13_State_S3_Dosing",
+      "line_no": 14,
+      "message": "FC直接写入HMI参数区 VD90(VD90)",
+      "detail": "VD10~VD140为HMI设定参数区,FC直接写入可能覆盖操作员设定"
+    },
+    {
+      "severity": "警告",
+      "category": "参数区写入",
+      "fc_name": "FC13_State_S3_Dosing",
+      "line_no": 16,
+      "message": "FC直接写入HMI参数区 VD14(VD14)",
+      "detail": "VD10~VD140为HMI设定参数区,FC直接写入可能覆盖操作员设定"
+    },
+    {
+      "severity": "警告",
+      "category": "参数区写入",
+      "fc_name": "FC13_State_S3_Dosing",
+      "line_no": 17,
+      "message": "FC直接写入HMI参数区 VD98(VD98)",
+      "detail": "VD10~VD140为HMI设定参数区,FC直接写入可能覆盖操作员设定"
+    },
+    {
+      "severity": "警告",
+      "category": "参数区写入",
+      "fc_name": "FC13_State_S3_Dosing",
+      "line_no": 19,
+      "message": "FC直接写入HMI参数区 VD18(VD18)",
+      "detail": "VD10~VD140为HMI设定参数区,FC直接写入可能覆盖操作员设定"
+    },
+    {
+      "severity": "警告",
+      "category": "参数区写入",
+      "fc_name": "FC13_State_S3_Dosing",
+      "line_no": 21,
+      "message": "FC直接写入HMI参数区 VD102(VD102)",
+      "detail": "VD10~VD140为HMI设定参数区,FC直接写入可能覆盖操作员设定"
+    },
+    {
+      "severity": "警告",
+      "category": "参数区写入",
+      "fc_name": "FC15_State_S4_Transfer",
+      "line_no": 54,
+      "message": "FC直接写入HMI参数区 VD74(VD74)",
+      "detail": "VD10~VD140为HMI设定参数区,FC直接写入可能覆盖操作员设定"
+    },
+    {
+      "severity": "警告",
+      "category": "参数区写入",
+      "fc_name": "FC17_State_S6_Drain",
+      "line_no": 50,
+      "message": "FC直接写入HMI参数区 VD78(VD78)",
+      "detail": "VD10~VD140为HMI设定参数区,FC直接写入可能覆盖操作员设定"
+    },
+    {
+      "severity": "警告",
+      "category": "参数区写入",
+      "fc_name": "FC30_ValveA_Diag",
+      "line_no": 113,
+      "message": "FC直接写入HMI参数区 VD90(VD90)",
+      "detail": "VD10~VD140为HMI设定参数区,FC直接写入可能覆盖操作员设定"
+    }
+  ],
+  "fc_stats": {
+    "FC0_SysInit": {
+      "refs": 98,
+      "writes": 42
+    },
+    "FC10_State_S0_Init": {
+      "refs": 7,
+      "writes": 4
+    },
+    "FC11_State_S1_Inlet": {
+      "refs": 44,
+      "writes": 34
+    },
+    "FC12_State_S2_PreMix": {
+      "refs": 27,
+      "writes": 18
+    },
+    "FC13_State_S3_Dosing": {
+      "refs": 16,
+      "writes": 13
+    },
+    "FC14_State_S35_Rest": {
+      "refs": 8,
+      "writes": 5
+    },
+    "FC15_State_S4_Transfer": {
+      "refs": 33,
+      "writes": 21
+    },
+    "FC16_State_S5_Run": {
+      "refs": 36,
+      "writes": 22
+    },
+    "FC17_State_S6_Drain": {
+      "refs": 17,
+      "writes": 13
+    },
+    "FC18_State_S7_End": {
+      "refs": 4,
+      "writes": 3
+    },
+    "FC19_State_Error": {
+      "refs": 11,
+      "writes": 9
+    },
+    "FC1_StateDispatcher": {
+      "refs": 13,
+      "writes": 2
+    },
+    "FC2_EStopHandling": {
+      "refs": 13,
+      "writes": 8
+    },
+    "FC30_ValveA_Diag": {
+      "refs": 51,
+      "writes": 31
+    },
+    "FC31_ValveB_Diag": {
+      "refs": 45,
+      "writes": 37
+    },
+    "FC32_ValveC_Diag": {
+      "refs": 41,
+      "writes": 33
+    },
+    "FC3_AlarmHandling": {
+      "refs": 182,
+      "writes": 83
+    },
+    "FC40_RhythmCorrection": {
+      "refs": 63,
+      "writes": 40
+    },
+    "FC4_ModbusPolling": {
+      "refs": 2,
+      "writes": 0
+    },
+    "OB1_MAIN": {
+      "refs": 0,
+      "writes": 0
+    }
+  }
+}
