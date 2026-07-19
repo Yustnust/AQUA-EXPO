@@ -9,10 +9,10 @@
 
 ## 一、分析摘要
 
-- **问题总数**: 228 个
+- **问题总数**: 237 个
 - **严重**: 0 个
-- **警告**: 58 个
-- **提示**: 170 个
+- **警告**: 61 个
+- **提示**: 176 个
 
 ## 二、STL文件统计
 
@@ -37,23 +37,23 @@
 | FC32_ValveC_Diag | 41 | 33 |
 | FC3_AlarmHandling | 183 | 84 |
 | FC40_RhythmCorrection | 63 | 40 |
-| FC4_ModbusPolling | 28 | 12 |
+| FC4_ModbusPolling | 78 | 34 |
 | OB1_MAIN | 0 | 0 |
-| **合计** | **761** | **441** |
+| **合计** | **811** | **463** |
 
 ## 三、变量定义统计
 
 - VB(字节): 0 个
-- VW(字): 25 个
-- VD(双字): 23 个
+- VW(字): 26 个
+- VD(双字): 25 个
 - Vbit(位): 25 个
-- **合计**: 73 个变量定义
+- **合计**: 76 个变量定义
 
 ## 四、问题清单
 
-### 警告(58个)
+### 警告(61个)
 
-#### 跨FC写入冲突(49个)
+#### 跨FC写入冲突(51个)
 
 1. **[警告]** 变量 VB2 被 17 个FC写入: ['FC0_SysInit', 'FC10_State_S0_Init', 'FC11_State_S1_Inlet', 'FC12_State_S2_PreMix', 'FC13_State_S3_Dosing', 'FC14_State_S35_Rest', 'FC15_State_S4_Transfer', 'FC16_State_S5_Run', 'FC17_State_S6_Drain', 'FC18_State_S7_End', 'FC19_State_Error', 'FC1_StateDispatcher', 'FC2_EStopHandling', 'FC30_ValveA_Diag', 'FC31_ValveB_Diag', 'FC32_ValveC_Diag', 'FC40_RhythmCorrection']
    - 同一变量被多个FC写入可能导致时序冲突,需确认调用顺序与互斥性
@@ -109,100 +109,106 @@
 18. **[警告]** 变量 VW182 被 2 个FC写入: ['FC11_State_S1_Inlet', 'FC16_State_S5_Run']
    - 同一变量被多个FC写入可能导致时序冲突,需确认调用顺序与互斥性
 
-19. **[警告]** 变量 V303.2 被 2 个FC写入: ['FC12_State_S2_PreMix', 'FC3_AlarmHandling']
+19. **[警告]** 变量 VW252 被 2 个FC写入: ['FC12_State_S2_PreMix', 'FC4_ModbusPolling']
    - 同一变量被多个FC写入可能导致时序冲突,需确认调用顺序与互斥性
 
-20. **[警告]** 变量 V303.3 被 2 个FC写入: ['FC12_State_S2_PreMix', 'FC3_AlarmHandling']
+20. **[警告]** 变量 V303.2 被 2 个FC写入: ['FC12_State_S2_PreMix', 'FC3_AlarmHandling']
    - 同一变量被多个FC写入可能导致时序冲突,需确认调用顺序与互斥性
 
-21. **[警告]** 变量 VD90 被 2 个FC写入: ['FC13_State_S3_Dosing', 'FC30_ValveA_Diag']
+21. **[警告]** 变量 V303.3 被 2 个FC写入: ['FC12_State_S2_PreMix', 'FC3_AlarmHandling']
    - 同一变量被多个FC写入可能导致时序冲突,需确认调用顺序与互斥性
 
-22. **[警告]** 变量 V303.4 被 3 个FC写入: ['FC13_State_S3_Dosing', 'FC3_AlarmHandling', 'FC4_ModbusPolling']
+22. **[警告]** 变量 VD90 被 2 个FC写入: ['FC13_State_S3_Dosing', 'FC30_ValveA_Diag']
    - 同一变量被多个FC写入可能导致时序冲突,需确认调用顺序与互斥性
 
-23. **[警告]** 变量 VB262 被 2 个FC写入: ['FC15_State_S4_Transfer', 'FC31_ValveB_Diag']
+23. **[警告]** 变量 V303.4 被 3 个FC写入: ['FC13_State_S3_Dosing', 'FC3_AlarmHandling', 'FC4_ModbusPolling']
    - 同一变量被多个FC写入可能导致时序冲突,需确认调用顺序与互斥性
 
-24. **[警告]** 变量 VB263 被 2 个FC写入: ['FC15_State_S4_Transfer', 'FC31_ValveB_Diag']
+24. **[警告]** 变量 VW254 被 2 个FC写入: ['FC14_State_S35_Rest', 'FC4_ModbusPolling']
    - 同一变量被多个FC写入可能导致时序冲突,需确认调用顺序与互斥性
 
-25. **[警告]** 变量 VB268 被 2 个FC写入: ['FC15_State_S4_Transfer', 'FC31_ValveB_Diag']
+25. **[警告]** 变量 VB262 被 2 个FC写入: ['FC15_State_S4_Transfer', 'FC31_ValveB_Diag']
    - 同一变量被多个FC写入可能导致时序冲突,需确认调用顺序与互斥性
 
-26. **[警告]** 变量 V301.6 被 2 个FC写入: ['FC16_State_S5_Run', 'FC3_AlarmHandling']
+26. **[警告]** 变量 VB263 被 2 个FC写入: ['FC15_State_S4_Transfer', 'FC31_ValveB_Diag']
    - 同一变量被多个FC写入可能导致时序冲突,需确认调用顺序与互斥性
 
-27. **[警告]** 变量 VB264 被 2 个FC写入: ['FC17_State_S6_Drain', 'FC32_ValveC_Diag']
+27. **[警告]** 变量 VB268 被 2 个FC写入: ['FC15_State_S4_Transfer', 'FC31_ValveB_Diag']
    - 同一变量被多个FC写入可能导致时序冲突,需确认调用顺序与互斥性
 
-28. **[警告]** 变量 VB265 被 2 个FC写入: ['FC17_State_S6_Drain', 'FC32_ValveC_Diag']
+28. **[警告]** 变量 V301.6 被 2 个FC写入: ['FC16_State_S5_Run', 'FC3_AlarmHandling']
    - 同一变量被多个FC写入可能导致时序冲突,需确认调用顺序与互斥性
 
-29. **[警告]** 变量 VW270 被 2 个FC写入: ['FC17_State_S6_Drain', 'FC32_ValveC_Diag']
+29. **[警告]** 变量 VB264 被 2 个FC写入: ['FC17_State_S6_Drain', 'FC32_ValveC_Diag']
    - 同一变量被多个FC写入可能导致时序冲突,需确认调用顺序与互斥性
 
-30. **[警告]** 变量 V300.5 被 2 个FC写入: ['FC19_State_Error', 'FC2_EStopHandling']
+30. **[警告]** 变量 VB265 被 2 个FC写入: ['FC17_State_S6_Drain', 'FC32_ValveC_Diag']
    - 同一变量被多个FC写入可能导致时序冲突,需确认调用顺序与互斥性
 
-31. **[警告]** 变量 V300.0 被 2 个FC写入: ['FC30_ValveA_Diag', 'FC3_AlarmHandling']
+31. **[警告]** 变量 VW270 被 2 个FC写入: ['FC17_State_S6_Drain', 'FC32_ValveC_Diag']
    - 同一变量被多个FC写入可能导致时序冲突,需确认调用顺序与互斥性
 
-32. **[警告]** 变量 V301.4 被 2 个FC写入: ['FC30_ValveA_Diag', 'FC3_AlarmHandling']
+32. **[警告]** 变量 V300.5 被 2 个FC写入: ['FC19_State_Error', 'FC2_EStopHandling']
    - 同一变量被多个FC写入可能导致时序冲突,需确认调用顺序与互斥性
 
-33. **[警告]** 变量 V301.5 被 2 个FC写入: ['FC30_ValveA_Diag', 'FC3_AlarmHandling']
+33. **[警告]** 变量 V300.0 被 2 个FC写入: ['FC30_ValveA_Diag', 'FC3_AlarmHandling']
    - 同一变量被多个FC写入可能导致时序冲突,需确认调用顺序与互斥性
 
-34. **[警告]** 变量 V301.0 被 2 个FC写入: ['FC30_ValveA_Diag', 'FC3_AlarmHandling']
+34. **[警告]** 变量 V301.4 被 2 个FC写入: ['FC30_ValveA_Diag', 'FC3_AlarmHandling']
    - 同一变量被多个FC写入可能导致时序冲突,需确认调用顺序与互斥性
 
-35. **[警告]** 变量 V301.1 被 2 个FC写入: ['FC30_ValveA_Diag', 'FC3_AlarmHandling']
+35. **[警告]** 变量 V301.5 被 2 个FC写入: ['FC30_ValveA_Diag', 'FC3_AlarmHandling']
    - 同一变量被多个FC写入可能导致时序冲突,需确认调用顺序与互斥性
 
-36. **[警告]** 变量 V301.2 被 2 个FC写入: ['FC30_ValveA_Diag', 'FC3_AlarmHandling']
+36. **[警告]** 变量 V301.0 被 2 个FC写入: ['FC30_ValveA_Diag', 'FC3_AlarmHandling']
    - 同一变量被多个FC写入可能导致时序冲突,需确认调用顺序与互斥性
 
-37. **[警告]** 变量 V301.3 被 2 个FC写入: ['FC30_ValveA_Diag', 'FC3_AlarmHandling']
+37. **[警告]** 变量 V301.1 被 2 个FC写入: ['FC30_ValveA_Diag', 'FC3_AlarmHandling']
    - 同一变量被多个FC写入可能导致时序冲突,需确认调用顺序与互斥性
 
-38. **[警告]** 变量 V300.1 被 2 个FC写入: ['FC31_ValveB_Diag', 'FC3_AlarmHandling']
+38. **[警告]** 变量 V301.2 被 2 个FC写入: ['FC30_ValveA_Diag', 'FC3_AlarmHandling']
    - 同一变量被多个FC写入可能导致时序冲突,需确认调用顺序与互斥性
 
-39. **[警告]** 变量 V302.1 被 2 个FC写入: ['FC31_ValveB_Diag', 'FC3_AlarmHandling']
+39. **[警告]** 变量 V301.3 被 2 个FC写入: ['FC30_ValveA_Diag', 'FC3_AlarmHandling']
    - 同一变量被多个FC写入可能导致时序冲突,需确认调用顺序与互斥性
 
-40. **[警告]** 变量 V302.2 被 2 个FC写入: ['FC31_ValveB_Diag', 'FC3_AlarmHandling']
+40. **[警告]** 变量 V300.1 被 2 个FC写入: ['FC31_ValveB_Diag', 'FC3_AlarmHandling']
    - 同一变量被多个FC写入可能导致时序冲突,需确认调用顺序与互斥性
 
-41. **[警告]** 变量 V302.0 被 2 个FC写入: ['FC31_ValveB_Diag', 'FC3_AlarmHandling']
+41. **[警告]** 变量 V302.1 被 2 个FC写入: ['FC31_ValveB_Diag', 'FC3_AlarmHandling']
    - 同一变量被多个FC写入可能导致时序冲突,需确认调用顺序与互斥性
 
-42. **[警告]** 变量 V302.4 被 2 个FC写入: ['FC31_ValveB_Diag', 'FC3_AlarmHandling']
+42. **[警告]** 变量 V302.2 被 2 个FC写入: ['FC31_ValveB_Diag', 'FC3_AlarmHandling']
    - 同一变量被多个FC写入可能导致时序冲突,需确认调用顺序与互斥性
 
-43. **[警告]** 变量 V302.3 被 2 个FC写入: ['FC31_ValveB_Diag', 'FC3_AlarmHandling']
+43. **[警告]** 变量 V302.0 被 2 个FC写入: ['FC31_ValveB_Diag', 'FC3_AlarmHandling']
    - 同一变量被多个FC写入可能导致时序冲突,需确认调用顺序与互斥性
 
-44. **[警告]** 变量 V302.6 被 2 个FC写入: ['FC32_ValveC_Diag', 'FC3_AlarmHandling']
+44. **[警告]** 变量 V302.4 被 2 个FC写入: ['FC31_ValveB_Diag', 'FC3_AlarmHandling']
    - 同一变量被多个FC写入可能导致时序冲突,需确认调用顺序与互斥性
 
-45. **[警告]** 变量 V302.7 被 2 个FC写入: ['FC32_ValveC_Diag', 'FC3_AlarmHandling']
+45. **[警告]** 变量 V302.3 被 2 个FC写入: ['FC31_ValveB_Diag', 'FC3_AlarmHandling']
    - 同一变量被多个FC写入可能导致时序冲突,需确认调用顺序与互斥性
 
-46. **[警告]** 变量 V302.5 被 2 个FC写入: ['FC32_ValveC_Diag', 'FC3_AlarmHandling']
+46. **[警告]** 变量 V302.6 被 2 个FC写入: ['FC32_ValveC_Diag', 'FC3_AlarmHandling']
    - 同一变量被多个FC写入可能导致时序冲突,需确认调用顺序与互斥性
 
-47. **[警告]** 变量 V303.1 被 2 个FC写入: ['FC32_ValveC_Diag', 'FC3_AlarmHandling']
+47. **[警告]** 变量 V302.7 被 2 个FC写入: ['FC32_ValveC_Diag', 'FC3_AlarmHandling']
    - 同一变量被多个FC写入可能导致时序冲突,需确认调用顺序与互斥性
 
-48. **[警告]** 变量 V303.0 被 2 个FC写入: ['FC32_ValveC_Diag', 'FC3_AlarmHandling']
+48. **[警告]** 变量 V302.5 被 2 个FC写入: ['FC32_ValveC_Diag', 'FC3_AlarmHandling']
    - 同一变量被多个FC写入可能导致时序冲突,需确认调用顺序与互斥性
 
-49. **[警告]** 变量 V303.6 被 2 个FC写入: ['FC3_AlarmHandling', 'FC4_ModbusPolling']
+49. **[警告]** 变量 V303.1 被 2 个FC写入: ['FC32_ValveC_Diag', 'FC3_AlarmHandling']
    - 同一变量被多个FC写入可能导致时序冲突,需确认调用顺序与互斥性
 
-#### 参数区写入(9个)
+50. **[警告]** 变量 V303.0 被 2 个FC写入: ['FC32_ValveC_Diag', 'FC3_AlarmHandling']
+   - 同一变量被多个FC写入可能导致时序冲突,需确认调用顺序与互斥性
+
+51. **[警告]** 变量 V303.6 被 2 个FC写入: ['FC3_AlarmHandling', 'FC4_ModbusPolling']
+   - 同一变量被多个FC写入可能导致时序冲突,需确认调用顺序与互斥性
+
+#### 参数区写入(10个)
 
 1. **[警告]** FC直接写入HMI参数区 VD82(VD82)
    - VD10~VD140为HMI设定参数区,FC直接写入可能覆盖操作员设定
@@ -240,9 +246,13 @@
    - VD10~VD140为HMI设定参数区,FC直接写入可能覆盖操作员设定
    - 位置: FC30_ValveA_Diag 第114行
 
-### 提示(170个)
+10. **[警告]** FC直接写入HMI参数区 VD86(VD86)
+   - VD10~VD140为HMI设定参数区,FC直接写入可能覆盖操作员设定
+   - 位置: FC4_ModbusPolling 第114行
 
-#### 对齐建议(94个)
+### 提示(176个)
+
+#### 对齐建议(98个)
 
 1. **[提示]** VD地址非4字节对齐: VD178(地址178)
    - VD建议从4倍数字节地址起始(非强制)
@@ -618,7 +628,23 @@
 
 94. **[提示]** VD地址非4字节对齐: VD86(地址86)
    - VD建议从4倍数字节地址起始(非强制)
-   - 位置: FC4_ModbusPolling 第73行
+   - 位置: FC4_ModbusPolling 第108行
+
+95. **[提示]** VD地址非4字节对齐: VD374(地址374)
+   - VD建议从4倍数字节地址起始(非强制)
+   - 位置: FC4_ModbusPolling 第114行
+
+96. **[提示]** VD地址非4字节对齐: VD86(地址86)
+   - VD建议从4倍数字节地址起始(非强制)
+   - 位置: FC4_ModbusPolling 第114行
+
+97. **[提示]** VD地址非4字节对齐: VD86(地址86)
+   - VD建议从4倍数字节地址起始(非强制)
+   - 位置: FC4_ModbusPolling 第126行
+
+98. **[提示]** VD地址非4字节对齐: VD374(地址374)
+   - VD建议从4倍数字节地址起始(非强制)
+   - 位置: FC4_ModbusPolling 第126行
 
 #### 未使用变量(5个)
 
@@ -637,7 +663,7 @@
 5. **[提示]** 变量 VW8(实验轮次计数) 定义但未在STL中引用
    - 来源: OB1_MAIN.stl
 
-#### 未定义变量(71个)
+#### 未定义变量(73个)
 
 1. **[提示]** 变量 VB2 在STL中引用但变量表/注释未定义
    - FC: FC0_SysInit, 行: 37
@@ -916,12 +942,20 @@
    - 位置: FC40_RhythmCorrection 第70行
 
 70. **[提示]** 变量 VB250 在STL中引用但变量表/注释未定义
-   - FC: FC4_ModbusPolling, 行: 63
-   - 位置: FC4_ModbusPolling 第63行
+   - FC: FC4_ModbusPolling, 行: 73
+   - 位置: FC4_ModbusPolling 第73行
 
 71. **[提示]** 变量 VB251 在STL中引用但变量表/注释未定义
-   - FC: FC4_ModbusPolling, 行: 64
-   - 位置: FC4_ModbusPolling 第64行
+   - FC: FC4_ModbusPolling, 行: 74
+   - 位置: FC4_ModbusPolling 第74行
+
+72. **[提示]** 变量 VB520 在STL中引用但变量表/注释未定义
+   - FC: FC4_ModbusPolling, 行: 242
+   - 位置: FC4_ModbusPolling 第242行
+
+73. **[提示]** 变量 VB530 在STL中引用但变量表/注释未定义
+   - FC: FC4_ModbusPolling, 行: 245
+   - 位置: FC4_ModbusPolling 第245行
 
 ## 五、跨FC变量访问矩阵(写入)
 
@@ -951,6 +985,8 @@
 | VD154 | 2 | FC11_State_S1_Inlet, FC16_State_S5_Run |
 | VD178 | 4 | FC0_SysInit, FC11_State_S1_Inlet, FC15_State_S4_Transfer, FC16_State_S5_Run |
 | VW182 | 2 | FC11_State_S1_Inlet, FC16_State_S5_Run |
+| VW252 | 2 | FC12_State_S2_PreMix, FC4_ModbusPolling |
+| VW254 | 2 | FC14_State_S35_Rest, FC4_ModbusPolling |
 | VW270 | 2 | FC17_State_S6_Drain, FC32_ValveC_Diag |
 | V300.0 | 2 | FC30_ValveA_Diag, FC3_AlarmHandling |
 | V300.1 | 2 | FC31_ValveB_Diag, FC3_AlarmHandling |
@@ -991,9 +1027,11 @@
 | VB301 | 47 |
 | VB303 | 44 |
 | VB300 | 32 |
+| VB250 | 26 |
+| VB251 | 26 |
 | VB1 | 25 |
-| VB250 | 16 |
-| VB251 | 16 |
+| VB252 | 22 |
+| VB253 | 22 |
 | VB0 | 13 |
 | VB158 | 12 |
 | VB159 | 12 |
@@ -1001,13 +1039,11 @@
 | VB161 | 12 |
 | VB150 | 11 |
 | VB151 | 11 |
-| VB152 | 11 |
-| VB153 | 11 |
 
 ## 七、结论与建议
 
-⚠️ 未发现严重问题,但存在 58 个警告,建议在下一轮迭代前修复。
-ℹ️ 另有 170 个提示项,可择机处理。
+⚠️ 未发现严重问题,但存在 61 个警告,建议在下一轮迭代前修复。
+ℹ️ 另有 176 个提示项,可择机处理。
 
 ---
 
