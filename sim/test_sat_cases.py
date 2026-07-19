@@ -44,11 +44,13 @@ def drive_s1_to_s2(plc: PLCSim):
     plc.set_di(0, 0, True)   # I0.0 流量开关A ON
     plc.run_cycle()
     # fc30 sub-state=3: 差值法计量, VD90=VD86-VD82, 目标VD316=10
-    # 每周期递增VD86, 直到VD90>=10
+    # 每周期递增VD86, 直到VD90>=VD316(阀A关断)
+    # 注: 阀A关断后(VW260=5)必须停止递增VD86,否则VD312=VD86-VD308>0.1会触发V301.1内漏报警
     for _ in range(30):
-        plc.set_vd(86, plc.get_vd(86) + 1.0)
+        if plc.get_vw(260) < 5:  # 仅在state=3及以前递增
+            plc.set_vd(86, plc.get_vd(86) + 1.0)
         plc.run_cycle()
-        if plc.vw2 != PLCSim.S1_INLET:
+        if plc.get_vw(260) == 5 or plc.vw2 != PLCSim.S1_INLET:
             break
     # fc30 sub-state=5: 关阀后延时验证(T51=VD66*10=5 ticks=0.5s)
     plc.set_di(0, 0, False)  # I0.0 OFF (无流)
@@ -119,10 +121,10 @@ def drive_to_s5() -> PLCSim:
 
 
 def drive_to_s6() -> PLCSim:
-    """驱动到S6: S5→S6 (强制VD178>=VD20*60)"""
+    """驱动到S6: S5→S6 (强制VD178>=VD354*60)"""
     plc = drive_to_s5()
-    # 直接置VD178>=VD20*60, 触发NETWORK4 → S6
-    plc.set_vd(178, plc.get_vd(20) * 60.0 + 1.0)
+    # 直接置VD178>=VD354*60, 触发NETWORK4 → S6
+    plc.set_vd(178, plc.get_vd(354) * 60.0 + 1.0)  # VD354 (AQEX-36: VD20→VD354)
     plc.run_cycle()
     return plc
 
@@ -217,7 +219,7 @@ class TestStateMachine:
         """TC-04-008: S5→S6换水周期到达转移"""
         plc = drive_to_s5()
         # 强制VD178>=VD20*60, 触发S6
-        plc.set_vd(178, plc.get_vd(20) * 60.0 + 1.0)
+        plc.set_vd(178, plc.get_vd(354) * 60.0 + 1.0)  # VD354 (AQEX-36: VD20→VD354)
         plc.run_cycle()
         assert plc.vw2 == 7                 # S6
         assert plc.q[(0, 4)] == True        # Q0.4 阀C开
@@ -236,8 +238,8 @@ class TestStateMachine:
     def test_TC_04_010_s5_to_s7(self):
         """TC-04-010: S5→S7实验时长达标结束"""
         plc = drive_to_s5()
-        # 强制VD96>=VD24触发S7 (避免VD178达S6阈值)
-        plc.set_vd(96, plc.get_vd(24))
+        # 强制VD366>=VD24触发S7 (避免VD178达S6阈值)
+        plc.set_vd(366, plc.get_vd(24))  # VD366 (AQEX-36: VD96→VD366)
         plc.set_vd(178, 0.0)  # 确保不触发S6
         plc.run_cycle()
         assert plc.vw2 == 8                 # S7
@@ -246,7 +248,7 @@ class TestStateMachine:
     def test_TC_04_011_s7_to_s0(self):
         """TC-04-011: S7→S0 HMI确认重启 (CMD_Start)"""
         plc = drive_to_s5()
-        plc.set_vd(96, plc.get_vd(24))
+        plc.set_vd(366, plc.get_vd(24))  # VD366 (AQEX-36: VD96→VD366)
         plc.set_vd(178, 0.0)
         plc.run_cycle()
         assert plc.vw2 == 8                 # S7
@@ -578,8 +580,8 @@ class TestRhythmCorrection:
     def test_TC_06_008_s5_elapsed_increment(self):
         """TC-06-008: VD_S5_Elapsed秒累加正确 (每秒+1)"""
         plc = drive_to_s5()
-        # 设VD20大, 避免S5提前转S6; 设VD96小避免S7
-        plc.set_vd(20, 100.0)   # 100min = 6000s, 远大于测试时长
+        # 设VD354大, 避免S5提前转S6; 设VD366小避免S7
+        plc.set_vd(354, 100.0)   # 100min = 6000s, 远大于测试时长 (AQEX-36: VD20→VD354)
         plc.set_vd(24, 100.0)   # 实验目标大
         initial = plc.get_vd(178)
         plc.advance_seconds(10.0)
@@ -587,11 +589,11 @@ class TestRhythmCorrection:
         assert abs(plc.get_vd(178) - (initial + 10.0)) < 1.5
 
     def test_TC_06_009_cycle_to_s6(self):
-        """TC-06-009: 换水周期到达转S6 (VD178>=VD20*60)"""
+        """TC-06-009: 换水周期到达转S6 (VD178>=VD354*60)"""
         plc = drive_to_s5()
         plc.set_vd(24, 100.0)  # 避免S7
-        # 强制VD178>=VD20*60
-        plc.set_vd(178, plc.get_vd(20) * 60.0 + 1.0)
+        # 强制VD178>=VD354*60
+        plc.set_vd(178, plc.get_vd(354) * 60.0 + 1.0)  # VD354 (AQEX-36: VD20→VD354)
         plc.run_cycle()
         assert plc.vw2 == 7    # S6
         assert plc.m[(10, 7)] == False  # M10.7清零
@@ -601,7 +603,7 @@ class TestRhythmCorrection:
         plc = drive_to_s5()
         # 强制V1.6=True(上缸满, 异常) + 触发预规划
         plc.set_v_bit(1, 6, True)
-        plc.set_vd(178, plc.get_vd(20) * 60.0)  # 接近周期末,触发预规划
+        plc.set_vd(178, plc.get_vd(354) * 60.0)  # 接近周期末,触发预规划 (AQEX-36: VD20→VD354)
         plc.set_vd(24, 100.0)  # 避免S7
         # 运行直到触发预规划或报警
         for _ in range(50):
@@ -964,12 +966,12 @@ class TestPowerRecovery:
         plc = PLCSim()
         plc.run_cold_start()
         plc.set_vd(10, 7.5)      # VD_C_Set
-        plc.set_vd(20, 4.0)      # VD_CycleSetpoint
+        plc.set_vd(354, 4.0)     # VD_CycleSetpoint (AQEX-36: VD20→VD354)
         plc.vw8 = 3              # 轮次
         # 断电恢复(V304.0=1), 参数应保持
         plc.warm_restart(vw2=6, v17=True, rtc_sec=100.0, dt10_sec=50.0)
         assert abs(plc.get_vd(10) - 7.5) < 0.01
-        assert abs(plc.get_vd(20) - 4.0) < 0.01
+        assert abs(plc.get_vd(354) - 4.0) < 0.01  # VD354 (AQEX-36: VD20→VD354)
         assert plc.vw8 == 3
 
     def test_TC_09_010_supercap_fail_cold_start(self):

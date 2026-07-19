@@ -104,16 +104,16 @@ class PLCSim:
         # 默认工艺参数 (测试友好: 较小超时, 快速推进)
         self.set_vd(10, 5.0)       # VD_C_Set 目标浓度
         self.set_vd(14, 100.0)     # VD_C_Stock 母液浓度
-        self.set_vd(18, 0.5)       # VD_StepResolution 步进分辨率
-        self.set_vd(20, 3.0)       # VD_CycleSetpoint 换水周期(min)
+        self.set_vd(350, 0.5)      # VD_StepResolution 步进分辨率 (AQEX-36: VD18→VD350)
+        self.set_vd(354, 3.0)      # VD_CycleSetpoint 换水周期(min) (AQEX-36: VD20→VD354)
         self.set_vd(24, 5.0)       # VD_ExperimentTarget 实验目标(min)
         self.set_vd(28, 12.0)      # VD_PreMixTime 预循环
         self.set_vd(32, 3.0)       # VD_PreMixTime_MinSafe
         self.set_vd(36, 6.0)       # VD_RestTime 静止
         self.set_vd(40, 1.5)       # VD_RestTime_Min
         self.set_vd(44, 0.5)       # VD_CycleExtend_Max(min)
-        self.set_vd(48, 2.0)       # VD_Timeout_ValveA
-        self.set_vd(50, 2.0)       # VD_Timeout_ValveB
+        self.set_vd(358, 2.0)      # VD_Timeout_ValveA (AQEX-36: VD48→VD358)
+        self.set_vd(362, 2.0)      # VD_Timeout_ValveB (AQEX-36: VD50→VD362)
         self.set_vd(54, 2.0)       # VD_Timeout_ValveC
         self.set_vd(58, 2.0)       # VD_Timeout_Pump1
         self.set_vd(62, 2.0)       # VD_Timeout_Pump2
@@ -125,6 +125,7 @@ class PLCSim:
         self.set_vd(174, 5.0)      # VD_S3_Estimate
         self.set_vd(316, 10.0)     # 目标进水量(FC30用)
         self.set_vd(86, 0.0)       # VD_FlowMeter_Cumulative
+        self.set_v_bit(200, 0, True)  # M_AlarmAckMode=1(默认人工确认模式)
         # 急停常闭触点默认ON
         self.i[(1, 1)] = True
 
@@ -174,8 +175,9 @@ class PLCSim:
         self.q[(byte, bit)] = bool(val)
 
     def get_qb0(self) -> int:
+        """QB0字节值(排除Q0.7报警声音, 仅反映执行机构Q0.0~Q0.6)"""
         v = 0
-        for bit in range(8):
+        for bit in range(7):  # Q0.0~Q0.6 执行机构
             if self.q.get((0, bit)):
                 v |= (1 << bit)
         return v
@@ -359,7 +361,7 @@ class PLCSim:
         if self.get_v_bit(300, 1): return 11
         if self.get_v_bit(300, 2): return 12
         if self.get_v_bit(300, 3): return 13
-        if self.get_v_bit(300, 4): return 14
+        if self.get_v_bit(300, 4): return 10  # 急停锁存:与FC2 MOVB 10,VB6一致
         if self.get_v_bit(300, 6): return 20
         if self.get_v_bit(300, 7): return 21
         for bit, code in [(0, 30), (1, 31), (2, 32), (3, 33),
@@ -454,7 +456,8 @@ class PLCSim:
             if self.get_v_bit(303, 4) and self.vw4 == 0:
                 self.set_v_bit(303, 4, False)
         # NETWORK5: 自动恢复模式(V200.0=0) 一般故障级条件消失自动复位
-        if not self.get_v_bit(200, 0):
+        # 注: 新报警周期跳过自动恢复, 避免刚置位的报警被立即清除
+        if not self.get_v_bit(200, 0) and not new_alarm:
             if self.get_v_bit(301, 0) and not self.i[(0, 0)]:
                 self.set_v_bit(301, 0, False)
             if self.get_v_bit(301, 1) and not self.i[(0, 0)]:
@@ -477,45 +480,57 @@ class PLCSim:
                 self.set_v_bit(303, 2, False)
             if self.get_v_bit(303, 3) and self.i[(0, 4)]:
                 self.set_v_bit(303, 3, False)
+        # 末尾重算VW6: 反映ack/自动恢复后的最新状态
+        self.vw6 = self._priority_chain()
+        if self.vw6 == 0:
+            # 报警消失(自动恢复/确认后): 覆盖NETWORK2的Q1.0=True, 自动消光消音
+            self.q[(1, 0)] = False
+            self.q[(0, 7)] = False
+            self.m[(11, 1)] = False
         # 更新上一周期报警标志
         self.m[(11, 2)] = (self.vw6 != 0)
 
     # ===== FC1 状态调度 =====
     def fc1_dispatch(self):
-        """FC1状态调度: 根据VW2调用对应状态FC, 处理首入脉冲/非法态"""
-        cur = self.vw2
-        first = (cur != self._last_dispatched)
-        if cur == self.S0_INIT:
-            self.fc10(first)
-        elif cur == self.S1_INLET:
-            self.fc11(first)
-        elif cur == self.S2_PREMIX:
-            self.fc12(first)
-        elif cur == self.S3_DOSING:
-            self.fc13(first)
-        elif cur == self.S35_REST:
-            self.fc14(first)
-        elif cur == self.S4_TRANSFER:
-            self.fc15(first)
-        elif cur == self.S5_RUN:
-            self.fc16(first)
-        elif cur == self.S6_DRAIN:
-            self.fc17(first)
-        elif cur == self.S7_END:
-            self.fc18(first)
-        elif cur == self.S_ERROR:
-            self.fc19(first)
-        else:
-            # 非法状态强制回S0
-            self.vw2 = self.S0_INIT
-        self._last_dispatched = cur
+        """FC1状态调度: 根据VW2调用对应状态FC, 处理首入脉冲/非法态
+        支持同周期状态转移链(最多2次): 如fc16触发S6后, 同周期调度fc17 first
+        """
+        for _ in range(2):
+            cur = self.vw2
+            first = (cur != self._last_dispatched)
+            if cur == self.S0_INIT:
+                self.fc10(first)
+            elif cur == self.S1_INLET:
+                self.fc11(first)
+            elif cur == self.S2_PREMIX:
+                self.fc12(first)
+            elif cur == self.S3_DOSING:
+                self.fc13(first)
+            elif cur == self.S35_REST:
+                self.fc14(first)
+            elif cur == self.S4_TRANSFER:
+                self.fc15(first)
+            elif cur == self.S5_RUN:
+                self.fc16(first)
+            elif cur == self.S6_DRAIN:
+                self.fc17(first)
+            elif cur == self.S7_END:
+                self.fc18(first)
+            elif cur == self.S_ERROR:
+                self.fc19(first)
+            else:
+                # 非法状态强制回S0
+                self.vw2 = self.S0_INIT
+            self._last_dispatched = cur
+            # 状态未变或已调度2次, 退出
+            if self.vw2 == cur:
+                break
 
     # ===== FC10 S0 初始化 =====
     def fc10(self, first: bool):
-        # 每周期安全待命
-        for bit in range(8):
+        # 每周期安全待命 (Q0.7报警声音由FC3管理,不清)
+        for bit in range(7):  # 仅清Q0.0~Q0.6执行机构
             self.q[(0, bit)] = False
-        self.q[(0, 7)] = False
         # CMD_Start上升沿 + 无报警 → S1
         if self.rose_v(0, 0) and self.vw6 == 0:
             self.vw2 = self.S1_INLET
@@ -529,22 +544,23 @@ class PLCSim:
             self.set_vd(82, self.get_vd(86))  # VD82流量计快照
             self.q[(0, 2)] = True             # 开阀A
             self.r_timer(37)
-            self.ton(37, 32767, enabled=True)  # S1计时(自由)
             self.set_v_bit(1, 6, False)        # 上缸=空
             self.set_vw(260, 1)                # 诊断子状态=1
             self.set_vw(266, 0)                # 清诊断结果
             # VW278 = VD48×10, VW280 = VD66×10
-            self.set_vw(278, int(round(self.get_vd(48) * 10)))
+            self.set_vw(278, int(round(self.get_vd(358) * 10)))  # VD358 (AQEX-36: VD48→VD358)
             self.set_vw(280, int(round(self.get_vd(66) * 10)))
+        # S1自由计时器(每周期累计,用于VD_S1_Actual)
+        self.ton(37, 32767, enabled=True)
         # 调用FC30阀A诊断
         self.fc30()
         # 检查诊断结果
         if self.get_vw(266) == 1:
-            # 诊断正常完成
-            self.r_timer(37)
+            # 诊断正常完成 (注: 先读T37累计值再复位,否则r_timer后acc=0)
             self.set_vd(70, self.t_acc_sec(37))  # VD_S1_Actual
+            self.r_timer(37)
             # Story1.4 二次校正(模式1)
-            self.set_vd(150, self.get_vd(20) * 60.0 + self.get_vd(116) - self.get_vd(178))
+            self.set_vd(150, self.get_vd(354) * 60.0 + self.get_vd(116) - self.get_vd(178))  # VD354 (AQEX-36: VD20→VD354)
             self.set_vd(154, self.get_vd(120) + self.get_vd(174) + self.get_vd(124))
             self.set_vw(182, 1)
             self.fc40()
@@ -561,8 +577,9 @@ class PLCSim:
             self.q[(0, 1)] = True  # 潜水泵2
             self.set_vw(252, int(round(self.get_vd(120) * 10)))
             self.r_timer(38)
-            self.ton(38, self.get_vw(252), enabled=True)
             self.set_v_bit(1, 6, True)  # 上缸=满
+        # 预循环计时器(每周期累计,达PT后转S3)
+        self.ton(38, self.get_vw(252), enabled=True)
         # 泵1流量检测
         self.set_vw(282, int(round(self.get_vd(58) * 10)))
         self.ton(44, self.get_vw(282), enabled=self.q[(0, 0)] and not self.i[(0, 3)])
@@ -586,26 +603,31 @@ class PLCSim:
         if first:
             # 简化剂量计算
             vol = self.get_vd(10) * self.get_vd(90) / self.get_vd(14)
-            steps = vol / self.get_vd(18)
-            self.set_vd(98, vol)
+            steps = vol / self.get_vd(350)  # VD350 (AQEX-36: VD18→VD350)
+            self.set_vd(370, vol)           # VD370 (AQEX-36: VD98→VD370)
             self.set_vd(102, steps)
             self.set_vw(204, int(round(steps)))
             self.set_vw(206, int(round(steps)))
             self.m[(10, 3)] = True
-        # 轮询注射泵状态码
-        if self.vw4 == 0:
-            self.vw2 = self.S35_REST
-            self.m[(10, 3)] = False
-        elif self.vw4 >= 4:
-            self.set_v_bit(303, 4, True)
-            self.vw2 = self.S_ERROR
+            # 模拟从站初始响应:运行中(等待HMI/测试set_vw(4,0)模拟完成)
+            # 避免VW4默认0被NETWORK3立即判定为完成跳过S3
+            self.vw4 = 1
+        # 轮询注射泵状态码(first周期不检查,避免立即转出)
+        if not first:
+            if self.vw4 == 0:
+                self.vw2 = self.S35_REST
+                self.m[(10, 3)] = False
+            elif self.vw4 >= 4:
+                self.set_v_bit(303, 4, True)
+                self.vw2 = self.S_ERROR
 
     # ===== FC14 S3.5 静止等候 =====
     def fc14(self, first: bool):
         if first:
             self.set_vw(254, int(round(self.get_vd(124) * 10)))
             self.r_timer(39)
-            self.ton(39, self.get_vw(254), enabled=True)
+        # 静止计时器(每周期累计,达PT后转S4)
+        self.ton(39, self.get_vw(254), enabled=True)
         if self.get_t(39):
             self.vw2 = self.S4_TRANSFER
 
@@ -614,15 +636,17 @@ class PLCSim:
         if first:
             self.q[(0, 3)] = True  # 开阀B
             self.r_timer(40)
-            self.ton(40, 32767, enabled=True)
             self.set_v_bit(1, 6, False)  # 上缸=空
             self.set_vw(262, 1)
             self.set_vw(268, 0)
-            self.set_vw(274, int(round(self.get_vd(50) * 10)))
+            self.set_vw(274, int(round(self.get_vd(362) * 10)))  # VD362 (AQEX-36: VD50→VD362)
+        # S4自由计时器(每周期累计,用于VD_S4_Actual)
+        self.ton(40, 32767, enabled=True)
         self.fc31()
         if self.get_vw(268) == 1:
-            self.r_timer(40)
+            # 先读T40累计值再复位(否则r_timer后acc=0)
             self.set_vd(74, self.t_acc_sec(40))
+            self.r_timer(40)
             self.set_v_bit(1, 7, True)  # 下缸=满
             self.dt10_sec = self.rtc_sec  # 记录下缸变满时间戳
             self.set_vd(178, 0.0)         # VD_S5_Elapsed清零
@@ -640,33 +664,38 @@ class PLCSim:
             self.set_vd(178, self.get_vd(178) + 1.0)
             self.r_timer(60)
         # NETWORK2: Available计算 + 预规划上升沿
-        self.set_vd(150, self.get_vd(20) * 60.0 + self.get_vd(116) - self.get_vd(178))
-        if (self.get_vd(150) <= self.get_vd(112)) and (not self.m[(10, 7)]):
+        # 注: VD178<=周期时触发预规划, V1.6=True(异常)时跳过fc40避免V300.7误报
+        self.set_vd(150, self.get_vd(354) * 60.0 + self.get_vd(116) - self.get_vd(178))  # VD354 (AQEX-36: VD20→VD354)
+        preplan_triggered = False
+        if (self.get_vd(150) <= self.get_vd(112)) and (not self.m[(10, 7)]) and (self.get_vd(178) <= self.get_vd(354) * 60.0):
             self.m[(10, 7)] = True
             self.set_vw(182, 0)
             self.set_vd(154, self.get_vd(112))
-            self.fc40()
-            if self.get_vw(184) != 4:
-                if not self.get_v_bit(1, 6):
+            if not self.get_v_bit(1, 6):
+                # 上缸空(正常) → 调fc40纠偏计算
+                self.fc40()
+                if self.get_vw(184) != 4:
                     self.vw2 = self.S1_INLET  # 上缸=空 → 启动新一轮配液
-        # 预规划触发后上缸≠空(异常)
-        if self.m[(10, 7)] and self.get_v_bit(1, 6):
-            self.set_v_bit(301, 6, True)
-            self.vw2 = self.S_ERROR
+            preplan_triggered = True
         # NETWORK3: 实验时长累加(每分钟+1)
         if self.get_v_bit(1, 7):
             self.ton(47, 600, enabled=True)
         else:
             self.ton(47, 600, enabled=False)
         if self.rose_t(47):
-            self.set_vd(96, self.get_vd(96) + 1.0)
+            self.set_vd(366, self.get_vd(366) + 1.0)  # VD366 (AQEX-36: VD96→VD366)
         # NETWORK4: 换水周期到达 → S6
-        if self.get_vd(178) >= self.get_vd(20) * 60.0:
+        # 注: 若本周期预规划触发且上缸满(异常), 不转S6, 由异常处理置V301.6+S_ERROR
+        if (self.get_vd(178) >= self.get_vd(354) * 60.0) and not (preplan_triggered and self.get_v_bit(1, 6)):  # VD354 (AQEX-36: VD20→VD354)
             self.m[(10, 7)] = False
             self.r_timer(60)
             self.vw2 = self.S6_DRAIN
+        # NETWORK2 异常: 预规划触发后上缸≠空(覆盖S6转移, 报警优先)
+        if preplan_triggered and self.get_v_bit(1, 6):
+            self.set_v_bit(301, 6, True)
+            self.vw2 = self.S_ERROR
         # NETWORK5: 实验时长达标 → S7
-        if self.get_vd(96) >= self.get_vd(24):
+        if self.get_vd(366) >= self.get_vd(24):  # VD366 (AQEX-36: VD96→VD366)
             self.r_timer(47)
             self.r_timer(60)
             self.m[(10, 7)] = False
@@ -685,16 +714,20 @@ class PLCSim:
         if first:
             self.q[(0, 4)] = True  # 开阀C
             self.r_timer(42)
-            self.ton(42, 32767, enabled=True)
             self.set_vw(264, 1)
             self.set_vw(270, 0)
             self.set_vw(276, int(round(self.get_vd(54) * 10)))
+        # S6自由计时器(每周期累计,用于VD_S6_Actual)
+        self.ton(42, 32767, enabled=True)
         self.fc32()
         if self.get_vw(270) == 1:
-            self.r_timer(42)
+            # 先读T42累计值再复位(否则r_timer后acc=0)
             self.set_vd(78, self.t_acc_sec(42))
+            self.r_timer(42)
             self.set_vd(116, self.get_vd(78))  # VD_S6_Rolling
             self.set_v_bit(1, 7, False)        # 下缸=空
+            # 清VD_S5_Elapsed, 避免S5→S6链式触发(fc16 NETWORK4 VD178>=VD354*60)
+            self.set_vd(178, 0.0)
             # 状态转移: 实验未结束→S5(轮次+1), 实验结束→S7
             if not self.m[(10, 6)]:
                 self.vw8 = self.vw8 + 1
@@ -712,10 +745,11 @@ class PLCSim:
             self.q[(1, 0)] = False
             self.r_timer(47)
             self.m[(10, 6)] = True  # 实验结束标志
-        # CMD_Start上升沿 → S0
+        # CMD_Start上升沿 → S0 (清V0.0避免fc10链式触发S1)
         if self.rose_v(0, 0):
             self.m[(10, 6)] = False
             self.set_v_bit(1, 0, False)
+            self.set_v_bit(0, 0, False)
             self.vw2 = self.S0_INIT
 
     # ===== FC19 S_ERROR 故障锁定 =====
@@ -749,8 +783,11 @@ class PLCSim:
             self.vw2 = self.S_ERROR
             self.set_vw(266, 2)
             return
-        # 诊断子状态调度
+        # 每周期计算VD90差值(供FC13剂量计算与外部读取, 与FC30_STL NETWORK6一致)
+        # 注: STL中fc30在S1/S5全程调用, VD90=VD86-VD82每周期更新
+        self.set_vd(90, self.get_vd(86) - self.get_vd(82))
         st = self.get_vw(260)
+        # 诊断子状态调度
         if st == 1:
             # 等开到位
             self.ton(50, self.get_vw(278), enabled=True)
@@ -780,7 +817,6 @@ class PLCSim:
                 self.ton(52, 20, enabled=False)
         elif st == 3:
             # 运行中-差值法持续计量
-            self.set_vd(90, self.get_vd(86) - self.get_vd(82))
             if self.get_vd(90) >= self.get_vd(316):
                 self.q[(0, 2)] = False  # 关阀A
                 self.set_vd(308, self.get_vd(86))  # 关阀瞬间快照
@@ -984,6 +1020,7 @@ class PLCSim:
         self.set_vw(184, 4)
         self.set_v_bit(300, 6, True)
         self.vw2 = self.S_ERROR
+        self.vw6 = 20  # 严重滞后报警码(fc3本周期已执行,直接置VW6保证本周期生效)
 
     # ===== 主循环 =====
     def run_cycle(self):
@@ -999,6 +1036,20 @@ class PLCSim:
         self.fc2_estop()
         self.fc3_alarm()
         self.fc1_dispatch()
+        # fc1可能新置报警位(如阀诊断), 同周期重算VW6+输出管理
+        # 避免测试期望"诊断报警当周期VW6=对应码"需等下周期fc3才更新
+        code = self._priority_chain()
+        if code != self.vw6:
+            self.vw6 = code
+            if code != 0:
+                self.q[(1, 0)] = True  # 灯光常亮
+                if not self.m[(11, 1)]:
+                    self.q[(0, 7)] = True  # 声音开(若未消音)
+            else:
+                # 报警消失(自动恢复/确认后): 灯光+声音消光
+                self.q[(1, 0)] = False
+                self.q[(0, 7)] = False
+            self.m[(11, 2)] = (code != 0)
         # 周期末快照, 作为下周期的"前一状态"
         self._snapshot_edges()
 
