@@ -1,0 +1,92 @@
+# AQUA-EXPO 轻量CI流水线
+#
+# 目标: 保护已通过的测试资产与0严重问题状态,防止回归
+# 触发: push到master + PR到master
+# 内容: 3个测试脚本(S7服务端+静态分析阻断,SAT仿真仅报告)
+# 维护: 仅在新增测试脚本或调整目录结构时修改本文件
+#
+# 阻断策略:
+#   - S7协议服务端测试: 阻断(17/17全通过,稳定基线)
+#   - STL静态分析: 仅"严重"问题阻断,警告/提示仅记录(0严重问题状态保护)
+#   - SAT仿真测试: 不阻断(当前存在34个回归失败,需单独修复,修复后改为阻断)
+#
+# 不在CI范围(本地或现场执行):
+#   - STL编译验证(需STEP 7-Micro/WIN SMART,Windows专有)
+#   - MCGS组态验证(MCGS专有格式)
+#   - 现场调试(需硬件)
+
+name: CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: S7协议 + 静态分析 + SAT仿真
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+
+      - name: 配置 Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: 安装测试依赖
+        run: |
+          python -m pip install --upgrade pip
+          pip install pytest
+
+      # ============================================================
+      # 阻断项1: S7协议服务端测试 (17/17 全通过基线)
+      # ============================================================
+      - name: 运行S7协议服务端测试
+        working-directory: sim
+        run: |
+          # test_s7_server.py 使用自定义测试框架, 直接python运行
+          python test_s7_server.py
+          echo "✓ S7协议服务端测试通过"
+
+      # ============================================================
+      # 阻断项2: STL静态分析 (0严重问题门禁)
+      # ============================================================
+      - name: 运行STL静态分析
+        working-directory: tools
+        run: |
+          python stl_static_analyzer.py --report static_analysis_report.md --json static_analysis_result.json
+          # CI门禁: 仅"严重"问题阻断,警告和提示仅记录
+          SEVERE=$(python -c "import json; d=json.load(open('static_analysis_result.json')); print(d['summary']['issues_severe'])")
+          echo "严重问题数: $SEVERE"
+          if [ "$SEVERE" -ne 0 ]; then
+            echo "❌ 静态分析发现 $SEVERE 个严重问题,CI失败"
+            exit 1
+          fi
+          echo "✓ 静态分析通过(0严重问题)"
+
+      # ============================================================
+      # 非阻断项: SAT仿真测试 (当前34个回归失败,需单独修复)
+      # ============================================================
+      - name: 运行SAT仿真测试 (非阻断,记录回归)
+        working-directory: sim
+        continue-on-error: true
+        run: |
+          python -m pytest test_sat_cases.py --tb=line -q || true
+          echo "⚠ SAT仿真测试存在已知回归失败,不阻断CI,详见日志"
+
+      - name: 上传静态分析报告
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: static-analysis-report
+          path: tools/static_analysis_report.md
+          retention-days: 14
