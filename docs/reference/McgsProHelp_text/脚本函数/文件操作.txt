@@ -1,0 +1,1188 @@
+===  ===
+
+12.8
+文件操作函数
+此版本支持的文件操作函数有
+:
+Ø
+!
+CreateDirectory
+(strDirPath)
+Ø
+!
+FileAppend
+(strTarget,strSource)
+Ø
+!
+FileCopy
+(strSource,strTarget)
+Ø
+!
+FileDelete
+(strFilename)
+Ø
+!
+FileFind
+(strFilename,nameArr,sizeArr,attribArr)
+Ø
+!
+FileList
+(strPath,nameArr,sizeArr,attribArr)
+Ø
+!
+FileMove
+(strSource,strTarget)
+Ø
+!
+FileSplit
+(strSourceFile,strTargetFile,FileSize)
+Ø
+!
+GetFreeDiskSpace
+()
+Ø
+!
+FileWriteByBuffer
+(filePath,filePos,bufID,bufPos,bufLength)
+Ø
+!
+FileReadByBuffer
+(filePath,filePos,dataLength,bufID,bufPos)
+Ø
+!
+FileWriteByStr
+(strFileName,strValue,mode,encode)
+Ø
+!
+FileReadByStr
+(strFilename,filePos,strLength,strResultRef,encode)
+Ø
+!
+GetFileSize
+(strFilePath)
+注
+：
+1.
+文件操作涉及路径均以“
+$MCGS_DIR_USER
+”开始表示用户目录，不支持以“
+$MCGS_DIR_HISTORY
+”开始的路径，若输入路径以“
+$MCGS_DIR_HISTORY
+”开始，将返回输入路径错误，其他情况则表示
+U
+盘路径，且路径中不能存在
+"../"
+、
+"/.."
+、
+"/../"
+。
+2.
+文件操作涉及的路径或文件名，在模拟环境下不区分大小写；实际触摸屏运行环境下严格区分大小写。
+3.
+若某个路径下存在文件时，在该路径不能创建同名文件夹。因此，如果需要创建某个文件夹路径时，若待创建的文件夹路径中有同名的文件存在，将会创建失败。
+!
+CreateDirectory
+(strDirPath)
+函数意义：
+创建指定路径的文件夹目录
+参
+数：
+strDirPath
+，字符串，输入，目标目录
+返 回 值：
+整数
+= 0
+，成功
+< 0
+，失败
+失败返回值：
+= -209
+，输入路径错误
+= -208
+，创建文件夹失败
+= -220
+，指定路径中存在与待创建文件夹同名的文件
+= -1021
+，
+U
+盘未插入
+实
+例：
+ret = !CreateDirectory("$MCGS_DIR_USER/test/")
+，在
+$MCGS_DIR_USER
+下创建名为
+test
+的文件夹
+!FileAppend
+(strSource,strTarget)
+函数意义：
+将源文件中的内容写到目标文件的末尾，使两文件的内容合并到目标文件中
+参
+数：
+strSource
+，字符串，输入，源文件路径
+strTarget
+，字符串，输入，目标文件路径
+返 回 值：
+整数
+= 0
+，成功
+< 0
+，失败
+失败返回值：
+= -201
+，目标路径与源路径相同
+= -203
+，读写失败
+= -204
+，打开文件失败
+= -205
+，磁盘空间不足
+= -206
+，源文件不存在
+= -208
+，创建文件夹失败
+= -209
+，输入路径错误
+= -220
+，目标路径中存在与待创建文件夹同名的文件
+= -224
+，源路径类型不匹配
+= -225
+，目标路径类型不匹配
+= -1021
+，
+U
+盘未插入
+实
+例：
+ret = !FileAppend("$MCGS_DIR_USER/test/append/a.txt","$MCGS_DIR_USER/test/b.txt")
+，将
+$MCGS_DIR_USER/test/append
+下的文件
+a.txt
+的内容写到
+$MCGS_DIR_USER/test
+下的文件
+b.txt
+的末尾。若
+b.txt
+不存在，则会自动新建一个文件。
+注意事项：
+1.strSource
+不能为文件夹路径，否则返回源路径类型不匹配；
+2.strTarget
+不能为文件夹路径，否则返回目标路径类型不匹配；
+3.strSource
+、
+strTarget
+不能为同一个文件，否则返回目标路径与源路径相同；
+!
+FileCopy
+(strSource,strTarget)
+函数意义：
+将路径为
+strSource
+的文件复制到路径为
+strTarget
+的文件（支持文件夹拷贝）
+参
+数：
+strSource
+，字符串，输入，源文件路径
+strTarget
+，字符串，输入，目标文件路径
+返 回 值：
+整数
+= 0
+，成功
+< 0
+，失败
+失败返回值：
+= -201
+，目标路径与源路径相同
+= -203
+，读写失败
+= -205
+，磁盘空间不足
+= -206
+，源文件或路径不存在
+= -208
+，创建文件夹失败
+= -209
+，输入路径错误
+= -220
+，目标路径中存在与待创建文件夹同名的文件
+= -227
+，源路径为文件，目标路径下存在同名的文件夹
+= -228
+，源路径为文件夹，目标路径为文件或目标路径下存在同名的文件
+= -229
+，目标路径为源路径的子文件夹
+= -1021
+，
+U
+盘未插入
+实
+例：
+（
+1
+）
+ret = !FileCopy("$MCGS_DIR_USER/test/copySource/a.txt","$MCGS_DIR_USER/test/copy/b.txt"),
+将
+$MCGS_DIR_USER/test/copySource/
+的文件
+a.txt
+复制到
+$MCGS_DIR_USER/test/copy/
+路径下，且文件名为
+b.txt
+。
+（
+2
+）
+ret = !FileCopy("$MCGS_DIR_USER/test/copySource/","$MCGS_DIR_USER/test/copy/"),
+将
+$MCGS_DIR_USER/test/
+路径下的
+copySource
+文件夹复制到
+$MCGS_DIR_USER/test/copy/
+路径下。
+（
+3
+）
+ret = !FileCopy("$MCGS_DIR_USER/test/copySource/a.txt","$MCGS_DIR_USER/test/copy/"),
+将
+$MCGS_DIR_USER/test/copySource/
+下的文件
+a.txt
+复制到
+$MCGS_DIR_USER/test/copy/
+路径下。
+注意事项：
+1.
+若目标文件已存在，则将目标文件覆盖
+2.
+不能将文件夹拷贝至文件，即
+strSource
+为文件夹路径，
+strTarget
+为文件路径，将返回
+-228
+。
+3.
+不能将文件或文件夹拷贝至该文件或文件夹当前所在的路径下，即目标路径为源路径的上一级目录，将返回
+-201
+。
+!
+FileDelete
+(strFilename)
+函数意义：
+将指定的文件或目录删除
+参
+数：
+strFilename
+，字符串，输入，需要删除的文件或目录
+返 回 值：
+整数
+= 0
+，成功
+< 0
+，失败
+失败返回值：
+= -206
+，源文件或路径不存在
+= -207
+，删除文件或文件夹失败
+= -209
+，输入路径错误
+= -1021
+，
+U
+盘未插入
+实
+例：
+（
+1
+）
+ret = !FileDelete("$MCGS_DIR_USER/test/test.txt")
+，删除
+$MCGS_DIR_USER/test/
+路径下的文件
+test.txt
+。
+（
+2
+）
+ret = !FileDelete("$MCGS_DIR_USER/test/deleteDir/")
+，删除
+$MCGS_DIR_USER/test/
+路径下的文件夹
+deleteDir
+及文件夹内的所有文件。
+!
+FileFind
+(strFilename,nameArr,sizeArr,attribArr)
+函数意义：
+查找指定路径下及子文件下指定条件的文件或文件夹
+参
+数：
+strFilename
+，字符串，输入，查找条件：需要查找的文件或文件夹所在的路径和条件（查找条件中可以包含文件通配符：
+*
+和
+?)
+nameArr
+，字符串数组，输出，函数调用成功后，保存查找结果的名称（包含路径）
+sizeArr
+，整数数组，输出，函数调用成功后，保存查找结果的大小，单位：
+bit
+attribArr
+，整数数组，输出，函数调用成功后，保存查找结果的属性：
+0:
+表示文件，
+1
+：表示文件夹，
+2
+：表示其它
+返 回 值：
+整数
+>=0
+，成功，返回查找到满足要求的结果的个数
+< 0,
+失败
+失败返回值：
+= -206
+，源路径不存在
+= -209
+，输入路径错误
+= -1021
+，
+U
+盘未插入
+实
+例：
+（
+1
+）
+r
+et = !FileFind("$MCGS_DIR_USER/test/find/a*",nameArr,sizeArr,attribArr)
+，查找
+$MCGS_DIR_USER/test/find
+文件夹及子文件夹下名字第一个字母为
+a
+的文件或目录，将查找结果的名字（包含路径）存入
+nameArr
+字符串数组中，大小存入
+sizeArr
+整数数组中，属性存入
+attribArr
+整数数组中。
+（
+2
+）
+r
+et = !FileFind("$MCGS_DIR_USER/test/find/*",nameArr,sizeArr,attribArr)
+，查找
+$MCGS_DIR_USER/test/find
+文件夹及子文件夹下所有的文件或目录，将查找结果的名字（包含路径）存入
+nameArr
+字符串数组中，大小存入
+sizeArr
+整数数组中，属性存入
+attribArr
+整数数组中。
+注意事项：
+strFilename
+必须以查条件结束，不能以
+”
+/
+”
+结束，否则结果返回
+0
+。
+!
+FileList
+(strPath,nameArr,sizeArr,attribArr)
+函数意义：
+获取指定路径下满足条件的文件和文件夹
+参
+数：
+strPath
+，字符串，输入，获取条件：需要获取的文件或文件夹所在的路径和条件
+(
+获取条件中可以包含文件通配符：
+*
+和
+?)
+nameArr
+，字符串数组，输出，函数调用成功后，保存查找结果的名称
+sizeArr
+，整数数组，输出，函数调用成功后，保存查找结果的大小，单位：
+bit
+attribArr
+，整数数组，输出，函数调用成功后，保存查找结果的属性：
+0:
+表示文件，
+1
+：表示文件夹，
+2
+：表示其它
+返 回 值：
+整数
+>=0
+，成功，返回当前路径下的文件和文件夹总个数
+< 0,
+失败
+失败返回值：
+= -206
+，源路径不存在
+= -209
+，输入路径错误
+= -1021
+，
+U
+盘未插入
+实
+例：
+r
+et = !FileList("$MCGS_DIR_USER/test/find/",nameArr,sizeArr,attribArr)
+，获取
+$MCGS_DIR_USER/test/find
+文件夹下的文件和文件夹，将查找结果的名字存入
+nameArr
+字符串数组中，大小存入
+sizeArr
+整数数组中，属性存入
+attribArr
+整数数组中。
+注意事项：
+若
+strPath
+为存在的文件夹路径，则默认获取条件为“
+*
+”，将获取该文件夹下的文件和文件夹的名称、大小和属性。
+!
+FileMove
+(strSource,strTarget)
+函数意义：
+将路径为
+strSource
+的文件移动并改名为路径
+strTarget
+的文件（支持文件夹移动）
+参
+数：
+strSource
+，字符串，输入，源文件路径
+strTarget
+，字符串，输入，目标文件路径
+返 回 值：
+整数
+= 0
+，成功
+< 0
+，失败
+失败返回值：
+= -201
+，目标路径与源路径相同
+= -203
+，读写失败
+= -205
+，磁盘空间不足
+= -206
+，源文件或路径不存在
+= -208
+，创建文件夹失败
+= -209
+，输入路径错误
+= -220
+，目标路径中存在与待创建文件夹同名的文件
+= -226
+，目标路径文件夹存在且不为空
+= -227
+，源路径为文件，目标路径下存在同名的文件夹
+= -228
+，源路径为文件夹，目标路径为文件或目标路径下存在同名的文件
+= -229
+，目标路径为源路径的子文件夹
+= -1021
+，
+U
+盘未插入
+实
+例：
+ret = !FileMove("$MCGS_DIR_USER/test/a.txt","$MCGS_DIR_USER/test/move/b.txt")
+将
+$MCGS_DIR_USER/test
+下的文件
+a.txt
+移动到
+$MCGS_DIR_USER/test/move
+并改名为
+b.txt
+。
+注意事项：
+1.
+若目标文件已存在，则将目标文件覆盖
+2.
+文件夹移动至文件夹，若目标文件夹下存在与源文件夹同名的文件夹且不为空时，返回
+-226
+，目标路径文件夹存在且不为空；若目标文件夹下存在与源文件夹同名的空文件夹，则会移动成功。
+3.
+不能将文件夹移动至文件，即
+strSource
+为文件夹路径，
+strTarget
+为存在的文件路径，将返回
+-228
+。
+4.
+不能将文件或文件夹拷贝至路径下，即目标路径为源路径的上一级目录，将返回
+-201
+。
+!
+FileSplit
+(strSourceFile,strTargetFile,FileSize)
+函数意义：
+将指定文件按指定大小分割为多个文件
+参
+数：
+strSourceFile
+，字符串，输入，需要分割的文件名路径
+strTargetFile
+，字符串，输入，分割后的文件名
+FileSize
+，整数，输入，指定分隔后的文件的最大大小，单位是
+MB
+返 回 值：
+整数
+> 0
+，成功，返回拆分后的文件个数。
+< 0
+，失败
+失败返回值：
+= -203
+，读写失败
+= -204
+，打开文件失败
+= -205
+，磁盘空间不足
+= -206
+，源文件或路径不存在
+= -209
+，输入路径错误
+= -216
+，参数无效
+= -221
+，源文件路径下存在与拆分后的文件同名的文件夹
+= -223
+，目标文件名输入不合法
+= -224
+，源路径类型不匹配
+= -1021
+，
+U
+盘未插入
+实
+例：
+ret = !FileSplit("$MCGS_DIR_USER/test/split.txt","new.txt",1)
+，将
+$MCGS_DIR_USER/test/
+下的文件
+split.txt
+拆分为多个文件，每个文件最大为
+1MB
+，并存放在
+$MCGS_DIR_USER/test/
+下，分别命名为
+new000.txt
+、
+new001.txt
+、
+new003.txt
+、
+new004.txt
+等。
+注意事项：
+1.strSourceFile
+不能为文件夹路径，否则返回源路径类型不匹配；
+2.strTargetFile
+为拆分后的文件名，不能包含“
+/
+”，否则返回
+-223
+，目标文件名输入不合法。
+!
+GetFreeDiskSpace
+()
+函数意义：
+读取空余存盘空间
+参
+数：
+NA
+返 回 值：
+整数
+>=0
+，成功，返回空余存盘空间值，单位
+MB
+< 0
+，失败
+失败返回值：
+= -202
+，获取磁盘信息失败
+实
+例：
+ret = !GetFreeDiskSpace()
+，
+ret
+等于空余存盘空间值。
+!
+FileWriteByBuffer
+(filePath,filePos,bufID,bufPos,bufLength)
+函数意义：
+将指定缓冲区指定位置开始的指定字节长度的数据写入指定的路径的文件的指定位置，覆盖原有的内容
+参
+数：
+filePath
+，字符串，输入，文件路径，路径不存在时直接创建
+filePos
+，整数，输入，指定文件写入的位置，
+-1
+表示写入到文件末尾
+bufID
+，整数，输入，唯一标识的缓冲区
+ID
+号
+bufPos
+，整数，输入，缓冲区位置（从
+0
+开始）
+bufLength
+，整数，输入，写入文件的缓冲区数据长度，
+-1
+表示指定位置开始的缓冲区所有的有效数据存入文件
+返 回 值：
+整数
+> 0
+，成功，返回实际写入文件数据的大小
+< 0
+，失败
+失败返回值：
+= -203
+，读写失败
+= -204
+，打开文件失败
+= -205
+，磁盘空间不足
+= -208
+，创建文件夹失败
+= -209
+，输入路径错误
+= -211
+，
+bufID
+无效
+= -212
+，
+buffer
+不存在
+= -213
+，访问
+buffer
+越界
+= -216
+，参数不正确
+= -218
+，缓冲区位置超过有效数据位置
+= -220
+，目标路径中存在与待创建文件夹同名的文件
+= -225
+，目标路径类型不匹配
+= -1021
+，
+U
+盘不存在
+实
+例：
+!BufferCreate(1,100,ENDIAN_LITTLE,TEXT_UTF8)
+，创建一个
+id
+为
+1
+，大小
+100
+，字节序列小端，编码格式
+"utf-8"
+的缓冲区；
+（
+1
+）
+ret = !FileWriteByBuffer("$MCGS_DIR_USER/test/writeBuffer.txt",0,1,5,10),
+将
+id
+为
+1
+的缓冲区，从
+5
+的位置开始，长度为
+10
+的数据写到
+$MCGS_DIR_USER/test/writeBuffer.txt
+文件偏移为
+0
+的位置，并返回
+10
+。
+（
+2
+）
+ret = !FileWriteByBuffer("$MCGS_DIR_USER/test/writeBuffer.txt",0,1,5,-1),
+将
+id
+为
+1
+的缓冲区，从
+5
+的位置开始，将缓冲区的数据全部写到
+$MCGS_DIR_USER/test/writeBuffer.txt
+文件偏移为
+0
+的位置，并返回缓冲区有效数据长度
+-5
+。
+（
+3
+）
+ret = !FileWriteByBuffer("$MCGS_DIR_USER/test/writeBuffer.txt",-1,1,5,-1),
+将
+id
+为
+1
+的缓冲区，从
+5
+的位置开始，将缓冲区的数据全部写到
+$MCGS_DIR_USER/test/writeBuffer.txt
+文件末尾的位置，并返回缓冲区有效数据长度
+-5
+。
+注意事项：
+filePath
+不能为文件夹路径，否则返回目标路径类型不匹配。
+!
+FileReadByBuffer
+(filePath,filePos,dataLength,bufID,bufPos)
+函数意义：
+加载指定文件指定位置开始的指定字节长度的数据写入指定的缓冲区的指定位置
+参
+数：
+filePath
+，字符串，输入，文件路径，文件不存在时，加载失败
+filePos
+，整数，输入，读取指定文件的位置
+dataLength
+，整数，输入，写入缓冲区数据长度，
+-1
+表示文件指定位置开始的全部的数据导入缓冲区
+bufID
+，整数，输入，唯一标识的缓冲区
+ID
+号
+bufPos
+，整数，输入，缓冲区位置（从
+0
+开始）
+返 回 值：
+整数
+> 0
+，成功，返回导入缓冲区数据的大小；若
+dataLength>0
+，且文件位置加
+dataLength
+不超过文件长度，返回
+dataLength
+，反之返回实际从文件位置到文件末尾的长度。
+< 0
+，失败
+失败返回值：
+= -203
+，读写失败
+= -204
+，打开文件失败
+= -206
+，源文件不存在
+= -208
+，创建文件夹失败
+= -209
+，输入路径错误
+= -211
+，
+bufID
+无效
+= -212
+，
+buffer
+不存在
+= -213
+，访问
+buffer
+越界
+= -216
+，参数不正确
+= -224
+，源路径类型不匹配
+= -230
+，文件指定位置超过文件总大小
+= -1021
+，
+U
+盘不存在
+实
+例：
+!BufferCreate(1,100,ENDIAN_LITTLE,TEXT_UTF8)
+，创建一个
+id
+为
+1
+，大小
+100
+，字节序列小端，编码格式
+"utf-8"
+的缓冲区；
+（
+1
+）
+ret = !FileReadByBuffer("$MCGS_DIR_USER/test/writeBuffer.txt",0,10,1,0),
+将
+$MCGS_DIR_USER/test/writeBuffer.txt
+文件偏移为
+0
+的位置，长度为
+10
+的数据导入
+id
+为
+1
+的缓冲区
+0
+的位置，返回
+10
+（
+2
+）
+ret = !FileReadByBuffer("$MCGS_DIR_USER/test/writeBuffer.txt",5,-1,1,0),
+将
+$MCGS_DIR_USER/test/writeBuffer.txt
+文件偏移为
+5
+的位置开始到文件末尾的数据全部导入
+id
+为
+1
+的缓冲区
+0
+的位置，返回文件大小减
+5
+（假设文件可全部导入缓冲区）。
+注意事项：
+filePath
+不能为文件夹路径，否则返回源路径类型不匹配。
+!
+FileWriteByStr
+(strFileName,strValue,mode,encode)
+函数意义：
+将字符串按照指定编码方式写入指定文件的指定位置
+参
+数：
+strFileName
+，字符串，输入，文件路径，文件不存在时创建
+strValue
+，字符串，输入，需要写入的字符串
+mode
+，枚举，输入，写入文件的方式：追加或创建追加，
+FILE_APPEND
+：表示追加，
+FILE_TRUNC
+：表示新建
+encode
+，枚举，输入，设置字符串的编码格式，
+TEXT_UTF8
+：表示
+utf-8
+，
+TEXT_UTF16
+：表示
+utf-16
+，
+TEXT_GBK
+：表示
+gbk
+返 回 值：
+整数
+,
+>= 0
+，成功，返回写入文件的字符串的长度
+< 0
+，失败
+失败返回值：
+= -203
+，读写失败
+= -204
+，打开文件失败
+= -205
+，磁盘空间不足
+= -208
+，创建文件夹失败
+= -209
+，输入路径错误
+= -216
+，参数无效
+= -220
+，目标路径中存在与待创建文件夹同名的文件
+= -225
+，目标路径类型不匹配
+= -1021
+，
+U
+盘未插入
+实
+例：
+（
+1
+）
+ret = !FileWriteByStr("$MCGS_DIR_USER/test/writeStr.txt","strValue",FILE_TRUNC,TEXT_UTF8)
+，将字符串“
+strValue
+”以
+utf-8
+的编码方式，创建追加的方式写入
+$MCGS_DIR_USER/test/writeStr.txt
+文件中，返回字符串
+utf-8
+编码的长度
+8
+。
+（
+2
+）
+ret = !FileWriteByStr("$MCGS_DIR_USER/test/writeStr.txt","strValue",FILE_TRUNC,TEXT_UTF16)
+，将字符串“
+strValue
+”以
+utf-16
+的编码方式，创建追加的方式写入
+$MCGS_DIR_USER/test/writeStr.txt
+文件中，返回字符串
+utf-16
+编码的长度
+16
+。
+（
+3
+）
+ret = !FileWriteByStr("$MCGS_DIR_USER/test/writeStr.txt","strValue",FILE_APPEND,TEXT_UTF16)
+，将字符串“
+strValue
+”以
+utf-16
+的编码方式，追加的方式写入
+$MCGS_DIR_USER/test/writeStr.txt
+文件中，返回字符串
+utf-16
+编码的长度
+16
+。
+注意事项：
+strFileName
+不能为文件夹路径，否则返回目标路径类型不匹配。
+!
+FileReadByStr
+(strFilename,filePos,strLength,strResultRef,encode)
+函数意义：
+从指定文件指定位置开始，按照指定编码方式读取指定字节的字符串，或一整行，或全部字符串并将结果保存到
+strResultRef
+变量中
+参
+数：
+strFilename
+，字符串，输入，文件路径
+filePos
+，整数，输入，设置读取文件内容起始位置
+strLength
+，整数，输入，获取的字符串长度，
+-1
+表示读取从文件指定位置到文件末尾的全部字符串；
+0
+表示从文件指定位置开始读取一行字符串（即读取到
+’
+\n
+’
+结束）；
+>0
+，表示从文件指定位置开始读取
+strLength
+个字节。
+strResultRef
+，字符串引用，输出，用于存放结果的字符串变量
+encode
+，枚举，输入，设置字符串的编码格式，
+TEXT_UTF8
+：表示
+utf-8
+，
+TEXT_UTF16
+：表示
+utf-16
+，
+TEXT_GBK
+：表示
+gbk
+返 回 值：
+整数
+> 0
+，成功，若
+strLength=-1
+或
+strLength=0
+，则返回获取的字符串的长度；若
+strLength>0
+，且文件位置加
+strLength
+不超过文件长度，返回
+strLength
+，反之返回实际从文件位置读取到文件末尾的长度。
+< 0
+，失败
+失败返回值：
+= -203
+，读写失败
+= -204
+，打开文件失败
+= -206
+，源文件或目录不存在
+= -209
+，输入路径错误
+= -216
+，参数无效
+= -224
+，源路径类型不匹配
+= -230
+，文件指定位置超过文件总大小
+= -1021
+，
+U
+盘未插入
+实
+例：
+（
+1
+）
+ret = !FileReadByStr("$MCGS_DIR_USER/test/readStr.txt",0,10,strResultRef,TEXT_UTF16)
+，从
+$MCGS_DIR_USER/test/
+路径下的文件
+readStr.txt
+的文件偏移为
+0
+位置开始，按照
+utf-16
+的编码方式读取
+10
+字节的字符串，将结果保存到
+strResultRef
+变量中，返回
+10
+。
+（
+3
+）
+ret = !FileReadByStr("$MCGS_DIR_USER/test/readStr.txt",0,10,strResultRef,TEXT_UTF8)
+，从
+$MCGS_DIR_USER/test/
+路径下的文件
+readStr.txt
+的文件偏移为
+0
+位置开始，按照
+utf-8
+的编码方式读取
+10
+字节的字符串，将结果保存到
+strResultRef
+变量中，返回
+10
+。
+（
+3
+）
+ret = !FileReadByStr("$MCGS_DIR_USER/test/readStr.txt",6,-1,strResultRef,TEXT_UTF16)
+，从
+$MCGS_DIR_USER/test/
+路径下的文件
+readStr.txt
+的文件偏移为
+6
+位置开始，按照
+utf-16
+的编码方式读取到文件末尾的字符串，将结果保存到
+strResultRef
+变量中，返回文件大小减
+6
+。
+（
+4
+）
+ret = !FileReadByStr("$MCGS_DIR_USER/test/readStr.txt",6,0,strResultRef,TEXT_UTF16)
+，从
+$MCGS_DIR_USER/test/
+路径下的文件
+readStr.txt
+的文件偏移为
+6
+位置开始，按照
+utf-16
+的编码方式读取到当前行的末尾的字符串，将结果保存到
+strResultRef
+变量中，返回实际读取到字符串的长度。
+注意事项：
+strFileName
+不能为文件夹路径，否则返回源路径类型不匹配。
+!
+GetFileSize
+(strFilePath)
+函数意义：
+获取指定文件的大小
+参
+数：
+strFilePath
+，字符串，输入，文件路径
+返 回 值：
+整数
+>=0
+，成功，返回获取到的文件大小，单位：字节
+< 0
+，失败
+失败返回值：
+= -206
+，源文件不存在
+= -209
+，输入路径错误
+= -1021
+，
+U
+盘未插入
+实
+例：
+ret = !GetFileSize("$MCGS_DIR_USER/test/testFile.txt")
+，获取
+$MCGS_DIR_USER/test/
+路径下的文件
+testFile.txt
+的大小，返回文件大小。
+注意事项：
+strFilePath
+不能为文件夹，否则返回输入路径错误。

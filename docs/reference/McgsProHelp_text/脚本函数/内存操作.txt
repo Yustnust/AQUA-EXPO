@@ -1,0 +1,1021 @@
+===  ===
+
+12.9
+内存操作函数
+此版本支持的内存操作函数有：
+Ø
+!
+BufferCreate
+(bufID,bufSize,byteOrder,encode)
+Ø
+!
+BufferClear(bufID)
+Ø
+!
+BufferDestory
+(bufID)
+Ø
+!
+GetBufferSize
+(bufID)
+Ø
+!
+BufferSetInt
+(bufID,pos,intValue,type)
+Ø
+!
+BufferSetFloat
+(bufID,pos,floatValue,type)
+Ø
+!
+BufferSetString
+(bufID,pos,strValue,saveLen)
+Ø
+!
+BufferGetInt
+(bufID,pos,intValueRef,type)
+Ø
+!
+BufferGetFloat
+(bufID,pos,floatValueRef,type)
+Ø
+!
+BufferGetString
+(bufID,pos,strValueRef,strLength)
+Ø
+!
+BufferWriteToCsvStr
+(bufID,bufPos,formatStr,count,csvStrRef)
+Ø
+!
+BufferReadFromCsvStr
+(bufID,bufPos,formatStr,count,csvStr)
+数据类型枚举表
+数据类型枚举
+含义
+BUF_DT_BUB
+8
+位
+  无符号二进制
+BUF_DT_BB
+8
+位
+  有符号二进制
+BUF_DT_BD
+8
+位
+2
+位
+BCD
+BUF_DT_WUB
+16
+位
+  无符号二进制
+BUF_DT_WB
+16
+位
+  有符号二进制
+BUF_DT_WD
+16
+位
+4
+位
+BCD
+BUF_DT_DUB
+32
+位
+  无符号二进制
+BUF_DT_DB
+32
+位
+  有符号二进制
+BUF_DT_DD
+32
+位
+8
+位
+BCD
+BUF_DT_DF
+32
+位
+  浮点数
+BUF_DT_LF
+64
+位
+  浮点数
+!
+BufferCreate
+(bufID,bufSize,byteOrder,encode)
+函数意义：
+创建一个指定大小、字节序列、编码格式的内存缓冲区
+参
+数：
+bufID
+，整数，输入，缓冲区
+ID
+，范围
+0~127
+；若指定
+ID
+的缓冲区已经存在，且缓冲区长度不一致，则重新调整到指定的长度，将原缓冲区的数据复制到新缓冲区，若新缓冲区小于旧缓冲区，数据被截断，若新缓冲区大于旧缓冲区，超过部分补
+0
+。
+bufSize
+，整数，输入，指定的字节长度，范围
+1~1024*1024
+byteOrder
+，枚举，输入，指定的字节序列。
+ENDIAN_LITTLE
+：表示小端，
+ENDIAN_BIG
+：表示大端
+encode
+，枚举，输入，指定的字符串编码格式。
+TEXT_UTF8
+：表示
+utf-8
+，
+TEXT_UTF16
+：表示
+utf-16
+，
+TEXT_GBK
+：表示
+gbk
+返 回 值：
+整数
+= 0
+，成功
+< 0
+，失败
+失败返回值：
+= -211
+，
+bufID
+无效
+= -214
+，
+bufSize
+过大，超过总大小（
+1M
+）
+= -215
+，
+buffer
+内存空间申请失败
+= -216
+，参数不正确
+实
+例：
+ret = !BufferCreate(1,100,ENDIAN_LITTLE,TEXT_UTF8)
+，创建一个
+id
+为
+1
+，大小
+100
+，字节序列小端，编码格式
+"utf-8"
+的缓冲区。
+注意事项：
+缓冲区个数最多为
+128
+个
+缓冲区总大小不超过
+1M
+!BufferClear
+(bufID)
+函数意义：
+清除缓冲区数据
+参
+数：
+bufID
+，整数，输入，唯一标识的缓冲区
+ID
+号
+返 回 值：
+整数
+=0
+，成功
+<0
+，失败
+失败返回值：
+=-211
+，
+bufID
+无效
+=-212
+，
+buffer
+不存在
+实
+例：
+ret = !BufferClear(1)
+，清除
+id
+为
+1
+的缓冲区数据。
+!
+BufferDestory
+(bufID)
+函数意义：
+释放指定缓冲区
+参
+数：
+bufID
+，整数，输入，唯一标识的缓冲区
+ID
+号
+返 回 值：
+整数
+= 0
+，成功
+< 0
+，失败
+失败返回值：
+= -211
+，
+bufID
+无效
+= -212
+，
+buffer
+不存在
+实
+例：
+ret =
+!BufferDestory(1)
+，释放
+id
+为
+1
+的缓冲区。
+注意事项：
+退出运行环境，创建的内存块全部释放。
+!
+GetBufferSize
+(bufID)
+函数意义：
+获取指定缓冲区的大小
+参
+数：
+bufID
+，整数，输入，唯一标识的缓冲区
+ID
+号
+返 回 值：
+整数
+> 0
+，成功，返回指定
+ID
+的缓冲区的大小
+< 0
+，失败
+失败返回值：
+= -211
+，
+bufID
+无效
+= -212
+，
+buffer
+不存在
+实
+例：
+ret = !GetBufferSize(1)
+，获取为
+id
+为
+1
+的缓冲区的大小，并返回。
+!
+BufferSetInt
+(bufID,pos,intValue,type)
+函数意义：
+设置指定缓冲区指定位置的整型值
+参
+数：
+bufID
+，整数，输入，唯一标识的缓冲区
+ID
+号
+pos
+，整数，输入，缓冲区位置（从
+0
+开始）
+intValue
+，整数，输入，设置的整型值
+type
+，枚举，输入，支持的数据类型：
+BUF_DT_BUB
+、
+BUF_DT_BB
+、
+BUF_DT_BD
+、
+BUF_DT_WUB
+、
+BUF_DT_WB
+、
+BUF_DT_WD
+、
+BUF_DT_DUB
+、
+BUF_DT_DB
+、
+BUF_DT_DD
+，具体含义参考
+数据类型枚举表。
+返 回 值：
+整数
+= 0
+，成功
+< 0
+，失败
+失败返回值：
+= -211
+，
+bufID
+无效
+= -212
+，
+buffer
+不存在
+= -213
+，访问
+buffer
+越界
+= -216
+，参数不正确
+实
+例：
+ret =
+!BufferSetInt(1,5,123,BUF_DT_WUB)
+，
+id
+为
+1
+的缓冲区，
+5
+的位置设置
+16
+位无符号整型值
+123
+!
+BufferSetFloat
+(bufID,pos,floatValue,type)
+函数意义：
+设置指定缓冲区指定位置的浮点值
+参
+数：
+bufID
+，整数，输入，唯一标识的缓冲区
+ID
+号
+pos
+，整数，输入，缓冲区位置（从
+0
+开始）
+floatValue
+，浮点数，设置的浮点值
+type
+，枚举，输入，支持的数据类型：
+BUF_DT_DUB
+、
+BUF_DT_DB
+、
+BUF_DT_DD
+、
+BUF_DT_DF
+、
+BUF_DT_LF
+，具体含义参考
+数据类型枚举表。
+返 回 值：
+整数
+= 0
+，成功
+< 0
+，失败
+失败返回值：
+= -211
+，
+bufID
+无效
+= -212
+，
+buffer
+不存在
+= -213
+，访问
+buffer
+越界
+= -216
+，参数不正确
+实
+例：
+ret =
+!BufferSetFloat(1,5,224.123,BUF_DT_DF)
+，
+id
+为
+1
+的缓冲区，
+5
+的位置设置
+32
+位浮点数
+224.123
+。
+注意事项：
+pos
+位置不能超过缓冲区的大小
+浮点的小数位直接取整，如：
+floatValue=5.0,type=DUB,
+则值为
+5
+!
+BufferSetString
+(bufID,pos,strValue,saveLen)
+函数意义：
+设置指定缓冲区指定位置的字符串
+参
+数：
+bufID
+，整数，输入，唯一标识的缓冲区
+ID
+号
+pos
+，整数，输入，缓冲区位置（从
+0
+开始）
+strValue
+，字符串，输入，设置的字符串
+saveLen
+，整数，输入
+,-1
+表示字符串全部存储到缓冲区
+,
+并补
+0
+（结束符：
+utf-8
+和
+gbk
+长度为
+1
+个字节，
+utf-16
+为
+2
+个字节），
+>0
+表示：字符串在缓冲区占用的存储大小是
+saveLen
+，若
+saveLen
+大于字符串实际长度，则多余部分补
+0
+，反之则截断。
+返 回 值：
+整数
+> 0
+，成功，
+saveLen=-1,
+时，若缓冲区是
+utf-8
+或
+gbk
+编码格式，则返回成功存储到缓冲区的字符串字节长度
++1
+（结束符长度为
+1
+），若缓冲区是
+utf-16
+编码格式，则返回成功存储到缓冲区的字符串字节长度
++2
+（结束符长度为
+2
+）；
+saveLen>0
+时，返回
+saveLen
+< 0
+，失败
+失败返回值：
+= -211
+，
+bufID
+无效
+= -212
+，
+buffer
+不存在
+= -213
+，访问
+buffer
+越界
+= -216
+，参数不正确
+实
+例：
+!BufferCreate(1,100,ENDIAN_LITTLE,TEXT_UTF16)
+，创建一个
+id
+为
+1
+，大小
+100
+，字节序列小端，编码格式
+"utf-16"
+的缓冲区。
+（
+1
+）
+ret = !BufferSetString(1,4,"testStr",16)
+，
+id
+为
+1
+的缓冲区，
+4
+的位置开始，长度为
+16
+的缓冲区存入字符串，并返回
+16
+。
+（
+2
+）
+ret = !BufferSetString(1,4,"testStr",8)
+，
+id
+为
+1
+的缓冲区，
+4
+的位置开始，长度为
+8
+的缓冲区存入字符串，返回
+8
+。
+（
+3
+）
+ret = !BufferSetString(1,4,"testStr",-1)
+，
+id
+为
+1
+的缓冲区，
+4
+的位置开始，将字符串全部存入缓冲区，并补结束符，返回
+16
+（字符串长度为
+14
+，结束符长度为
+2
+）。
+注意事项：
+!
+BufferGetInt
+(bufID,pos,intValueRef,type)
+函数意义：
+获取指定缓冲区指定位置的整型值
+参
+数：
+bufID
+，整数，输入，唯一标识的缓冲区
+ID
+号
+pos
+，整数，输入，缓冲区位置（从
+0
+开始）
+intValueRef
+，整数引用，输出，用于存放结果的整数变量
+type
+，枚举，输入，支持的数据类型：
+BUF_DT_BUB
+、
+BUF_DT_BB
+、
+BUF_DT_BD
+、
+BUF_DT_WUB
+、
+BUF_DT_WB
+、
+BUF_DT_WD
+、
+BUF_DT_DUB
+、
+BUF_DT_DB
+、
+BUF_DT_DD
+，具体含义参考
+数据类型枚举表。
+返 回 值：
+整数
+= 0
+，成功
+< 0
+，失败
+失败返回值：
+= -211
+，
+bufID
+无效
+= -212
+，
+buffer
+不存在
+= -213
+，访问
+buffer
+越界
+= -216
+，参数不正确
+= -218
+，缓冲区位置超过有效数据位置
+实
+例：
+ret =
+!BufferGetInt(1,5,intValueRef,BUF_DT_WUB)
+，获取
+id
+为
+1
+的缓冲区
+5
+的位置的
+16
+位无符号整型值，赋给变量
+intValueRef
+。
+!
+BufferGetFloat
+(bufID,pos,floatValueRef,type)
+函数意义：
+获取指定缓冲区指定位置的浮点值
+参
+数：
+bufID
+，整数，输入，唯一标识的缓冲区
+ID
+号
+pos
+，整数，输入，缓冲区位置（从
+0
+开始）
+floatValueRef
+，浮点数引用，输出，用于存放结果的浮点数变量
+type
+，枚举，输入，支持的数据类型：
+BUF_DT_DUB
+、
+BUF_DT_DB
+、
+BUF_DT_DD
+、
+BUF_DT_DF
+、
+BUF_DT_LF
+，具体含义参考
+数据类型枚举表。
+返 回 值：
+整数
+= 0
+，成功
+< 0
+，失败
+失败返回值：
+= -211
+，
+bufID
+无效
+= -212
+，
+buffer
+不存在
+= -213
+，访问
+buffer
+越界
+= -216
+，参数不正确
+= -218
+，缓冲区位置超过有效数据位置
+实
+例：
+ret =
+!BufferGetFloat(1,5,floatValueRef,BUF_DT_DF)
+，获取
+id
+为
+1
+的缓冲区
+5
+的位置的
+32
+位浮点数，赋给变量
+floatValueRef
+。
+注意事项：
+!
+BufferGetString
+(bufID,pos,strValueRef,strLength)
+函数意义：
+获取指定缓冲区指定位置的字符串
+参
+数：
+bufID
+，整数，输入，唯一标识的缓冲区
+ID
+号
+pos
+，整数，输入，缓冲区位置（从
+0
+开始）
+strValueRef
+，字符串引用，输出，用于存放结果的字符串变量
+strLength
+，整数，输入，
+-1
+表示获取一个完整的字符串，
+>0
+表示：读取
+strLength
+字节到字符串。
+返 回 值：
+整数
+> 0
+，成功，
+strLength=-1,
+时，若缓冲区是
+utf-8
+或
+gbk
+编码格式，则返回成功获取到缓冲区的字符串字节长度
++1
+（结束符长度为
+1
+），若缓冲区是
+utf-16
+编码格式，则返回成功获取到缓冲区的字符串字节长度
++2
+（结束符长度为
+2
+）；
+strLength>0
+时，返回
+strLength
+< 0
+，失败
+失败返回值：
+= -211
+，
+bufID
+无效
+= -212
+，
+buffer
+不存在
+= -213
+，访问
+buffer
+越界
+= -216
+，参数不正确
+= -218
+，缓冲区位置超过有效数据位置
+实
+例：
+!BufferCreate(1,100,ENDIAN_LITTLE,TEXT_UTF16)
+，创建一个
+id
+为
+1
+，大小
+100
+，字节序列小端，编码格式
+"utf-16"
+的缓冲区。
+（
+1
+）
+ret = !BufferGetString(1,4,strValueRef,20)
+，获取
+id
+为
+1
+的缓冲区
+4
+的位置开始的字符串，字符串长度为
+20
+，赋给变量
+strValueRef
+；并返回
+20
+。
+（
+2
+）
+ret = !BufferGetString(1,4,strValueRef,-1)
+，获取
+id
+为
+1
+的缓冲区
+4
+的位置开始到结束符结束的字符串，赋给变量
+strValueRef
+；返回获取字符串实际长度
++2
+。
+注意事项：
+!
+BufferWriteToCsvStr
+(bufID,bufPos,formatStr,count,csvStrRef)
+函数意义：
+将指定的缓冲区的指定位置以指定格式的导出到字符串变量中
+参
+数：
+bufID
+，整数，输入，唯一标识的缓冲区
+ID
+号
+bufPos
+，整数，缓冲区位置（从
+0
+开始）
+formatStr
+，字符串，输入，字符串格式如：
+"[BUB][DB][DF][DF][STR_12]"
+表示每一行以
+8
+位无符号二进制
++32
+位有符号二进制
++32
+位浮点数
++32
+位浮点数
++12
+个字节的字符串，
+[STR_-1]
+表示字符串读取到结尾符结束
+count
+，整数，输入，导出指定格式的组数，即
+csv
+字符串的行数，
+-1
+表示从指定位置开始全部有效数据导出到字符串。
+csvStrRef
+，字符串引用，输出，导出指定的
+CSV
+字符串变量
+返 回 值：
+整数
+> 0
+，成功，返回写入字符串的行数
+< 0
+，失败
+失败返回值：
+= -211
+，
+bufID
+无效
+= -212
+，
+buffer
+不存在
+= -213
+，访问
+buffer
+越界
+= -216
+，参数不正确
+= -217
+，
+formatStr
+格式或内容有误
+= -218
+，缓冲区位置超过有效数据位置
+实
+例：
+ret =
+!BufferWriteToCsvStr(0,10,"[BUB][DB][DF][DF][STR_12]",2,csvStrRef)
+，将
+id
+为
+0
+的缓冲区，
+10
+的位置开始的数据，按
+8
+位无符号二进制、
+32
+位有符号二进制、
+32
+位浮点数、
+32
+位浮点数、
+12
+个字节的字符串导出到
+csvStrRef
+字符串变量中。
+注意事项：
+导出字符串前，将判断缓冲区中含有有效数据的长度，按输入的字符串格式预算能导出的行数，按实际能导出的有效整行导出。
+!
+BufferReadFromCsvStr
+(bufID,bufPos,formatStr,count,csvStr)
+函数意义：
+将指定字符串按照字节格式的加载到缓冲区中
+参
+数：
+bufID
+，整数，输入，唯一标识的缓冲区
+ID
+号
+bufPos
+，整数，缓冲区位置（从
+0
+开始）
+formatStr
+，字符串，输入，字符串格式如：
+"[BUB][DB][DF][LF][STR_12]"
+表示每一行以
+8
+位无符号二进制
++32
+位有符号二进制
++32
+位浮点数
++64
+位浮点数
++12
+个字节的字符串，
+[STR_-1]
+表示字符串读取到结尾符结束
+count
+，整数，输入，导入指定格式的组数，即
+csv
+字符串的行数，
+-1
+表示将字符串全部加载到缓冲区指定位置
+csvStr
+，字符串，输入，加载到缓冲区的字符串
+返 回 值：
+整数
+> 0
+，成功，返回加载到缓冲区的字符串行数
+< 0
+，失败
+失败返回值：
+= -211
+，
+bufID
+无效
+= -212
+，
+buffer
+不存在
+= -213
+，访问
+buffer
+越界
+= -216
+，参数不正确
+= -217
+，
+formatStr
+格式或内容有误
+实
+例：
+ret =
+!BufferReadFromCsvStr(0,10,"[BUB][DB][DF][LF][STR_12]",2,"7224,7224,7224.2,7224.2,"testStrings"")
+，将字符串按
+','
+拆分，按照
+8
+位无符号二进制
++32
+位有符号二进制
++32
+位浮点数
++64
+位浮点数
++12
+个字节的字符串加载到
+id
+为
+0
+的缓冲区的
+10
+的位置开始。
+注意事项：
+加载到缓冲区前，根据输入的期望导入行数（若超过文件实际行数，则按文件实际的行数导入）和字符串格式，判断期望导入的字符串大小是否超过缓冲区大小，若超过，返回
+buffer
+越界错误。
