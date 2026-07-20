@@ -1,0 +1,620 @@
+﻿# AQUA-EXPO项目 McgsPro 3.3.6 变量导入CSV v2.0
+# 项目: 8套缸单元药液配置加注控制系统
+# PLC: S7-200 SMART x 8台 (192.168.2.101~108)
+# HMI: 昆仑通态McgsPro 3.3.6 (TPC触摸屏)
+# 生成日期: 2026-07-20
+# 版本: v2.0 (AQEX-36 VD参数区重排)
+# 格式: 通道类型,数据类型,通道地址,通道个数,读写方式,连接变量,备注
+# 变量数: 每台PLC 75个 x 8台 = 600通道
+# 去重说明: VD116/VD308/VD358在HMI参数和PLC实测值中重复,已去重保留读写版本
+# 通道类型: V区变量 | 数据类型: 第XX位(V位)/8位无符号(VB)/16位有符号二进制(VW)/32位浮点数(VD)
+#
+通道类型,数据类型,通道地址,通道个数,读写方式,连接变量,备注
+# ===== Unit 1 (PLC_01, 192.168.2.101) =====
+V区变量,第00位,0,1,读写,U1_CMD_Start,启动命令
+V区变量,第01位,0,1,读写,U1_Reserved_V0_1,备用(预留)
+V区变量,第02位,0,1,读写,U1_CMD_Stop,停止命令
+V区变量,第03位,0,1,读写,U1_CMD_Ack,报警确认
+V区变量,第04位,0,1,读写,U1_CMD_Mute,消音
+V区变量,第05位,0,1,读写,U1_Reserved_V0_5,备用(预留)
+V区变量,第06位,0,1,读写,U1_Reserved_V0_6,备用(预留)
+V区变量,第07位,0,1,读写,U1_CMD_RelayAck,继电器故障确认
+V区变量,第00位,1,1,只读,U1_STA_StartAck,启动应答
+V区变量,第01位,1,1,只读,U1_Reserved_V1_1,备用(预留)
+V区变量,第02位,1,1,只读,U1_STA_StopAck,停止应答
+V区变量,第03位,1,1,只读,U1_STA_AlarmAckDone,报警确认完成
+V区变量,第04位,1,1,只读,U1_STA_MuteDone,消音完成
+V区变量,第05位,1,1,只读,U1_Reserved_V1_5,备用(预留)
+V区变量,第06位,1,1,只读,U1_TankTopFull,上缸满
+V区变量,第07位,1,1,只读,U1_TankBottomFull,下缸满
+V区变量,16位有符号二进制,2,1,只读,U1_VW2_StateMachine,状态机(S0~S7/S_ERROR)
+V区变量,16位有符号二进制,4,1,只读,U1_VW4_PumpStatus,注射泵状态码
+V区变量,16位有符号二进制,6,1,只读,U1_VW6_AlarmCode,报警码
+V区变量,16位有符号二进制,8,1,只读,U1_VW8_RoundCount,实验轮次
+V区变量,32位浮点数,10,1,读写,U1_VD_C_Set,目标浓度(5.0)
+V区变量,32位浮点数,14,1,读写,U1_VD_C_Stock,母液浓度(100.0)
+V区变量,32位浮点数,350,1,读写,U1_VD_StepRes,步进分辨率(0.5) AQEX-36:VD18→VD350
+V区变量,32位浮点数,354,1,读写,U1_VD_CycleSet,换水周期min(3.0) AQEX-36:VD20→VD354
+V区变量,32位浮点数,24,1,读写,U1_VD_ExpTarget,实验目标min(5.0)
+V区变量,32位浮点数,28,1,读写,U1_VD_PreMixTime,预循环(12.0)
+V区变量,32位浮点数,32,1,读写,U1_VD_PreMixTime_MinSafe,预循环最小安全值(3.0)
+V区变量,32位浮点数,36,1,读写,U1_VD_RestTime,静止(6.0)
+V区变量,32位浮点数,40,1,读写,U1_VD_RestTime_Min,静止最小值(1.5)
+V区变量,32位浮点数,44,1,读写,U1_VD_CycleExtend_Max,换水周期顺延上限(0.5)
+V区变量,32位浮点数,358,1,读写,U1_VD_Timeout_ValveA,阀A超时(2.0) AQEX-36:VD48→VD358
+V区变量,32位浮点数,362,1,读写,U1_VD_Timeout_ValveB,阀B超时(2.0) AQEX-36:VD50→VD362
+V区变量,32位浮点数,54,1,读写,U1_VD_Timeout_ValveC,阀C超时(2.0)
+V区变量,32位浮点数,58,1,读写,U1_VD_Timeout_Pump1,泵1超时(2.0)
+V区变量,32位浮点数,62,1,读写,U1_VD_Timeout_Pump2,泵2超时(2.0)
+V区变量,32位浮点数,66,1,读写,U1_VD_Delay_ValveA_Verify,阀A关闭延时验证(0.5)
+V区变量,32位浮点数,112,1,读写,U1_VD_T_Rolling,T滚动实测(20.0)
+V区变量,32位浮点数,116,1,读写,U1_VD_S6_Rolling,S6滚动实测(0.0)
+V区变量,32位浮点数,120,1,读写,U1_VD_S2_Target,S2目标(12.0)
+V区变量,32位浮点数,124,1,读写,U1_VD_RestTime_Target,静止目标(6.0)
+V区变量,32位浮点数,174,1,读写,U1_VD_S3_Estimate,S3估算(5.0)
+V区变量,32位浮点数,316,1,读写,U1_VD_TargetInletVolume,目标进水量(10.0)
+V区变量,32位浮点数,82,1,读写,U1_VD_FlowMeter_Snapshot,流量计快照(0.0)
+V区变量,32位浮点数,308,1,读写,U1_VD_FlowMeter_CloseSnapshot,关阀快照(0.0)
+V区变量,32位浮点数,70,1,只读,U1_VD_S1_Actual,S1实测时长
+V区变量,32位浮点数,74,1,只读,U1_VD_S2_Actual,S2实测时长
+V区变量,32位浮点数,78,1,只读,U1_VD_S6_Actual,S6实测时长
+V区变量,32位浮点数,86,1,只读,U1_VD_FlowCum,流量计累计
+V区变量,32位浮点数,90,1,只读,U1_VD_FlowDiff,流量计差值
+V区变量,32位浮点数,102,1,只读,U1_VD_Dose_Steps,加药步数
+V区变量,32位浮点数,150,1,只读,U1_VD_Available,剩余可用时间
+V区变量,32位浮点数,154,1,只读,U1_VD_Corr_Needed,纠偏Needed
+V区变量,32位浮点数,178,1,只读,U1_VD_S5_Elapsed,S5累计运行
+V区变量,32位浮点数,312,1,只读,U1_VD_LeakDiff,内漏差值
+V区变量,32位浮点数,328,1,只读,U1_VD_Timeout_ValveC_x10,阀C超时×10
+V区变量,32位浮点数,370,1,只读,U1_VD_Vol_Target,加药目标体积 AQEX-36:VD98→VD370
+V区变量,8位无符号,300,1,只读,U1_VB300_AlarmByte0,报警字节0(漫溢+急停)
+V区变量,8位无符号,301,1,只读,U1_VB301_AlarmByte1,报警字节1(阀A诊断)
+V区变量,8位无符号,302,1,只读,U1_VB302_AlarmByte2,报警字节2(阀B诊断)
+V区变量,8位无符号,303,1,只读,U1_VB303_AlarmByte3,报警字节3(其他)
+V区变量,第04位,2,1,读写,U1_Manual_ValveA,阀A手动
+V区变量,第05位,2,1,读写,U1_Manual_ValveB,阀B手动
+V区变量,第06位,2,1,读写,U1_Manual_ValveC,阀C手动
+V区变量,第07位,2,1,读写,U1_Manual_Pump1,泵1手动
+V区变量,第00位,3,1,读写,U1_Manual_Pump2,泵2手动
+V区变量,第01位,3,1,读写,U1_Manual_Aspirate,抽液
+V区变量,第02位,3,1,读写,U1_Manual_Dispense,排液
+V区变量,第03位,3,1,读写,U1_Manual_Reset,复位
+V区变量,16位有符号二进制,204,1,读写,U1_MB_Pump_Aspirate,抽液步数
+V区变量,16位有符号二进制,206,1,读写,U1_MB_Pump_Dispense,排液步数
+V区变量,16位有符号二进制,208,1,读写,U1_MB_Pump_Speed,泵速度
+V区变量,16位有符号二进制,210,1,读写,U1_MB_Pump_Status,泵状态
+V区变量,32位浮点数,366,1,只读,U1_VD_ExpDuration_Accum,实验累计时长min AQEX-36:VD96→VD366
+V区变量,16位有符号二进制,182,1,读写,U1_VW_Corr_Mode,纠偏模式
+V区变量,16位有符号二进制,184,1,读写,U1_VW_Corr_Result,纠偏结果
+# ===== Unit 2 (PLC_02, 192.168.2.102) =====
+V区变量,第00位,0,1,读写,U2_CMD_Start,启动命令
+V区变量,第01位,0,1,读写,U2_Reserved_V0_1,备用(预留)
+V区变量,第02位,0,1,读写,U2_CMD_Stop,停止命令
+V区变量,第03位,0,1,读写,U2_CMD_Ack,报警确认
+V区变量,第04位,0,1,读写,U2_CMD_Mute,消音
+V区变量,第05位,0,1,读写,U2_Reserved_V0_5,备用(预留)
+V区变量,第06位,0,1,读写,U2_Reserved_V0_6,备用(预留)
+V区变量,第07位,0,1,读写,U2_CMD_RelayAck,继电器故障确认
+V区变量,第00位,1,1,只读,U2_STA_StartAck,启动应答
+V区变量,第01位,1,1,只读,U2_Reserved_V1_1,备用(预留)
+V区变量,第02位,1,1,只读,U2_STA_StopAck,停止应答
+V区变量,第03位,1,1,只读,U2_STA_AlarmAckDone,报警确认完成
+V区变量,第04位,1,1,只读,U2_STA_MuteDone,消音完成
+V区变量,第05位,1,1,只读,U2_Reserved_V1_5,备用(预留)
+V区变量,第06位,1,1,只读,U2_TankTopFull,上缸满
+V区变量,第07位,1,1,只读,U2_TankBottomFull,下缸满
+V区变量,16位有符号二进制,2,1,只读,U2_VW2_StateMachine,状态机(S0~S7/S_ERROR)
+V区变量,16位有符号二进制,4,1,只读,U2_VW4_PumpStatus,注射泵状态码
+V区变量,16位有符号二进制,6,1,只读,U2_VW6_AlarmCode,报警码
+V区变量,16位有符号二进制,8,1,只读,U2_VW8_RoundCount,实验轮次
+V区变量,32位浮点数,10,1,读写,U2_VD_C_Set,目标浓度(5.0)
+V区变量,32位浮点数,14,1,读写,U2_VD_C_Stock,母液浓度(100.0)
+V区变量,32位浮点数,350,1,读写,U2_VD_StepRes,步进分辨率(0.5) AQEX-36:VD18→VD350
+V区变量,32位浮点数,354,1,读写,U2_VD_CycleSet,换水周期min(3.0) AQEX-36:VD20→VD354
+V区变量,32位浮点数,24,1,读写,U2_VD_ExpTarget,实验目标min(5.0)
+V区变量,32位浮点数,28,1,读写,U2_VD_PreMixTime,预循环(12.0)
+V区变量,32位浮点数,32,1,读写,U2_VD_PreMixTime_MinSafe,预循环最小安全值(3.0)
+V区变量,32位浮点数,36,1,读写,U2_VD_RestTime,静止(6.0)
+V区变量,32位浮点数,40,1,读写,U2_VD_RestTime_Min,静止最小值(1.5)
+V区变量,32位浮点数,44,1,读写,U2_VD_CycleExtend_Max,换水周期顺延上限(0.5)
+V区变量,32位浮点数,358,1,读写,U2_VD_Timeout_ValveA,阀A超时(2.0) AQEX-36:VD48→VD358
+V区变量,32位浮点数,362,1,读写,U2_VD_Timeout_ValveB,阀B超时(2.0) AQEX-36:VD50→VD362
+V区变量,32位浮点数,54,1,读写,U2_VD_Timeout_ValveC,阀C超时(2.0)
+V区变量,32位浮点数,58,1,读写,U2_VD_Timeout_Pump1,泵1超时(2.0)
+V区变量,32位浮点数,62,1,读写,U2_VD_Timeout_Pump2,泵2超时(2.0)
+V区变量,32位浮点数,66,1,读写,U2_VD_Delay_ValveA_Verify,阀A关闭延时验证(0.5)
+V区变量,32位浮点数,112,1,读写,U2_VD_T_Rolling,T滚动实测(20.0)
+V区变量,32位浮点数,116,1,读写,U2_VD_S6_Rolling,S6滚动实测(0.0)
+V区变量,32位浮点数,120,1,读写,U2_VD_S2_Target,S2目标(12.0)
+V区变量,32位浮点数,124,1,读写,U2_VD_RestTime_Target,静止目标(6.0)
+V区变量,32位浮点数,174,1,读写,U2_VD_S3_Estimate,S3估算(5.0)
+V区变量,32位浮点数,316,1,读写,U2_VD_TargetInletVolume,目标进水量(10.0)
+V区变量,32位浮点数,82,1,读写,U2_VD_FlowMeter_Snapshot,流量计快照(0.0)
+V区变量,32位浮点数,308,1,读写,U2_VD_FlowMeter_CloseSnapshot,关阀快照(0.0)
+V区变量,32位浮点数,70,1,只读,U2_VD_S1_Actual,S1实测时长
+V区变量,32位浮点数,74,1,只读,U2_VD_S2_Actual,S2实测时长
+V区变量,32位浮点数,78,1,只读,U2_VD_S6_Actual,S6实测时长
+V区变量,32位浮点数,86,1,只读,U2_VD_FlowCum,流量计累计
+V区变量,32位浮点数,90,1,只读,U2_VD_FlowDiff,流量计差值
+V区变量,32位浮点数,102,1,只读,U2_VD_Dose_Steps,加药步数
+V区变量,32位浮点数,150,1,只读,U2_VD_Available,剩余可用时间
+V区变量,32位浮点数,154,1,只读,U2_VD_Corr_Needed,纠偏Needed
+V区变量,32位浮点数,178,1,只读,U2_VD_S5_Elapsed,S5累计运行
+V区变量,32位浮点数,312,1,只读,U2_VD_LeakDiff,内漏差值
+V区变量,32位浮点数,328,1,只读,U2_VD_Timeout_ValveC_x10,阀C超时×10
+V区变量,32位浮点数,370,1,只读,U2_VD_Vol_Target,加药目标体积 AQEX-36:VD98→VD370
+V区变量,8位无符号,300,1,只读,U2_VB300_AlarmByte0,报警字节0(漫溢+急停)
+V区变量,8位无符号,301,1,只读,U2_VB301_AlarmByte1,报警字节1(阀A诊断)
+V区变量,8位无符号,302,1,只读,U2_VB302_AlarmByte2,报警字节2(阀B诊断)
+V区变量,8位无符号,303,1,只读,U2_VB303_AlarmByte3,报警字节3(其他)
+V区变量,第04位,2,1,读写,U2_Manual_ValveA,阀A手动
+V区变量,第05位,2,1,读写,U2_Manual_ValveB,阀B手动
+V区变量,第06位,2,1,读写,U2_Manual_ValveC,阀C手动
+V区变量,第07位,2,1,读写,U2_Manual_Pump1,泵1手动
+V区变量,第00位,3,1,读写,U2_Manual_Pump2,泵2手动
+V区变量,第01位,3,1,读写,U2_Manual_Aspirate,抽液
+V区变量,第02位,3,1,读写,U2_Manual_Dispense,排液
+V区变量,第03位,3,1,读写,U2_Manual_Reset,复位
+V区变量,16位有符号二进制,204,1,读写,U2_MB_Pump_Aspirate,抽液步数
+V区变量,16位有符号二进制,206,1,读写,U2_MB_Pump_Dispense,排液步数
+V区变量,16位有符号二进制,208,1,读写,U2_MB_Pump_Speed,泵速度
+V区变量,16位有符号二进制,210,1,读写,U2_MB_Pump_Status,泵状态
+V区变量,32位浮点数,366,1,只读,U2_VD_ExpDuration_Accum,实验累计时长min AQEX-36:VD96→VD366
+V区变量,16位有符号二进制,182,1,读写,U2_VW_Corr_Mode,纠偏模式
+V区变量,16位有符号二进制,184,1,读写,U2_VW_Corr_Result,纠偏结果
+# ===== Unit 3 (PLC_03, 192.168.2.103) =====
+V区变量,第00位,0,1,读写,U3_CMD_Start,启动命令
+V区变量,第01位,0,1,读写,U3_Reserved_V0_1,备用(预留)
+V区变量,第02位,0,1,读写,U3_CMD_Stop,停止命令
+V区变量,第03位,0,1,读写,U3_CMD_Ack,报警确认
+V区变量,第04位,0,1,读写,U3_CMD_Mute,消音
+V区变量,第05位,0,1,读写,U3_Reserved_V0_5,备用(预留)
+V区变量,第06位,0,1,读写,U3_Reserved_V0_6,备用(预留)
+V区变量,第07位,0,1,读写,U3_CMD_RelayAck,继电器故障确认
+V区变量,第00位,1,1,只读,U3_STA_StartAck,启动应答
+V区变量,第01位,1,1,只读,U3_Reserved_V1_1,备用(预留)
+V区变量,第02位,1,1,只读,U3_STA_StopAck,停止应答
+V区变量,第03位,1,1,只读,U3_STA_AlarmAckDone,报警确认完成
+V区变量,第04位,1,1,只读,U3_STA_MuteDone,消音完成
+V区变量,第05位,1,1,只读,U3_Reserved_V1_5,备用(预留)
+V区变量,第06位,1,1,只读,U3_TankTopFull,上缸满
+V区变量,第07位,1,1,只读,U3_TankBottomFull,下缸满
+V区变量,16位有符号二进制,2,1,只读,U3_VW2_StateMachine,状态机(S0~S7/S_ERROR)
+V区变量,16位有符号二进制,4,1,只读,U3_VW4_PumpStatus,注射泵状态码
+V区变量,16位有符号二进制,6,1,只读,U3_VW6_AlarmCode,报警码
+V区变量,16位有符号二进制,8,1,只读,U3_VW8_RoundCount,实验轮次
+V区变量,32位浮点数,10,1,读写,U3_VD_C_Set,目标浓度(5.0)
+V区变量,32位浮点数,14,1,读写,U3_VD_C_Stock,母液浓度(100.0)
+V区变量,32位浮点数,350,1,读写,U3_VD_StepRes,步进分辨率(0.5) AQEX-36:VD18→VD350
+V区变量,32位浮点数,354,1,读写,U3_VD_CycleSet,换水周期min(3.0) AQEX-36:VD20→VD354
+V区变量,32位浮点数,24,1,读写,U3_VD_ExpTarget,实验目标min(5.0)
+V区变量,32位浮点数,28,1,读写,U3_VD_PreMixTime,预循环(12.0)
+V区变量,32位浮点数,32,1,读写,U3_VD_PreMixTime_MinSafe,预循环最小安全值(3.0)
+V区变量,32位浮点数,36,1,读写,U3_VD_RestTime,静止(6.0)
+V区变量,32位浮点数,40,1,读写,U3_VD_RestTime_Min,静止最小值(1.5)
+V区变量,32位浮点数,44,1,读写,U3_VD_CycleExtend_Max,换水周期顺延上限(0.5)
+V区变量,32位浮点数,358,1,读写,U3_VD_Timeout_ValveA,阀A超时(2.0) AQEX-36:VD48→VD358
+V区变量,32位浮点数,362,1,读写,U3_VD_Timeout_ValveB,阀B超时(2.0) AQEX-36:VD50→VD362
+V区变量,32位浮点数,54,1,读写,U3_VD_Timeout_ValveC,阀C超时(2.0)
+V区变量,32位浮点数,58,1,读写,U3_VD_Timeout_Pump1,泵1超时(2.0)
+V区变量,32位浮点数,62,1,读写,U3_VD_Timeout_Pump2,泵2超时(2.0)
+V区变量,32位浮点数,66,1,读写,U3_VD_Delay_ValveA_Verify,阀A关闭延时验证(0.5)
+V区变量,32位浮点数,112,1,读写,U3_VD_T_Rolling,T滚动实测(20.0)
+V区变量,32位浮点数,116,1,读写,U3_VD_S6_Rolling,S6滚动实测(0.0)
+V区变量,32位浮点数,120,1,读写,U3_VD_S2_Target,S2目标(12.0)
+V区变量,32位浮点数,124,1,读写,U3_VD_RestTime_Target,静止目标(6.0)
+V区变量,32位浮点数,174,1,读写,U3_VD_S3_Estimate,S3估算(5.0)
+V区变量,32位浮点数,316,1,读写,U3_VD_TargetInletVolume,目标进水量(10.0)
+V区变量,32位浮点数,82,1,读写,U3_VD_FlowMeter_Snapshot,流量计快照(0.0)
+V区变量,32位浮点数,308,1,读写,U3_VD_FlowMeter_CloseSnapshot,关阀快照(0.0)
+V区变量,32位浮点数,70,1,只读,U3_VD_S1_Actual,S1实测时长
+V区变量,32位浮点数,74,1,只读,U3_VD_S2_Actual,S2实测时长
+V区变量,32位浮点数,78,1,只读,U3_VD_S6_Actual,S6实测时长
+V区变量,32位浮点数,86,1,只读,U3_VD_FlowCum,流量计累计
+V区变量,32位浮点数,90,1,只读,U3_VD_FlowDiff,流量计差值
+V区变量,32位浮点数,102,1,只读,U3_VD_Dose_Steps,加药步数
+V区变量,32位浮点数,150,1,只读,U3_VD_Available,剩余可用时间
+V区变量,32位浮点数,154,1,只读,U3_VD_Corr_Needed,纠偏Needed
+V区变量,32位浮点数,178,1,只读,U3_VD_S5_Elapsed,S5累计运行
+V区变量,32位浮点数,312,1,只读,U3_VD_LeakDiff,内漏差值
+V区变量,32位浮点数,328,1,只读,U3_VD_Timeout_ValveC_x10,阀C超时×10
+V区变量,32位浮点数,370,1,只读,U3_VD_Vol_Target,加药目标体积 AQEX-36:VD98→VD370
+V区变量,8位无符号,300,1,只读,U3_VB300_AlarmByte0,报警字节0(漫溢+急停)
+V区变量,8位无符号,301,1,只读,U3_VB301_AlarmByte1,报警字节1(阀A诊断)
+V区变量,8位无符号,302,1,只读,U3_VB302_AlarmByte2,报警字节2(阀B诊断)
+V区变量,8位无符号,303,1,只读,U3_VB303_AlarmByte3,报警字节3(其他)
+V区变量,第04位,2,1,读写,U3_Manual_ValveA,阀A手动
+V区变量,第05位,2,1,读写,U3_Manual_ValveB,阀B手动
+V区变量,第06位,2,1,读写,U3_Manual_ValveC,阀C手动
+V区变量,第07位,2,1,读写,U3_Manual_Pump1,泵1手动
+V区变量,第00位,3,1,读写,U3_Manual_Pump2,泵2手动
+V区变量,第01位,3,1,读写,U3_Manual_Aspirate,抽液
+V区变量,第02位,3,1,读写,U3_Manual_Dispense,排液
+V区变量,第03位,3,1,读写,U3_Manual_Reset,复位
+V区变量,16位有符号二进制,204,1,读写,U3_MB_Pump_Aspirate,抽液步数
+V区变量,16位有符号二进制,206,1,读写,U3_MB_Pump_Dispense,排液步数
+V区变量,16位有符号二进制,208,1,读写,U3_MB_Pump_Speed,泵速度
+V区变量,16位有符号二进制,210,1,读写,U3_MB_Pump_Status,泵状态
+V区变量,32位浮点数,366,1,只读,U3_VD_ExpDuration_Accum,实验累计时长min AQEX-36:VD96→VD366
+V区变量,16位有符号二进制,182,1,读写,U3_VW_Corr_Mode,纠偏模式
+V区变量,16位有符号二进制,184,1,读写,U3_VW_Corr_Result,纠偏结果
+# ===== Unit 4 (PLC_04, 192.168.2.104) =====
+V区变量,第00位,0,1,读写,U4_CMD_Start,启动命令
+V区变量,第01位,0,1,读写,U4_Reserved_V0_1,备用(预留)
+V区变量,第02位,0,1,读写,U4_CMD_Stop,停止命令
+V区变量,第03位,0,1,读写,U4_CMD_Ack,报警确认
+V区变量,第04位,0,1,读写,U4_CMD_Mute,消音
+V区变量,第05位,0,1,读写,U4_Reserved_V0_5,备用(预留)
+V区变量,第06位,0,1,读写,U4_Reserved_V0_6,备用(预留)
+V区变量,第07位,0,1,读写,U4_CMD_RelayAck,继电器故障确认
+V区变量,第00位,1,1,只读,U4_STA_StartAck,启动应答
+V区变量,第01位,1,1,只读,U4_Reserved_V1_1,备用(预留)
+V区变量,第02位,1,1,只读,U4_STA_StopAck,停止应答
+V区变量,第03位,1,1,只读,U4_STA_AlarmAckDone,报警确认完成
+V区变量,第04位,1,1,只读,U4_STA_MuteDone,消音完成
+V区变量,第05位,1,1,只读,U4_Reserved_V1_5,备用(预留)
+V区变量,第06位,1,1,只读,U4_TankTopFull,上缸满
+V区变量,第07位,1,1,只读,U4_TankBottomFull,下缸满
+V区变量,16位有符号二进制,2,1,只读,U4_VW2_StateMachine,状态机(S0~S7/S_ERROR)
+V区变量,16位有符号二进制,4,1,只读,U4_VW4_PumpStatus,注射泵状态码
+V区变量,16位有符号二进制,6,1,只读,U4_VW6_AlarmCode,报警码
+V区变量,16位有符号二进制,8,1,只读,U4_VW8_RoundCount,实验轮次
+V区变量,32位浮点数,10,1,读写,U4_VD_C_Set,目标浓度(5.0)
+V区变量,32位浮点数,14,1,读写,U4_VD_C_Stock,母液浓度(100.0)
+V区变量,32位浮点数,350,1,读写,U4_VD_StepRes,步进分辨率(0.5) AQEX-36:VD18→VD350
+V区变量,32位浮点数,354,1,读写,U4_VD_CycleSet,换水周期min(3.0) AQEX-36:VD20→VD354
+V区变量,32位浮点数,24,1,读写,U4_VD_ExpTarget,实验目标min(5.0)
+V区变量,32位浮点数,28,1,读写,U4_VD_PreMixTime,预循环(12.0)
+V区变量,32位浮点数,32,1,读写,U4_VD_PreMixTime_MinSafe,预循环最小安全值(3.0)
+V区变量,32位浮点数,36,1,读写,U4_VD_RestTime,静止(6.0)
+V区变量,32位浮点数,40,1,读写,U4_VD_RestTime_Min,静止最小值(1.5)
+V区变量,32位浮点数,44,1,读写,U4_VD_CycleExtend_Max,换水周期顺延上限(0.5)
+V区变量,32位浮点数,358,1,读写,U4_VD_Timeout_ValveA,阀A超时(2.0) AQEX-36:VD48→VD358
+V区变量,32位浮点数,362,1,读写,U4_VD_Timeout_ValveB,阀B超时(2.0) AQEX-36:VD50→VD362
+V区变量,32位浮点数,54,1,读写,U4_VD_Timeout_ValveC,阀C超时(2.0)
+V区变量,32位浮点数,58,1,读写,U4_VD_Timeout_Pump1,泵1超时(2.0)
+V区变量,32位浮点数,62,1,读写,U4_VD_Timeout_Pump2,泵2超时(2.0)
+V区变量,32位浮点数,66,1,读写,U4_VD_Delay_ValveA_Verify,阀A关闭延时验证(0.5)
+V区变量,32位浮点数,112,1,读写,U4_VD_T_Rolling,T滚动实测(20.0)
+V区变量,32位浮点数,116,1,读写,U4_VD_S6_Rolling,S6滚动实测(0.0)
+V区变量,32位浮点数,120,1,读写,U4_VD_S2_Target,S2目标(12.0)
+V区变量,32位浮点数,124,1,读写,U4_VD_RestTime_Target,静止目标(6.0)
+V区变量,32位浮点数,174,1,读写,U4_VD_S3_Estimate,S3估算(5.0)
+V区变量,32位浮点数,316,1,读写,U4_VD_TargetInletVolume,目标进水量(10.0)
+V区变量,32位浮点数,82,1,读写,U4_VD_FlowMeter_Snapshot,流量计快照(0.0)
+V区变量,32位浮点数,308,1,读写,U4_VD_FlowMeter_CloseSnapshot,关阀快照(0.0)
+V区变量,32位浮点数,70,1,只读,U4_VD_S1_Actual,S1实测时长
+V区变量,32位浮点数,74,1,只读,U4_VD_S2_Actual,S2实测时长
+V区变量,32位浮点数,78,1,只读,U4_VD_S6_Actual,S6实测时长
+V区变量,32位浮点数,86,1,只读,U4_VD_FlowCum,流量计累计
+V区变量,32位浮点数,90,1,只读,U4_VD_FlowDiff,流量计差值
+V区变量,32位浮点数,102,1,只读,U4_VD_Dose_Steps,加药步数
+V区变量,32位浮点数,150,1,只读,U4_VD_Available,剩余可用时间
+V区变量,32位浮点数,154,1,只读,U4_VD_Corr_Needed,纠偏Needed
+V区变量,32位浮点数,178,1,只读,U4_VD_S5_Elapsed,S5累计运行
+V区变量,32位浮点数,312,1,只读,U4_VD_LeakDiff,内漏差值
+V区变量,32位浮点数,328,1,只读,U4_VD_Timeout_ValveC_x10,阀C超时×10
+V区变量,32位浮点数,370,1,只读,U4_VD_Vol_Target,加药目标体积 AQEX-36:VD98→VD370
+V区变量,8位无符号,300,1,只读,U4_VB300_AlarmByte0,报警字节0(漫溢+急停)
+V区变量,8位无符号,301,1,只读,U4_VB301_AlarmByte1,报警字节1(阀A诊断)
+V区变量,8位无符号,302,1,只读,U4_VB302_AlarmByte2,报警字节2(阀B诊断)
+V区变量,8位无符号,303,1,只读,U4_VB303_AlarmByte3,报警字节3(其他)
+V区变量,第04位,2,1,读写,U4_Manual_ValveA,阀A手动
+V区变量,第05位,2,1,读写,U4_Manual_ValveB,阀B手动
+V区变量,第06位,2,1,读写,U4_Manual_ValveC,阀C手动
+V区变量,第07位,2,1,读写,U4_Manual_Pump1,泵1手动
+V区变量,第00位,3,1,读写,U4_Manual_Pump2,泵2手动
+V区变量,第01位,3,1,读写,U4_Manual_Aspirate,抽液
+V区变量,第02位,3,1,读写,U4_Manual_Dispense,排液
+V区变量,第03位,3,1,读写,U4_Manual_Reset,复位
+V区变量,16位有符号二进制,204,1,读写,U4_MB_Pump_Aspirate,抽液步数
+V区变量,16位有符号二进制,206,1,读写,U4_MB_Pump_Dispense,排液步数
+V区变量,16位有符号二进制,208,1,读写,U4_MB_Pump_Speed,泵速度
+V区变量,16位有符号二进制,210,1,读写,U4_MB_Pump_Status,泵状态
+V区变量,32位浮点数,366,1,只读,U4_VD_ExpDuration_Accum,实验累计时长min AQEX-36:VD96→VD366
+V区变量,16位有符号二进制,182,1,读写,U4_VW_Corr_Mode,纠偏模式
+V区变量,16位有符号二进制,184,1,读写,U4_VW_Corr_Result,纠偏结果
+# ===== Unit 5 (PLC_05, 192.168.2.105) =====
+V区变量,第00位,0,1,读写,U5_CMD_Start,启动命令
+V区变量,第01位,0,1,读写,U5_Reserved_V0_1,备用(预留)
+V区变量,第02位,0,1,读写,U5_CMD_Stop,停止命令
+V区变量,第03位,0,1,读写,U5_CMD_Ack,报警确认
+V区变量,第04位,0,1,读写,U5_CMD_Mute,消音
+V区变量,第05位,0,1,读写,U5_Reserved_V0_5,备用(预留)
+V区变量,第06位,0,1,读写,U5_Reserved_V0_6,备用(预留)
+V区变量,第07位,0,1,读写,U5_CMD_RelayAck,继电器故障确认
+V区变量,第00位,1,1,只读,U5_STA_StartAck,启动应答
+V区变量,第01位,1,1,只读,U5_Reserved_V1_1,备用(预留)
+V区变量,第02位,1,1,只读,U5_STA_StopAck,停止应答
+V区变量,第03位,1,1,只读,U5_STA_AlarmAckDone,报警确认完成
+V区变量,第04位,1,1,只读,U5_STA_MuteDone,消音完成
+V区变量,第05位,1,1,只读,U5_Reserved_V1_5,备用(预留)
+V区变量,第06位,1,1,只读,U5_TankTopFull,上缸满
+V区变量,第07位,1,1,只读,U5_TankBottomFull,下缸满
+V区变量,16位有符号二进制,2,1,只读,U5_VW2_StateMachine,状态机(S0~S7/S_ERROR)
+V区变量,16位有符号二进制,4,1,只读,U5_VW4_PumpStatus,注射泵状态码
+V区变量,16位有符号二进制,6,1,只读,U5_VW6_AlarmCode,报警码
+V区变量,16位有符号二进制,8,1,只读,U5_VW8_RoundCount,实验轮次
+V区变量,32位浮点数,10,1,读写,U5_VD_C_Set,目标浓度(5.0)
+V区变量,32位浮点数,14,1,读写,U5_VD_C_Stock,母液浓度(100.0)
+V区变量,32位浮点数,350,1,读写,U5_VD_StepRes,步进分辨率(0.5) AQEX-36:VD18→VD350
+V区变量,32位浮点数,354,1,读写,U5_VD_CycleSet,换水周期min(3.0) AQEX-36:VD20→VD354
+V区变量,32位浮点数,24,1,读写,U5_VD_ExpTarget,实验目标min(5.0)
+V区变量,32位浮点数,28,1,读写,U5_VD_PreMixTime,预循环(12.0)
+V区变量,32位浮点数,32,1,读写,U5_VD_PreMixTime_MinSafe,预循环最小安全值(3.0)
+V区变量,32位浮点数,36,1,读写,U5_VD_RestTime,静止(6.0)
+V区变量,32位浮点数,40,1,读写,U5_VD_RestTime_Min,静止最小值(1.5)
+V区变量,32位浮点数,44,1,读写,U5_VD_CycleExtend_Max,换水周期顺延上限(0.5)
+V区变量,32位浮点数,358,1,读写,U5_VD_Timeout_ValveA,阀A超时(2.0) AQEX-36:VD48→VD358
+V区变量,32位浮点数,362,1,读写,U5_VD_Timeout_ValveB,阀B超时(2.0) AQEX-36:VD50→VD362
+V区变量,32位浮点数,54,1,读写,U5_VD_Timeout_ValveC,阀C超时(2.0)
+V区变量,32位浮点数,58,1,读写,U5_VD_Timeout_Pump1,泵1超时(2.0)
+V区变量,32位浮点数,62,1,读写,U5_VD_Timeout_Pump2,泵2超时(2.0)
+V区变量,32位浮点数,66,1,读写,U5_VD_Delay_ValveA_Verify,阀A关闭延时验证(0.5)
+V区变量,32位浮点数,112,1,读写,U5_VD_T_Rolling,T滚动实测(20.0)
+V区变量,32位浮点数,116,1,读写,U5_VD_S6_Rolling,S6滚动实测(0.0)
+V区变量,32位浮点数,120,1,读写,U5_VD_S2_Target,S2目标(12.0)
+V区变量,32位浮点数,124,1,读写,U5_VD_RestTime_Target,静止目标(6.0)
+V区变量,32位浮点数,174,1,读写,U5_VD_S3_Estimate,S3估算(5.0)
+V区变量,32位浮点数,316,1,读写,U5_VD_TargetInletVolume,目标进水量(10.0)
+V区变量,32位浮点数,82,1,读写,U5_VD_FlowMeter_Snapshot,流量计快照(0.0)
+V区变量,32位浮点数,308,1,读写,U5_VD_FlowMeter_CloseSnapshot,关阀快照(0.0)
+V区变量,32位浮点数,70,1,只读,U5_VD_S1_Actual,S1实测时长
+V区变量,32位浮点数,74,1,只读,U5_VD_S2_Actual,S2实测时长
+V区变量,32位浮点数,78,1,只读,U5_VD_S6_Actual,S6实测时长
+V区变量,32位浮点数,86,1,只读,U5_VD_FlowCum,流量计累计
+V区变量,32位浮点数,90,1,只读,U5_VD_FlowDiff,流量计差值
+V区变量,32位浮点数,102,1,只读,U5_VD_Dose_Steps,加药步数
+V区变量,32位浮点数,150,1,只读,U5_VD_Available,剩余可用时间
+V区变量,32位浮点数,154,1,只读,U5_VD_Corr_Needed,纠偏Needed
+V区变量,32位浮点数,178,1,只读,U5_VD_S5_Elapsed,S5累计运行
+V区变量,32位浮点数,312,1,只读,U5_VD_LeakDiff,内漏差值
+V区变量,32位浮点数,328,1,只读,U5_VD_Timeout_ValveC_x10,阀C超时×10
+V区变量,32位浮点数,370,1,只读,U5_VD_Vol_Target,加药目标体积 AQEX-36:VD98→VD370
+V区变量,8位无符号,300,1,只读,U5_VB300_AlarmByte0,报警字节0(漫溢+急停)
+V区变量,8位无符号,301,1,只读,U5_VB301_AlarmByte1,报警字节1(阀A诊断)
+V区变量,8位无符号,302,1,只读,U5_VB302_AlarmByte2,报警字节2(阀B诊断)
+V区变量,8位无符号,303,1,只读,U5_VB303_AlarmByte3,报警字节3(其他)
+V区变量,第04位,2,1,读写,U5_Manual_ValveA,阀A手动
+V区变量,第05位,2,1,读写,U5_Manual_ValveB,阀B手动
+V区变量,第06位,2,1,读写,U5_Manual_ValveC,阀C手动
+V区变量,第07位,2,1,读写,U5_Manual_Pump1,泵1手动
+V区变量,第00位,3,1,读写,U5_Manual_Pump2,泵2手动
+V区变量,第01位,3,1,读写,U5_Manual_Aspirate,抽液
+V区变量,第02位,3,1,读写,U5_Manual_Dispense,排液
+V区变量,第03位,3,1,读写,U5_Manual_Reset,复位
+V区变量,16位有符号二进制,204,1,读写,U5_MB_Pump_Aspirate,抽液步数
+V区变量,16位有符号二进制,206,1,读写,U5_MB_Pump_Dispense,排液步数
+V区变量,16位有符号二进制,208,1,读写,U5_MB_Pump_Speed,泵速度
+V区变量,16位有符号二进制,210,1,读写,U5_MB_Pump_Status,泵状态
+V区变量,32位浮点数,366,1,只读,U5_VD_ExpDuration_Accum,实验累计时长min AQEX-36:VD96→VD366
+V区变量,16位有符号二进制,182,1,读写,U5_VW_Corr_Mode,纠偏模式
+V区变量,16位有符号二进制,184,1,读写,U5_VW_Corr_Result,纠偏结果
+# ===== Unit 6 (PLC_06, 192.168.2.106) =====
+V区变量,第00位,0,1,读写,U6_CMD_Start,启动命令
+V区变量,第01位,0,1,读写,U6_Reserved_V0_1,备用(预留)
+V区变量,第02位,0,1,读写,U6_CMD_Stop,停止命令
+V区变量,第03位,0,1,读写,U6_CMD_Ack,报警确认
+V区变量,第04位,0,1,读写,U6_CMD_Mute,消音
+V区变量,第05位,0,1,读写,U6_Reserved_V0_5,备用(预留)
+V区变量,第06位,0,1,读写,U6_Reserved_V0_6,备用(预留)
+V区变量,第07位,0,1,读写,U6_CMD_RelayAck,继电器故障确认
+V区变量,第00位,1,1,只读,U6_STA_StartAck,启动应答
+V区变量,第01位,1,1,只读,U6_Reserved_V1_1,备用(预留)
+V区变量,第02位,1,1,只读,U6_STA_StopAck,停止应答
+V区变量,第03位,1,1,只读,U6_STA_AlarmAckDone,报警确认完成
+V区变量,第04位,1,1,只读,U6_STA_MuteDone,消音完成
+V区变量,第05位,1,1,只读,U6_Reserved_V1_5,备用(预留)
+V区变量,第06位,1,1,只读,U6_TankTopFull,上缸满
+V区变量,第07位,1,1,只读,U6_TankBottomFull,下缸满
+V区变量,16位有符号二进制,2,1,只读,U6_VW2_StateMachine,状态机(S0~S7/S_ERROR)
+V区变量,16位有符号二进制,4,1,只读,U6_VW4_PumpStatus,注射泵状态码
+V区变量,16位有符号二进制,6,1,只读,U6_VW6_AlarmCode,报警码
+V区变量,16位有符号二进制,8,1,只读,U6_VW8_RoundCount,实验轮次
+V区变量,32位浮点数,10,1,读写,U6_VD_C_Set,目标浓度(5.0)
+V区变量,32位浮点数,14,1,读写,U6_VD_C_Stock,母液浓度(100.0)
+V区变量,32位浮点数,350,1,读写,U6_VD_StepRes,步进分辨率(0.5) AQEX-36:VD18→VD350
+V区变量,32位浮点数,354,1,读写,U6_VD_CycleSet,换水周期min(3.0) AQEX-36:VD20→VD354
+V区变量,32位浮点数,24,1,读写,U6_VD_ExpTarget,实验目标min(5.0)
+V区变量,32位浮点数,28,1,读写,U6_VD_PreMixTime,预循环(12.0)
+V区变量,32位浮点数,32,1,读写,U6_VD_PreMixTime_MinSafe,预循环最小安全值(3.0)
+V区变量,32位浮点数,36,1,读写,U6_VD_RestTime,静止(6.0)
+V区变量,32位浮点数,40,1,读写,U6_VD_RestTime_Min,静止最小值(1.5)
+V区变量,32位浮点数,44,1,读写,U6_VD_CycleExtend_Max,换水周期顺延上限(0.5)
+V区变量,32位浮点数,358,1,读写,U6_VD_Timeout_ValveA,阀A超时(2.0) AQEX-36:VD48→VD358
+V区变量,32位浮点数,362,1,读写,U6_VD_Timeout_ValveB,阀B超时(2.0) AQEX-36:VD50→VD362
+V区变量,32位浮点数,54,1,读写,U6_VD_Timeout_ValveC,阀C超时(2.0)
+V区变量,32位浮点数,58,1,读写,U6_VD_Timeout_Pump1,泵1超时(2.0)
+V区变量,32位浮点数,62,1,读写,U6_VD_Timeout_Pump2,泵2超时(2.0)
+V区变量,32位浮点数,66,1,读写,U6_VD_Delay_ValveA_Verify,阀A关闭延时验证(0.5)
+V区变量,32位浮点数,112,1,读写,U6_VD_T_Rolling,T滚动实测(20.0)
+V区变量,32位浮点数,116,1,读写,U6_VD_S6_Rolling,S6滚动实测(0.0)
+V区变量,32位浮点数,120,1,读写,U6_VD_S2_Target,S2目标(12.0)
+V区变量,32位浮点数,124,1,读写,U6_VD_RestTime_Target,静止目标(6.0)
+V区变量,32位浮点数,174,1,读写,U6_VD_S3_Estimate,S3估算(5.0)
+V区变量,32位浮点数,316,1,读写,U6_VD_TargetInletVolume,目标进水量(10.0)
+V区变量,32位浮点数,82,1,读写,U6_VD_FlowMeter_Snapshot,流量计快照(0.0)
+V区变量,32位浮点数,308,1,读写,U6_VD_FlowMeter_CloseSnapshot,关阀快照(0.0)
+V区变量,32位浮点数,70,1,只读,U6_VD_S1_Actual,S1实测时长
+V区变量,32位浮点数,74,1,只读,U6_VD_S2_Actual,S2实测时长
+V区变量,32位浮点数,78,1,只读,U6_VD_S6_Actual,S6实测时长
+V区变量,32位浮点数,86,1,只读,U6_VD_FlowCum,流量计累计
+V区变量,32位浮点数,90,1,只读,U6_VD_FlowDiff,流量计差值
+V区变量,32位浮点数,102,1,只读,U6_VD_Dose_Steps,加药步数
+V区变量,32位浮点数,150,1,只读,U6_VD_Available,剩余可用时间
+V区变量,32位浮点数,154,1,只读,U6_VD_Corr_Needed,纠偏Needed
+V区变量,32位浮点数,178,1,只读,U6_VD_S5_Elapsed,S5累计运行
+V区变量,32位浮点数,312,1,只读,U6_VD_LeakDiff,内漏差值
+V区变量,32位浮点数,328,1,只读,U6_VD_Timeout_ValveC_x10,阀C超时×10
+V区变量,32位浮点数,370,1,只读,U6_VD_Vol_Target,加药目标体积 AQEX-36:VD98→VD370
+V区变量,8位无符号,300,1,只读,U6_VB300_AlarmByte0,报警字节0(漫溢+急停)
+V区变量,8位无符号,301,1,只读,U6_VB301_AlarmByte1,报警字节1(阀A诊断)
+V区变量,8位无符号,302,1,只读,U6_VB302_AlarmByte2,报警字节2(阀B诊断)
+V区变量,8位无符号,303,1,只读,U6_VB303_AlarmByte3,报警字节3(其他)
+V区变量,第04位,2,1,读写,U6_Manual_ValveA,阀A手动
+V区变量,第05位,2,1,读写,U6_Manual_ValveB,阀B手动
+V区变量,第06位,2,1,读写,U6_Manual_ValveC,阀C手动
+V区变量,第07位,2,1,读写,U6_Manual_Pump1,泵1手动
+V区变量,第00位,3,1,读写,U6_Manual_Pump2,泵2手动
+V区变量,第01位,3,1,读写,U6_Manual_Aspirate,抽液
+V区变量,第02位,3,1,读写,U6_Manual_Dispense,排液
+V区变量,第03位,3,1,读写,U6_Manual_Reset,复位
+V区变量,16位有符号二进制,204,1,读写,U6_MB_Pump_Aspirate,抽液步数
+V区变量,16位有符号二进制,206,1,读写,U6_MB_Pump_Dispense,排液步数
+V区变量,16位有符号二进制,208,1,读写,U6_MB_Pump_Speed,泵速度
+V区变量,16位有符号二进制,210,1,读写,U6_MB_Pump_Status,泵状态
+V区变量,32位浮点数,366,1,只读,U6_VD_ExpDuration_Accum,实验累计时长min AQEX-36:VD96→VD366
+V区变量,16位有符号二进制,182,1,读写,U6_VW_Corr_Mode,纠偏模式
+V区变量,16位有符号二进制,184,1,读写,U6_VW_Corr_Result,纠偏结果
+# ===== Unit 7 (PLC_07, 192.168.2.107) =====
+V区变量,第00位,0,1,读写,U7_CMD_Start,启动命令
+V区变量,第01位,0,1,读写,U7_Reserved_V0_1,备用(预留)
+V区变量,第02位,0,1,读写,U7_CMD_Stop,停止命令
+V区变量,第03位,0,1,读写,U7_CMD_Ack,报警确认
+V区变量,第04位,0,1,读写,U7_CMD_Mute,消音
+V区变量,第05位,0,1,读写,U7_Reserved_V0_5,备用(预留)
+V区变量,第06位,0,1,读写,U7_Reserved_V0_6,备用(预留)
+V区变量,第07位,0,1,读写,U7_CMD_RelayAck,继电器故障确认
+V区变量,第00位,1,1,只读,U7_STA_StartAck,启动应答
+V区变量,第01位,1,1,只读,U7_Reserved_V1_1,备用(预留)
+V区变量,第02位,1,1,只读,U7_STA_StopAck,停止应答
+V区变量,第03位,1,1,只读,U7_STA_AlarmAckDone,报警确认完成
+V区变量,第04位,1,1,只读,U7_STA_MuteDone,消音完成
+V区变量,第05位,1,1,只读,U7_Reserved_V1_5,备用(预留)
+V区变量,第06位,1,1,只读,U7_TankTopFull,上缸满
+V区变量,第07位,1,1,只读,U7_TankBottomFull,下缸满
+V区变量,16位有符号二进制,2,1,只读,U7_VW2_StateMachine,状态机(S0~S7/S_ERROR)
+V区变量,16位有符号二进制,4,1,只读,U7_VW4_PumpStatus,注射泵状态码
+V区变量,16位有符号二进制,6,1,只读,U7_VW6_AlarmCode,报警码
+V区变量,16位有符号二进制,8,1,只读,U7_VW8_RoundCount,实验轮次
+V区变量,32位浮点数,10,1,读写,U7_VD_C_Set,目标浓度(5.0)
+V区变量,32位浮点数,14,1,读写,U7_VD_C_Stock,母液浓度(100.0)
+V区变量,32位浮点数,350,1,读写,U7_VD_StepRes,步进分辨率(0.5) AQEX-36:VD18→VD350
+V区变量,32位浮点数,354,1,读写,U7_VD_CycleSet,换水周期min(3.0) AQEX-36:VD20→VD354
+V区变量,32位浮点数,24,1,读写,U7_VD_ExpTarget,实验目标min(5.0)
+V区变量,32位浮点数,28,1,读写,U7_VD_PreMixTime,预循环(12.0)
+V区变量,32位浮点数,32,1,读写,U7_VD_PreMixTime_MinSafe,预循环最小安全值(3.0)
+V区变量,32位浮点数,36,1,读写,U7_VD_RestTime,静止(6.0)
+V区变量,32位浮点数,40,1,读写,U7_VD_RestTime_Min,静止最小值(1.5)
+V区变量,32位浮点数,44,1,读写,U7_VD_CycleExtend_Max,换水周期顺延上限(0.5)
+V区变量,32位浮点数,358,1,读写,U7_VD_Timeout_ValveA,阀A超时(2.0) AQEX-36:VD48→VD358
+V区变量,32位浮点数,362,1,读写,U7_VD_Timeout_ValveB,阀B超时(2.0) AQEX-36:VD50→VD362
+V区变量,32位浮点数,54,1,读写,U7_VD_Timeout_ValveC,阀C超时(2.0)
+V区变量,32位浮点数,58,1,读写,U7_VD_Timeout_Pump1,泵1超时(2.0)
+V区变量,32位浮点数,62,1,读写,U7_VD_Timeout_Pump2,泵2超时(2.0)
+V区变量,32位浮点数,66,1,读写,U7_VD_Delay_ValveA_Verify,阀A关闭延时验证(0.5)
+V区变量,32位浮点数,112,1,读写,U7_VD_T_Rolling,T滚动实测(20.0)
+V区变量,32位浮点数,116,1,读写,U7_VD_S6_Rolling,S6滚动实测(0.0)
+V区变量,32位浮点数,120,1,读写,U7_VD_S2_Target,S2目标(12.0)
+V区变量,32位浮点数,124,1,读写,U7_VD_RestTime_Target,静止目标(6.0)
+V区变量,32位浮点数,174,1,读写,U7_VD_S3_Estimate,S3估算(5.0)
+V区变量,32位浮点数,316,1,读写,U7_VD_TargetInletVolume,目标进水量(10.0)
+V区变量,32位浮点数,82,1,读写,U7_VD_FlowMeter_Snapshot,流量计快照(0.0)
+V区变量,32位浮点数,308,1,读写,U7_VD_FlowMeter_CloseSnapshot,关阀快照(0.0)
+V区变量,32位浮点数,70,1,只读,U7_VD_S1_Actual,S1实测时长
+V区变量,32位浮点数,74,1,只读,U7_VD_S2_Actual,S2实测时长
+V区变量,32位浮点数,78,1,只读,U7_VD_S6_Actual,S6实测时长
+V区变量,32位浮点数,86,1,只读,U7_VD_FlowCum,流量计累计
+V区变量,32位浮点数,90,1,只读,U7_VD_FlowDiff,流量计差值
+V区变量,32位浮点数,102,1,只读,U7_VD_Dose_Steps,加药步数
+V区变量,32位浮点数,150,1,只读,U7_VD_Available,剩余可用时间
+V区变量,32位浮点数,154,1,只读,U7_VD_Corr_Needed,纠偏Needed
+V区变量,32位浮点数,178,1,只读,U7_VD_S5_Elapsed,S5累计运行
+V区变量,32位浮点数,312,1,只读,U7_VD_LeakDiff,内漏差值
+V区变量,32位浮点数,328,1,只读,U7_VD_Timeout_ValveC_x10,阀C超时×10
+V区变量,32位浮点数,370,1,只读,U7_VD_Vol_Target,加药目标体积 AQEX-36:VD98→VD370
+V区变量,8位无符号,300,1,只读,U7_VB300_AlarmByte0,报警字节0(漫溢+急停)
+V区变量,8位无符号,301,1,只读,U7_VB301_AlarmByte1,报警字节1(阀A诊断)
+V区变量,8位无符号,302,1,只读,U7_VB302_AlarmByte2,报警字节2(阀B诊断)
+V区变量,8位无符号,303,1,只读,U7_VB303_AlarmByte3,报警字节3(其他)
+V区变量,第04位,2,1,读写,U7_Manual_ValveA,阀A手动
+V区变量,第05位,2,1,读写,U7_Manual_ValveB,阀B手动
+V区变量,第06位,2,1,读写,U7_Manual_ValveC,阀C手动
+V区变量,第07位,2,1,读写,U7_Manual_Pump1,泵1手动
+V区变量,第00位,3,1,读写,U7_Manual_Pump2,泵2手动
+V区变量,第01位,3,1,读写,U7_Manual_Aspirate,抽液
+V区变量,第02位,3,1,读写,U7_Manual_Dispense,排液
+V区变量,第03位,3,1,读写,U7_Manual_Reset,复位
+V区变量,16位有符号二进制,204,1,读写,U7_MB_Pump_Aspirate,抽液步数
+V区变量,16位有符号二进制,206,1,读写,U7_MB_Pump_Dispense,排液步数
+V区变量,16位有符号二进制,208,1,读写,U7_MB_Pump_Speed,泵速度
+V区变量,16位有符号二进制,210,1,读写,U7_MB_Pump_Status,泵状态
+V区变量,32位浮点数,366,1,只读,U7_VD_ExpDuration_Accum,实验累计时长min AQEX-36:VD96→VD366
+V区变量,16位有符号二进制,182,1,读写,U7_VW_Corr_Mode,纠偏模式
+V区变量,16位有符号二进制,184,1,读写,U7_VW_Corr_Result,纠偏结果
+# ===== Unit 8 (PLC_08, 192.168.2.108) =====
+V区变量,第00位,0,1,读写,U8_CMD_Start,启动命令
+V区变量,第01位,0,1,读写,U8_Reserved_V0_1,备用(预留)
+V区变量,第02位,0,1,读写,U8_CMD_Stop,停止命令
+V区变量,第03位,0,1,读写,U8_CMD_Ack,报警确认
+V区变量,第04位,0,1,读写,U8_CMD_Mute,消音
+V区变量,第05位,0,1,读写,U8_Reserved_V0_5,备用(预留)
+V区变量,第06位,0,1,读写,U8_Reserved_V0_6,备用(预留)
+V区变量,第07位,0,1,读写,U8_CMD_RelayAck,继电器故障确认
+V区变量,第00位,1,1,只读,U8_STA_StartAck,启动应答
+V区变量,第01位,1,1,只读,U8_Reserved_V1_1,备用(预留)
+V区变量,第02位,1,1,只读,U8_STA_StopAck,停止应答
+V区变量,第03位,1,1,只读,U8_STA_AlarmAckDone,报警确认完成
+V区变量,第04位,1,1,只读,U8_STA_MuteDone,消音完成
+V区变量,第05位,1,1,只读,U8_Reserved_V1_5,备用(预留)
+V区变量,第06位,1,1,只读,U8_TankTopFull,上缸满
+V区变量,第07位,1,1,只读,U8_TankBottomFull,下缸满
+V区变量,16位有符号二进制,2,1,只读,U8_VW2_StateMachine,状态机(S0~S7/S_ERROR)
+V区变量,16位有符号二进制,4,1,只读,U8_VW4_PumpStatus,注射泵状态码
+V区变量,16位有符号二进制,6,1,只读,U8_VW6_AlarmCode,报警码
+V区变量,16位有符号二进制,8,1,只读,U8_VW8_RoundCount,实验轮次
+V区变量,32位浮点数,10,1,读写,U8_VD_C_Set,目标浓度(5.0)
+V区变量,32位浮点数,14,1,读写,U8_VD_C_Stock,母液浓度(100.0)
+V区变量,32位浮点数,350,1,读写,U8_VD_StepRes,步进分辨率(0.5) AQEX-36:VD18→VD350
+V区变量,32位浮点数,354,1,读写,U8_VD_CycleSet,换水周期min(3.0) AQEX-36:VD20→VD354
+V区变量,32位浮点数,24,1,读写,U8_VD_ExpTarget,实验目标min(5.0)
+V区变量,32位浮点数,28,1,读写,U8_VD_PreMixTime,预循环(12.0)
+V区变量,32位浮点数,32,1,读写,U8_VD_PreMixTime_MinSafe,预循环最小安全值(3.0)
+V区变量,32位浮点数,36,1,读写,U8_VD_RestTime,静止(6.0)
+V区变量,32位浮点数,40,1,读写,U8_VD_RestTime_Min,静止最小值(1.5)
+V区变量,32位浮点数,44,1,读写,U8_VD_CycleExtend_Max,换水周期顺延上限(0.5)
+V区变量,32位浮点数,358,1,读写,U8_VD_Timeout_ValveA,阀A超时(2.0) AQEX-36:VD48→VD358
+V区变量,32位浮点数,362,1,读写,U8_VD_Timeout_ValveB,阀B超时(2.0) AQEX-36:VD50→VD362
+V区变量,32位浮点数,54,1,读写,U8_VD_Timeout_ValveC,阀C超时(2.0)
+V区变量,32位浮点数,58,1,读写,U8_VD_Timeout_Pump1,泵1超时(2.0)
+V区变量,32位浮点数,62,1,读写,U8_VD_Timeout_Pump2,泵2超时(2.0)
+V区变量,32位浮点数,66,1,读写,U8_VD_Delay_ValveA_Verify,阀A关闭延时验证(0.5)
+V区变量,32位浮点数,112,1,读写,U8_VD_T_Rolling,T滚动实测(20.0)
+V区变量,32位浮点数,116,1,读写,U8_VD_S6_Rolling,S6滚动实测(0.0)
+V区变量,32位浮点数,120,1,读写,U8_VD_S2_Target,S2目标(12.0)
+V区变量,32位浮点数,124,1,读写,U8_VD_RestTime_Target,静止目标(6.0)
+V区变量,32位浮点数,174,1,读写,U8_VD_S3_Estimate,S3估算(5.0)
+V区变量,32位浮点数,316,1,读写,U8_VD_TargetInletVolume,目标进水量(10.0)
+V区变量,32位浮点数,82,1,读写,U8_VD_FlowMeter_Snapshot,流量计快照(0.0)
+V区变量,32位浮点数,308,1,读写,U8_VD_FlowMeter_CloseSnapshot,关阀快照(0.0)
+V区变量,32位浮点数,70,1,只读,U8_VD_S1_Actual,S1实测时长
+V区变量,32位浮点数,74,1,只读,U8_VD_S2_Actual,S2实测时长
+V区变量,32位浮点数,78,1,只读,U8_VD_S6_Actual,S6实测时长
+V区变量,32位浮点数,86,1,只读,U8_VD_FlowCum,流量计累计
+V区变量,32位浮点数,90,1,只读,U8_VD_FlowDiff,流量计差值
+V区变量,32位浮点数,102,1,只读,U8_VD_Dose_Steps,加药步数
+V区变量,32位浮点数,150,1,只读,U8_VD_Available,剩余可用时间
+V区变量,32位浮点数,154,1,只读,U8_VD_Corr_Needed,纠偏Needed
+V区变量,32位浮点数,178,1,只读,U8_VD_S5_Elapsed,S5累计运行
+V区变量,32位浮点数,312,1,只读,U8_VD_LeakDiff,内漏差值
+V区变量,32位浮点数,328,1,只读,U8_VD_Timeout_ValveC_x10,阀C超时×10
+V区变量,32位浮点数,370,1,只读,U8_VD_Vol_Target,加药目标体积 AQEX-36:VD98→VD370
+V区变量,8位无符号,300,1,只读,U8_VB300_AlarmByte0,报警字节0(漫溢+急停)
+V区变量,8位无符号,301,1,只读,U8_VB301_AlarmByte1,报警字节1(阀A诊断)
+V区变量,8位无符号,302,1,只读,U8_VB302_AlarmByte2,报警字节2(阀B诊断)
+V区变量,8位无符号,303,1,只读,U8_VB303_AlarmByte3,报警字节3(其他)
+V区变量,第04位,2,1,读写,U8_Manual_ValveA,阀A手动
+V区变量,第05位,2,1,读写,U8_Manual_ValveB,阀B手动
+V区变量,第06位,2,1,读写,U8_Manual_ValveC,阀C手动
+V区变量,第07位,2,1,读写,U8_Manual_Pump1,泵1手动
+V区变量,第00位,3,1,读写,U8_Manual_Pump2,泵2手动
+V区变量,第01位,3,1,读写,U8_Manual_Aspirate,抽液
+V区变量,第02位,3,1,读写,U8_Manual_Dispense,排液
+V区变量,第03位,3,1,读写,U8_Manual_Reset,复位
+V区变量,16位有符号二进制,204,1,读写,U8_MB_Pump_Aspirate,抽液步数
+V区变量,16位有符号二进制,206,1,读写,U8_MB_Pump_Dispense,排液步数
+V区变量,16位有符号二进制,208,1,读写,U8_MB_Pump_Speed,泵速度
+V区变量,16位有符号二进制,210,1,读写,U8_MB_Pump_Status,泵状态
+V区变量,32位浮点数,366,1,只读,U8_VD_ExpDuration_Accum,实验累计时长min AQEX-36:VD96→VD366
+V区变量,16位有符号二进制,182,1,读写,U8_VW_Corr_Mode,纠偏模式
+V区变量,16位有符号二进制,184,1,读写,U8_VW_Corr_Result,纠偏结果
