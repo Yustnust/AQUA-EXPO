@@ -1,0 +1,127 @@
+// ============================================================
+// 文件: FC16_State_S5_Run.stl
+// 功能: S5实验运行中 (VW2=6)
+// Story: AQEX-6 状态机骨架 + AQEX-8 节奏纠偏(已集成)
+// 说明: 下缸满期间累计实验时长,计算Available触发纠偏预规划,
+//       换水周期到转S6排水,实验时长达标转S7结束
+// ============================================================
+
+// 符号说明:
+// VD150 : VD_Available       剩余可用时间(s) = CycleSetpoint×60 + S6_Rolling - S5_Elapsed
+// VD178 : VD_S5_Elapsed      下缸变满后累计运行秒数(S4完成时清零)
+// VD112 : VD_T_Rolling       滚动实测S1-S3.5总时长(预规划Needed)
+// M10.7 : 预规划已触发标志(本轮只触发一次,转S6/S7时清)
+// VW182 : VW_Corr_Mode       纠偏模式(FC40输入)
+// VW184 : VW_Corr_Result     纠偏结果(FC40输出)
+
+
+NETWORK 1: 下缸满计时器 VD_S5_Elapsed 累加
+// 每秒VD_S5_Elapsed+1,仅下缸=满期间
+LD     SM0.0
+LPS
+A      V1.7                         // 下缸=满才计时
+R      T60, 1
+TON    T60, 10                      // 1秒(10×100ms)
+LPP
+LD     T60                          // 1秒到
+EU
++R     1.0, VD178                   // VD_S5_Elapsed + 1
+R      T60, 1                       // 重置进入下一秒
+// 注: 断电恢复时VD_S5_Elapsed由FC0_SysInit用RTC重算(Story 1.7完善)
+
+
+NETWORK 2: Available计算 + 预规划上升沿触发(转S1上缸配液)
+// VD_Available = VD_CycleSetpoint×60 + VD_S6_Rolling - VD_S5_Elapsed
+LD     SM0.0
+MOVR   VD354, VD150                  // VD_CycleSetpoint(min)
+*R     60.0, VD150                  // →秒
++R     VD116, VD150                 // + VD_S6_Rolling
+-R     VD178, VD150                 // - VD_S5_Elapsed = VD_Available
+
+// 预规划上升沿: Available <= VD_T_Rolling 且 本轮未触发过
+LD     SM0.0
+LPS
+AR<=   VD150, VD112                 // Available <= T_Rolling ?
+AN     M10.7                        // 且本轮未触发过
+S      M10.7, 1                     // 锁存:本轮已触发
+// 填入FC40输入: 模式=0(预规划), Needed=VD_T_Rolling
+MOVW   0, VW182
+MOVR   VD112, VD154                 // Needed = VD_T_Rolling
+CALL   FC40:V RhythmCorrection
+// 检查纠偏结果: 非"人工介入(4)"才启动S1
+LPS
+AW<>   VW184, 4
+LPS
+AN     V1.6                         // 上缸=空(正常)
+MOVB   1, VB2                      // →S1启动新一轮上缸配液
+MOVB   0, VB3
+LPP
+LPP
+LPP
+
+// 预规划触发后上缸≠空(异常:上一轮S4未排空)
+LD     M10.7
+A      V1.6                         // 上缸=满(异常)
+S      V301.6, 1                    // 报警(上缸未排空异常)
+MOVB   99, VB2
+
+
+NETWORK 3: 实验时长累加(仅下缸=满期间)
+// VD_ExperimentDuration_Accum(VD366)每分钟+1
+LD     V1.7                         // 下缸=满
+R      T47, 1
+TON    T47, 600                     // 60秒(600×100ms)
+LD     T47                          // 1分钟到
+EU
++R     1.0, VD366                    // VD_ExperimentDuration_Accum + 1(分钟)
+
+
+NETWORK 4: 换水周期到达 - 转S6排水
+// VD_S5_Elapsed >= VD_CycleSetpoint×60 → 下缸该排空了
+LD     SM0.0
+LPS
+MOVR   VD354, AC0                    // VD_CycleSetpoint(min)
+*R     60.0, AC0                    // →秒
+AR>=   VD178, AC0                   // 已满时长 >= 换水周期 ?
+R      M10.7, 1                     // 清预规划触发标志(下轮重新触发)
+R      T60, 1                       // 停下缸满计时器
+MOVB   7, VB2                      // →S6排水(VW2=7)
+MOVB   0, VB3
+LPP
+
+
+NETWORK 5: 实验时长达标 - 转S7实验结束
+// VD_ExperimentDuration_Accum >= VD_ExperimentTarget → 实验结束
+LD     SM0.0
+LPS
+AR>=   VD366, VD24                   // 累计时长 >= 目标时长
+R      T41, 1                       // 停周期计时
+R      T60, 1                       // 停下缸满计时器
+R      M10.7, 1                     // 清预规划触发标志
+MOVB   8, VB2                      // →S7(VW2=8)
+MOVB   0, VB3
+LPP
+
+
+NETWORK 6: HMI手动停止命令
+LD     V0.2                         // CMD_Stop
+EU
+R      T41, 1
+R      T60, 1
+R      M10.7, 1                     // 清预规划触发标志
+MOVB   8, VB2                      // →S7(VW2=8)
+MOVB   0, VB3
+S      V1.2, 1                     // STA_StopAck握手
+R      V0.2, 1                     // 清停止命令
+
+
+// 注: 纠偏预规划由FC40完成,二次校正由FC11(S1完成)调用FC40
+// 注: S5与S1-S3.5并行:预规划触发转S1开始上缸配液,下缸继续实验至换水周期到转S6
+// 注: 断电恢复VD_S5_Elapsed重算由FC0_SysInit负责(Story 1.7)
+// 注: 断电恢复由FC0统一处理,VW2=6(S5无阀门动作)时FC0保持S5并重算VD_S5_Elapsed
+// 注: 上缸配液完成后若下缸仍未到换水周期,状态停留逻辑由FC14(S3.5)细化(后续Story)
+
+
+// ============================================================
+// 文件结束
+// ============================================================

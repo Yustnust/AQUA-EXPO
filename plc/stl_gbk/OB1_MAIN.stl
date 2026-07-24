@@ -1,0 +1,73 @@
+// ============================================================
+// 文件: OB1_MAIN.stl
+// 功能: PLC主循环程序
+// 项目: 药液配置与加注控制系统
+// Story: AQEX-6 状态机骨架 + AQEX-9 急停调度顺序确认
+// PLC: S7-200 SMART CPU ST20
+// 说明: 本文件为语句表(STL)格式，可参考导入STEP 7-Micro/WIN SMART
+// 调度顺序: FC0(初始化)→FC2(急停,最高优先级)→FC4(Modbus)→FC3(报警)→FC1(状态调度)
+//           FC2在FC1之前,保证急停触发时同周期转S_ERROR
+// ============================================================
+
+// 符号注释（实际导入时在符号表定义）
+// VW2     : 状态机当前状态 (0=S0,1=S1...8=S7,99=ERROR)
+// VW4     : 注射泵状态码
+// VW6     : 当前最高优先级报警码
+// VW8     : 实验轮次计数
+// V0.0    : CMD_Start (HMI→PLC启动命令)
+// V0.2    : CMD_Stop  (HMI→PLC停止命令)
+// V1.0    : STA_StartAck (PLC→HMI启动确认)
+// I1.1    : DI_EStop (急停反馈，常闭，ON=正常)
+// I2.3    : DI_Btn_SystemReset (系统复位按钮)
+
+
+NETWORK 1: 首次扫描初始化
+// SM0.1仅在首次扫描周期ON，调用FC0系统初始化
+LD     SM0.1
+=      L60.0                      // 局部存储器中转
+LD     L60.0
+CALL   FC0:S SysInit
+
+
+NETWORK 2: 急停与安全处理（每周期调用，优先级最高）
+// SM0.0常ON，每周期调用FC2
+LD     SM0.0
+CALL   FC2:EStopHandling
+
+
+NETWORK 3: Modbus通讯轮询（每周期调用）
+LD     SM0.0
+CALL   FC4:M ModbusPolling
+
+
+NETWORK 4: 报警处理（每周期调用）
+LD     SM0.0
+CALL   FC3:A AlarmHandling
+
+
+NETWORK 5: 状态机调度（急停时FC2会强制VW2=99）
+// 每周期根据VW2调用对应状态FC
+LD     SM0.0
+CALL   FC1:S StateDispatcher
+
+
+NETWORK 6: 实验轮次计数（S5每完成一轮S1→S6累加）
+// 简化骨架：在S6完成转S5时累加，实际在FC17中处理
+// 此处预留，具体在FC17实现
+
+
+NETWORK 7: 手动控制处理（每周期调用,在状态调度之后）
+// 处理HMI画面3手动控制命令位V2.4~V3.3
+// 仅S0或S_ERROR态响应,含安全联锁(详见FC20)
+LD     SM0.0
+CALL   FC20 ManualControl
+
+
+// ============================================================
+// 文件结束
+// 说明:
+//   1. FC0/FC1/FC2/FC3/FC4 见各自独立文件
+//   2. FC10~FC19 各状态FC见 State_Sxx.stl 文件
+//   3. FC20 手动控制(新增,AQEX-34修复)
+//   4. 导入时需先建符号表，再逐个新建FC并粘贴代码
+// ============================================================

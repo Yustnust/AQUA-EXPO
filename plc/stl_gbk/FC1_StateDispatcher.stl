@@ -1,0 +1,137 @@
+// ============================================================
+// 文件: FC1_StateDispatcher.stl
+// 功能: 状态机调度器（每周期根据VW2调用对应状态FC）
+// Story: AQEX-6 状态机骨架
+// 说明: S7-200 SMART STL无CASE语句，用比较+跳转实现
+// ============================================================
+
+NETWORK 1: 状态调度
+// 读取VW2并与各状态值比较，相等则调用对应FC
+// 使用LPP/LRD栈操作避免重复装载
+
+// VW2 = 0 → S0初始化
+LDW<=  VW2, 0
+JMP    nStateS0
+
+// VW2 = 1 → S1上缸进水
+LDW=   VW2, 1
+JMP    nStateS1
+
+// VW2 = 2 → S2预循环
+LDW=   VW2, 2
+JMP    nStateS2
+
+// VW2 = 3 → S3加药
+LDW=   VW2, 3
+JMP    nStateS3
+
+// VW2 = 4 → S3.5静止等候
+LDW=   VW2, 4
+JMP    nStateS35
+
+// VW2 = 5 → S4上→下转移
+LDW=   VW2, 5
+JMP    nStateS4
+
+// VW2 = 6 → S5实验运行中
+LDW=   VW2, 6
+JMP    nStateS5
+
+// VW2 = 7 → S6下缸排水
+LDW=   VW2, 7
+JMP    nStateS6
+
+// VW2 = 8 → S7实验结束
+LDW=   VW2, 8
+JMP    nStateS7
+
+// VW2 = 99 → S_ERROR故障锁定
+LDW=   VW2, 99
+JMP    nStateErr
+
+// 其他非法值 → 强制回S0
+LDW>=  VW2, 100
+JMP    nStateInvalid
+
+// 若未匹配任何状态(0<VW2<99但非上述值)，也回S0
+JMP    nStateInvalid
+
+
+NETWORK 2: S0入口
+LBL    nStateS0
+CALL   FC10:S State_S0_Init
+JMP    nDispatchEnd
+
+
+NETWORK 3: S1入口
+LBL    nStateS1
+CALL   FC11:S State_S1_Inlet
+JMP    nDispatchEnd
+
+
+NETWORK 4: S2入口
+LBL    nStateS2
+CALL   FC12:S State_S2_PreMix
+JMP    nDispatchEnd
+
+
+NETWORK 5: S3入口
+LBL    nStateS3
+CALL   FC13:S State_S3_Dosing
+JMP    nDispatchEnd
+
+
+NETWORK 6: S3.5入口
+LBL    nStateS35
+CALL   FC14:S State_S35_Rest
+JMP    nDispatchEnd
+
+
+NETWORK 7: S4入口
+LBL    nStateS4
+CALL   FC15:S State_S4_Transfer
+JMP    nDispatchEnd
+
+
+NETWORK 8: S5入口
+LBL    nStateS5
+CALL   FC16:S State_S5_Run
+JMP    nDispatchEnd
+
+
+NETWORK 9: S6入口
+LBL    nStateS6
+CALL   FC17:S State_S6_Drain
+JMP    nDispatchEnd
+
+
+NETWORK 10: S7入口
+LBL    nStateS7
+CALL   FC18:S State_S7_End
+JMP    nDispatchEnd
+
+
+NETWORK 11: S_ERROR入口
+LBL    nStateErr
+CALL   FC19:S State_Error
+JMP    nDispatchEnd
+
+
+NETWORK 12: 非法状态处理（强制回S0）
+LBL    nStateInvalid
+MOVB   0, VB2
+MOVB   0, VB3                       // VW2=0
+
+
+NETWORK 13: 调度结束
+LBL    nDispatchEnd
+// 状态调度完成，返回OB1
+
+
+// ============================================================
+// 文件结束
+// 说明:
+//   1. JMP/LBL为STL跳转指令，模拟CASE多分支
+//   2. 实际导入时也可用LAD的跳转线圈实现等价逻辑
+//   3. 每个状态FC内部负责状态转移(修改VW2)
+// ============================================================
