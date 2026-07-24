@@ -5,7 +5,8 @@
 // 说明: 计算加药步数，控制注射泵抽液+排液，轮询状态码等待完成
 // ============================================================
 
-NETWORK 1: S3进入动作 - 计算加药步数
+NETWORK 1
+// S3进入动作 - 计算加药步数
 // VD_Vol_Target = VD_C_Set × VD_Current_InletVolume / VD_C_Stock
 // VD_Dose_Steps = VD_Vol_Target / VD_StepResolution
 LD     SM0.0
@@ -22,7 +23,8 @@ MOVR   AC0, VD102                  // VD_Dose_Steps
 LPP
 
 
-NETWORK 2: 下发注射泵抽液+排液指令
+NETWORK 2
+// 下发注射泵抽液+排液指令
 // 写入40006(抽液步数)和40007(排液步数)
 // 通过Modbus写指令(FC4触发或本FC内触发)
 // 简化：将步数写入VW204/VW206(映射缓冲区)，由FC4实际下发
@@ -37,7 +39,8 @@ S      M10.3, 1                    // M10.3=注射泵指令待下发
 LPP
 
 
-NETWORK 3: 轮询注射泵状态码等待完成
+NETWORK 3
+// 轮询注射泵状态码等待完成
 // VW4映射自41001：0=完成，1=运行中，2=抽液，3=排液，其他=错误
 LD     SM0.0
 LPS

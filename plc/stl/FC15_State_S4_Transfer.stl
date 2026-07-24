@@ -13,7 +13,8 @@
 // VW274 : VD_Timeout_ValveB×10 转换值(供FC31用)
 
 
-NETWORK 1: S4首次进入动作
+NETWORK 1
+// S4首次进入动作
 LD     M10.4                        // S4首次进入脉冲
 EU
 LPS
@@ -38,13 +39,15 @@ MOVW   AC0, VW274
 LPP
 
 
-NETWORK 2: 调用阀B诊断FC31
+NETWORK 2
+// 调用阀B诊断FC31
 // FC31内部处理漫溢保护+四态诊断+开关到位+超时
 LD     SM0.0
-CALL   FC31:V ValveB_Diag
+CALL ValveB_Diag
 
 
-NETWORK 3: 检查阀B诊断结果
+NETWORK 3
+// 检查阀B诊断结果
 LD     SM0.0
 LPS
 // 诊断正常完成 → 转S5
@@ -56,7 +59,7 @@ MOVD   T40, VD74                  // VD_S4_Actual
 S      V1.7, 1
 // 【关键】记录下缸变满时间戳
 LD     SM0.0
-READ_RTC VB900
+TODR VB900
 MOVB   VB900, VB10                 // DT10 = 当前时间
 MOVB   VB901, VB11
 MOVB   VB902, VB12

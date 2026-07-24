@@ -10,7 +10,8 @@
 // VD336 : VD120运算中间变量(避免修改VD_S2_Target)
 // VD344 : VD58/VD62运算中间变量(泵超时转换)
 
-NETWORK 1: S2进入动作
+NETWORK 1
+// S2进入动作
 // 启动潜水泵1和2
 LD     SM0.0
 S      Q0.0, 1                     // 潜水泵1开
@@ -28,7 +29,8 @@ TON    T38, VW252                  // PT=VD_S2_Target×10(100ms时基)
 S      V1.6, 1
 
 
-NETWORK 2: 潜水泵流量检测
+NETWORK 2
+// 潜水泵流量检测
 // A3修复: 原用固定+100(10秒),现改读VD_Timeout_Pump1/2×10
 // 潜水泵1: VD58×10 转换
 MOVR   VD58, VD344                 // 复制VD_Timeout_Pump1
@@ -57,7 +59,8 @@ MOVB   99, VB2
 MOVB   0, VB3
 
 
-NETWORK 3: 预循环完成转移至S3
+NETWORK 3
+// 预循环完成转移至S3
 LD     T38                         // 计时到达
 R      Q0.0, 1                    // 停潜水泵1
 R      Q0.1, 1                    // 停潜水泵2

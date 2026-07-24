@@ -7,6 +7,11 @@
 //   断电恢复(V304.0=1): RTC检测+VD_S5_Elapsed重算+状态机恢复策略
 //   阀门动作态(S1~S6)断电 → 转S_ERROR(安全)
 //   S5(实验运行)断电 → 重算Elapsed,保持S5继续
+// 修复记录:
+//   P1-NETWORK标题去掉冒号(错误66)
+//   P2-LBL格式由C风格"name:"改为STL标准"LBL name"(错误33)
+//   P3-字节比较LD VBxx+AW=改为LDB=(错误36/32)
+//   P4-字比较LD VW2+AW=改为LDW=(错误36/32)
 // ============================================================
 
 // 符号说明:
@@ -21,16 +26,18 @@
 // RTC   : VB900~VB907       READ_RTC读取结果(BCD)
 
 
-NETWORK 1: 判断冷启动/断电恢复
+NETWORK 1
+// 判断冷启动/断电恢复
 // V304.0=0 → 冷启动(出厂/长期断电后,超级电容失效)
 // V304.0=1 → 断电恢复(超级电容保持期内)
 LD     SM0.1
 MOVW   1, VW198                    // 步骤=1(开始初始化)
 LD     V304.0                      // 初始化完成标志=1?
-JMP    nWarmStart                  // 是 → 断电恢复路径
+JMP    1                  // 是 → 断电恢复路径
 
 
-NETWORK 2: 冷启动路径(全部清零安全状态)
+NETWORK 2
+// 冷启动路径(全部清零安全状态)
 LD     SM0.1
 AN     V304.0                      // 冷启动(V304.0=0)
 // 状态机初始化为S0
@@ -59,66 +66,55 @@ R      M10.7, 1                    // 清预规划触发标志
 // VD参数区(VD10~VD140)不初始化,保留HMI设定值
 // DT10不初始化(冷启动时DT10无效,后续S4完成时覆盖)
 MOVW   2, VW198                    // 步骤=2(冷启动完成)
-JMP    nInitDone                   // → 完成,跳过断电恢复
+JMP    2                   // → 完成,跳过断电恢复
 
 
-NETWORK 3: 断电恢复路径 - READ_RTC + RTC丢失检测
-LBL    nWarmStart
+NETWORK 3
+// 断电恢复路径 - READ_RTC + RTC丢失检测
+LBL    1
 LD     SM0.1
-READ_RTC VB900                     // 读RTC到VB900~VB907(BCD)
+TODR VB900                     // 读RTC到VB900~VB907(BCD)
 // VB900=年,VB901=月,VB902=日,VB903=时,VB904=分,VB905=秒,VB907=星期
 
 // RTC丢失检测: 比较RTC与DT10(VB10~VB17)
 // DT10未写入(VB10=0)→跳过检测
-LD     VB10
-AW=    VB10, 0
-JMP    nRTCOK                      // DT10未写入,跳过检测
+LDB=   VB10, 0
+JMP    3                      // DT10未写入,跳过检测
 
 // 逐字段BCD比较(年→月→日→时→分→秒)
 // RTC年 < DT10年 → RTC丢失
-LD     VB900
-AW<    VB900, VB10
-JMP    nRTCError
+LDB<   VB900, VB10
+JMP    4
 // RTC年 > DT10年 → 正常
-LD     VB900
-AW>    VB900, VB10
-JMP    nRTCOK
+LDB>   VB900, VB10
+JMP    3
 // RTC年 = DT10年 → 比月
-LD     VB901
-AW<    VB901, VB11
-JMP    nRTCError
-LD     VB901
-AW>    VB901, VB11
-JMP    nRTCOK
+LDB<   VB901, VB11
+JMP    4
+LDB>   VB901, VB11
+JMP    3
 // 比日
-LD     VB902
-AW<    VB902, VB12
-JMP    nRTCError
-LD     VB902
-AW>    VB902, VB12
-JMP    nRTCOK
+LDB<   VB902, VB12
+JMP    4
+LDB>   VB902, VB12
+JMP    3
 // 比时
-LD     VB903
-AW<    VB903, VB13
-JMP    nRTCError
-LD     VB903
-AW>    VB903, VB13
-JMP    nRTCOK
+LDB<   VB903, VB13
+JMP    4
+LDB>   VB903, VB13
+JMP    3
 // 比分
-LD     VB904
-AW<    VB904, VB14
-JMP    nRTCError
-LD     VB904
-AW>    VB904, VB14
-JMP    nRTCOK
+LDB<   VB904, VB14
+JMP    4
+LDB>   VB904, VB14
+JMP    3
 // 比秒
-LD     VB905
-AW<    VB905, VB15
-JMP    nRTCError
+LDB<   VB905, VB15
+JMP    4
 // 全部>= → RTC正常
-JMP    nRTCOK
+JMP    3
 
-nRTCError:
+LBL    4
 // RTC丢失: V303.5置位,VD_S5_Elapsed无法重算,转S_ERROR
 LD     SM0.1
 S      V303.5, 1                   // M_Alarm_RTC_Lost
@@ -126,13 +122,14 @@ MOVR   0.0, VD178                  // VD_S5_Elapsed=0(无法重算)
 MOVB   99, VB2                     // 转S_ERROR
 MOVB   0, VB3
 MOVW   8, VW198                    // 步骤=8(RTC错误)
-JMP    nInitDone
+JMP    2
 
-nRTCOK:
+LBL    3
 MOVW   3, VW198                    // 步骤=3(RTC正常)
 
 
-NETWORK 4: BCD转秒 - RTC(VD_RTC_Now_Sec)
+NETWORK 4
+// BCD转秒 - RTC(VD_RTC_Now_Sec)
 // VD_RTC_Now_Sec = 时×3600 + 分×60 + 秒
 // 注: 跨天场景需补天数×86400,换水周期通常同天内,本版用当天秒数
 LD     SM0.1
@@ -156,7 +153,8 @@ DTR    AC0, AC0
 +R     AC0, VD186
 
 
-NETWORK 5: BCD转秒 - DT10(VD_DT10_Sec)
+NETWORK 5
+// BCD转秒 - DT10(VD_DT10_Sec)
 LD     SM0.1
 MOVR   0.0, VD190                  // 清VD_DT10_Sec
 // 时×3600
@@ -179,7 +177,8 @@ DTR    AC0, AC0
 MOVW   4, VW198                    // 步骤=4(BCD转秒完成)
 
 
-NETWORK 6: VD_S5_Elapsed重算(仅保持S5且下缸=满时)
+NETWORK 6
+// VD_S5_Elapsed重算(仅保持S5且下缸=满时)
 // VD_S5_Elapsed = VD_RTC_Now_Sec - VD_DT10_Sec
 // P7修复: 加 VW2==6 条件,仅在确认保持S5时才重算
 //         (避免V1.7=1但VW2已转S_ERROR时错误重算)
@@ -188,7 +187,7 @@ AW=    VW2, 6                      // 且状态机=S5(字比较,与栈顶AND)
 MOVR   VD186, VD178                // 满足:VD_S5_Elapsed = RTC秒
 -R     VD190, VD178                // - DT10秒 = 断电期间经过秒数
 MOVW   5, VW198                    // 步骤=5(Elapsed重算完成)
-JMP    nStateRecover
+JMP    5
 
 // 下缸=空 或 非S5 时VD_S5_Elapsed=0(条件不满足,不执行上面JMP,走这里)
 LD     SM0.0
@@ -196,26 +195,23 @@ MOVR   0.0, VD178                  // Elapsed=0
 MOVW   5, VW198
 
 
-NETWORK 7: 状态机恢复策略(VW2分类处理)
+NETWORK 7
+// 状态机恢复策略(VW2分类处理)
 // S0(0)/S5(6)/S7(8)/S_ERROR(99) → 可恢复,保持原状态
 // S1(1)/S2(2)/S3(3)/S3.5(4)/S4(5)/S6(7) → 转S_ERROR(阀门/泵动作中断不安全)
-LBL    nStateRecover
-LD     VW2
-AW=    VW2, 0                      // S0?
-JMP    nStateOK                    // 保持S0
-LD     VW2
-AW=    VW2, 6                      // S5?
-JMP    nStateOK                    // 保持S5(无阀门动作,Elapsed已重算)
-LD     VW2
-AW=    VW2, 8                      // S7?
-JMP    nStateOK                    // 保持S7(锁定态)
-LD     VW2
-AW=    VW2, 99                     // S_ERROR?
-JMP    nStateOK                    // 保持S_ERROR
+LBL    5
+LDW=   VW2, 0                      // S0?
+JMP    6                    // 保持S0
+LDW=   VW2, 6                      // S5?
+JMP    6                    // 保持S5(无阀门动作,Elapsed已重算)
+LDW=   VW2, 8                      // S7?
+JMP    6                    // 保持S7(锁定态)
+LDW=   VW2, 99                     // S_ERROR?
+JMP    6                    // 保持S_ERROR
 // S1~S6: 阀门/泵动作中断 → 转S_ERROR
-JMP    nStateError
+JMP    7
 
-nStateError:
+LBL    7
 // 阀门动作态断电,强制安全输出+转S_ERROR
 LD     SM0.1
 MOVB   0, QB0                      // 阀门关/泵停/NC电磁阀失电(安全)
@@ -223,15 +219,16 @@ MOVB   99, VB2                     // 转S_ERROR
 MOVB   0, VB3
 S      V300.4, 1                   // 置急停锁存(类比急停,需人工复位)
 MOVW   7, VW198                    // 步骤=7(状态机转S_ERROR)
-JMP    nInitDone
+JMP    2
 
-nStateOK:
+LBL    6
 // 可恢复状态,保持VW2原值
 MOVW   6, VW198                    // 步骤=6(状态恢复完成)
 
 
-NETWORK 8: 初始化完成
-LBL    nInitDone
+NETWORK 8
+// 初始化完成
+LBL    2
 LD     SM0.1
 S      V304.0, 1                   // M_InitDone=1(初始化完成,断电保持)
 MOVW   0, VW198                    // 步骤=0(完成)

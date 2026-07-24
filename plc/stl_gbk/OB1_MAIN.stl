@@ -21,46 +21,53 @@
 // I2.3    : DI_Btn_SystemReset (系统复位按钮)
 
 
-NETWORK 1: 首次扫描初始化
+NETWORK 1
+// 首次扫描初始化
 // SM0.1仅在首次扫描周期ON，调用FC0系统初始化
 LD     SM0.1
 =      L60.0                      // 局部存储器中转
 LD     L60.0
-CALL   FC0:S SysInit
+CALL SysInit
 
 
-NETWORK 2: 急停与安全处理（每周期调用，优先级最高）
+NETWORK 2
+// 急停与安全处理（每周期调用，优先级最高）
 // SM0.0常ON，每周期调用FC2
 LD     SM0.0
-CALL   FC2:EStopHandling
+CALL   EStopHandling
 
 
-NETWORK 3: Modbus通讯轮询（每周期调用）
+NETWORK 3
+// Modbus通讯轮询（每周期调用）
 LD     SM0.0
-CALL   FC4:M ModbusPolling
+CALL ModbusPolling
 
 
-NETWORK 4: 报警处理（每周期调用）
+NETWORK 4
+// 报警处理（每周期调用）
 LD     SM0.0
-CALL   FC3:A AlarmHandling
+CALL AlarmHandling
 
 
-NETWORK 5: 状态机调度（急停时FC2会强制VW2=99）
+NETWORK 5
+// 状态机调度（急停时FC2会强制VW2=99）
 // 每周期根据VW2调用对应状态FC
 LD     SM0.0
-CALL   FC1:S StateDispatcher
+CALL StateDispatcher
 
 
-NETWORK 6: 实验轮次计数（S5每完成一轮S1→S6累加）
+NETWORK 6
+// 实验轮次计数（S5每完成一轮S1→S6累加）
 // 简化骨架：在S6完成转S5时累加，实际在FC17中处理
 // 此处预留，具体在FC17实现
 
 
-NETWORK 7: 手动控制处理（每周期调用,在状态调度之后）
+NETWORK 7
+// 手动控制处理（每周期调用,在状态调度之后）
 // 处理HMI画面3手动控制命令位V2.4~V3.3
 // 仅S0或S_ERROR态响应,含安全联锁(详见FC20)
 LD     SM0.0
-CALL   FC20 ManualControl
+CALL   ManualControl
 
 
 // ============================================================

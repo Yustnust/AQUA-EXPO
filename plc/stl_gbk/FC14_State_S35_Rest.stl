@@ -9,7 +9,8 @@
 // VW254 : VD_RestTime_Target×10 转换值(100ms时基,供T39用)
 // VD340 : VD124运算中间变量(避免修改VD_RestTime_Target)
 
-NETWORK 1: S3.5进入动作 - 启动计时
+NETWORK 1
+// S3.5进入动作 - 启动计时
 // A2修复: 原骨架标注"待Story1.4补充转换",FC40只输出REAL秒到VD124,
 //         从未写入VW254导致T39计时失效。现补转换逻辑。
 // VW254 = VD_RestTime_Target(VD124) × 10 (REAL秒→100ms时基)
@@ -22,7 +23,8 @@ R      T39, 1
 TON    T39, VW254                  // PT=VD_RestTime_Target×10(100ms时基)
 
 
-NETWORK 2: 静止等候完成转移至S4
+NETWORK 2
+// 静止等候完成转移至S4
 LD     T39                         // 计时到达
 MOVB   5, VB2                     // VW2=5(S4)
 MOVB   0, VB3

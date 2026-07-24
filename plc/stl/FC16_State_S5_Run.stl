@@ -15,7 +15,8 @@
 // VW184 : VW_Corr_Result     纠偏结果(FC40输出)
 
 
-NETWORK 1: 下缸满计时器 VD_S5_Elapsed 累加
+NETWORK 1
+// 下缸满计时器 VD_S5_Elapsed 累加
 // 每秒VD_S5_Elapsed+1,仅下缸=满期间
 LD     SM0.0
 LPS
@@ -30,7 +31,8 @@ R      T60, 1                       // 重置进入下一秒
 // 注: 断电恢复时VD_S5_Elapsed由FC0_SysInit用RTC重算(Story 1.7完善)
 
 
-NETWORK 2: Available计算 + 预规划上升沿触发(转S1上缸配液)
+NETWORK 2
+// Available计算 + 预规划上升沿触发(转S1上缸配液)
 // VD_Available = VD_CycleSetpoint×60 + VD_S6_Rolling - VD_S5_Elapsed
 LD     SM0.0
 MOVR   VD354, VD150                  // VD_CycleSetpoint(min)
@@ -47,7 +49,7 @@ S      M10.7, 1                     // 锁存:本轮已触发
 // 填入FC40输入: 模式=0(预规划), Needed=VD_T_Rolling
 MOVW   0, VW182
 MOVR   VD112, VD154                 // Needed = VD_T_Rolling
-CALL   FC40:V RhythmCorrection
+CALL RhythmCorrection
 // 检查纠偏结果: 非"人工介入(4)"才启动S1
 LPS
 AW<>   VW184, 4
@@ -66,7 +68,8 @@ S      V301.6, 1                    // 报警(上缸未排空异常)
 MOVB   99, VB2
 
 
-NETWORK 3: 实验时长累加(仅下缸=满期间)
+NETWORK 3
+// 实验时长累加(仅下缸=满期间)
 // VD_ExperimentDuration_Accum(VD366)每分钟+1
 LD     V1.7                         // 下缸=满
 R      T47, 1
@@ -76,7 +79,8 @@ EU
 +R     1.0, VD366                    // VD_ExperimentDuration_Accum + 1(分钟)
 
 
-NETWORK 4: 换水周期到达 - 转S6排水
+NETWORK 4
+// 换水周期到达 - 转S6排水
 // VD_S5_Elapsed >= VD_CycleSetpoint×60 → 下缸该排空了
 LD     SM0.0
 LPS
@@ -90,7 +94,8 @@ MOVB   0, VB3
 LPP
 
 
-NETWORK 5: 实验时长达标 - 转S7实验结束
+NETWORK 5
+// 实验时长达标 - 转S7实验结束
 // VD_ExperimentDuration_Accum >= VD_ExperimentTarget → 实验结束
 LD     SM0.0
 LPS
@@ -103,7 +108,8 @@ MOVB   0, VB3
 LPP
 
 
-NETWORK 6: HMI手动停止命令
+NETWORK 6
+// HMI手动停止命令
 LD     V0.2                         // CMD_Stop
 EU
 R      T41, 1

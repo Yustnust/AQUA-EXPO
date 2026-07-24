@@ -16,7 +16,8 @@
 // VD250 : 目标进水量(HMI设定)
 
 
-NETWORK 1: S1首次进入动作
+NETWORK 1
+// S1首次进入动作
 // 用M10.2作为S1首次进入标志(由FC1状态调度置位)
 LD     M10.2                        // S1首次进入脉冲
 EU
@@ -50,22 +51,24 @@ MOVW   AC0, VW280
 LPP
 
 
-NETWORK 2: 调用阀A诊断FC30
+NETWORK 2
+// 调用阀A诊断FC30
 // 每周期调用FC30，FC30内部管理诊断子状态机
 LD     SM0.0
-CALL   FC30:V ValveA_Diag
+CALL ValveA_Diag
 
 
-NETWORK 3: 检查阀A诊断结果 + 二次校正(Story1.4) + 转S2
+NETWORK 3
+// 检查阀A诊断结果 + 二次校正(Story1.4) + 转S2
 // VW266=0 进行中，继续等待
 // VW266=1 正常完成 → 二次校正 → 转S2
 // VW266=2 故障(FC30已转S_ERROR)，本周期结束
 LD     SM0.0
 AW=    VW266, 1                    // 诊断正常完成?
-JMP    nS1DiagOK                   // 是 → 跳转处理
-JMP    nS1CheckEnd                 // 否 → 结束本NETWORK
+JMP    1                   // 是 → 跳转处理
+JMP    2                 // 否 → 结束本NETWORK
 
-nS1DiagOK:
+LBL    1
 LD     SM0.0
 R      T37, 1                      // 停S1计时
 MOVD   T37, VD70                   // 记录S1实测时长 VD_S1_Actual
@@ -81,7 +84,7 @@ MOVR   VD120, VD154                // VD_S2_Target
 +R     VD174, VD154                // + VD_S3_Estimate
 +R     VD124, VD154                // + VD_RestTime_Target = Needed'
 MOVW   1, VW182                    // 模式=1(二次校正)
-CALL   FC40:V RhythmCorrection
+CALL RhythmCorrection
 // 更新VD_T_Rolling(取标称值,7.5): S1实测+S2标称+S3估算+S3.5标称
 LD     SM0.0
 MOVR   VD70, VD112                 // VD_S1_Actual
@@ -94,8 +97,8 @@ AW<>   VW184, 4
 MOVB   2, VB2                      // 状态转移 S1→S2
 MOVB   0, VB3
 
-nS1CheckEnd:
-LBL    nS1CheckEnd
+LBL    2
+LBL    2
 
 
 // 注: 漫溢保护、差值法计量、延时验证、内漏检测、开关到位诊断

@@ -22,7 +22,8 @@
 // Q0.6  : NC电磁阀-下缸
 
 
-NETWORK 1: 漫溢保护（全程，优先级最高）
+NETWORK 1
+// 漫溢保护（全程，优先级最高）
 // 液位计B高位=ON立即报警+NC阀+转S_ERROR
 LD     I0.7
 S      V300.1, 1                   // M_Alarm_Overflow_BHigh
@@ -32,32 +33,35 @@ R      Q0.3, 1                     // 关阀B
 MOVB   99, VB2
 MOVB   0, VB3
 MOVB   2, VB268                    // 故障
-JMP    nDiagB_End
+JMP    1
 
 
-NETWORK 2: 诊断子状态调度
+NETWORK 2
+// 诊断子状态调度
 LDW=   VW262, 0
-JMP    nDiagB_S0
+JMP    2
 LDW=   VW262, 1
-JMP    nDiagB_S1
+JMP    3
 LDW=   VW262, 2
-JMP    nDiagB_S2
+JMP    4
 LDW=   VW262, 3
-JMP    nDiagB_S3
+JMP    5
 LDW=   VW262, 4
-JMP    nDiagB_S4
-JMP    nDiagB_End
+JMP    6
+JMP    1
 
 
 // ---- 子状态0: 空闲 ----
-NETWORK 3: S0空闲
-LBL    nDiagB_S0
-JMP    nDiagB_End
+NETWORK 3
+// S0空闲
+LBL    2
+JMP    1
 
 
 // ---- 子状态1: 等待开到位 ----
-NETWORK 4: S1等待开到位
-LBL    nDiagB_S1
+NETWORK 4
+// S1等待开到位
+LBL    3
 // T53开到位超时 + T54流量开关超时(两套独立判据)
 LD     SM0.0
 TON    T53, VW274                  // PT=VD_Timeout_ValveB(VD362)×10
@@ -70,7 +74,7 @@ MOVB   2, VB262
 MOVB   0, VB263
 R      T53, 1
 R      T54, 1
-JMP    nDiagB_End
+JMP    1
 
 // 开到位超时 → 报警
 LD     T53
@@ -78,7 +82,7 @@ S      V302.1, 1                   // M_Alarm_ValveB_OpenTimeout
 MOVB   99, VB2
 MOVB   0, VB3
 MOVB   2, VB268
-JMP    nDiagB_End
+JMP    1
 
 // 流量开关超时(开阀后一直无流) → 报警
 LD     T54
@@ -87,17 +91,18 @@ S      V302.2, 1                   // M_Alarm_ValveB_OpenNoFlow
 MOVB   99, VB2
 MOVB   0, VB3
 MOVB   2, VB268
-JMP    nDiagB_End
+JMP    1
 
 
 // ---- 子状态2: 开启完成检查 ----
-NETWORK 5: S2开启完成检查
-LBL    nDiagB_S2
+NETWORK 5
+// S2开启完成检查
+LBL    4
 // 流量开关B=ON → 正常，转S3
 LD     I0.1
 MOVB   3, VB262
 MOVB   0, VB263
-JMP    nDiagB_End
+JMP    1
 
 // 开到位但无流 → 报警
 LD     I1.5
@@ -106,12 +111,13 @@ S      V302.2, 1                   // M_Alarm_ValveB_OpenNoFlow
 MOVB   99, VB2
 MOVB   0, VB3
 MOVB   2, VB268
-JMP    nDiagB_End
+JMP    1
 
 
 // ---- 子状态3: 运行中(四态诊断持续扫描) ----
-NETWORK 6: S3四态诊断
-LBL    nDiagB_S3
+NETWORK 6
+// S3四态诊断
+LBL    5
 // 四态诊断: 流量开关B(I0.1) + 液位计A低位(I0.6)
 // 状态3: 流量开关OFF + 液位低位ON → 上缸排空，关阀触发
 LD     I0.6                        // 液位计A低位=ON(上缸空)
@@ -119,7 +125,7 @@ AN     I0.1                        // 且流量开关B=OFF(转移结束)
 R      Q0.3, 1                     // 关阀B
 MOVB   4, VB262                    // 转S4等关到位
 MOVB   0, VB263
-JMP    nDiagB_End
+JMP    1
 
 // 状态4: 流量开关OFF + 液位低位OFF → 设备故障
 LD     I0.1                        // 流量开关B
@@ -131,16 +137,17 @@ S      V302.0, 1                   // M_Alarm_ValveB_Diag
 MOVB   99, VB2
 MOVB   0, VB3
 MOVB   2, VB268
-JMP    nDiagB_End
+JMP    1
 
 // 状态1/2: 流量开关ON → 正常转移中/即将排空，继续
 LD     I0.1
-JMP    nDiagB_End
+JMP    1
 
 
 // ---- 子状态4: 等待关到位 ----
-NETWORK 7: S4等待关到位
-LBL    nDiagB_S4
+NETWORK 7
+// S4等待关到位
+LBL    6
 // T55关到位超时
 LD     SM0.0
 TON    T55, VW274                  // PT=VD_Timeout_ValveB×10
@@ -152,7 +159,7 @@ MOVB   0, VB262                    // VW262=0空闲
 MOVB   0, VB263
 MOVB   1, VB268                    // Diag_Result_B=1正常完成
 R      T55, 1
-JMP    nDiagB_End
+JMP    1
 
 // 关到位=ON AND 流量开关=ON → 内漏
 LD     I1.6
@@ -161,7 +168,7 @@ S      V302.4, 1                   // M_Alarm_ValveB_CloseLeak
 MOVB   99, VB2
 MOVB   0, VB3
 MOVB   2, VB268
-JMP    nDiagB_End
+JMP    1
 
 // 关到位超时 → 报警
 LD     T55
@@ -170,11 +177,12 @@ S      V302.3, 1                   // M_Alarm_ValveB_CloseTimeout
 MOVB   99, VB2
 MOVB   0, VB3
 MOVB   2, VB268
-JMP    nDiagB_End
+JMP    1
 
 
-NETWORK 8: 诊断结束
-LBL    nDiagB_End
+NETWORK 8
+// 诊断结束
+LBL    1
 
 
 // ============================================================

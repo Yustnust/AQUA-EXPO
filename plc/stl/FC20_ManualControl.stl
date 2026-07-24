@@ -26,7 +26,8 @@
 // Q0.4  : DO_ValveC 阀C
 
 
-NETWORK 1: 手动控制允许条件
+NETWORK 1
+// 手动控制允许条件
 // 仅S0或S_ERROR态允许手动(避免运行中误操作)
 // 用L60.1暂存"允许手动"标志
 LD     SM0.0
@@ -37,8 +38,9 @@ OW=    VW2, 99                      // 或S_ERROR
 LPP
 
 
-NETWORK 2: 阀A手动控制(无特殊联锁)
-LBL    nManualValveA
+NETWORK 2
+// 阀A手动控制(无特殊联锁)
+LBL    1
 LD     L60.1                         // 允许手动
 A      V2.4                          // 开阀A命令
 EU                                   // 上升沿触发
@@ -52,8 +54,9 @@ R      Q0.2, 1                       // 关阀A
 R      V2.5, 1
 
 
-NETWORK 3: 阀B手动控制(联锁:上缸=满 AND 下缸=空)
-LBL    nManualValveB
+NETWORK 3
+// 阀B手动控制(联锁:上缸=满 AND 下缸=空)
+LBL    2
 LD     L60.1
 A      V2.6                          // 开阀B命令
 EU
@@ -69,8 +72,9 @@ R      Q0.3, 1                       // 关阀B(关阀无联锁)
 R      V2.7, 1
 
 
-NETWORK 4: 阀C手动控制(联锁:下缸=满)
-LBL    nManualValveC
+NETWORK 4
+// 阀C手动控制(联锁:下缸=满)
+LBL    3
 LD     L60.1
 A      V3.0                          // 开阀C命令
 EU
@@ -85,8 +89,9 @@ R      Q0.4, 1                       // 关阀C
 R      V3.1, 1
 
 
-NETWORK 5: 潜水泵1手动控制(无特殊联锁,但建议阀A或B开启时有水)
-LBL    nManualPump1
+NETWORK 5
+// 潜水泵1手动控制(无特殊联锁,但建议阀A或B开启时有水)
+LBL    4
 LD     L60.1
 A      V3.2                          // 启动泵1命令
 EU
@@ -100,8 +105,9 @@ R      Q0.0, 1                       // 停止潜水泵1
 R      V3.3, 1
 
 
-NETWORK 6: FC20结束
-LBL    nManualEnd
+NETWORK 6
+// FC20结束
+LBL    5
 
 
 // ============================================================

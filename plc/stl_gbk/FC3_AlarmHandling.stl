@@ -21,185 +21,213 @@
 // M11.2 : M_PrevAlarm 上一周期有报警标志(新报警检测用)
 
 
-NETWORK 1: 优先级链计算VW6(最高优先级未确认报警码)
+NETWORK 1
+// 优先级链计算VW6(最高优先级未确认报警码)
 // 优先级: 99 > 10~14 > 20 > 21 > 30~36 > 40~47 > 60~66
 // 用LD压栈+条件JMP实现,JMP nAlarmCodeDone跳到末尾
 
 // 最高级: 安全继电器故障
 LD     V300.5
-JMP    nCode99
+JMP    1
 
 // 漫溢级(10~14)
 LD     V300.0
-JMP    nCode10
+JMP    2
 LD     V300.1
-JMP    nCode11
+JMP    3
 LD     V300.2
-JMP    nCode12
+JMP    4
 LD     V300.3
-JMP    nCode13
+JMP    5
 LD     V300.4
-JMP    nCode14
+JMP    6
 
 // 节奏滞后级(20~21)
 LD     V300.6
-JMP    nCode20
+JMP    7
 LD     V300.7
-JMP    nCode21
+JMP    8
 
 // 阀A类(30~36)
 LD     V301.0
-JMP    nCode30
+JMP    9
 LD     V301.1
-JMP    nCode31
+JMP    10
 LD     V301.2
-JMP    nCode32
+JMP    11
 LD     V301.3
-JMP    nCode33
+JMP    12
 LD     V301.4
-JMP    nCode34
+JMP    13
 LD     V301.5
-JMP    nCode35
+JMP    14
 LD     V301.6
-JMP    nCode36
+JMP    15
 
 // 阀B/C/泵类(40~47)
 LD     V302.0
-JMP    nCode40
+JMP    16
 LD     V302.1
-JMP    nCode41
+JMP    17
 LD     V302.2
-JMP    nCode42
+JMP    18
 LD     V302.3
-JMP    nCode43
+JMP    19
 LD     V302.4
-JMP    nCode44
+JMP    20
 LD     V302.5
-JMP    nCode45
+JMP    21
 LD     V302.6
-JMP    nCode46
+JMP    22
 LD     V302.7
-JMP    nCode47
+JMP    23
 
 // 其他(60~66)
 LD     V303.0
-JMP    nCode60
+JMP    24
 LD     V303.1
-JMP    nCode61
+JMP    25
 LD     V303.2
-JMP    nCode62
+JMP    26
 LD     V303.3
-JMP    nCode63
+JMP    27
 LD     V303.4
-JMP    nCode64
+JMP    28
 LD     V303.5
-JMP    nCode65
+JMP    29
 LD     V303.6
-JMP    nCode66
+JMP    30
 
 // 无报警
 LD     SM0.0
 MOVW   0, VW6
-JMP    nAlarmCodeDone
+JMP    31
 
 // 报警码赋值
-nCode99:  MOVW 99, VW6
-          JMP nAlarmCodeDone
-nCode10:  MOVW 10, VW6
-          JMP nAlarmCodeDone
-nCode11:  MOVW 11, VW6
-          JMP nAlarmCodeDone
-nCode12:  MOVW 12, VW6
-          JMP nAlarmCodeDone
-nCode13:  MOVW 13, VW6
-          JMP nAlarmCodeDone
-nCode14:  MOVW 14, VW6
-          JMP nAlarmCodeDone
-nCode20:  MOVW 20, VW6
-          JMP nAlarmCodeDone
-nCode21:  MOVW 21, VW6
-          JMP nAlarmCodeDone
-nCode30:  MOVW 30, VW6
-          JMP nAlarmCodeDone
-nCode31:  MOVW 31, VW6
-          JMP nAlarmCodeDone
-nCode32:  MOVW 32, VW6
-          JMP nAlarmCodeDone
-nCode33:  MOVW 33, VW6
-          JMP nAlarmCodeDone
-nCode34:  MOVW 34, VW6
-          JMP nAlarmCodeDone
-nCode35:  MOVW 35, VW6
-          JMP nAlarmCodeDone
-nCode36:  MOVW 36, VW6
-          JMP nAlarmCodeDone
-nCode40:  MOVW 40, VW6
-          JMP nAlarmCodeDone
-nCode41:  MOVW 41, VW6
-          JMP nAlarmCodeDone
-nCode42:  MOVW 42, VW6
-          JMP nAlarmCodeDone
-nCode43:  MOVW 43, VW6
-          JMP nAlarmCodeDone
-nCode44:  MOVW 44, VW6
-          JMP nAlarmCodeDone
-nCode45:  MOVW 45, VW6
-          JMP nAlarmCodeDone
-nCode46:  MOVW 46, VW6
-          JMP nAlarmCodeDone
-nCode47:  MOVW 47, VW6
-          JMP nAlarmCodeDone
-nCode60:  MOVW 60, VW6
-          JMP nAlarmCodeDone
-nCode61:  MOVW 61, VW6
-          JMP nAlarmCodeDone
-nCode62:  MOVW 62, VW6
-          JMP nAlarmCodeDone
-nCode63:  MOVW 63, VW6
-          JMP nAlarmCodeDone
-nCode64:  MOVW 64, VW6
-          JMP nAlarmCodeDone
-nCode65:  MOVW 65, VW6
-          JMP nAlarmCodeDone
-nCode66:  MOVW 66, VW6
+LBL    1
+MOVW 99, VW6
+          JMP 31
+LBL    2
+MOVW 10, VW6
+          JMP 31
+LBL    3
+MOVW 11, VW6
+          JMP 31
+LBL    4
+MOVW 12, VW6
+          JMP 31
+LBL    5
+MOVW 13, VW6
+          JMP 31
+LBL    6
+MOVW 14, VW6
+          JMP 31
+LBL    7
+MOVW 20, VW6
+          JMP 31
+LBL    8
+MOVW 21, VW6
+          JMP 31
+LBL    9
+MOVW 30, VW6
+          JMP 31
+LBL    10
+MOVW 31, VW6
+          JMP 31
+LBL    11
+MOVW 32, VW6
+          JMP 31
+LBL    12
+MOVW 33, VW6
+          JMP 31
+LBL    13
+MOVW 34, VW6
+          JMP 31
+LBL    14
+MOVW 35, VW6
+          JMP 31
+LBL    15
+MOVW 36, VW6
+          JMP 31
+LBL    16
+MOVW 40, VW6
+          JMP 31
+LBL    17
+MOVW 41, VW6
+          JMP 31
+LBL    18
+MOVW 42, VW6
+          JMP 31
+LBL    19
+MOVW 43, VW6
+          JMP 31
+LBL    20
+MOVW 44, VW6
+          JMP 31
+LBL    21
+MOVW 45, VW6
+          JMP 31
+LBL    22
+MOVW 46, VW6
+          JMP 31
+LBL    23
+MOVW 47, VW6
+          JMP 31
+LBL    24
+MOVW 60, VW6
+          JMP 31
+LBL    25
+MOVW 61, VW6
+          JMP 31
+LBL    26
+MOVW 62, VW6
+          JMP 31
+LBL    27
+MOVW 63, VW6
+          JMP 31
+LBL    28
+MOVW 64, VW6
+          JMP 31
+LBL    29
+MOVW 65, VW6
+          JMP 31
+LBL    30
+MOVW 66, VW6
 
-nAlarmCodeDone:
+LBL    31
 
 
-NETWORK 2: 报警输出管理(灯光常亮 + 新报警声音重鸣)
+NETWORK 2
+// 报警输出管理(灯光常亮 + 新报警声音重鸣)
 // 有活动报警(VW6≠0) → 灯光Q1.0常亮
 // 新报警(VW6由0变非0) → 清M_Sound_Latched,声音重鸣
-LD     VW6
-AW<>   VW6, 0
+LDW<> VW6, 0
 S      Q1.0, 1                       // 灯光常亮
 
 // 新报警检测: 本周期VW6≠0 且 上一周期M11.2=0(无报警) → 新报警
-LD     VW6
-AW<>   VW6, 0
+LDW<> VW6, 0
 AN     M11.2                         // 上一周期无报警 → 新报警
 R      M11.1, 1                      // 清消音标志(新报警重鸣)
 
 // 声音管理: 有报警且未消音 → 声音开
-LD     VW6
-AW<>   VW6, 0
+LDW<> VW6, 0
 AN     M11.1                         // 未消音
 S      Q0.7, 1                       // 声音开
 
 // 自动恢复模式: VW6=0且自动模式 → 自动消光
-LD     VW6
-AW=    VW6, 0
+LDW= VW6, 0
 AN     V200.0                        // M_AlarmAckMode=0(自动模式)
 R      Q1.0, 1                       // 无报警自动消光
 R      Q0.7, 1                       // 无报警关声音
 R      M11.1, 1                      // 清消音标志
 
 // 更新上一周期报警标志
-LD     VW6
-AW<>   VW6, 0
+LDW<> VW6, 0
 =      M11.2                         // 记录本周期有报警(供下周期新报警检测)
 
 
-NETWORK 3: 消音处理(I2.1就地按钮 OR V0.4 HMI命令)
+NETWORK 3
+// 消音处理(I2.1就地按钮 OR V0.4 HMI命令)
 // 消音源: I2.1上升沿 OR V0.4上升沿
 LD     I2.1
 EU
@@ -213,7 +241,8 @@ R      V0.4, 1                       // 清HMI消音命令
 // 注: 消音只关声音,灯光Q1.0和报警位保持;新报警(VW6变化)时M11.1清,声音重鸣
 
 
-NETWORK 4: 报警确认处理(V0.3 HMI确认 → 条件消失才消光+清锁存)
+NETWORK 4
+// 报警确认处理(V0.3 HMI确认 → 条件消失才消光+清锁存)
 // V0.3上升沿 = HMI报警确认命令(高优先级HMI侧二次确认,PLC只收V0.3)
 // 确认规则: V0.3上升沿后,逐个检查报警位条件,条件消失的复位报警位,再由NETWORK1重算VW6
 LD     V0.3
@@ -314,7 +343,8 @@ R      V303.6, 1                     // 瞬时异常,确认即清除
 //      由FC19系统复位按钮/HMI高权限确认处理
 
 
-NETWORK 5: 自动恢复模式(M_AlarmAckMode=0时一般故障级条件消失自动复位)
+NETWORK 5
+// 自动恢复模式(M_AlarmAckMode=0时一般故障级条件消失自动复位)
 // 自动模式: V200.0=0时,一般故障级报警位条件消失自动R复位
 // 漫溢/节奏滞后/继电器故障不受此模式影响,保持锁存
 LD     V200.0                        // M_AlarmAckMode
@@ -397,14 +427,14 @@ R      V303.6, 1                     // 瞬时异常自动清除
 // 注: 自动复位后下一周期NETWORK1重算VW6,NETWORK2自动消光
 
 
-NETWORK 6: 报警日志(新报警触发时写入,简化版)
+NETWORK 6
+// 报警日志(新报警触发时写入,简化版)
 // 新报警: 本周期VW6≠0 且 上一周期M11.2=0
 // 简化: 仅记录报警码和时间戳到固定位置(完整环形缓冲区由HMI侧轮询读取)
-LD     VW6
-AW<>   VW6, 0
+LDW<> VW6, 0
 AN     M11.2                         // 上一周期无报警 → 新报警
 EU
-READ_RTC VB500                       // 时间戳写入VB500~507
+TODR VB500                       // 时间戳写入VB500~507
 MOVB   VW6, VB509                    // 报警码(低字节)
 MOVB   1, VB510                      // 动作=1(触发)
 MOVB   1, VB508                      // 单元编号=1(本PLC)
@@ -412,7 +442,8 @@ MOVB   1, VB508                      // 单元编号=1(本PLC)
 // 注: 详细历史记录由HMI侧存储,PLC仅保留最新一条供HMI轮询
 
 
-NETWORK 7: 流量开关瞬时异常检测(修复AQEX-32,触发V303.6)
+NETWORK 7
+// 流量开关瞬时异常检测(修复AQEX-32,触发V303.6)
 // 检测原理: 流量开关在短时间内(2秒窗口)多次翻转(抖动),判定为瞬时异常
 // 用T56做2秒窗口计时,C24做翻转计数,M11.3做上一周期状态(边沿检测)
 // 阈值: 2秒内翻转≥5次(可现场整定),触发V303.6报警

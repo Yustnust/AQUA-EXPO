@@ -3,128 +3,144 @@
 // 功能: 状态机调度器（每周期根据VW2调用对应状态FC）
 // Story: AQEX-6 状态机骨架
 // 说明: S7-200 SMART STL无CASE语句，用比较+跳转实现
+// 修复记录:
+//   P1-NETWORK标题去掉冒号(错误66)
+//   注: 若导入后仍报错误33(JMP/LBL跨网络),需改用条件CALL方案
 // ============================================================
 
-NETWORK 1: 状态调度
+NETWORK 1
+// 状态调度
 // 读取VW2并与各状态值比较，相等则调用对应FC
 // 使用LPP/LRD栈操作避免重复装载
 
 // VW2 = 0 → S0初始化
 LDW<=  VW2, 0
-JMP    nStateS0
+JMP    1
 
 // VW2 = 1 → S1上缸进水
 LDW=   VW2, 1
-JMP    nStateS1
+JMP    2
 
 // VW2 = 2 → S2预循环
 LDW=   VW2, 2
-JMP    nStateS2
+JMP    3
 
 // VW2 = 3 → S3加药
 LDW=   VW2, 3
-JMP    nStateS3
+JMP    4
 
 // VW2 = 4 → S3.5静止等候
 LDW=   VW2, 4
-JMP    nStateS35
+JMP    5
 
 // VW2 = 5 → S4上→下转移
 LDW=   VW2, 5
-JMP    nStateS4
+JMP    6
 
 // VW2 = 6 → S5实验运行中
 LDW=   VW2, 6
-JMP    nStateS5
+JMP    7
 
 // VW2 = 7 → S6下缸排水
 LDW=   VW2, 7
-JMP    nStateS6
+JMP    8
 
 // VW2 = 8 → S7实验结束
 LDW=   VW2, 8
-JMP    nStateS7
+JMP    9
 
 // VW2 = 99 → S_ERROR故障锁定
 LDW=   VW2, 99
-JMP    nStateErr
+JMP    10
 
 // 其他非法值 → 强制回S0
 LDW>=  VW2, 100
-JMP    nStateInvalid
+JMP    11
 
 // 若未匹配任何状态(0<VW2<99但非上述值)，也回S0
-JMP    nStateInvalid
+JMP    11
 
 
-NETWORK 2: S0入口
-LBL    nStateS0
-CALL   FC10:S State_S0_Init
-JMP    nDispatchEnd
+NETWORK 2
+// S0入口
+LBL    1
+CALL State_S0_Init
+JMP    12
 
 
-NETWORK 3: S1入口
-LBL    nStateS1
-CALL   FC11:S State_S1_Inlet
-JMP    nDispatchEnd
+NETWORK 3
+// S1入口
+LBL    2
+CALL State_S1_Inlet
+JMP    12
 
 
-NETWORK 4: S2入口
-LBL    nStateS2
-CALL   FC12:S State_S2_PreMix
-JMP    nDispatchEnd
+NETWORK 4
+// S2入口
+LBL    3
+CALL State_S2_PreMix
+JMP    12
 
 
-NETWORK 5: S3入口
-LBL    nStateS3
-CALL   FC13:S State_S3_Dosing
-JMP    nDispatchEnd
+NETWORK 5
+// S3入口
+LBL    4
+CALL State_S3_Dosing
+JMP    12
 
 
-NETWORK 6: S3.5入口
-LBL    nStateS35
-CALL   FC14:S State_S35_Rest
-JMP    nDispatchEnd
+NETWORK 6
+// S3.5入口
+LBL    5
+CALL State_S35_Rest
+JMP    12
 
 
-NETWORK 7: S4入口
-LBL    nStateS4
-CALL   FC15:S State_S4_Transfer
-JMP    nDispatchEnd
+NETWORK 7
+// S4入口
+LBL    6
+CALL State_S4_Transfer
+JMP    12
 
 
-NETWORK 8: S5入口
-LBL    nStateS5
-CALL   FC16:S State_S5_Run
-JMP    nDispatchEnd
+NETWORK 8
+// S5入口
+LBL    7
+CALL State_S5_Run
+JMP    12
 
 
-NETWORK 9: S6入口
-LBL    nStateS6
-CALL   FC17:S State_S6_Drain
-JMP    nDispatchEnd
+NETWORK 9
+// S6入口
+LBL    8
+CALL State_S6_Drain
+JMP    12
 
 
-NETWORK 10: S7入口
-LBL    nStateS7
-CALL   FC18:S State_S7_End
-JMP    nDispatchEnd
+NETWORK 10
+// S7入口
+LBL    9
+CALL State_S7_End
+JMP    12
 
 
-NETWORK 11: S_ERROR入口
-LBL    nStateErr
-CALL   FC19:S State_Error
-JMP    nDispatchEnd
+NETWORK 11
+// S_ERROR入口
+LBL    10
+CALL State_Error
+JMP    12
 
 
-NETWORK 12: 非法状态处理（强制回S0）
-LBL    nStateInvalid
+NETWORK 12
+// 非法状态处理（强制回S0）
+LBL    11
 MOVB   0, VB2
 MOVB   0, VB3                       // VW2=0
 
 
-NETWORK 13: 调度结束
-LBL    nDispatchEnd
+NETWORK 13
+// 调度结束
+LBL    12
 // 状态调度完成，返回OB1
 
 

@@ -23,7 +23,8 @@
 // Q0.5  : NC电磁阀-上缸
 
 
-NETWORK 1: 漫溢保护（全程，优先级最高）
+NETWORK 1
+// 漫溢保护（全程，优先级最高）
 // 无论诊断子状态如何，液位计A高位=ON立即报警+NC阀+转S_ERROR
 LD     I0.5
 S      V300.0, 1                   // M_Alarm_Overflow_AHigh
@@ -33,34 +34,37 @@ R      Q0.2, 1                     // 关阀A
 MOVB   99, VB2                     // 转S_ERROR
 MOVB   0, VB3
 MOVB   2, VB266                    // Diag_Result_A=2故障
-JMP    nDiagA_End
+JMP    1
 
 
-NETWORK 2: 诊断子状态调度
+NETWORK 2
+// 诊断子状态调度
 // 根据VW260调用对应处理
 LDW=   VW260, 0
-JMP    nDiagA_S0
+JMP    2
 LDW=   VW260, 1
-JMP    nDiagA_S1
+JMP    3
 LDW=   VW260, 2
-JMP    nDiagA_S2
+JMP    4
 LDW=   VW260, 3
-JMP    nDiagA_S3
+JMP    5
 LDW=   VW260, 5
-JMP    nDiagA_S5
-JMP    nDiagA_End
+JMP    6
+JMP    1
 
 
 // ---- 子状态0: 空闲 ----
-NETWORK 3: S0空闲
-LBL    nDiagA_S0
+NETWORK 3
+// S0空闲
+LBL    2
 // 等待FC11触发置VW260=1
-JMP    nDiagA_End
+JMP    1
 
 
 // ---- 子状态1: 等待开到位 ----
-NETWORK 4: S1等待开到位
-LBL    nDiagA_S1
+NETWORK 4
+// S1等待开到位
+LBL    3
 // T50超时计时(PT=VD_Timeout_ValveA×10, 用VW278存转换值,已修正避FC32 VW270冲突)
 LD     SM0.0
 TON    T50, VW278                  // PT由FC11计算VD358×10写入VW278
@@ -71,7 +75,7 @@ EU
 MOVB   2, VB260                    // VW260=2
 MOVB   0, VB261
 R      T50, 1                      // 复位超时计时
-JMP    nDiagA_End
+JMP    1
 
 // 开到位超时 → 报警转S_ERROR
 LD     T50
@@ -79,17 +83,18 @@ S      V301.4, 1                   // M_Alarm_ValveA_OpenTimeout
 MOVB   99, VB2
 MOVB   0, VB3
 MOVB   2, VB266
-JMP    nDiagA_End
+JMP    1
 
 
 // ---- 子状态2: 开启完成检查 ----
-NETWORK 5: S2开启完成检查
-LBL    nDiagA_S2
+NETWORK 5
+// S2开启完成检查
+LBL    4
 // 流量开关A=ON → 正常有流，转S3运行中
 LD     I0.0
 MOVB   3, VB260                    // VW260=3运行中
 MOVB   0, VB261
-JMP    nDiagA_End
+JMP    1
 
 // 流量开关A=OFF(开到位但无流) → 报警
 // 加2s延时确认避免瞬时波动
@@ -101,12 +106,13 @@ S      V301.5, 1                   // M_Alarm_ValveA_OpenNoFlow
 MOVB   99, VB2
 MOVB   0, VB3
 MOVB   2, VB266
-JMP    nDiagA_End
+JMP    1
 
 
 // ---- 子状态3: 运行中(差值法持续计量) ----
-NETWORK 6: S3运行中-持续计算进水量
-LBL    nDiagA_S3
+NETWORK 6
+// S3运行中-持续计算进水量
+LBL    5
 // VD_Current_InletVolume(VD90) = VD86(当前累计) - VD82(开启快照)
 LD     SM0.0
 MOVD   VD86, AC0
@@ -125,12 +131,13 @@ MOVB   5, VB260
 MOVB   0, VB261
 R      T52, 1                      // 复位确认计时
 LPP
-JMP    nDiagA_End
+JMP    1
 
 
 // ---- 子状态5: 关闭后延时验证(4项并行) ----
-NETWORK 7: S5延时验证启动
-LBL    nDiagA_S5
+NETWORK 7
+// S5延时验证启动
+LBL    6
 // T51延时验证计时(PT=VD_Delay_ValveA_Verify×10, 用VW280存转换值,已修正避FC32冲突)
 LD     SM0.0
 TON    T51, VW280                  // PT=VD66×10,由FC11写入VW280
@@ -142,7 +149,8 @@ MOVD   VD86, AC0
 MOVD   AC0, VD312                  // VD_FlowMeter_CloseDelta
 
 
-NETWORK 8: S5延时到达后4项并行校验
+NETWORK 8
+// S5延时到达后4项并行校验
 // 仅当T51延时到达后执行校验
 LD     T51                         // 延时到达
 LPS
@@ -169,7 +177,8 @@ S      V301.3, 1                   // M_Alarm_ValveA_CloseLeak
 LPP
 
 
-NETWORK 9: S5校验结果判定
+NETWORK 9
+// S5校验结果判定
 LD     T51
 LPS
 // 4项全通过: 流量开关OFF AND 差值不增 AND 关到位ON
@@ -181,7 +190,7 @@ MOVB   0, VB260                    // VW260=0空闲
 MOVB   0, VB261
 MOVB   1, VB266                    // Diag_Result_A=1正常完成
 R      T51, 1                      // 复位延时计时
-JMP    nDiagA_End
+JMP    1
 LPP
 
 // 任一项报警 → 转S_ERROR
@@ -193,11 +202,12 @@ O      V301.3
 MOVB   99, VB2
 MOVB   0, VB3
 MOVB   2, VB266                    // 故障
-JMP    nDiagA_End
+JMP    1
 
 
-NETWORK 10: 诊断结束
-LBL    nDiagA_End
+NETWORK 10
+// 诊断结束
+LBL    1
 
 
 // ============================================================

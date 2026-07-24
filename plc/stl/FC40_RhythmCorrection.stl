@@ -23,7 +23,8 @@
 // V300.7: M_Alarm_ScheduleLag_Warn 滞后提示报警
 
 
-NETWORK 1: 计算三层额度 + 清结果
+NETWORK 1
+// 计算三层额度 + 清结果
 LD     SM0.0
 MOVW   0, VW184                    // 清纠偏结果
 // 第0层额度 = VD_RestTime - VD_RestTime_Min
@@ -37,14 +38,16 @@ MOVR   VD44, VD170                 // VD_CycleExtend_Max(min)
 *R     60.0, VD170                 // →秒
 
 
-NETWORK 2: 判断是否需要纠偏(Available >= Needed → 无需纠偏)
+NETWORK 2
+// 判断是否需要纠偏(Available >= Needed → 无需纠偏)
 LD     SM0.0
 AR>=   VD150, VD154                // Available >= Needed ?
-JMP    nNoCorrection               // 是 → 无需纠偏
+JMP    1               // 是 → 无需纠偏
 // 否 → 继续计算缺口
 
 
-NETWORK 3: 计算缺口Delta + 第0层扣减(压缩静止等候)
+NETWORK 3
+// 计算缺口Delta + 第0层扣减(压缩静止等候)
 LD     SM0.0
 // Delta = Needed - Available
 MOVR   VD154, VD158                // Delta = Needed
@@ -52,60 +55,62 @@ MOVR   VD154, VD158                // Delta = Needed
 // 第0层判断: Delta <= Layer0_Quota ?
 LD     SM0.0
 AR<=   VD158, VD162                // Delta <= 第0层额度 ?
-JMP    nLayer0OK                   // 是 → 第0层够
+JMP    2                   // 是 → 第0层够
 // 否 → 第0层用满,Delta减去第0层额度,继续第1层
 LD     SM0.0
 MOVR   VD40, VD124                 // VD_RestTime_Target = VD_RestTime_Min(用满)
 MOVR   VD158, AC0                  // 暂存Delta
 -R     VD162, AC0                  // Delta - Layer0_Quota
 MOVR   AC0, VD158                  // 更新Delta
-JMP    nLayer1                     // → 第1层
+JMP    3                     // → 第1层
 
-nLayer0OK:
+LBL    2
 LD     SM0.0
 MOVR   VD36, VD124                 // VD_RestTime_Target = VD_RestTime - Delta
 -R     VD158, VD124
 MOVR   VD28, VD120                 // VD_S2_Target = VD_PreMixTime(不动)
 MOVR   0.0, VD128                  // VD_CycleExtend_Target = 0
 MOVB   2, VB184                   // Result=2(已纠偏)
-JMP    nCorrEnd
+JMP    4
 
 
-NETWORK 4: 第1层扣减(压缩S2预循环)
-LBL    nLayer1
+NETWORK 4
+// 第1层扣减(压缩S2预循环)
+LBL    3
 LD     SM0.0
 AR<=   VD158, VD166                // Delta <= 第1层额度 ?
-JMP    nLayer1OK                   // 是 → 第1层够
+JMP    5                   // 是 → 第1层够
 // 否 → 第1层用满,Delta减去第1层额度,继续第2层
 LD     SM0.0
 MOVR   VD32, VD120                 // VD_S2_Target = VD_PreMixTime_MinSafe(用满)
 MOVR   VD158, AC0                  // 暂存Delta
 -R     VD166, AC0                  // Delta - Layer1_Quota
 MOVR   AC0, VD158                  // 更新Delta
-JMP    nLayer2                     // → 第2层
+JMP    6                     // → 第2层
 
-nLayer1OK:
+LBL    5
 LD     SM0.0
 MOVR   VD28, VD120                 // VD_S2_Target = VD_PreMixTime - Delta
 -R     VD158, VD120
 MOVR   0.0, VD128                  // VD_CycleExtend_Target = 0
 MOVB   2, VB184                   // Result=2(已纠偏)
-JMP    nCorrEnd
+JMP    4
 
 
-NETWORK 5: 第2层扣减(顺延换水周期)
-LBL    nLayer2
+NETWORK 5
+// 第2层扣减(顺延换水周期)
+LBL    6
 LD     SM0.0
 AR<=   VD158, VD170                // Delta <= 第2层额度(总顺延上限) ?
-JMP    nLayer2OK                   // 是 → 顺延可覆盖
+JMP    7                   // 是 → 顺延可覆盖
 // 否 → 三层额度全部用尽,人工介入
 LD     SM0.0
 MOVB   4, VB184                   // Result=4(人工介入)
 S      V300.6, 1                  // M_Alarm_ScheduleLag(严重滞后,强制人工确认)
 MOVB   99, VB2                    // 转S_ERROR(VW2=99)
-JMP    nCorrEnd
+JMP    4
 
-nLayer2OK:
+LBL    7
 // 顺延周期可覆盖,触发滞后提示报警
 LD     SM0.0
 MOVR   VD158, VD128                // VD_CycleExtend_Target = Delta(s)
@@ -115,11 +120,12 @@ MOVB   3, VB184                   // Result=3(滞后提示)
 LD     SM0.0
 AN     V300.7                      // 预规划未触发过滞后提示?
 S      V300.7, 1                   // 才置位(避免二次校正重复报警)
-JMP    nCorrEnd
+JMP    4
 
 
-NETWORK 6: 无需纠偏分支(Available >= Needed)
-LBL    nNoCorrection
+NETWORK 6
+// 无需纠偏分支(Available >= Needed)
+LBL    1
 LD     SM0.0
 MOVR   VD28, VD120                 // VD_S2_Target = VD_PreMixTime(标称)
 MOVR   VD36, VD124                 // VD_RestTime_Target = VD_RestTime(标称)
@@ -127,8 +133,9 @@ MOVR   0.0, VD128                  // VD_CycleExtend_Target = 0(无需顺延)
 MOVB   1, VB184                   // Result=1(正常无需纠偏)
 
 
-NETWORK 7: 纠偏计算结束
-LBL    nCorrEnd
+NETWORK 7
+// 纠偏计算结束
+LBL    4
 // 返回调用方(FC16预规划 或 FC11二次校正)
 // 调用方检查VW184:
 //   1=正常 → 按标称执行

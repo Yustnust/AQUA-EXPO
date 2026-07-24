@@ -12,7 +12,8 @@
 // VW276 : VD_Timeout_ValveC×10 转换值(供FC32用)
 
 
-NETWORK 1: S6首次进入动作
+NETWORK 1
+// S6首次进入动作
 LD     M10.7                        // S6首次进入脉冲
 EU
 LPS
@@ -34,13 +35,15 @@ MOVW   AC0, VW276
 LPP
 
 
-NETWORK 2: 调用阀C诊断FC32
+NETWORK 2
+// 调用阀C诊断FC32
 // FC32内部处理四态诊断+开关到位+超时(阀C无漫溢保护)
 LD     SM0.0
-CALL   FC32:V ValveC_Diag
+CALL ValveC_Diag
 
 
-NETWORK 3: 检查阀C诊断结果
+NETWORK 3
+// 检查阀C诊断结果
 LD     SM0.0
 LPS
 // 诊断正常完成 → 排水完成处理
@@ -55,7 +58,8 @@ R      V1.7, 1
 LPP
 
 
-NETWORK 4: 排水后状态转移
+NETWORK 4
+// 排水后状态转移
 // 若实验未结束(换水周期内) → 返回S5
 // 若实验已结束(M10.6标志) → 转S7
 LD     SM0.0
