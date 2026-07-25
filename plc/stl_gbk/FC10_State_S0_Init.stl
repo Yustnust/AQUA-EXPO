@@ -18,7 +18,6 @@ NETWORK 2
 // V0.0(CMD_Start)上升沿 AND 无活动报警(VW6=0) → 转S1
 LD     V0.0                        // CMD_Start
 EU                                 // 上升沿检测
-A      VW6                         // 检查报警码
 LPS
 AW=    VW6, 0                      // 无活动报警
 // 状态转移：S0→S1

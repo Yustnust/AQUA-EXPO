@@ -50,7 +50,8 @@ LPS
 AW=    VW270, 1
 R      T42, 1                     // 停S6计时
 // 记录S6实测时长
-MOVD   T42, VD78                  // VD_S6_Actual
+MOVW   T42, AC0                   // VD_S6_Actual
+ITR    AC0, VD78                  // 定时器值转浮点存入VD78
 // 更新VD_S6_Rolling(滚动实测)
 MOVR   VD78, VD116                // VD_S6_Rolling
 // 置下缸状态=空

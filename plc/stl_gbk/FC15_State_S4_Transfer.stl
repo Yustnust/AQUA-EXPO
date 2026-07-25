@@ -54,7 +54,8 @@ LPS
 AW=    VW268, 1
 R      T40, 1                     // 停S4计时
 // 记录S4实测时长
-MOVD   T40, VD74                  // VD_S4_Actual
+MOVW   T40, AC0                   // VD_S4_Actual
+ITR    AC0, VD74                  // 定时器值转浮点存入VD74
 // 置下缸状态=满
 S      V1.7, 1
 // 【关键】记录下缸变满时间戳

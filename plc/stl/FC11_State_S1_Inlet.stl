@@ -71,7 +71,8 @@ JMP    2                 // 否 → 结束本NETWORK
 LBL    1
 LD     SM0.0
 R      T37, 1                      // 停S1计时
-MOVD   T37, VD70                   // 记录S1实测时长 VD_S1_Actual
+MOVW   T37, AC0                    // 记录S1实测时长 VD_S1_Actual
+ITR    AC0, VD70                   // 定时器值(16位整数)转浮点存入VD70
 // 【Story1.4】二次校正(7.3): 用S1实测值重核S2/S3.5目标
 // Available' = CycleSetpoint×60 + S6_Rolling - S5_Elapsed(已含S1耗时)
 LD     SM0.0
