@@ -71,8 +71,9 @@ JMP    2                 // 否 → 结束本NETWORK
 LBL    1
 LD     SM0.0
 R      T37, 1                      // 停S1计时
-MOVW   T37, VW300                   // 暂存定时器值(16位整数)
-ITR    VW300, VD70                  // 转浮点存入VD70(VD_S1_Actual)
+MOVW   T37, VW380                   // 暂存定时器值(16位整数)
+ITD    VW380, VD380                 // 整数→双整数
+DTR    VD380, VD70                  // 双整数→实数(VD_S1_Actual)
 // 【Story1.4】二次校正(7.3): 用S1实测值重核S2/S3.5目标
 // Available' = CycleSetpoint×60 + S6_Rolling - S5_Elapsed(已含S1耗时)
 LD     SM0.0
