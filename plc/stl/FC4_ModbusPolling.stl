@@ -39,8 +39,9 @@
 NETWORK 1
 // Modbus主站初始化（每周期调用MBUS_CTRL）
 // Mode=1(RTU), Baud=9600, Parity=0(无), Port=0, Timeout=1000ms
+// 注: MBUS_CTRL是LAD指令盒,STL中无法直接调用,需在LAD网络中插入
 LD     SM0.0
-MBUS_CTRL 1, 9600, 0, 0, 1000
+// MBUS_CTRL 1, 9600, 0, 0, 1000   // 改为在LAD中实现
 
 
 NETWORK 2
@@ -50,7 +51,7 @@ LD     SM0.0
 LPS
 AW=    VW250, 0
 AN     M10.4                         // 非降级模式
-MBUS_MSG 1, 1, 0, 41001, 1, &VB4, M10.0, MW12
+// MBUS_MSG 1, 1, 0, 41001, 1, &VB4, M10.0, MW12   // 改为在LAD中实现
 LPP
 
 // 降级模式: 用上一有效值
@@ -113,7 +114,7 @@ LD     SM0.0
 LPS
 AW=    VW250, 1
 AN     M10.5                         // 非降级模式
-MBUS_MSG 1, 2, 0, 40009, 2, &VB86, M10.1, MW14
+// MBUS_MSG 1, 2, 0, 40009, 2, &VB86, M10.1, MW14   // 改为在LAD中实现
 LPP
 
 // 降级模式
@@ -168,7 +169,7 @@ LD     SM0.0
 LPS
 AW=    VW250, 2
 AN     M10.4                         // 注射泵降级时跳过
-MBUS_MSG 1, 1, 0, 40006, 2, &VB204, M10.2, MW12
+// MBUS_MSG 1, 1, 0, 40006, 2, &VB204, M10.2, MW12   // 改为在LAD中实现
 LPP
 
 LD     SM0.0
@@ -209,7 +210,7 @@ LD     SM0.0
 LPS
 AW=    VW250, 3
 AN     M10.4
-MBUS_MSG 1, 1, 0, 40009, 3, &VB208, M10.3, MW12
+// MBUS_MSG 1, 1, 0, 40009, 3, &VB208, M10.3, MW12   // 改为在LAD中实现
 LPP
 
 LD     SM0.0
