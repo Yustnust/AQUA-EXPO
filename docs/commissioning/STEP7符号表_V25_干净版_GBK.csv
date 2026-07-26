@@ -1,0 +1,184 @@
+符号,地址,注释
+DI_FlowSwitch_A,I0.0,流量开关A-阀A进水
+DI_FlowSwitch_B,I0.1,流量开关B-上下转移
+DI_FlowSwitch_C,I0.2,流量开关C-下缸排水
+DI_FlowSwitch_Pump1,I0.3,潜水泵1流量反馈
+DI_FlowSwitch_Pump2,I0.4,潜水泵2流量反馈
+DI_LevelA_High,I0.5,上缸液位高位(漫溢保护)
+DI_LevelA_Low,I0.6,上缸液位低位(排空)
+DI_LevelB_High,I0.7,下缸液位高位(漫溢保护)
+DI_LevelB_Low,I1.0,下缸液位低位(排空)
+DI_EStop,I1.1,急停反馈(常闭ON=正常OFF=急停)
+DI_SafetyRelay_FB,I1.2,安全继电器反馈(强制导向触点)
+DI_ValveA_Open,I1.3,阀A开到位反馈
+DI_ValveA_Close,I1.4,阀A关到位反馈
+DI_ValveB_Open,I1.5,阀B开到位反馈
+DI_ValveB_Close,I1.6,阀B关到位反馈
+DI_ValveC_Open,I1.7,阀C开到位反馈
+DI_ValveC_Close,I2.0,阀C关到位反馈
+DI_Btn_Mute,I2.1,消音按钮(点动)
+DI_Btn_SystemReset,I2.3,系统复位按钮(点动)
+DO_Pump1,Q0.0,潜水泵1(上缸搅拌)
+DO_Pump2,Q0.1,潜水泵2(上缸搅拌)
+DO_ValveA,Q0.2,电动球阀A(上缸进水)
+DO_ValveB,Q0.3,电动球阀B(上下转移)
+DO_ValveC,Q0.4,电动球阀C(下缸排水)
+DO_NCValve_Top,Q0.5,NC电磁阀-上缸(常闭失效安全)
+DO_NCValve_Bottom,Q0.6,NC电磁阀-下缸(常闭失效安全)
+DO_Alarm_Sound,Q0.7,报警蜂鸣器(独立消音)
+DO_Alarm_Light,Q1.0,报警指示灯(独立消光)
+CMD_Start,V0.0,启动实验(S0到S1)
+CMD_Pause,V0.1,暂停实验(预留)
+CMD_Stop,V0.2,停止实验(进入S7)
+CMD_AckAlarm,V0.3,报警确认
+CMD_Mute,V0.4,消音命令
+CMD_ForceTankA_Empty,V0.5,强制上缸状态=空
+CMD_ForceTankA_Full,V0.6,强制上缸状态=满
+CMD_SafetyRelayAck,V0.7,继电器故障HMI高权限确认
+STA_StartAck,V1.0,启动命令已接收
+STA_PauseAck,V1.1,暂停命令已接收(预留)
+STA_StopAck,V1.2,停止命令已接收
+STA_AlarmAckDone,V1.3,报警确认已执行
+STA_MuteDone,V1.4,消音已执行
+STA_ForceDone,V1.5,状态强制修正已执行
+STA_TankA_State,V1.6,上缸状态(0=空1=满)
+STA_TankB_State,V1.7,下缸状态(0=空1=满)
+CMD_Manual_ValveA_Open,V2.4,手动开阀A
+CMD_Manual_ValveA_Close,V2.5,手动关阀A
+CMD_Manual_ValveB_Open,V2.6,手动开阀B
+CMD_Manual_ValveB_Close,V2.7,手动关阀B
+CMD_Manual_ValveC_Open,V3.0,手动开阀C
+CMD_Manual_ValveC_Close,V3.1,手动关阀C
+CMD_Manual_Pump1_On,V3.2,手动启动潜水泵1
+CMD_Manual_Pump1_Off,V3.3,手动停止潜水泵1
+VW2_State,VW2,状态机当前状态(0=S0...8=S7 99=S_ERROR)
+VW4_PumpStatus,VW4,注射泵状态码(0空闲1运行2抽液3排液其他错误)
+VW6_AlarmCode,VW6,当前最高优先级未确认报警码(0=无)
+VW8_CycleCount,VW8,实验轮次计数(每完成S1到S6累加1)
+VD_C_Set,VD10,目标浓度设定值(%)
+VD_C_Stock,VD14,母液浓度(%)
+VD_ExperimentTarget,VD24,实验时长目标设定值(min)
+VD_PreMixTime,VD28,S2预循环标称时长(s)
+VD_PreMixTime_MinSafe,VD32,S2压缩下限(s)
+VD_RestTime,VD36,S3.5静止等候标称时长(s)
+VD_RestTime_Min,VD40,静止等候压缩下限(s)
+VD_CycleExtend_Max,VD44,换水周期顺延最大允许幅度(min)
+VD_Timeout_ValveC,VD54,阀C动作超时保护时长(s)
+VD_Timeout_Pump1,VD58,潜水泵1动作超时保护时长(s)
+VD_Timeout_Pump2,VD62,潜水泵2动作超时保护时长(s)
+VD_Delay_ValveA_Verify,VD66,阀A关闭后延时验证时长(s)
+VD_StepResolution,VD350,注射泵单步分辨率(uL/步 原VD18)
+VD_CycleSetpoint,VD354,换水周期设定值(min 原VD20)
+VD_Timeout_ValveA,VD358,阀A动作超时保护时长(s 原VD48)
+VD_Timeout_ValveB,VD362,阀B动作超时保护时长(s 原VD50)
+VD_ExperimentDuration_Accum,VD366,实验时长累加值(min 原VD96)
+VD_Vol_Target,VD370,本轮目标抽取母液体积(uL 原VD98)
+VD_S1_Actual,VD70,S1上缸进水实测时长(s)
+VD_S4_Actual,VD74,S4上下转移实测时长(s)
+VD_S6_Actual,VD78,S6下缸排水实测时长(s)
+VD_FlowMeter_Snapshot,VD82,阀A开启瞬间流量计累计值快照
+VD_FlowMeter_Current,VD86,流量计当前累计值(轮询读取)
+VD_Current_InletVolume,VD90,本次进水量(L)
+VD_FlowRate_Instant,VD94,瞬时流速(L/min)
+VD_Dose_Steps,VD102,本轮加药目标步数(写40006/40007)
+VD_T_Default,VD104,T的初始默认值(s)
+VD_S6_Default,VD108,S6排水时长初始默认值(s)
+VD_T_Rolling,VD112,滚动实测S1-S3+静止等候总时长T(s)
+VD_S6_Rolling,VD116,滚动实测S6排水时长(s)
+VD_S2_Target,VD120,本轮S2实际执行目标时长(s)
+VD_RestTime_Target,VD124,本轮S3.5实际执行目标时长(s)
+VD_CycleExtend_Target,VD128,本轮预规划允许下缸空等时长(min)
+VD_PumpSpeed_Start,VD132,注射泵启动速度(Hz 写40009)
+VD_PumpSpeed_Max,VD136,注射泵最高速度(Hz 写40010)
+VD_PumpSpeed_Cutoff,VD140,注射泵截止速度(Hz 写40011)
+VB300_AlarmWord1,VB300,报警字1(漫溢级+急停+继电器+节奏)
+VB301_AlarmWord2,VB301,报警字2(阀A类故障)
+VB302_AlarmWord3,VB302,报警字3(阀B/C类故障)
+VB303_AlarmWord4,VB303,报警字4(泵/注射泵/RTC/流量瞬时)
+Alarm_Overflow_AHigh,V300.0,上缸漫溢(液位计A高位)
+Alarm_Overflow_BHigh,V300.1,下缸漫溢(液位计B高位)
+Alarm_NCValve_Top,V300.2,NC电磁阀-上缸动作(阀A失效保护)
+Alarm_NCValve_Bottom,V300.3,NC电磁阀-下缸动作(阀B/液位计B报警)
+EStop_Latch,V300.4,急停触发锁存
+Alarm_SafetyRelay,V300.5,安全继电器/接触器故障(最高优先级)
+Alarm_ScheduleLag,V300.6,配液节奏严重滞后(三层纠偏用尽)
+Alarm_ScheduleLag_Warn,V300.7,配液节奏滞后提示(第2层顺延触发)
+Alarm_ValveA_CloseFlow,V301.0,阀A关后延时验证仍有流
+Alarm_ValveA_Leak,V301.1,阀A已关但流量计计量值仍增长(内漏)
+Alarm_ValveA_CloseTimeout,V301.2,阀A关到位反馈超时
+Alarm_ValveA_CloseLeak,V301.3,阀A关到位但仍有流(内漏)
+Alarm_ValveA_OpenTimeout,V301.4,阀A开到位反馈超时
+Alarm_ValveA_OpenNoFlow,V301.5,阀A开到位但无流(上游缺水/堵塞)
+Alarm_ValveA_S1Start,V301.6,S5触发新一轮S1时上缸状态不等于空
+Alarm_ValveB_Diag,V302.0,阀B四态诊断异常
+Alarm_ValveB_OpenTimeout,V302.1,阀B开到位反馈超时
+Alarm_ValveB_OpenNoFlow,V302.2,阀B开到位但无流
+Alarm_ValveB_CloseTimeout,V302.3,阀B关到位反馈超时
+Alarm_ValveB_CloseLeak,V302.4,阀B关到位但仍有流(内漏)
+Alarm_ValveC_Diag,V302.5,阀C四态诊断异常
+Alarm_ValveC_OpenTimeout,V302.6,阀C开到位反馈超时
+Alarm_ValveC_OpenNoFlow,V302.7,阀C开到位但无流
+Alarm_ValveC_CloseTimeout,V303.0,阀C关到位反馈超时
+Alarm_ValveC_CloseLeak,V303.1,阀C关到位但仍有流(内漏)
+Alarm_Pump1_Abnormal,V303.2,潜水泵1启动后超时无流
+Alarm_Pump2_Abnormal,V303.3,潜水泵2启动后超时无流
+Alarm_SyringePump,V303.4,注射泵通讯/动作异常
+Alarm_RTC_Lost,V303.5,RTC时钟丢失
+Alarm_FlowSwitch_Instant,V303.6,流量开关瞬时异常(2秒窗口大于5次翻转)
+AlarmAckMode,V200.0,报警确认模式(0=自动恢复1=人工确认)
+MB_Pump_ForceStop,VW200,强停注射泵(40002 0=空闲1=强停)
+MB_Pump_Reset,VW202,复位注射泵(40003 0=空闲1=复位)
+MB_Pump_Aspirate,VW204,抽液目标步数(40006)
+MB_Pump_Dispense,VW206,排液目标步数(40007)
+MB_Pump_SpeedStart,VW208,启动速度(40009 Hz)
+MB_Pump_SpeedMax,VW210,最高速度(40010 Hz)
+MB_Pump_SpeedCutoff,VW212,截止速度(40011 Hz)
+MB_Pump_CurrentRun,VW214,运行电流(40015 1-31)
+MB_Pump_CurrentReset,VW216,复位电流(40016 1-31)
+MB_Pump_ValveIn,VW218,阀输入口(40017)
+MB_Pump_ValveOut,VW220,阀输出口(40018)
+MB_Pump_Position,VW222,注射泵位置反馈(41007 半步)
+MB_Flow_Avg,VD224,平均流速(0x000F 近1分钟)
+MB_Flow_Unit,VW228,流量单位编码(0x0012 默认0x03=升L)
+DT_TankB_FullTime,DT10,下缸变满时刻时间戳(断电恢复用)
+VW230_ValveA_SubState,VW230,阀A诊断子状态
+VW232_ValveA_Result,VW232,阀A诊断结果
+VW234_ValveA_PT,VW234,阀A当前PT定时值
+VW240_ValveB_SubState,VW240,阀B诊断子状态
+VW242_ValveB_Result,VW242,阀B诊断结果
+VW244_ValveB_PT,VW244,阀B当前PT定时值
+VW250_ValveC_SubState,VW250,阀C诊断子状态
+VW252_ValveC_Result,VW252,阀C诊断结果
+VW254_ValveC_PT,VW254,阀C当前PT定时值
+VD308_Diag_Spare1,VD308,诊断数据迁移区1
+VD312_Diag_Spare2,VD312,诊断数据迁移区2
+VD316_TargetInletVolume,VD316,目标进水量(FC30用)
+VD320_Diag_Spare3,VD320,诊断数据迁移区3
+VD324_Diag_Spare4,VD324,诊断数据迁移区4
+VD328_Diag_Spare5,VD328,诊断数据迁移区5
+VD332_Diag_Spare6,VD332,诊断数据迁移区6
+VD336_Diag_Spare7,VD336,诊断数据迁移区7
+VD340_Diag_Spare8,VD340,诊断数据迁移区8
+VD344_Diag_Spare9,VD344,诊断数据迁移区9
+VD_FlowMeter_Degraded,VD374,流量计降级值(通讯失败时使用)
+VB500_LogHead,VB500,报警日志头指针
+VB501_LogTail,VB501,报警日志尾指针
+VB502_LogCount,VB502,报警日志当前条数
+VB510_LogEntry1,VB510,报警日志条目1起始
+Flag_EStop_Latch,M0.0,急停锁存标志(建议保持)
+Flag_S0_FirstEnter,M10.0,S0状态首入脉冲(建议保持)
+Flag_S1_FirstEnter,M10.1,S1状态首入脉冲(建议保持)
+Flag_S2_FirstEnter,M10.2,S2状态首入脉冲(建议保持)
+Flag_S3_FirstEnter,M10.3,S3状态首入脉冲(建议保持)
+Flag_S35_FirstEnter,M10.4,S3.5状态首入脉冲(建议保持)
+Flag_S4_FirstEnter,M10.5,S4状态首入脉冲(建议保持)
+Flag_S5_FirstEnter,M10.6,S5状态首入脉冲(建议保持)
+Flag_S6_FirstEnter,M10.7,S6状态首入脉冲(建议保持)
+Flag_I0_0_Prev,M11.0,I0.0边沿上一周期(建议保持)
+Flag_I0_1_Prev,M11.1,I0.1边沿上一周期(建议保持)
+Flag_I0_2_Prev,M11.2,I0.2边沿上一周期(建议保持)
+Flag_I1_1_Prev,M11.3,I1.1边沿上一周期(建议保持)
+Flag_FC4_Done_Pump,M12.0,FC4注射泵轮询完成位
+Flag_FC4_Done_Flow,M12.1,FC4流量计轮询完成位
+Flag_FC4_DegradedMode,M12.2,FC4降级模式(连续5次失败)
+Flag_FC4_Retry_Count,MW14,FC4当前重试计数(0到3)
