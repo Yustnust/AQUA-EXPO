@@ -46,8 +46,7 @@ LD     SM0.0
 LPS
 // 状态码=0(完成) → 转S3.5
 AW=    VW4, 0
-MOVB   4, VB2                     // VW2=4(S3.5)
-MOVB   0, VB3
+MOVW   4, VW2                     // VW2=4(S3.5)
 R      M10.3, 1                   // 清除待下发标志
 LPP
 
@@ -56,8 +55,7 @@ LD     SM0.0
 LPS
 AW>=   VW4, 4                     // 状态码≥4视为错误
 S      V303.4, 1                  // M_Alarm_SyringePump
-MOVB   99, VB2
-MOVB   0, VB3
+MOVW   99, VW2
 LPP
 
 

@@ -42,8 +42,7 @@ AN     I0.3                        // 流量开关未到
 TON    T44, VW282                  // PT=VD_Timeout_Pump1×10
 LD     T44
 S      V303.2, 1                   // M_Alarm_Pump1_Abnormal
-MOVB   99, VB2
-MOVB   0, VB3
+MOVW   99, VW2
 
 // 潜水泵2: VD62×10 转换
 MOVR   VD62, VD344                 // 复制VD_Timeout_Pump2
@@ -55,8 +54,7 @@ AN     I0.4
 TON    T45, VW284                  // PT=VD_Timeout_Pump2×10
 LD     T45
 S      V303.3, 1                   // M_Alarm_Pump2_Abnormal
-MOVB   99, VB2
-MOVB   0, VB3
+MOVW   99, VW2
 
 
 NETWORK 3
@@ -64,8 +62,7 @@ NETWORK 3
 LD     T38                         // 计时到达
 R      Q0.0, 1                    // 停潜水泵1
 R      Q0.1, 1                    // 停潜水泵2
-MOVB   3, VB2                     // VW2=3(S3)
-MOVB   0, VB3
+MOVW   3, VW2                     // VW2=3(S3)
 
 
 // ============================================================

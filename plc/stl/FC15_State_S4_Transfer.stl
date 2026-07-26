@@ -76,8 +76,7 @@ MOVR   0.0, VD178                  // VD_S5_Elapsed清零,开始新一轮计时
 R      M10.7, 1                    // 清预规划触发标志(下轮S5重新触发)
 // 状态转移 S4→S5
 LD     SM0.0
-MOVB   6, VB2
-MOVB   0, VB3
+MOVW   6, VW2
 LPP
 
 

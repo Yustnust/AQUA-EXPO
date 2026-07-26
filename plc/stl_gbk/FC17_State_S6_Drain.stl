@@ -67,14 +67,12 @@ NETWORK 4
 LD     SM0.0
 LPS
 AN     M10.6                       // 实验未结束
-MOVB   6, VB2                     // 返回S5
-MOVB   0, VB3
+MOVW   6, VW2                     // 返回S5
 LPP
 
 LD     M10.6                       // 实验已结束
 R      M10.6, 1
-MOVB   8, VB2                     // 转S7
-MOVB   0, VB3
+MOVW   8, VW2                     // 转S7
 
 
 // 注: 四态诊断、开关到位、超时保护全部由FC32统一处理

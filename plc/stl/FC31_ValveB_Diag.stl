@@ -30,8 +30,7 @@ S      V300.1, 1                   // M_Alarm_Overflow_BHigh
 S      V300.3, 1                   // M_Alarm_NCValve_Bottom(NC阀下缸动作报警,漫溢风险级)
 S      Q0.6, 1                     // NC电磁阀-下缸动作
 R      Q0.3, 1                     // 关阀B
-MOVB   99, VB2
-MOVB   0, VB3
+MOVW   99, VW2
 MOVB   2, VB268                    // 故障
 JMP    1
 
@@ -79,8 +78,7 @@ JMP    1
 // 开到位超时 → 报警
 LD     T53
 S      V302.1, 1                   // M_Alarm_ValveB_OpenTimeout
-MOVB   99, VB2
-MOVB   0, VB3
+MOVW   99, VW2
 MOVB   2, VB268
 JMP    1
 
@@ -88,8 +86,7 @@ JMP    1
 LD     T54
 AN     I0.1                        // 确认流量开关B仍OFF
 S      V302.2, 1                   // M_Alarm_ValveB_OpenNoFlow
-MOVB   99, VB2
-MOVB   0, VB3
+MOVW   99, VW2
 MOVB   2, VB268
 JMP    1
 
@@ -108,8 +105,7 @@ JMP    1
 LD     I1.5
 AN     I0.1
 S      V302.2, 1                   // M_Alarm_ValveB_OpenNoFlow
-MOVB   99, VB2
-MOVB   0, VB3
+MOVW   99, VW2
 MOVB   2, VB268
 JMP    1
 
@@ -134,8 +130,7 @@ AN     I0.6                        // 且液位低位OFF
 // 注:需排除刚开始转移时的瞬时(流量开关尚未ON)
 // 简化: 直接判定状态4
 S      V302.0, 1                   // M_Alarm_ValveB_Diag
-MOVB   99, VB2
-MOVB   0, VB3
+MOVW   99, VW2
 MOVB   2, VB268
 JMP    1
 
@@ -165,8 +160,7 @@ JMP    1
 LD     I1.6
 A      I0.1
 S      V302.4, 1                   // M_Alarm_ValveB_CloseLeak
-MOVB   99, VB2
-MOVB   0, VB3
+MOVW   99, VW2
 MOVB   2, VB268
 JMP    1
 
@@ -174,8 +168,7 @@ JMP    1
 LD     T55
 AN     I1.6
 S      V302.3, 1                   // M_Alarm_ValveB_CloseTimeout
-MOVB   99, VB2
-MOVB   0, VB3
+MOVW   99, VW2
 MOVB   2, VB268
 JMP    1
 

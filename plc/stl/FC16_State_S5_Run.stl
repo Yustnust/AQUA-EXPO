@@ -55,8 +55,7 @@ LPS
 AW<>   VW184, 4
 LPS
 AN     V1.6                         // 上缸=空(正常)
-MOVB   1, VB2                      // →S1启动新一轮上缸配液
-MOVB   0, VB3
+MOVW   1, VW2                      // →S1启动新一轮上缸配液
 LPP
 LPP
 LPP
@@ -65,7 +64,7 @@ LPP
 LD     M10.7
 A      V1.6                         // 上缸=满(异常)
 S      V301.6, 1                    // 报警(上缸未排空异常)
-MOVB   99, VB2
+MOVW   99, VW2
 
 
 NETWORK 3
@@ -89,8 +88,7 @@ MOVR   VD354, AC0                    // VD_CycleSetpoint(min)
 AR>=   VD178, AC0                   // 已满时长 >= 换水周期 ?
 R      M10.7, 1                     // 清预规划触发标志(下轮重新触发)
 R      T60, 1                       // 停下缸满计时器
-MOVB   7, VB2                      // →S6排水(VW2=7)
-MOVB   0, VB3
+MOVW   7, VW2                      // →S6排水(VW2=7)
 LPP
 
 
@@ -103,8 +101,7 @@ AR>=   VD366, VD24                   // 累计时长 >= 目标时长
 R      T41, 1                       // 停周期计时
 R      T60, 1                       // 停下缸满计时器
 R      M10.7, 1                     // 清预规划触发标志
-MOVB   8, VB2                      // →S7(VW2=8)
-MOVB   0, VB3
+MOVW   8, VW2                      // →S7(VW2=8)
 LPP
 
 
@@ -115,8 +112,7 @@ EU
 R      T41, 1
 R      T60, 1
 R      M10.7, 1                     // 清预规划触发标志
-MOVB   8, VB2                      // →S7(VW2=8)
-MOVB   0, VB3
+MOVW   8, VW2                      // →S7(VW2=8)
 S      V1.2, 1                     // STA_StopAck握手
 R      V0.2, 1                     // 清停止命令
 

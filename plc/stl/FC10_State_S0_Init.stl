@@ -21,8 +21,7 @@ EU                                 // 上升沿检测
 LPS
 AW=    VW6, 0                      // 无活动报警
 // 状态转移：S0→S1
-MOVB   1, VB2                     // VW2=1(S1)
-MOVB   0, VB3
+MOVW   1, VW2                     // VW2=1(S1)
 // 握手确认
 S      V1.0, 1                    // STA_StartAck=1
 // 清除启动命令位（防止重复触发）

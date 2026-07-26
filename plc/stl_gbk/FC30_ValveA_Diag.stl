@@ -31,8 +31,7 @@ S      V300.0, 1                   // M_Alarm_Overflow_AHigh
 S      V300.2, 1                   // M_Alarm_NCValve_Top(NC阀上缸动作报警,漫溢风险级)
 S      Q0.5, 1                     // NC电磁阀-上缸动作(安全)
 R      Q0.2, 1                     // 关阀A
-MOVB   99, VB2                     // 转S_ERROR
-MOVB   0, VB3
+MOVW   99, VW2                     // 转S_ERROR
 MOVB   2, VB266                    // Diag_Result_A=2故障
 JMP    1
 
@@ -80,8 +79,7 @@ JMP    1
 // 开到位超时 → 报警转S_ERROR
 LD     T50
 S      V301.4, 1                   // M_Alarm_ValveA_OpenTimeout
-MOVB   99, VB2
-MOVB   0, VB3
+MOVW   99, VW2
 MOVB   2, VB266
 JMP    1
 
@@ -103,8 +101,7 @@ AN     I0.0                        // 但无流量
 TON    T52, 20                     // 2s确认(20×100ms)
 LD     T52
 S      V301.5, 1                   // M_Alarm_ValveA_OpenNoFlow
-MOVB   99, VB2
-MOVB   0, VB3
+MOVW   99, VW2
 MOVB   2, VB266
 JMP    1
 
@@ -199,8 +196,7 @@ A      V301.0                      // 任一报警标志
 O      V301.1
 O      V301.2
 O      V301.3
-MOVB   99, VB2
-MOVB   0, VB3
+MOVW   99, VW2
 MOVB   2, VB266                    // 故障
 JMP    1
 

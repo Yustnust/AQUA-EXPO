@@ -65,8 +65,7 @@ JMP    6
 // 开到位超时 → 报警
 LD     T56
 S      V302.6, 1                   // M_Alarm_ValveC_OpenTimeout
-MOVB   99, VB2
-MOVB   0, VB3
+MOVW   99, VW2
 MOVW   2, VW270
 JMP    6
 
@@ -74,8 +73,7 @@ JMP    6
 LD     T57
 AN     I0.2
 S      V302.7, 1                   // M_Alarm_ValveC_OpenNoFlow
-MOVB   99, VB2
-MOVB   0, VB3
+MOVW   99, VW2
 MOVW   2, VW270
 JMP    6
 
@@ -94,8 +92,7 @@ JMP    6
 LD     I1.7
 AN     I0.2
 S      V302.7, 1                   // M_Alarm_ValveC_OpenNoFlow
-MOVB   99, VB2
-MOVB   0, VB3
+MOVW   99, VW2
 MOVW   2, VW270
 JMP    6
 
@@ -118,8 +115,7 @@ LD     I0.2
 NOT
 AN     I1.0
 S      V302.5, 1                   // M_Alarm_ValveC_Diag
-MOVB   99, VB2
-MOVB   0, VB3
+MOVW   99, VW2
 MOVW   2, VW270
 JMP    6
 
@@ -149,8 +145,7 @@ JMP    6
 LD     I2.0
 A      I0.2
 S      V303.1, 1                   // M_Alarm_ValveC_CloseLeak
-MOVB   99, VB2
-MOVB   0, VB3
+MOVW   99, VW2
 MOVW   2, VW270
 JMP    6
 
@@ -158,8 +153,7 @@ JMP    6
 LD     T58
 AN     I2.0
 S      V303.0, 1                   // M_Alarm_ValveC_CloseTimeout
-MOVB   99, VB2
-MOVB   0, VB3
+MOVW   99, VW2
 MOVW   2, VW270                    // Diag_Result_C=2故障(已修正:用MOVW)
 JMP    6
 

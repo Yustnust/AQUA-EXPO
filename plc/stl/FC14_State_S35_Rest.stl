@@ -26,8 +26,7 @@ TON    T39, VW254                  // PT=VD_RestTime_Target×10(100ms时基)
 NETWORK 2
 // 静止等候完成转移至S4
 LD     T39                         // 计时到达
-MOVB   5, VB2                     // VW2=5(S4)
-MOVB   0, VB3
+MOVW   5, VW2                     // VW2=5(S4)
 
 
 // S3.5无输出动作，仅计时

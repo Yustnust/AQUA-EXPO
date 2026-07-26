@@ -27,8 +27,7 @@ LD     I1.1
 NOT
 EU
 S      V300.4, 1                  // M_EStop_Latch锁存
-MOVB   99, VB2                    // VW2=99(转S_ERROR)
-MOVB   0, VB3
+MOVW   99, VW2                    // VW2=99(转S_ERROR)
 // 清预规划标志(防止S5残留干扰)
 R      M10.7, 1
 
@@ -60,14 +59,12 @@ S      Q0.7, 1                     // 报警声音开
 NETWORK 4
 // 报警码写入(优先级:继电器故障99 > 急停10)
 LD     V300.5                      // 继电器故障(最高级)
-MOVB   99, VB6                    // VW6=99
-MOVB   0, VB7
+MOVW   99, VW6                    // VW6=99
 JMP    1
 
 LD     V300.4                      // 急停(无继电器故障)
 AN     V300.5
-MOVB   10, VB6                    // VW6=10
-MOVB   0, VB7
+MOVW   10, VW6                    // VW6=10
 
 LBL    1
 

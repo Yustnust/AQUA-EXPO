@@ -107,7 +107,7 @@ JMP    7                   // 是 → 顺延可覆盖
 LD     SM0.0
 MOVB   4, VB184                   // Result=4(人工介入)
 S      V300.6, 1                  // M_Alarm_ScheduleLag(严重滞后,强制人工确认)
-MOVB   99, VB2                    // 转S_ERROR(VW2=99)
+MOVW   99, VW2                    // 转S_ERROR(VW2=99)
 JMP    4
 
 LBL    7

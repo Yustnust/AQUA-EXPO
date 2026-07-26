@@ -96,10 +96,8 @@ MOVR   VD70, VD112                 // VD_S1_Actual
 // 二次校正非人工介入(4) → 转S2
 LD     SM0.0
 AW<>   VW184, 4
-MOVB   2, VB2                      // 状态转移 S1→S2
-MOVB   0, VB3
+MOVW   2, VW2                      // 状态转移 S1→S2
 
-LBL    2
 LBL    2
 
 

@@ -134,8 +134,7 @@ JMP    12
 NETWORK 12
 // 非法状态处理（强制回S0）
 LBL    11
-MOVB   0, VB2
-MOVB   0, VB3                       // VW2=0
+MOVW   0, VW2                       // VW2=0
 
 
 NETWORK 13

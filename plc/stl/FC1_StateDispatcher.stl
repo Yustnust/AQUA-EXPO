@@ -5,13 +5,12 @@
 // 说明: S7-200 SMART STL无CASE语句，用比较+跳转实现
 // 修复记录:
 //   P1-NETWORK标题去掉冒号(错误66)
-//   注: 若导入后仍报错误33(JMP/LBL跨网络),需改用条件CALL方案
+//   P2-JMP/LBL跨NETWORK问题修复: 全部合并到NETWORK 1
 // ============================================================
 
 NETWORK 1
-// 状态调度
+// 状态调度 (JMP/LBL必须在同一NETWORK内)
 // 读取VW2并与各状态值比较，相等则调用对应FC
-// 使用LPP/LRD栈操作避免重复装载
 
 // VW2 = 0 → S0初始化
 LDW<=  VW2, 0
@@ -60,85 +59,60 @@ JMP    11
 // 若未匹配任何状态(0<VW2<99但非上述值)，也回S0
 JMP    11
 
-
-NETWORK 2
 // S0入口
 LBL    1
 CALL State_S0_Init
 JMP    12
 
-
-NETWORK 3
 // S1入口
 LBL    2
 CALL State_S1_Inlet
 JMP    12
 
-
-NETWORK 4
 // S2入口
 LBL    3
 CALL State_S2_PreMix
 JMP    12
 
-
-NETWORK 5
 // S3入口
 LBL    4
 CALL State_S3_Dosing
 JMP    12
 
-
-NETWORK 6
 // S3.5入口
 LBL    5
 CALL State_S35_Rest
 JMP    12
 
-
-NETWORK 7
 // S4入口
 LBL    6
 CALL State_S4_Transfer
 JMP    12
 
-
-NETWORK 8
 // S5入口
 LBL    7
 CALL State_S5_Run
 JMP    12
 
-
-NETWORK 9
 // S6入口
 LBL    8
 CALL State_S6_Drain
 JMP    12
 
-
-NETWORK 10
 // S7入口
 LBL    9
 CALL State_S7_End
 JMP    12
 
-
-NETWORK 11
 // S_ERROR入口
 LBL    10
 CALL State_Error
 JMP    12
 
-
-NETWORK 12
 // 非法状态处理（强制回S0）
 LBL    11
-MOVB   0, VB2
-MOVB   0, VB3                       // VW2=0
+MOVW   0, VW2                       // VW2=0
 
-
-NETWORK 13
 // 调度结束
 LBL    12
 // 状态调度完成，返回OB1
@@ -147,7 +121,7 @@ LBL    12
 // ============================================================
 // 文件结束
 // 说明:
-//   1. JMP/LBL为STL跳转指令，模拟CASE多分支
-//   2. 实际导入时也可用LAD的跳转线圈实现等价逻辑
-//   3. 每个状态FC内部负责状态转移(修改VW2)
+//   1. JMP/LBL必须在同一NETWORK内(修复跨网络跳转问题)
+//   2. 每个状态FC内部负责状态转移(修改VW2)
+//   3. 修复VW2=1无法保持的问题(原跨NETWORK跳转导致程序流混乱)
 // ============================================================
