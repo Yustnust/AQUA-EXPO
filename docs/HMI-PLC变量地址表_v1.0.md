@@ -507,6 +507,40 @@ S5上升沿触发预规划、S1完成后二次校正使用的中间变量，REAL
   用于计算 VD_Dose_Steps = VD_Vol_Target ÷ VD_StepResolution
 ```
 
+### 11.5 Modbus通讯状态字（FC4 LAD指令引脚输出，2026-07-27新增）
+
+**背景**：MBUS_CTRL和MBUS_MSG指令盒的Done/Error引脚必须连接到具体地址，不能留空（否则编译错误32）。本节登记FC4中LAD指令盒所占用的Done位和Error错误码地址。
+
+**地址分配原则**：
+- Done位用M区（BOOL），Error错误码用VB区（BYTE，错误码0~255）
+- 避开VD380定时器暂存区（VB380~383，FC11/FC15/FC17/FC3共用）
+- 避开VD374降级值区（VB374~377）
+- 避开VB500~599报警日志区和VB600+ Modbus库区
+
+| 地址 | 符号 | 类型 | 用途 | 来源 |
+|---|---|---|---|---|
+| M10.0 | M_FC4_Done_Pump | BOOL | MBUS_MSG任务0(注射泵状态码)Done位 | LAD引脚输出 |
+| M10.1 | M_FC4_Done_Flow | BOOL | MBUS_MSG任务1(流量计累计值)Done位 | LAD引脚输出 |
+| M10.2 | M_FC4_Done_PumpStep | BOOL | MBUS_MSG任务2(注射泵步数)Done位，预留 | LAD引脚输出 |
+| M10.3 | M_FC4_Done_PumpSpeed | BOOL | MBUS_MSG任务3(注射泵速度)Done位，预留 | LAD引脚输出 |
+| M10.4 | M_FC4_Degraded_Pump | BOOL | 注射泵降级模式标志（连续5次失败） | FC4内部逻辑 |
+| M10.5 | M_FC4_Degraded_Flow | BOOL | 流量计降级模式标志 | FC4内部逻辑 |
+| M11.0 | M_MBUS_CTRL_Done | BOOL | MBUS_CTRL Done位（每周期脉冲） | LAD引脚输出 |
+| VB378 | VB_MBUS_CTRL_Error | BYTE | MBUS_CTRL Error错误码 | LAD引脚输出 |
+| VB379 | VB_MBUS_MSG_Pump_Error | BYTE | MBUS_MSG注射泵轮询错误码 | LAD引脚输出 |
+| VB384 | VB_MBUS_MSG_Flow_Error | BYTE | MBUS_MSG流量计轮询错误码（避开VD380暂存区） | LAD引脚输出 |
+
+**错误码含义**（参考西门子Modbus RTU Master库手册）：
+- 0 = 无错误
+- 1 = 从站无响应（超时）
+- 2 = 接收校验错误（CRC/奇偶）
+- 3 = 从站返回异常码（Modbus Exception）
+- 4 = 请求队列满
+- 5~6 = 库内部错误
+- 101+ = 参数错误（Addr/Count/DataPtr配置非法）
+
+**HMI读取建议**：HMI可通过VB378/VB379/VB384读取通讯错误码，在"通讯维护页"显示Modbus总线状态。当错误码≠0持续超过10秒，建议HMI提示"通讯异常"。
+
 ---
 
 ## 十二、8套PLC网络编址规范
@@ -677,11 +711,19 @@ HMI工程中配置8个PLC连接（站点），每个连接对应1台PLC：
 | VW200~VW228 | MB_xxx | INT/WORD | Modbus寄存器映射缓冲区 |
 | VW230~VW289 | Diag_xxx | INT/WORD | 阀门诊断子状态/结果/PT转换值（VW250轮询计数/VW252 S2 PT/VW260~270诊断子状态结果/VW274~284超时PT） |
 | VD308~VD344 | Diag_Data_xxx | REAL/DWORD | 阀门诊断数据/运算中间变量（VD308阀A快照/VD312阀A差值/VD316目标进水量/VD320~344各FC运算中间变量） |
+| M10.0~M10.5 | M_FC4_xxx | BOOL | FC4 Modbus轮询Done位(M10.0~3)+降级标志(M10.4~5)，详见11.5节 |
+| M10.6 | M_ExpEnd_Flag | BOOL | 实验结束标志（FC17置位/FC18复位） |
+| M10.7 | M_PrePlan_Trig | BOOL | 预规划触发标志（FC15/FC16/FC17用） |
+| M11.0 | M_MBUS_CTRL_Done | BOOL | MBUS_CTRL Done位（LAD引脚输出） |
+| M11.1~M11.5 | M_xxx_Edge | BOOL | FC3边沿检测/消音标志（M11.1消音/M11.2报警/M11.3~5 I0.0~I0.2边沿） |
+| VB378 | VB_MBUS_CTRL_Error | BYTE | MBUS_CTRL Error错误码（LAD引脚输出） |
+| VB379 | VB_MBUS_MSG_Pump_Error | BYTE | MBUS_MSG注射泵轮询错误码（LAD引脚输出） |
+| VB384 | VB_MBUS_MSG_Flow_Error | BYTE | MBUS_MSG流量计轮询错误码（避开VD380暂存区） |
 | DT10 | DT_TankB_FullTime | DT | 下缸变满时间戳 |
 
 ---
 
-**文档版本**：v1.0
-**编制日期**：2026-07-15
+**文档版本**：v1.1
+**编制日期**：2026-07-15（v1.0）/ 2026-07-27（v1.1新增11.5节Modbus通讯状态字+附录B索引更新）
 **配套文档版本**：PLC设计文档v9.3、HMI画面架构文档v9.3
 **下次更新触发**：待确认事项闭环、HMI选型确认、PLC编程地址调整时

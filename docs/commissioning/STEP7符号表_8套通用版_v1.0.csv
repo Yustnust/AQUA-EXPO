@@ -1,4 +1,4 @@
-﻿符号,地址,数据类型,注释
+符号,地址,数据类型,注释
 // ============================================================
 // 药液配置加注控制系统 — STEP 7-Micro/WIN SMART 符号表 v1.0
 // 适用: 8套缸单元通用 (1~8号PLC程序完全相同,差异仅在IP)
@@ -193,22 +193,23 @@ VB500_LogHead,VB500,BYTE,报警日志头指针
 VB501_LogTail,VB501,BYTE,报警日志尾指针
 VB502_LogCount,VB502,BYTE,报警日志当前条数
 VB510_LogEntry1,VB510,BYTE,报警日志条目1起始
-// === M区 边沿检测/状态首入标志 (建议保持) ===
-M_EStop_Latch_Flag,M0.0,BOOL,急停锁存标志(建议保持)
-M10.0_StateFirstEnter_S0,M10.0,BOOL,S0状态首入脉冲(建议保持)
-M10.1_StateFirstEnter_S1,M10.1,BOOL,S1状态首入脉冲(建议保持)
-M10.2_StateFirstEnter_S2,M10.2,BOOL,S2状态首入脉冲(建议保持)
-M10.3_StateFirstEnter_S3,M10.3,BOOL,S3状态首入脉冲(建议保持)
-M10.4_StateFirstEnter_S35,M10.4,BOOL,S3.5状态首入脉冲(建议保持)
-M10.5_StateFirstEnter_S4,M10.5,BOOL,S4状态首入脉冲(建议保持)
-M10.6_StateFirstEnter_S5,M10.6,BOOL,S5状态首入脉冲(建议保持)
-M10.7_StateFirstEnter_S6,M10.7,BOOL,S6状态首入脉冲(建议保持)
-M11.0_Edge_I0_0,M11.0,BOOL,I0.0边沿上一周期(建议保持)
-M11.1_Edge_I0_1,M11.1,BOOL,I0.1边沿上一周期(建议保持)
-M11.2_Edge_I0_2,M11.2,BOOL,I0.2边沿上一周期(建议保持)
-M11.3_Edge_I1_1,M11.3,BOOL,I1.1边沿上一周期(建议保持)
-// === FC4 Modbus轮询内部标志 (M10.0~M10.3 Done位) ===
-M_FC4_Done_Pump,M12.0,BOOL,FC4注射泵轮询完成位
-M_FC4_Done_Flow,M12.1,BOOL,FC4流量计轮询完成位
-M_FC4_DegradedMode,M12.2,BOOL,FC4降级模式(连续5次失败)
-M_FC4_Retry_Count,MW14,WORD,FC4当前重试计数(0~3)
+// === M区 状态机/FC4/FC3/FC17/FC18 实际使用标志 ===
+M_EStop_Latch_Flag,M0.0,BOOL,急停锁存标志
+M10.0_FC4_Done_Pump,M10.0,BOOL,FC4注射泵轮询Done位(MBUS_MSG任务0输出,LAD引脚)
+M10.1_FC4_Done_Flow,M10.1,BOOL,FC4流量计轮询Done位(MBUS_MSG任务1输出,LAD引脚)
+M10.2_FC4_Done_PumpStep,M10.2,BOOL,FC4注射泵步数读取Done位(任务2,预留)
+M10.3_FC4_Done_PumpSpeed,M10.3,BOOL,FC4注射泵速度读取Done位(任务3,预留)
+M10.4_FC4_Degraded_Pump,M10.4,BOOL,FC4注射泵降级模式标志(连续5次失败)
+M10.5_FC4_Degraded_Flow,M10.5,BOOL,FC4流量计降级模式标志
+M10.6_ExpEnd_Flag,M10.6,BOOL,实验结束标志(FC17置位/FC18复位,驱动S6→S7转移)
+M10.7_PrePlan_Trig,M10.7,BOOL,预规划触发标志(FC15/FC16/FC17用,本轮只触发一次)
+M11.0_MBUS_CTRL_Done,M11.0,BOOL,MBUS_CTRL Done位(LAD引脚,每周期脉冲)
+M11.1_Sound_Latched,M11.1,BOOL,FC3声音已消音标志(新报警时清,实现重鸣)
+M11.2_PrevAlarm,M11.2,BOOL,FC3上一周期有报警标志(新报警检测用)
+M11.3_Edge_I0_0,M11.3,BOOL,FC3 I0.0边沿上一周期状态
+M11.4_Edge_I0_1,M11.4,BOOL,FC3 I0.1边沿上一周期状态
+M11.5_Edge_I0_2,M11.5,BOOL,FC3 I0.2边沿上一周期状态
+// === FC4 Modbus轮询错误码 (LAD引脚输出,2026-07-27新增) ===
+VB378_MBUS_CTRL_Error,VB378,BYTE,MBUS_CTRL Error错误码(LAD引脚)
+VB379_MBUS_MSG_Pump_Error,VB379,BYTE,MBUS_MSG注射泵轮询错误码(LAD引脚,任务0输出)
+VB384_MBUS_MSG_Flow_Error,VB384,BYTE,MBUS_MSG流量计轮询错误码(LAD引脚,任务1输出,避开VD380暂存区)
