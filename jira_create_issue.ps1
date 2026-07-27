@@ -9,8 +9,13 @@ param(
     [string]$EpicKey
 )
 
-$email = 'yusongt@gmail.com'
-$token = 'ATATT3xFfGF0HF4yTIrmyVArQm2HtPKXXH8Zgj_ko7DKcHA5zHwps2IjK7ROdgjfHCGavpTc-sKfER21Hwonsty7Xm3DtUqvJS2OBIoBLUZSYL82-Aab4EDXs-UExx25OExoopRiP48vg3vstgcJnm5oKsnjyG1eLVjZ2N2jdsSp22_1HECuj1E=F1481C58'
+# Load credentials from external file (not tracked by git)
+$tokenFile = Join-Path $PSScriptRoot 'jira_token.ps1'
+if (-not (Test-Path $tokenFile)) {
+    Write-Host "ERROR: jira_token.ps1 not found. Create it with:`n  `$email = 'your@email'`n  `$token = 'your_token'"
+    exit 1
+}
+. $tokenFile
 $base = 'https://yusongtao.atlassian.net'
 
 $pair = "$email`:$token"
@@ -24,10 +29,12 @@ $headers = @{
 # Read JSON body as UTF-8
 $utf8 = New-Object System.Text.UTF8Encoding($false)
 $body = [System.IO.File]::ReadAllText($JsonFile, $utf8)
+# Convert to UTF-8 byte array (Invoke-RestMethod default Latin1 causes Chinese ???)
+$bodyBytes = [System.Text.Encoding]::UTF8.GetBytes($body)
 
 Write-Host "=== Creating JIRA issue ==="
 try {
-    $resp = Invoke-RestMethod -Uri "$base/rest/api/3/issue" -Headers $headers -Method Post -Body $body -ContentType 'application/json'
+    $resp = Invoke-RestMethod -Uri "$base/rest/api/3/issue" -Headers $headers -Method Post -Body $bodyBytes -ContentType 'application/json; charset=utf-8'
     Write-Host "SUCCESS!"
     Write-Host "Key: $($resp.key)"
     Write-Host "URL: $base/browse/$($resp.key)"
@@ -35,8 +42,9 @@ try {
     # Link to Epic if specified
     if ($EpicKey -and $EpicKey -ne '') {
         $linkBody = '{"fields":{"parent":{"key":"' + $EpicKey + '"}}}'
+        $linkBytes = [System.Text.Encoding]::UTF8.GetBytes($linkBody)
         try {
-            Invoke-RestMethod -Uri "$base/rest/api/3/issue/$($resp.key)" -Headers $headers -Method Put -Body $linkBody -ContentType 'application/json'
+            Invoke-RestMethod -Uri "$base/rest/api/3/issue/$($resp.key)" -Headers $headers -Method Put -Body $linkBytes -ContentType 'application/json; charset=utf-8'
             Write-Host "Linked to Epic: $EpicKey"
         } catch {
             Write-Host "WARNING: Epic link failed: $($_.Exception.Message)"

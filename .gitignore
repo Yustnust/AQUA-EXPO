@@ -1,0 +1,6 @@
+# JIRA credentials (local only, not tracked by git)
+jira_token.ps1
+
+# Temporary files
+*.tmp
+commit_msg.txt
