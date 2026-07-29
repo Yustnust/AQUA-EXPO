@@ -2,7 +2,7 @@
 
 **项目**: 8套缸单元药液配置加注控制系统
 **HMI**: 昆仑通态 McgsPro 3.3.6 (TPC 触摸屏)
-**配套文档**: McgsPro变量导入_8单元_v2.0.csv / HMI用户权限矩阵_v1.0.md / HMI画面架构规划文档.md
+**配套文档**: McgsPro变量导入_8单元_v2.1.csv / HMI用户权限矩阵_v1.0.md / HMI画面架构规划文档.md
 **用途**: 直接粘贴到 McgsPro 脚本编辑器,完成8画面+策略+子窗口的脚本组态
 **Story**: AQEX-12 Story 2.1 (8画面组态) — v2.0 重写为纯正 McgsPro 类Basic语法
 
@@ -234,14 +234,14 @@ EndIf
 If U1_CMD_Stop = 1 Then
     U1_CMD_Stop = 0
 EndIf
-If U1_CMD_Ack = 1 Then
-    U1_CMD_Ack = 0
+If U1_CMD_AckAlarm = 1 Then
+    U1_CMD_AckAlarm = 0
 EndIf
 If U1_CMD_Mute = 1 Then
     U1_CMD_Mute = 0
 EndIf
-If U1_CMD_RelayAck = 1 Then
-    U1_CMD_RelayAck = 0
+If U1_CMD_SafetyRelayAck = 1 Then
+    U1_CMD_SafetyRelayAck = 0
 EndIf
 
 ' --- 2. 清零2号单元命令位 ---
@@ -251,14 +251,14 @@ EndIf
 If U2_CMD_Stop = 1 Then
     U2_CMD_Stop = 0
 EndIf
-If U2_CMD_Ack = 1 Then
-    U2_CMD_Ack = 0
+If U2_CMD_AckAlarm = 1 Then
+    U2_CMD_AckAlarm = 0
 EndIf
 If U2_CMD_Mute = 1 Then
     U2_CMD_Mute = 0
 EndIf
-If U2_CMD_RelayAck = 1 Then
-    U2_CMD_RelayAck = 0
+If U2_CMD_SafetyRelayAck = 1 Then
+    U2_CMD_SafetyRelayAck = 0
 EndIf
 
 ' --- 3. 清零3号单元命令位 ---
@@ -268,14 +268,14 @@ EndIf
 If U3_CMD_Stop = 1 Then
     U3_CMD_Stop = 0
 EndIf
-If U3_CMD_Ack = 1 Then
-    U3_CMD_Ack = 0
+If U3_CMD_AckAlarm = 1 Then
+    U3_CMD_AckAlarm = 0
 EndIf
 If U3_CMD_Mute = 1 Then
     U3_CMD_Mute = 0
 EndIf
-If U3_CMD_RelayAck = 1 Then
-    U3_CMD_RelayAck = 0
+If U3_CMD_SafetyRelayAck = 1 Then
+    U3_CMD_SafetyRelayAck = 0
 EndIf
 
 ' --- 4. 清零4号单元命令位 ---
@@ -285,14 +285,14 @@ EndIf
 If U4_CMD_Stop = 1 Then
     U4_CMD_Stop = 0
 EndIf
-If U4_CMD_Ack = 1 Then
-    U4_CMD_Ack = 0
+If U4_CMD_AckAlarm = 1 Then
+    U4_CMD_AckAlarm = 0
 EndIf
 If U4_CMD_Mute = 1 Then
     U4_CMD_Mute = 0
 EndIf
-If U4_CMD_RelayAck = 1 Then
-    U4_CMD_RelayAck = 0
+If U4_CMD_SafetyRelayAck = 1 Then
+    U4_CMD_SafetyRelayAck = 0
 EndIf
 
 ' --- 5. 清零5号单元命令位 ---
@@ -302,14 +302,14 @@ EndIf
 If U5_CMD_Stop = 1 Then
     U5_CMD_Stop = 0
 EndIf
-If U5_CMD_Ack = 1 Then
-    U5_CMD_Ack = 0
+If U5_CMD_AckAlarm = 1 Then
+    U5_CMD_AckAlarm = 0
 EndIf
 If U5_CMD_Mute = 1 Then
     U5_CMD_Mute = 0
 EndIf
-If U5_CMD_RelayAck = 1 Then
-    U5_CMD_RelayAck = 0
+If U5_CMD_SafetyRelayAck = 1 Then
+    U5_CMD_SafetyRelayAck = 0
 EndIf
 
 ' --- 6. 清零6号单元命令位 ---
@@ -319,14 +319,14 @@ EndIf
 If U6_CMD_Stop = 1 Then
     U6_CMD_Stop = 0
 EndIf
-If U6_CMD_Ack = 1 Then
-    U6_CMD_Ack = 0
+If U6_CMD_AckAlarm = 1 Then
+    U6_CMD_AckAlarm = 0
 EndIf
 If U6_CMD_Mute = 1 Then
     U6_CMD_Mute = 0
 EndIf
-If U6_CMD_RelayAck = 1 Then
-    U6_CMD_RelayAck = 0
+If U6_CMD_SafetyRelayAck = 1 Then
+    U6_CMD_SafetyRelayAck = 0
 EndIf
 
 ' --- 7. 清零7号单元命令位 ---
@@ -336,14 +336,14 @@ EndIf
 If U7_CMD_Stop = 1 Then
     U7_CMD_Stop = 0
 EndIf
-If U7_CMD_Ack = 1 Then
-    U7_CMD_Ack = 0
+If U7_CMD_AckAlarm = 1 Then
+    U7_CMD_AckAlarm = 0
 EndIf
 If U7_CMD_Mute = 1 Then
     U7_CMD_Mute = 0
 EndIf
-If U7_CMD_RelayAck = 1 Then
-    U7_CMD_RelayAck = 0
+If U7_CMD_SafetyRelayAck = 1 Then
+    U7_CMD_SafetyRelayAck = 0
 EndIf
 
 ' --- 8. 清零8号单元命令位 ---
@@ -353,14 +353,14 @@ EndIf
 If U8_CMD_Stop = 1 Then
     U8_CMD_Stop = 0
 EndIf
-If U8_CMD_Ack = 1 Then
-    U8_CMD_Ack = 0
+If U8_CMD_AckAlarm = 1 Then
+    U8_CMD_AckAlarm = 0
 EndIf
 If U8_CMD_Mute = 1 Then
     U8_CMD_Mute = 0
 EndIf
-If U8_CMD_RelayAck = 1 Then
-    U8_CMD_RelayAck = 0
+If U8_CMD_SafetyRelayAck = 1 Then
+    U8_CMD_SafetyRelayAck = 0
 EndIf
 
 ' --- 9. 更新8台PLC通讯在线状态 ---
@@ -758,7 +758,7 @@ GlobalMuteState = 1
 ```
 ' ============================================
 ' 全局报警确认按钮脚本
-' 功能: 对所有使能+在线单元置 CMD_Ack=1
+' 功能: 对所有使能+在线单元置 CMD_AckAlarm=1
 ' 注意: 仅确认当前激活报警,不影响历史日志
 ' ============================================
 
@@ -768,42 +768,42 @@ GlobalMuteState = 1
 ' --- 2. 对8个使能+在线单元下发报警确认命令 ---
 If U1_Enable = 1 Then
     If U1_Online = 1 Then
-        U1_CMD_Ack = 1
+        U1_CMD_AckAlarm = 1
     EndIf
 EndIf
 If U2_Enable = 1 Then
     If U2_Online = 1 Then
-        U2_CMD_Ack = 1
+        U2_CMD_AckAlarm = 1
     EndIf
 EndIf
 If U3_Enable = 1 Then
     If U3_Online = 1 Then
-        U3_CMD_Ack = 1
+        U3_CMD_AckAlarm = 1
     EndIf
 EndIf
 If U4_Enable = 1 Then
     If U4_Online = 1 Then
-        U4_CMD_Ack = 1
+        U4_CMD_AckAlarm = 1
     EndIf
 EndIf
 If U5_Enable = 1 Then
     If U5_Online = 1 Then
-        U5_CMD_Ack = 1
+        U5_CMD_AckAlarm = 1
     EndIf
 EndIf
 If U6_Enable = 1 Then
     If U6_Online = 1 Then
-        U6_CMD_Ack = 1
+        U6_CMD_AckAlarm = 1
     EndIf
 EndIf
 If U7_Enable = 1 Then
     If U7_Online = 1 Then
-        U7_CMD_Ack = 1
+        U7_CMD_AckAlarm = 1
     EndIf
 EndIf
 If U8_Enable = 1 Then
     If U8_Online = 1 Then
-        U8_CMD_Ack = 1
+        U8_CMD_AckAlarm = 1
     EndIf
 EndIf
 
@@ -950,34 +950,34 @@ EndIf
 ```
 ' ============================================
 ' 报警确认按钮脚本(以当前选中单元为例)
-' 功能: 对 SelectedUnit 对应单元置 CMD_Ack=1
+' 功能: 对 SelectedUnit 对应单元置 CMD_AckAlarm=1
 ' ============================================
 
 !Beep()
 
 If SelectedUnit = 1 Then
-    U1_CMD_Ack = 1
+    U1_CMD_AckAlarm = 1
 EndIf
 If SelectedUnit = 2 Then
-    U2_CMD_Ack = 1
+    U2_CMD_AckAlarm = 1
 EndIf
 If SelectedUnit = 3 Then
-    U3_CMD_Ack = 1
+    U3_CMD_AckAlarm = 1
 EndIf
 If SelectedUnit = 4 Then
-    U4_CMD_Ack = 1
+    U4_CMD_AckAlarm = 1
 EndIf
 If SelectedUnit = 5 Then
-    U5_CMD_Ack = 1
+    U5_CMD_AckAlarm = 1
 EndIf
 If SelectedUnit = 6 Then
-    U6_CMD_Ack = 1
+    U6_CMD_AckAlarm = 1
 EndIf
 If SelectedUnit = 7 Then
-    U7_CMD_Ack = 1
+    U7_CMD_AckAlarm = 1
 EndIf
 If SelectedUnit = 8 Then
-    U8_CMD_Ack = 1
+    U8_CMD_AckAlarm = 1
 EndIf
 ```
 
@@ -1139,7 +1139,7 @@ EndIf
 ### 脚本 19:阀A 手动开/关
 
 - **编号**: 19
-- **用途**: 手动开/关阀A(需维护组权限)。开按钮置 Manual_ValveA=1,关按钮置 0
+- **用途**: 手动开/关阀A(需维护组权限)。开按钮置 CMD_Manual_ValveA_Open=1,关按钮置 CMD_Manual_ValveA_Close=1
 - **位置**: 用户窗口 → 画面3_手动控制 → 阀A开按钮 / 阀A关按钮 → Click 事件
 - **触发方式**: 按钮单击
 
@@ -1154,30 +1154,30 @@ If !CheckUserGroup("维护组") = 1 Then
     EndIf
 EndIf
 
-' --- 2. 置 Manual_ValveA=1 ---
+' --- 2. 置 CMD_Manual_ValveA_Open=1 ---
 If SelectedUnit = 1 Then
-    U1_Manual_ValveA = 1
+    U1_CMD_Manual_ValveA_Open = 1
 EndIf
 If SelectedUnit = 2 Then
-    U2_Manual_ValveA = 1
+    U2_CMD_Manual_ValveA_Open = 1
 EndIf
 If SelectedUnit = 3 Then
-    U3_Manual_ValveA = 1
+    U3_CMD_Manual_ValveA_Open = 1
 EndIf
 If SelectedUnit = 4 Then
-    U4_Manual_ValveA = 1
+    U4_CMD_Manual_ValveA_Open = 1
 EndIf
 If SelectedUnit = 5 Then
-    U5_Manual_ValveA = 1
+    U5_CMD_Manual_ValveA_Open = 1
 EndIf
 If SelectedUnit = 6 Then
-    U6_Manual_ValveA = 1
+    U6_CMD_Manual_ValveA_Open = 1
 EndIf
 If SelectedUnit = 7 Then
-    U7_Manual_ValveA = 1
+    U7_CMD_Manual_ValveA_Open = 1
 EndIf
 If SelectedUnit = 8 Then
-    U8_Manual_ValveA = 1
+    U8_CMD_Manual_ValveA_Open = 1
 EndIf
 
 !Beep()
@@ -1194,30 +1194,30 @@ If !CheckUserGroup("维护组") = 1 Then
     EndIf
 EndIf
 
-' --- 2. 置 Manual_ValveA=0 ---
+' --- 2. 置 CMD_Manual_ValveA_Close=1 ---
 If SelectedUnit = 1 Then
-    U1_Manual_ValveA = 0
+    U1_CMD_Manual_ValveA_Close = 1
 EndIf
 If SelectedUnit = 2 Then
-    U2_Manual_ValveA = 0
+    U2_CMD_Manual_ValveA_Close = 1
 EndIf
 If SelectedUnit = 3 Then
-    U3_Manual_ValveA = 0
+    U3_CMD_Manual_ValveA_Close = 1
 EndIf
 If SelectedUnit = 4 Then
-    U4_Manual_ValveA = 0
+    U4_CMD_Manual_ValveA_Close = 1
 EndIf
 If SelectedUnit = 5 Then
-    U5_Manual_ValveA = 0
+    U5_CMD_Manual_ValveA_Close = 1
 EndIf
 If SelectedUnit = 6 Then
-    U6_Manual_ValveA = 0
+    U6_CMD_Manual_ValveA_Close = 1
 EndIf
 If SelectedUnit = 7 Then
-    U7_Manual_ValveA = 0
+    U7_CMD_Manual_ValveA_Close = 1
 EndIf
 If SelectedUnit = 8 Then
-    U8_Manual_ValveA = 0
+    U8_CMD_Manual_ValveA_Close = 1
 EndIf
 
 !Beep()
@@ -1229,7 +1229,7 @@ EndIf
 - **用途**: 手动开/关阀B(需维护组权限)
 - **位置**: 用户窗口 → 画面3_手动控制 → 阀B开按钮 / 阀B关按钮 → Click 事件
 - **触发方式**: 按钮单击
-- **扩展方法**: 将脚本19中的 `Manual_ValveA` 替换为 `Manual_ValveB`
+- **扩展方法**: 将脚本19中的 `CMD_Manual_ValveA_Open/Close` 替换为 `CMD_Manual_ValveB_Open/Close`
 
 **阀B 开按钮**:
 ```
@@ -1242,28 +1242,28 @@ If !CheckUserGroup("维护组") = 1 Then
 EndIf
 
 If SelectedUnit = 1 Then
-    U1_Manual_ValveB = 1
+    U1_CMD_Manual_ValveB_Open = 1
 EndIf
 If SelectedUnit = 2 Then
-    U2_Manual_ValveB = 1
+    U2_CMD_Manual_ValveB_Open = 1
 EndIf
 If SelectedUnit = 3 Then
-    U3_Manual_ValveB = 1
+    U3_CMD_Manual_ValveB_Open = 1
 EndIf
 If SelectedUnit = 4 Then
-    U4_Manual_ValveB = 1
+    U4_CMD_Manual_ValveB_Open = 1
 EndIf
 If SelectedUnit = 5 Then
-    U5_Manual_ValveB = 1
+    U5_CMD_Manual_ValveB_Open = 1
 EndIf
 If SelectedUnit = 6 Then
-    U6_Manual_ValveB = 1
+    U6_CMD_Manual_ValveB_Open = 1
 EndIf
 If SelectedUnit = 7 Then
-    U7_Manual_ValveB = 1
+    U7_CMD_Manual_ValveB_Open = 1
 EndIf
 If SelectedUnit = 8 Then
-    U8_Manual_ValveB = 1
+    U8_CMD_Manual_ValveB_Open = 1
 EndIf
 
 !Beep()
@@ -1280,28 +1280,28 @@ If !CheckUserGroup("维护组") = 1 Then
 EndIf
 
 If SelectedUnit = 1 Then
-    U1_Manual_ValveB = 0
+    U1_CMD_Manual_ValveB_Close = 1
 EndIf
 If SelectedUnit = 2 Then
-    U2_Manual_ValveB = 0
+    U2_CMD_Manual_ValveB_Close = 1
 EndIf
 If SelectedUnit = 3 Then
-    U3_Manual_ValveB = 0
+    U3_CMD_Manual_ValveB_Close = 1
 EndIf
 If SelectedUnit = 4 Then
-    U4_Manual_ValveB = 0
+    U4_CMD_Manual_ValveB_Close = 1
 EndIf
 If SelectedUnit = 5 Then
-    U5_Manual_ValveB = 0
+    U5_CMD_Manual_ValveB_Close = 1
 EndIf
 If SelectedUnit = 6 Then
-    U6_Manual_ValveB = 0
+    U6_CMD_Manual_ValveB_Close = 1
 EndIf
 If SelectedUnit = 7 Then
-    U7_Manual_ValveB = 0
+    U7_CMD_Manual_ValveB_Close = 1
 EndIf
 If SelectedUnit = 8 Then
-    U8_Manual_ValveB = 0
+    U8_CMD_Manual_ValveB_Close = 1
 EndIf
 
 !Beep()
@@ -1313,7 +1313,7 @@ EndIf
 - **用途**: 手动开/关阀C(需维护组权限)
 - **位置**: 用户窗口 → 画面3_手动控制 → 阀C开按钮 / 阀C关按钮 → Click 事件
 - **触发方式**: 按钮单击
-- **扩展方法**: 将脚本19中的 `Manual_ValveA` 替换为 `Manual_ValveC`
+- **扩展方法**: 将脚本19中的 `CMD_Manual_ValveA_Open/Close` 替换为 `CMD_Manual_ValveC_Open/Close`
 
 **阀C 开按钮**:
 ```
@@ -1326,28 +1326,28 @@ If !CheckUserGroup("维护组") = 1 Then
 EndIf
 
 If SelectedUnit = 1 Then
-    U1_Manual_ValveC = 1
+    U1_CMD_Manual_ValveC_Open = 1
 EndIf
 If SelectedUnit = 2 Then
-    U2_Manual_ValveC = 1
+    U2_CMD_Manual_ValveC_Open = 1
 EndIf
 If SelectedUnit = 3 Then
-    U3_Manual_ValveC = 1
+    U3_CMD_Manual_ValveC_Open = 1
 EndIf
 If SelectedUnit = 4 Then
-    U4_Manual_ValveC = 1
+    U4_CMD_Manual_ValveC_Open = 1
 EndIf
 If SelectedUnit = 5 Then
-    U5_Manual_ValveC = 1
+    U5_CMD_Manual_ValveC_Open = 1
 EndIf
 If SelectedUnit = 6 Then
-    U6_Manual_ValveC = 1
+    U6_CMD_Manual_ValveC_Open = 1
 EndIf
 If SelectedUnit = 7 Then
-    U7_Manual_ValveC = 1
+    U7_CMD_Manual_ValveC_Open = 1
 EndIf
 If SelectedUnit = 8 Then
-    U8_Manual_ValveC = 1
+    U8_CMD_Manual_ValveC_Open = 1
 EndIf
 
 !Beep()
@@ -1364,28 +1364,28 @@ If !CheckUserGroup("维护组") = 1 Then
 EndIf
 
 If SelectedUnit = 1 Then
-    U1_Manual_ValveC = 0
+    U1_CMD_Manual_ValveC_Close = 1
 EndIf
 If SelectedUnit = 2 Then
-    U2_Manual_ValveC = 0
+    U2_CMD_Manual_ValveC_Close = 1
 EndIf
 If SelectedUnit = 3 Then
-    U3_Manual_ValveC = 0
+    U3_CMD_Manual_ValveC_Close = 1
 EndIf
 If SelectedUnit = 4 Then
-    U4_Manual_ValveC = 0
+    U4_CMD_Manual_ValveC_Close = 1
 EndIf
 If SelectedUnit = 5 Then
-    U5_Manual_ValveC = 0
+    U5_CMD_Manual_ValveC_Close = 1
 EndIf
 If SelectedUnit = 6 Then
-    U6_Manual_ValveC = 0
+    U6_CMD_Manual_ValveC_Close = 1
 EndIf
 If SelectedUnit = 7 Then
-    U7_Manual_ValveC = 0
+    U7_CMD_Manual_ValveC_Close = 1
 EndIf
 If SelectedUnit = 8 Then
-    U8_Manual_ValveC = 0
+    U8_CMD_Manual_ValveC_Close = 1
 EndIf
 
 !Beep()
@@ -1397,7 +1397,7 @@ EndIf
 - **用途**: 手动开/关潜水泵1(需维护组权限)
 - **位置**: 用户窗口 → 画面3_手动控制 → 泵1开按钮 / 泵1关按钮 → Click 事件
 - **触发方式**: 按钮单击
-- **扩展方法**: 将脚本19中的 `Manual_ValveA` 替换为 `Manual_Pump1`
+- **扩展方法**: 将脚本19中的 `CMD_Manual_ValveA_Open/Close` 替换为 `CMD_Manual_Pump1_On/Off`
 
 **泵1 开按钮**:
 ```
@@ -1410,28 +1410,28 @@ If !CheckUserGroup("维护组") = 1 Then
 EndIf
 
 If SelectedUnit = 1 Then
-    U1_Manual_Pump1 = 1
+    U1_CMD_Manual_Pump1_On = 1
 EndIf
 If SelectedUnit = 2 Then
-    U2_Manual_Pump1 = 1
+    U2_CMD_Manual_Pump1_On = 1
 EndIf
 If SelectedUnit = 3 Then
-    U3_Manual_Pump1 = 1
+    U3_CMD_Manual_Pump1_On = 1
 EndIf
 If SelectedUnit = 4 Then
-    U4_Manual_Pump1 = 1
+    U4_CMD_Manual_Pump1_On = 1
 EndIf
 If SelectedUnit = 5 Then
-    U5_Manual_Pump1 = 1
+    U5_CMD_Manual_Pump1_On = 1
 EndIf
 If SelectedUnit = 6 Then
-    U6_Manual_Pump1 = 1
+    U6_CMD_Manual_Pump1_On = 1
 EndIf
 If SelectedUnit = 7 Then
-    U7_Manual_Pump1 = 1
+    U7_CMD_Manual_Pump1_On = 1
 EndIf
 If SelectedUnit = 8 Then
-    U8_Manual_Pump1 = 1
+    U8_CMD_Manual_Pump1_On = 1
 EndIf
 
 !Beep()
@@ -1448,28 +1448,28 @@ If !CheckUserGroup("维护组") = 1 Then
 EndIf
 
 If SelectedUnit = 1 Then
-    U1_Manual_Pump1 = 0
+    U1_CMD_Manual_Pump1_Off = 1
 EndIf
 If SelectedUnit = 2 Then
-    U2_Manual_Pump1 = 0
+    U2_CMD_Manual_Pump1_Off = 1
 EndIf
 If SelectedUnit = 3 Then
-    U3_Manual_Pump1 = 0
+    U3_CMD_Manual_Pump1_Off = 1
 EndIf
 If SelectedUnit = 4 Then
-    U4_Manual_Pump1 = 0
+    U4_CMD_Manual_Pump1_Off = 1
 EndIf
 If SelectedUnit = 5 Then
-    U5_Manual_Pump1 = 0
+    U5_CMD_Manual_Pump1_Off = 1
 EndIf
 If SelectedUnit = 6 Then
-    U6_Manual_Pump1 = 0
+    U6_CMD_Manual_Pump1_Off = 1
 EndIf
 If SelectedUnit = 7 Then
-    U7_Manual_Pump1 = 0
+    U7_CMD_Manual_Pump1_Off = 1
 EndIf
 If SelectedUnit = 8 Then
-    U8_Manual_Pump1 = 0
+    U8_CMD_Manual_Pump1_Off = 1
 EndIf
 
 !Beep()
@@ -1481,7 +1481,7 @@ EndIf
 - **用途**: 手动开/关潜水泵2(需维护组权限)
 - **位置**: 用户窗口 → 画面3_手动控制 → 泵2开按钮 / 泵2关按钮 → Click 事件
 - **触发方式**: 按钮单击
-- **扩展方法**: 将脚本22中的 `Manual_Pump1` 替换为 `Manual_Pump2`
+- **扩展方法**: 将脚本22中的 `CMD_Manual_Pump1_On/Off` 替换为 `CMD_Manual_Pump2_On/Off`
 
 **泵2 开按钮**:
 ```
@@ -1494,28 +1494,28 @@ If !CheckUserGroup("维护组") = 1 Then
 EndIf
 
 If SelectedUnit = 1 Then
-    U1_Manual_Pump2 = 1
+    U1_CMD_Manual_Pump2_On = 1
 EndIf
 If SelectedUnit = 2 Then
-    U2_Manual_Pump2 = 1
+    U2_CMD_Manual_Pump2_On = 1
 EndIf
 If SelectedUnit = 3 Then
-    U3_Manual_Pump2 = 1
+    U3_CMD_Manual_Pump2_On = 1
 EndIf
 If SelectedUnit = 4 Then
-    U4_Manual_Pump2 = 1
+    U4_CMD_Manual_Pump2_On = 1
 EndIf
 If SelectedUnit = 5 Then
-    U5_Manual_Pump2 = 1
+    U5_CMD_Manual_Pump2_On = 1
 EndIf
 If SelectedUnit = 6 Then
-    U6_Manual_Pump2 = 1
+    U6_CMD_Manual_Pump2_On = 1
 EndIf
 If SelectedUnit = 7 Then
-    U7_Manual_Pump2 = 1
+    U7_CMD_Manual_Pump2_On = 1
 EndIf
 If SelectedUnit = 8 Then
-    U8_Manual_Pump2 = 1
+    U8_CMD_Manual_Pump2_On = 1
 EndIf
 
 !Beep()
@@ -1532,28 +1532,28 @@ If !CheckUserGroup("维护组") = 1 Then
 EndIf
 
 If SelectedUnit = 1 Then
-    U1_Manual_Pump2 = 0
+    U1_CMD_Manual_Pump2_Off = 1
 EndIf
 If SelectedUnit = 2 Then
-    U2_Manual_Pump2 = 0
+    U2_CMD_Manual_Pump2_Off = 1
 EndIf
 If SelectedUnit = 3 Then
-    U3_Manual_Pump2 = 0
+    U3_CMD_Manual_Pump2_Off = 1
 EndIf
 If SelectedUnit = 4 Then
-    U4_Manual_Pump2 = 0
+    U4_CMD_Manual_Pump2_Off = 1
 EndIf
 If SelectedUnit = 5 Then
-    U5_Manual_Pump2 = 0
+    U5_CMD_Manual_Pump2_Off = 1
 EndIf
 If SelectedUnit = 6 Then
-    U6_Manual_Pump2 = 0
+    U6_CMD_Manual_Pump2_Off = 1
 EndIf
 If SelectedUnit = 7 Then
-    U7_Manual_Pump2 = 0
+    U7_CMD_Manual_Pump2_Off = 1
 EndIf
 If SelectedUnit = 8 Then
-    U8_Manual_Pump2 = 0
+    U8_CMD_Manual_Pump2_Off = 1
 EndIf
 
 !Beep()
@@ -1565,7 +1565,7 @@ EndIf
 - **用途**: 注射泵抽液/排液(需维护组权限)
 - **位置**: 用户窗口 → 画面3_手动控制 → 抽液按钮 / 排液按钮 → Click 事件
 - **触发方式**: 按钮单击
-- **扩展方法**: 抽液用 `Manual_Aspirate`,排液用 `Manual_Dispense`
+- **扩展方法**: 抽液用 `MB_Pump_Aspirate`,排液用 `MB_Pump_Dispense`
 
 **抽液按钮**:
 ```
@@ -1578,28 +1578,28 @@ If !CheckUserGroup("维护组") = 1 Then
 EndIf
 
 If SelectedUnit = 1 Then
-    U1_Manual_Aspirate = 1
+    U1_MB_Pump_Aspirate = 1
 EndIf
 If SelectedUnit = 2 Then
-    U2_Manual_Aspirate = 1
+    U2_MB_Pump_Aspirate = 1
 EndIf
 If SelectedUnit = 3 Then
-    U3_Manual_Aspirate = 1
+    U3_MB_Pump_Aspirate = 1
 EndIf
 If SelectedUnit = 4 Then
-    U4_Manual_Aspirate = 1
+    U4_MB_Pump_Aspirate = 1
 EndIf
 If SelectedUnit = 5 Then
-    U5_Manual_Aspirate = 1
+    U5_MB_Pump_Aspirate = 1
 EndIf
 If SelectedUnit = 6 Then
-    U6_Manual_Aspirate = 1
+    U6_MB_Pump_Aspirate = 1
 EndIf
 If SelectedUnit = 7 Then
-    U7_Manual_Aspirate = 1
+    U7_MB_Pump_Aspirate = 1
 EndIf
 If SelectedUnit = 8 Then
-    U8_Manual_Aspirate = 1
+    U8_MB_Pump_Aspirate = 1
 EndIf
 
 !Beep()
@@ -1616,28 +1616,28 @@ If !CheckUserGroup("维护组") = 1 Then
 EndIf
 
 If SelectedUnit = 1 Then
-    U1_Manual_Dispense = 1
+    U1_MB_Pump_Dispense = 1
 EndIf
 If SelectedUnit = 2 Then
-    U2_Manual_Dispense = 1
+    U2_MB_Pump_Dispense = 1
 EndIf
 If SelectedUnit = 3 Then
-    U3_Manual_Dispense = 1
+    U3_MB_Pump_Dispense = 1
 EndIf
 If SelectedUnit = 4 Then
-    U4_Manual_Dispense = 1
+    U4_MB_Pump_Dispense = 1
 EndIf
 If SelectedUnit = 5 Then
-    U5_Manual_Dispense = 1
+    U5_MB_Pump_Dispense = 1
 EndIf
 If SelectedUnit = 6 Then
-    U6_Manual_Dispense = 1
+    U6_MB_Pump_Dispense = 1
 EndIf
 If SelectedUnit = 7 Then
-    U7_Manual_Dispense = 1
+    U7_MB_Pump_Dispense = 1
 EndIf
 If SelectedUnit = 8 Then
-    U8_Manual_Dispense = 1
+    U8_MB_Pump_Dispense = 1
 EndIf
 
 !Beep()
@@ -1653,7 +1653,7 @@ EndIf
 ```
 ' ============================================
 ' 复位按钮脚本
-' 功能: 校验管理员组权限 → 对选中单元置 Manual_Reset=1
+' 功能: 校验管理员组权限 → 对选中单元置 MB_Pump_Reset=1
 ' ============================================
 
 ' --- 1. 校验管理员组权限(L3) ---
@@ -1663,30 +1663,30 @@ If !CheckUserGroup("管理员组") = 1 Then
     Exit
 EndIf
 
-' --- 2. 置 Manual_Reset=1 ---
+' --- 2. 置 MB_Pump_Reset=1 ---
 If SelectedUnit = 1 Then
-    U1_Manual_Reset = 1
+    U1_MB_Pump_Reset = 1
 EndIf
 If SelectedUnit = 2 Then
-    U2_Manual_Reset = 1
+    U2_MB_Pump_Reset = 1
 EndIf
 If SelectedUnit = 3 Then
-    U3_Manual_Reset = 1
+    U3_MB_Pump_Reset = 1
 EndIf
 If SelectedUnit = 4 Then
-    U4_Manual_Reset = 1
+    U4_MB_Pump_Reset = 1
 EndIf
 If SelectedUnit = 5 Then
-    U5_Manual_Reset = 1
+    U5_MB_Pump_Reset = 1
 EndIf
 If SelectedUnit = 6 Then
-    U6_Manual_Reset = 1
+    U6_MB_Pump_Reset = 1
 EndIf
 If SelectedUnit = 7 Then
-    U7_Manual_Reset = 1
+    U7_MB_Pump_Reset = 1
 EndIf
 If SelectedUnit = 8 Then
-    U8_Manual_Reset = 1
+    U8_MB_Pump_Reset = 1
 EndIf
 
 !Beep()
@@ -1731,9 +1731,9 @@ EndIf
 If SelectedUnit = 1 Then
     Param_C_Set = U1_VD_C_Set
     Param_C_Stock = U1_VD_C_Stock
-    Param_StepRes = U1_VD_StepRes
-    Param_CycleSet = U1_VD_CycleSet
-    Param_ExpTarget = U1_VD_ExpTarget
+    Param_StepRes = U1_VD_StepResolution
+    Param_CycleSet = U1_VD_CycleSetpoint
+    Param_ExpTarget = U1_VD_ExperimentTarget
     Param_PreMixTime = U1_VD_PreMixTime
     Param_PreMixTime_MinSafe = U1_VD_PreMixTime_MinSafe
     Param_RestTime = U1_VD_RestTime
@@ -1750,9 +1750,9 @@ EndIf
 If SelectedUnit = 2 Then
     Param_C_Set = U2_VD_C_Set
     Param_C_Stock = U2_VD_C_Stock
-    Param_StepRes = U2_VD_StepRes
-    Param_CycleSet = U2_VD_CycleSet
-    Param_ExpTarget = U2_VD_ExpTarget
+    Param_StepRes = U2_VD_StepResolution
+    Param_CycleSet = U2_VD_CycleSetpoint
+    Param_ExpTarget = U2_VD_ExperimentTarget
     Param_PreMixTime = U2_VD_PreMixTime
     Param_PreMixTime_MinSafe = U2_VD_PreMixTime_MinSafe
     Param_RestTime = U2_VD_RestTime
@@ -1769,9 +1769,9 @@ EndIf
 If SelectedUnit = 3 Then
     Param_C_Set = U3_VD_C_Set
     Param_C_Stock = U3_VD_C_Stock
-    Param_StepRes = U3_VD_StepRes
-    Param_CycleSet = U3_VD_CycleSet
-    Param_ExpTarget = U3_VD_ExpTarget
+    Param_StepRes = U3_VD_StepResolution
+    Param_CycleSet = U3_VD_CycleSetpoint
+    Param_ExpTarget = U3_VD_ExperimentTarget
     Param_PreMixTime = U3_VD_PreMixTime
     Param_PreMixTime_MinSafe = U3_VD_PreMixTime_MinSafe
     Param_RestTime = U3_VD_RestTime
@@ -1788,9 +1788,9 @@ EndIf
 If SelectedUnit = 4 Then
     Param_C_Set = U4_VD_C_Set
     Param_C_Stock = U4_VD_C_Stock
-    Param_StepRes = U4_VD_StepRes
-    Param_CycleSet = U4_VD_CycleSet
-    Param_ExpTarget = U4_VD_ExpTarget
+    Param_StepRes = U4_VD_StepResolution
+    Param_CycleSet = U4_VD_CycleSetpoint
+    Param_ExpTarget = U4_VD_ExperimentTarget
     Param_PreMixTime = U4_VD_PreMixTime
     Param_PreMixTime_MinSafe = U4_VD_PreMixTime_MinSafe
     Param_RestTime = U4_VD_RestTime
@@ -1807,9 +1807,9 @@ EndIf
 If SelectedUnit = 5 Then
     Param_C_Set = U5_VD_C_Set
     Param_C_Stock = U5_VD_C_Stock
-    Param_StepRes = U5_VD_StepRes
-    Param_CycleSet = U5_VD_CycleSet
-    Param_ExpTarget = U5_VD_ExpTarget
+    Param_StepRes = U5_VD_StepResolution
+    Param_CycleSet = U5_VD_CycleSetpoint
+    Param_ExpTarget = U5_VD_ExperimentTarget
     Param_PreMixTime = U5_VD_PreMixTime
     Param_PreMixTime_MinSafe = U5_VD_PreMixTime_MinSafe
     Param_RestTime = U5_VD_RestTime
@@ -1826,9 +1826,9 @@ EndIf
 If SelectedUnit = 6 Then
     Param_C_Set = U6_VD_C_Set
     Param_C_Stock = U6_VD_C_Stock
-    Param_StepRes = U6_VD_StepRes
-    Param_CycleSet = U6_VD_CycleSet
-    Param_ExpTarget = U6_VD_ExpTarget
+    Param_StepRes = U6_VD_StepResolution
+    Param_CycleSet = U6_VD_CycleSetpoint
+    Param_ExpTarget = U6_VD_ExperimentTarget
     Param_PreMixTime = U6_VD_PreMixTime
     Param_PreMixTime_MinSafe = U6_VD_PreMixTime_MinSafe
     Param_RestTime = U6_VD_RestTime
@@ -1845,9 +1845,9 @@ EndIf
 If SelectedUnit = 7 Then
     Param_C_Set = U7_VD_C_Set
     Param_C_Stock = U7_VD_C_Stock
-    Param_StepRes = U7_VD_StepRes
-    Param_CycleSet = U7_VD_CycleSet
-    Param_ExpTarget = U7_VD_ExpTarget
+    Param_StepRes = U7_VD_StepResolution
+    Param_CycleSet = U7_VD_CycleSetpoint
+    Param_ExpTarget = U7_VD_ExperimentTarget
     Param_PreMixTime = U7_VD_PreMixTime
     Param_PreMixTime_MinSafe = U7_VD_PreMixTime_MinSafe
     Param_RestTime = U7_VD_RestTime
@@ -1864,9 +1864,9 @@ EndIf
 If SelectedUnit = 8 Then
     Param_C_Set = U8_VD_C_Set
     Param_C_Stock = U8_VD_C_Stock
-    Param_StepRes = U8_VD_StepRes
-    Param_CycleSet = U8_VD_CycleSet
-    Param_ExpTarget = U8_VD_ExpTarget
+    Param_StepRes = U8_VD_StepResolution
+    Param_CycleSet = U8_VD_CycleSetpoint
+    Param_ExpTarget = U8_VD_ExperimentTarget
     Param_PreMixTime = U8_VD_PreMixTime
     Param_PreMixTime_MinSafe = U8_VD_PreMixTime_MinSafe
     Param_RestTime = U8_VD_RestTime
@@ -1983,9 +1983,9 @@ EndIf
 If SelectedUnit = 1 Then
     U1_VD_C_Set = Param_C_Set
     U1_VD_C_Stock = Param_C_Stock
-    U1_VD_StepRes = Param_StepRes
-    U1_VD_CycleSet = Param_CycleSet
-    U1_VD_ExpTarget = Param_ExpTarget
+    U1_VD_StepResolution = Param_StepRes
+    U1_VD_CycleSetpoint = Param_CycleSet
+    U1_VD_ExperimentTarget = Param_ExpTarget
     U1_VD_PreMixTime = Param_PreMixTime
     U1_VD_PreMixTime_MinSafe = Param_PreMixTime_MinSafe
     U1_VD_RestTime = Param_RestTime
@@ -2002,9 +2002,9 @@ EndIf
 If SelectedUnit = 2 Then
     U2_VD_C_Set = Param_C_Set
     U2_VD_C_Stock = Param_C_Stock
-    U2_VD_StepRes = Param_StepRes
-    U2_VD_CycleSet = Param_CycleSet
-    U2_VD_ExpTarget = Param_ExpTarget
+    U2_VD_StepResolution = Param_StepRes
+    U2_VD_CycleSetpoint = Param_CycleSet
+    U2_VD_ExperimentTarget = Param_ExpTarget
     U2_VD_PreMixTime = Param_PreMixTime
     U2_VD_PreMixTime_MinSafe = Param_PreMixTime_MinSafe
     U2_VD_RestTime = Param_RestTime
@@ -2021,9 +2021,9 @@ EndIf
 If SelectedUnit = 3 Then
     U3_VD_C_Set = Param_C_Set
     U3_VD_C_Stock = Param_C_Stock
-    U3_VD_StepRes = Param_StepRes
-    U3_VD_CycleSet = Param_CycleSet
-    U3_VD_ExpTarget = Param_ExpTarget
+    U3_VD_StepResolution = Param_StepRes
+    U3_VD_CycleSetpoint = Param_CycleSet
+    U3_VD_ExperimentTarget = Param_ExpTarget
     U3_VD_PreMixTime = Param_PreMixTime
     U3_VD_PreMixTime_MinSafe = Param_PreMixTime_MinSafe
     U3_VD_RestTime = Param_RestTime
@@ -2040,9 +2040,9 @@ EndIf
 If SelectedUnit = 4 Then
     U4_VD_C_Set = Param_C_Set
     U4_VD_C_Stock = Param_C_Stock
-    U4_VD_StepRes = Param_StepRes
-    U4_VD_CycleSet = Param_CycleSet
-    U4_VD_ExpTarget = Param_ExpTarget
+    U4_VD_StepResolution = Param_StepRes
+    U4_VD_CycleSetpoint = Param_CycleSet
+    U4_VD_ExperimentTarget = Param_ExpTarget
     U4_VD_PreMixTime = Param_PreMixTime
     U4_VD_PreMixTime_MinSafe = Param_PreMixTime_MinSafe
     U4_VD_RestTime = Param_RestTime
@@ -2059,9 +2059,9 @@ EndIf
 If SelectedUnit = 5 Then
     U5_VD_C_Set = Param_C_Set
     U5_VD_C_Stock = Param_C_Stock
-    U5_VD_StepRes = Param_StepRes
-    U5_VD_CycleSet = Param_CycleSet
-    U5_VD_ExpTarget = Param_ExpTarget
+    U5_VD_StepResolution = Param_StepRes
+    U5_VD_CycleSetpoint = Param_CycleSet
+    U5_VD_ExperimentTarget = Param_ExpTarget
     U5_VD_PreMixTime = Param_PreMixTime
     U5_VD_PreMixTime_MinSafe = Param_PreMixTime_MinSafe
     U5_VD_RestTime = Param_RestTime
@@ -2078,9 +2078,9 @@ EndIf
 If SelectedUnit = 6 Then
     U6_VD_C_Set = Param_C_Set
     U6_VD_C_Stock = Param_C_Stock
-    U6_VD_StepRes = Param_StepRes
-    U6_VD_CycleSet = Param_CycleSet
-    U6_VD_ExpTarget = Param_ExpTarget
+    U6_VD_StepResolution = Param_StepRes
+    U6_VD_CycleSetpoint = Param_CycleSet
+    U6_VD_ExperimentTarget = Param_ExpTarget
     U6_VD_PreMixTime = Param_PreMixTime
     U6_VD_PreMixTime_MinSafe = Param_PreMixTime_MinSafe
     U6_VD_RestTime = Param_RestTime
@@ -2097,9 +2097,9 @@ EndIf
 If SelectedUnit = 7 Then
     U7_VD_C_Set = Param_C_Set
     U7_VD_C_Stock = Param_C_Stock
-    U7_VD_StepRes = Param_StepRes
-    U7_VD_CycleSet = Param_CycleSet
-    U7_VD_ExpTarget = Param_ExpTarget
+    U7_VD_StepResolution = Param_StepRes
+    U7_VD_CycleSetpoint = Param_CycleSet
+    U7_VD_ExperimentTarget = Param_ExpTarget
     U7_VD_PreMixTime = Param_PreMixTime
     U7_VD_PreMixTime_MinSafe = Param_PreMixTime_MinSafe
     U7_VD_RestTime = Param_RestTime
@@ -2116,9 +2116,9 @@ EndIf
 If SelectedUnit = 8 Then
     U8_VD_C_Set = Param_C_Set
     U8_VD_C_Stock = Param_C_Stock
-    U8_VD_StepRes = Param_StepRes
-    U8_VD_CycleSet = Param_CycleSet
-    U8_VD_ExpTarget = Param_ExpTarget
+    U8_VD_StepResolution = Param_StepRes
+    U8_VD_CycleSetpoint = Param_CycleSet
+    U8_VD_ExperimentTarget = Param_ExpTarget
     U8_VD_PreMixTime = Param_PreMixTime
     U8_VD_PreMixTime_MinSafe = Param_PreMixTime_MinSafe
     U8_VD_RestTime = Param_RestTime
@@ -2174,7 +2174,7 @@ ParamSrcUnit = SelectedUnit
 ' ============================================
 ' 恢复默认按钮脚本
 ' 功能: 权限校验 → 弹出恢复默认确认子窗口(脚本53负责执行)
-' 默认值清单(参考 McgsPro变量导入_8单元_v2.0.csv 备注):
+' 默认值清单(参考 McgsPro变量导入_8单元_v2.1.csv 备注):
 '   C_Set=5.0  C_Stock=100.0  StepRes=0.5  CycleSet=3.0
 '   ExpTarget=5.0  PreMixTime=12.0  PreMixTime_MinSafe=3.0
 '   RestTime=6.0  RestTime_Min=1.5  CycleExtend_Max=0.5
@@ -3273,7 +3273,7 @@ EndIf
 ' 恢复默认确认子窗口 - 确认按钮
 ' 功能: 把 Param_* 编辑缓冲变量重置为默认值
 '       (实际写回 PLC 由用户再次点击"保存参数"按钮完成,脚本28)
-' 默认值参考 McgsPro变量导入_8单元_v2.0.csv 备注
+' 默认值参考 McgsPro变量导入_8单元_v2.1.csv 备注
 ' ============================================
 
 Param_C_Set = 5.0
@@ -3528,9 +3528,9 @@ If ParamSrcUnit = 1 Then
     If ParamDstUnit = 2 Then
         U2_VD_C_Set = U1_VD_C_Set
         U2_VD_C_Stock = U1_VD_C_Stock
-        U2_VD_StepRes = U1_VD_StepRes
-        U2_VD_CycleSet = U1_VD_CycleSet
-        U2_VD_ExpTarget = U1_VD_ExpTarget
+        U2_VD_StepResolution = U1_VD_StepResolution
+        U2_VD_CycleSetpoint = U1_VD_CycleSetpoint
+        U2_VD_ExperimentTarget = U1_VD_ExperimentTarget
         U2_VD_PreMixTime = U1_VD_PreMixTime
         U2_VD_PreMixTime_MinSafe = U1_VD_PreMixTime_MinSafe
         U2_VD_RestTime = U1_VD_RestTime
@@ -3546,9 +3546,9 @@ If ParamSrcUnit = 1 Then
     If ParamDstUnit = 3 Then
         U3_VD_C_Set = U1_VD_C_Set
         U3_VD_C_Stock = U1_VD_C_Stock
-        U3_VD_StepRes = U1_VD_StepRes
-        U3_VD_CycleSet = U1_VD_CycleSet
-        U3_VD_ExpTarget = U1_VD_ExpTarget
+        U3_VD_StepResolution = U1_VD_StepResolution
+        U3_VD_CycleSetpoint = U1_VD_CycleSetpoint
+        U3_VD_ExperimentTarget = U1_VD_ExperimentTarget
         U3_VD_PreMixTime = U1_VD_PreMixTime
         U3_VD_PreMixTime_MinSafe = U1_VD_PreMixTime_MinSafe
         U3_VD_RestTime = U1_VD_RestTime
@@ -3564,9 +3564,9 @@ If ParamSrcUnit = 1 Then
     If ParamDstUnit = 4 Then
         U4_VD_C_Set = U1_VD_C_Set
         U4_VD_C_Stock = U1_VD_C_Stock
-        U4_VD_StepRes = U1_VD_StepRes
-        U4_VD_CycleSet = U1_VD_CycleSet
-        U4_VD_ExpTarget = U1_VD_ExpTarget
+        U4_VD_StepResolution = U1_VD_StepResolution
+        U4_VD_CycleSetpoint = U1_VD_CycleSetpoint
+        U4_VD_ExperimentTarget = U1_VD_ExperimentTarget
         U4_VD_PreMixTime = U1_VD_PreMixTime
         U4_VD_PreMixTime_MinSafe = U1_VD_PreMixTime_MinSafe
         U4_VD_RestTime = U1_VD_RestTime
@@ -3582,9 +3582,9 @@ If ParamSrcUnit = 1 Then
     If ParamDstUnit = 5 Then
         U5_VD_C_Set = U1_VD_C_Set
         U5_VD_C_Stock = U1_VD_C_Stock
-        U5_VD_StepRes = U1_VD_StepRes
-        U5_VD_CycleSet = U1_VD_CycleSet
-        U5_VD_ExpTarget = U1_VD_ExpTarget
+        U5_VD_StepResolution = U1_VD_StepResolution
+        U5_VD_CycleSetpoint = U1_VD_CycleSetpoint
+        U5_VD_ExperimentTarget = U1_VD_ExperimentTarget
         U5_VD_PreMixTime = U1_VD_PreMixTime
         U5_VD_PreMixTime_MinSafe = U1_VD_PreMixTime_MinSafe
         U5_VD_RestTime = U1_VD_RestTime
@@ -3600,9 +3600,9 @@ If ParamSrcUnit = 1 Then
     If ParamDstUnit = 6 Then
         U6_VD_C_Set = U1_VD_C_Set
         U6_VD_C_Stock = U1_VD_C_Stock
-        U6_VD_StepRes = U1_VD_StepRes
-        U6_VD_CycleSet = U1_VD_CycleSet
-        U6_VD_ExpTarget = U1_VD_ExpTarget
+        U6_VD_StepResolution = U1_VD_StepResolution
+        U6_VD_CycleSetpoint = U1_VD_CycleSetpoint
+        U6_VD_ExperimentTarget = U1_VD_ExperimentTarget
         U6_VD_PreMixTime = U1_VD_PreMixTime
         U6_VD_PreMixTime_MinSafe = U1_VD_PreMixTime_MinSafe
         U6_VD_RestTime = U1_VD_RestTime
@@ -3618,9 +3618,9 @@ If ParamSrcUnit = 1 Then
     If ParamDstUnit = 7 Then
         U7_VD_C_Set = U1_VD_C_Set
         U7_VD_C_Stock = U1_VD_C_Stock
-        U7_VD_StepRes = U1_VD_StepRes
-        U7_VD_CycleSet = U1_VD_CycleSet
-        U7_VD_ExpTarget = U1_VD_ExpTarget
+        U7_VD_StepResolution = U1_VD_StepResolution
+        U7_VD_CycleSetpoint = U1_VD_CycleSetpoint
+        U7_VD_ExperimentTarget = U1_VD_ExperimentTarget
         U7_VD_PreMixTime = U1_VD_PreMixTime
         U7_VD_PreMixTime_MinSafe = U1_VD_PreMixTime_MinSafe
         U7_VD_RestTime = U1_VD_RestTime
@@ -3636,9 +3636,9 @@ If ParamSrcUnit = 1 Then
     If ParamDstUnit = 8 Then
         U8_VD_C_Set = U1_VD_C_Set
         U8_VD_C_Stock = U1_VD_C_Stock
-        U8_VD_StepRes = U1_VD_StepRes
-        U8_VD_CycleSet = U1_VD_CycleSet
-        U8_VD_ExpTarget = U1_VD_ExpTarget
+        U8_VD_StepResolution = U1_VD_StepResolution
+        U8_VD_CycleSetpoint = U1_VD_CycleSetpoint
+        U8_VD_ExperimentTarget = U1_VD_ExperimentTarget
         U8_VD_PreMixTime = U1_VD_PreMixTime
         U8_VD_PreMixTime_MinSafe = U1_VD_PreMixTime_MinSafe
         U8_VD_RestTime = U1_VD_RestTime

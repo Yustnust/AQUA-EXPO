@@ -563,8 +563,8 @@ McgsPro 实时数据库中VB300~VB303按字节定义变量，定义为整数类�
 | **缸状态+流量区（4元素）** | | | | | |
 | 2-027 | 标签 | lblTankA | (20,230,300,30) | U{SelectedUnit}_STA_TankA_State | 上缸满/空 |
 | 2-028 | 标签 | lblTankB | (320,230,300,30) | U{SelectedUnit}_STA_TankB_State | 下缸满/空 |
-| 2-029 | 标签 | lblFlowAccum | (620,230,300,30) | U{SelectedUnit}_VD_FlowAccum | 累计流量 |
-| 2-030 | 标签 | lblFlowDiff | (920,230,340,30) | U{SelectedUnit}_VD_FlowDiff | 流量差值 |
+| 2-029 | 标签 | lblFlowAccum | (620,230,300,30) | U{SelectedUnit}_VD_FlowMeter_Current | 累计流量 |
+| 2-030 | 标签 | lblInletVolume | (920,230,340,30) | U{SelectedUnit}_VD_Current_InletVolume | 本次进水量 |
 | **报警码+文字（2元素）** | | | | | |
 | 2-031 | 标签 | lblAlarmCode | (20,270,300,30) | U{SelectedUnit}_VW6_AlarmCode | 报警码 |
 | 2-032 | 标签 | lblAlarmText | (320,270,940,30) | U{SelectedUnit}_AlarmText | 报警文字（查表） |
@@ -808,7 +808,7 @@ McgsPro 实时数据库中VB300~VB303按字节定义变量，定义为整数类�
 | 3-037 | 标准按钮 | btnSyringe_Dispense | (800,390,170,50) | U{SelectedUnit}_V2.5 | 排液 |
 | 3-038 | 标准按钮 | btnSyringe_Reset | (980,390,180,50) | U{SelectedUnit}_V2.6 | 复位 |
 | **累计流量显示（1元素）** | | | | | |
-| 3-039 | 标签 | lblFlowDisplay | (20,470,1240,40) | U{SelectedUnit}_VD_FlowAccum + VD_FlowRate_Instant | 流量+流速 |
+| 3-039 | 标签 | lblFlowDisplay | (20,470,1240,40) | U{SelectedUnit}_VD_FlowMeter_Current + VD_FlowRate_Instant | 流量+流速 |
 | **返回按钮（1元素）** | | | | | |
 | 3-040 | 标准按钮 | btnReturn | (20,695,150,40) | 打开画面2 | 返回 |
 
@@ -845,7 +845,7 @@ McgsPro 实时数据库中VB300~VB303按字节定义变量，定义为整数类�
 
 | 属性页 | 字段 | 取值 |
 |---|---|---|
-| 动画连接 → 显示输出 | 表达式 | "累计流量:" + Format(U{SelectedUnit}_VD_FlowAccum, "%.2f") + " L    瞬时流速:" + Format(U{SelectedUnit}_VD_FlowRate_Instant, "%.2f") + " L/min" |
+| 动画连接 → 显示输出 | 表达式 | "累计流量:" + Format(U{SelectedUnit}_VD_FlowMeter_Current, "%.2f") + " L    瞬时流速:" + Format(U{SelectedUnit}_VD_FlowRate_Instant, "%.2f") + " L/min" |
 | 动画连接 → 显示输出 | 显示类型 | 字符串输出 |
 | 基本属性 | 字符颜色 | #3498DB（蓝，数值色） |
 | 基本属性 | 字体 | 微软雅黑 24pt |

@@ -213,3 +213,9 @@ M11.5_Edge_I0_2,M11.5,BOOL,FC3 I0.2边沿上一周期状态
 VB378_MBUS_CTRL_Error,VB378,BYTE,MBUS_CTRL Error错误码(LAD引脚)
 VB379_MBUS_MSG_Pump_Error,VB379,BYTE,MBUS_MSG注射泵轮询错误码(LAD引脚,任务0输出)
 VB384_MBUS_MSG_Flow_Error,VB384,BYTE,MBUS_MSG流量计轮询错误码(LAD引脚,任务1输出,避开VD380暂存区)
+// === FC4 Modbus轮询内部计数器 (AQEX-48修复,2026-07-28新增) ===
+// 背景:原VW250/VW252/VW254/VW256与VD250/VW250(阀C诊断)/FC12/FC14地址冲突,迁移至VW290~VW297
+VW290_FC4_PollIndex,VW290,WORD,FC4轮询计数器(0=注射泵状态1=流量计2=泵步数3=泵速度)
+VW292_FC4_RetryCount,VW292,WORD,FC4当前任务重试计数(0~3,超3次标记失败)
+VW294_FC4_PumpFailCount,VW294,WORD,FC4注射泵连续失败计数(≥5次进入降级模式)
+VW296_FC4_FlowFailCount,VW296,WORD,FC4流量计连续失败计数(≥5次进入降级模式)

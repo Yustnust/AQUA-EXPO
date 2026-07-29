@@ -980,7 +980,7 @@ netsh interface set interface "Loopback" enable
 | 3 | 观察McgsPro:U1_VW2应变为99,U1_VW6应变为20 | □ |
 | 4 | 观察s7_server.py日志:应有急停状态转移 | □ |
 | 5 | 验证其他7个单元不受影响 | □ |
-| 6 | 通过McgsPro下发U1_CMD_Ack=1(报警确认) | □ |
+| 6 | 通过McgsPro下发U1_CMD_AckAlarm=1(报警确认) | □ |
 | 7 | 观察U1_VW6是否清零(或保持,看策略) | □ |
 
 **Python触发急停脚本**:
