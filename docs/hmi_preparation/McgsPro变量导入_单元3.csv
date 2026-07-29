@@ -1,0 +1,87 @@
+﻿通道类型,数据类型,通道地址,通道个数,读写方式,连接变量,备注
+V区变量,第00位,0,1,读写,U3_CMD_Start,启动实验命令
+V区变量,第01位,0,1,读写,U3_Reserved_CMD_Pause,"暂停命令(PLC未实现,预留)"
+V区变量,第02位,0,1,读写,U3_CMD_Stop,停止实验命令
+V区变量,第03位,0,1,读写,U3_CMD_AckAlarm,报警确认命令
+V区变量,第04位,0,1,读写,U3_CMD_Mute,消音命令
+V区变量,第05位,0,1,读写,U3_Reserved_CMD_ForceTankA_Empty,"强制上缸=空(PLC未实现,预留)"
+V区变量,第06位,0,1,读写,U3_Reserved_CMD_ForceTankA_Full,"强制上缸=满(PLC未实现,预留)"
+V区变量,第07位,0,1,读写,U3_CMD_SafetyRelayAck,安全继电器故障高权限确认
+V区变量,第00位,1,1,只读,U3_STA_StartAck,启动命令已接收
+V区变量,第01位,1,1,只读,U3_Reserved_STA_PauseAck,暂停命令已接收(预留)
+V区变量,第02位,1,1,只读,U3_STA_StopAck,停止命令已接收
+V区变量,第03位,1,1,只读,U3_STA_AlarmAckDone,报警确认已执行
+V区变量,第04位,1,1,只读,U3_STA_MuteDone,消音已执行
+V区变量,第05位,1,1,只读,U3_STA_ForceDone,状态强制修正已执行
+V区变量,第06位,1,1,只读,U3_STA_TankA_State,上缸状态 0=空 1=满
+V区变量,第07位,1,1,只读,U3_STA_TankB_State,下缸状态 0=空 1=满
+V区变量,16位有符号二进制,2,1,只读,U3_VW2_StateMachine,状态机当前状态(S0~S7/S_ERROR)
+V区变量,16位有符号二进制,4,1,只读,U3_VW4_PumpStatus,注射泵状态码(映射41001)
+V区变量,16位有符号二进制,6,1,只读,U3_VW6_AlarmCode,当前最高优先级报警码
+V区变量,16位有符号二进制,8,1,只读,U3_VW8_RoundCount,实验轮次计数
+V区变量,32位浮点数,10,1,读写,U3_VD_C_Set,目标浓度设定值(%)
+V区变量,32位浮点数,14,1,读写,U3_VD_C_Stock,母液浓度(%)
+V区变量,32位浮点数,24,1,读写,U3_VD_ExperimentTarget,实验时长目标(min)
+V区变量,32位浮点数,28,1,读写,U3_VD_PreMixTime,预循环标称时长S2(s)
+V区变量,32位浮点数,32,1,读写,U3_VD_PreMixTime_MinSafe,预循环压缩下限(s)
+V区变量,32位浮点数,36,1,读写,U3_VD_RestTime,静止等候标称S3.5(s)
+V区变量,32位浮点数,40,1,读写,U3_VD_RestTime_Min,静止等候压缩下限(s)
+V区变量,32位浮点数,44,1,读写,U3_VD_CycleExtend_Max,换水周期顺延上限(min)
+V区变量,32位浮点数,54,1,读写,U3_VD_Timeout_ValveC,阀C动作超时(s)
+V区变量,32位浮点数,58,1,读写,U3_VD_Timeout_Pump1,潜水泵1动作超时(s)
+V区变量,32位浮点数,62,1,读写,U3_VD_Timeout_Pump2,潜水泵2动作超时(s)
+V区变量,32位浮点数,66,1,读写,U3_VD_Delay_ValveA_Verify,阀A关闭后延时验证时长(s)
+V区变量,32位浮点数,70,1,只读,U3_VD_S1_Actual,S1上缸进水实测时长(s)
+V区变量,32位浮点数,74,1,只读,U3_VD_S4_Actual,S4上→下转移实测时长(s)
+V区变量,32位浮点数,78,1,只读,U3_VD_S6_Actual,S6下缸排水实测时长(s)
+V区变量,32位浮点数,82,1,只读,U3_VD_FlowMeter_Snapshot,阀A开启瞬间流量计累计快照
+V区变量,32位浮点数,86,1,只读,U3_VD_FlowMeter_Current,流量计当前累计值(L)
+V区变量,32位浮点数,90,1,只读,U3_VD_Current_InletVolume,本次进水量=Current-Snapshot(L)
+V区变量,32位浮点数,94,1,只读,U3_VD_FlowRate_Instant,瞬时流速(L/min)
+V区变量,32位浮点数,102,1,只读,U3_VD_Dose_Steps,本轮加药目标步数
+V区变量,32位浮点数,112,1,读写,U3_VD_T_Rolling,滚动实测T总时长(s)
+V区变量,32位浮点数,116,1,读写,U3_VD_S6_Rolling,滚动实测S6排水时长(s)
+V区变量,32位浮点数,120,1,读写,U3_VD_S2_Target,本轮S2实际执行目标(s)
+V区变量,32位浮点数,124,1,读写,U3_VD_RestTime_Target,本轮S3.5实际执行目标(s)
+V区变量,32位浮点数,132,1,读写,U3_VD_PumpSpeed_Start,注射泵启动速度(Hz)
+V区变量,32位浮点数,136,1,读写,U3_VD_PumpSpeed_Max,注射泵最高速度(Hz)
+V区变量,32位浮点数,140,1,读写,U3_VD_PumpSpeed_Cutoff,注射泵截止速度(Hz)
+V区变量,32位浮点数,150,1,只读,U3_VD_Available,剩余可用时间(min)
+V区变量,32位浮点数,154,1,只读,U3_VD_Corr_Needed,纠偏Needed(min)
+V区变量,32位浮点数,174,1,读写,U3_VD_S3_Estimate,S3估算时长(s)
+V区变量,32位浮点数,178,1,只读,U3_VD_S5_Elapsed,S5累计运行时长(min)
+V区变量,16位有符号二进制,182,1,读写,U3_VW_Corr_Mode,纠偏模式
+V区变量,16位有符号二进制,184,1,读写,U3_VW_Corr_Result,纠偏结果
+V区变量,32位浮点数,308,1,只读,U3_VD_FlowMeter_CloseSnapshot,阀A关闭后流量计快照(内漏诊断)
+V区变量,32位浮点数,312,1,只读,U3_VD_LeakDiff,阀A内漏差值
+V区变量,32位浮点数,316,1,只读,U3_VD_TargetInletVolume,PLC计算的目标进水量(L)
+V区变量,32位浮点数,328,1,只读,U3_VD_Timeout_ValveC_x10,阀C超时×10校验值
+V区变量,32位浮点数,350,1,读写,U3_VD_StepResolution,注射泵单步分辨率(µL/步) AQEX-36:VD18→VD350
+V区变量,32位浮点数,354,1,读写,U3_VD_CycleSetpoint,换水周期设定(min) AQEX-36:VD20→VD354
+V区变量,32位浮点数,358,1,读写,U3_VD_Timeout_ValveA,阀A动作超时(s) AQEX-36:VD48→VD358
+V区变量,32位浮点数,362,1,读写,U3_VD_Timeout_ValveB,阀B动作超时(s) AQEX-36:VD50→VD362
+V区变量,32位浮点数,366,1,只读,U3_VD_ExperimentDuration_Accum,实验时长累加(min) AQEX-36:VD96→VD366
+V区变量,32位浮点数,370,1,只读,U3_VD_Vol_Target,本轮目标抽取母液体积(µL) AQEX-36:VD98→VD370
+V区变量,8位无符号,300,1,只读,U3_VB300_AlarmByte0,报警字VB300(漫溢+急停+安全继电器+节奏滞后)
+V区变量,8位无符号,301,1,只读,U3_VB301_AlarmByte1,报警字VB301(阀A诊断)
+V区变量,8位无符号,302,1,只读,U3_VB302_AlarmByte2,报警字VB302(阀B/C/泵诊断)
+V区变量,8位无符号,303,1,只读,U3_VB303_AlarmByte3,报警字VB303(其他)
+V区变量,第04位,2,1,读写,U3_CMD_Manual_ValveA_Open,手动开阀A
+V区变量,第05位,2,1,读写,U3_CMD_Manual_ValveA_Close,手动关阀A
+V区变量,第06位,2,1,读写,U3_CMD_Manual_ValveB_Open,手动开阀B
+V区变量,第07位,2,1,读写,U3_CMD_Manual_ValveB_Close,手动关阀B
+V区变量,第00位,3,1,读写,U3_CMD_Manual_ValveC_Open,手动开阀C
+V区变量,第01位,3,1,读写,U3_CMD_Manual_ValveC_Close,手动关阀C
+V区变量,第02位,3,1,读写,U3_CMD_Manual_Pump1_On,手动启动潜水泵1
+V区变量,第03位,3,1,读写,U3_CMD_Manual_Pump1_Off,手动停止潜水泵1
+V区变量,第04位,3,1,读写,U3_CMD_Manual_Pump2_On,"手动启动潜水泵2(预留,V3.4)"
+V区变量,第05位,3,1,读写,U3_CMD_Manual_Pump2_Off,"手动停止潜水泵2(预留,V3.5)"
+V区变量,16位有符号二进制,202,1,读写,U3_MB_Pump_Reset,注射泵复位命令 40003
+V区变量,16位有符号二进制,204,1,读写,U3_MB_Pump_Aspirate,注射泵抽液目标步数 40006
+V区变量,16位有符号二进制,206,1,读写,U3_MB_Pump_Dispense,注射泵排液目标步数 40007
+V区变量,16位有符号二进制,208,1,读写,U3_MB_Pump_SpeedStart,注射泵启动速度 40009(Hz)
+V区变量,16位有符号二进制,210,1,读写,U3_MB_Pump_SpeedMax,注射泵最高速度 40010(Hz)
+V区变量,16位有符号二进制,212,1,读写,U3_MB_Pump_SpeedCutoff,注射泵截止速度 40011(Hz)
+V区变量,16位有符号二进制,222,1,只读,U3_MB_Pump_Position,注射泵位置反馈 41007
+V区变量,第00位,200,1,读写,U3_M_AlarmAckMode,报警确认模式 0=自动恢复 1=人工确认
+V区变量,第00位,304,1,只读,U3_M_InitDone,PLC初始化完成标志

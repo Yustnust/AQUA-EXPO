@@ -36,7 +36,7 @@
 
 在开始组态前，确认以下文件已就绪且为最新版本：
 
-- [ ] `docs/hmi_preparation/McgsPro变量导入_8单元_v2.1.csv`（602 通道，8 单元）
+- [ ] `docs/hmi_preparation/McgsPro变量导入_8单元_v2.1.csv`（688 通道，8 单元）
 - [ ] `docs/hmi_preparation/McgsPro脚本代码_54个_v2.0.md`
 - [ ] `docs/hmi_preparation/画面变量绑定清单.md`
 - [ ] `docs/hmi_preparation/HMI画面布局线框图_v1.0.md`
@@ -131,38 +131,57 @@
 
 ### 4.1 批量导入 CSV
 
-McgsPro 支持通过设备编辑窗口"导入 CSV"批量添加通道，自动在实时数据库创建变量。
+McgsPro 批量导入通道的入口是设备编辑窗口右侧菜单中的 **设备信息导入**，不是"增加设备通道"。
 
-1. 双击子设备 0（设备 0-[西门子_Smart200]）→ 打开设备编辑窗口。
-2. 点击 **导入 CSV** 按钮。
-3. 选择 `docs/hmi_preparation/McgsPro变量导入_8单元_v2.1.csv`。
-4. 在导入对话框中：
-   - 起始行：2（第 1 行为表头）
-   - 分隔符：英文逗号 `,`
-   - 编码：UTF-8 或 GBK（若乱码则切换）
-5. 点击"导入"，等待完成。
-6. **重复步骤 1~5**，为 8 个子设备分别导入同一 CSV。
+`McgsPro变量导入_8单元_v2.1.csv` 已按单元分段（每段 86 通道，共 8 段）。推荐先把 CSV 拆成 8 个独立文件，每个子设备导入对应文件，避免在 McgsPro 里手动删行。
 
-> **关键注意**：CSV 中的"连接变量"已带 `U1_` 前缀。为子设备 1~7 导入时，需在导入后使用 McgsPro 的"文本查找与替换"工具（组态辅助工具）将变量前缀统一替换为 `U2_` ~ `U8_`，或预先准备 8 份前缀不同的 CSV。
+#### 步骤 1：拆分 CSV（在 PowerShell 中执行）
 
-### 4.2 变量前缀批量替换（推荐做法）
-
-为减少出错，建议先准备 8 份 CSV：
-
-```bash
-# 在 PowerShell 中执行
-$base = "docs/hmi_preparation/McgsPro变量导入_8单元_v2.1.csv"
-for ($i = 2; $i -le 8; $i++) {
-    (Get-Content $base -Encoding UTF8) -replace "U1_", "U$i`_" |
-        Set-Content "docs/hmi_preparation/McgsPro变量导入_8单元_v2.1_U${i}.csv" -Encoding UTF8
-}
+```powershell
+cd d:\work\CTI\docs\hmi_preparation
+python -c "
+import csv
+src = 'McgsPro变量导入_8单元_v2.1.csv'
+with open(src, 'r', encoding='utf-8-sig') as f:
+    reader = csv.reader(f)
+    header = next(reader)
+    current_unit = None
+    files = {}
+    for row in reader:
+        if row and row[0].startswith('# ===== Unit'):
+            current_unit = int(row[0].split('Unit')[1].split()[0])
+            files[current_unit] = [header]
+        elif current_unit:
+            files[current_unit].append(row)
+    for u, rows in files.items():
+        with open(f'McgsPro变量导入_单元{u}.csv', 'w', encoding='utf-8-sig', newline='') as f:
+            csv.writer(f).writerows(rows)
+        print(f'单元{u}: {len(rows)-1} 通道')
+"
 ```
 
-然后为每个子设备导入对应前缀的 CSV。
+执行后生成：
+- `McgsPro变量导入_单元1.csv`（U1_前缀，86 通道）
+- ...
+- `McgsPro变量导入_单元8.csv`（U8_前缀，86 通道）
 
-### 4.3 导入后检查
+#### 步骤 2：为每个子设备导入对应 CSV
 
-1. 工作台 → **实时数据库**，确认变量总数约为 8×75 = 600 个。
+1. 双击子设备 0（设备 0-[西门子_Smart200]）→ 打开设备编辑窗口。
+2. 在右侧菜单中点击 **设备信息导入**。
+3. 选择 `McgsPro变量导入_单元1.csv`。
+4. 确认导入，设备 0 通道列表新增 86 行。
+5. 关闭设备 0 窗口，双击子设备 1。
+6. 点击 **设备信息导入** → 选择 `McgsPro变量导入_单元2.csv`。
+7. 重复步骤 5~6，对设备 2~7 分别导入单元 3~8 的 CSV。
+
+> **关键注意**：每个子设备只导入对应单元的 CSV。如果把 688 通道全部导入一个子设备，会导致 8 个单元变量重复绑定到同一台 PLC，HMI 数据会全部显示为同一单元。
+>
+> 拆分失败排查：若脚本无输出，检查 CSV 中单元分隔行是否被解析为单元素行。正确判断应为 `row[0].startswith('# ===== Unit')`，不要加 `len(row) >= 7`。
+
+### 4.2 导入后检查
+
+1. 工作台 → **实时数据库**，确认变量总数约为 8×86 = 688 个。
 2. 抽查以下关键变量：
    - `U1_CMD_Start`（开关型，V0.0）
    - `U1_VW2_StateMachine`（整数，VW2）
