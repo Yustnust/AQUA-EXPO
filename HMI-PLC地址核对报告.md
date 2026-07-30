@@ -6,7 +6,7 @@
 - `d:\work\CTI\docs\HMI-PLC变量地址表_v1.0.md`
 - `d:\work\CTI\docs\hmi_preparation\McgsPro变量导入_8单元_v2.0.csv`（**已废弃**，最新拆分为 `McgsPro变量导入_单元1.csv` ~ `单元8.csv`）
 
-> **重要说明**：本报告生成后，McgsPro CSV 已拆分为 8 个单元独立文件，且因 McgsPro 西门子_Smart200 驱动对 8 位无符号导入支持不完整，报警字已由 `VB300~VB303` 四个字节通道改为 `VW300/VW302` 两个 16 位字通道。报告中的 `U1_VB300_AlarmByte0` ~ `U1_VB303_AlarmByte3` 等旧变量名已不存在，请以最新 HMI-PLC 变量地址表和 CSV 为准。
+> **重要说明**：本报告生成后，McgsPro CSV 已拆分为 8 个单元独立文件。因 McgsPro 西门子_Smart200 驱动对 8 位无符号导入支持不完整，McgsPro 方案中报警字以 `VW300/VW302` 两个字通道导入。Web HMI 方案及 HMI-PLC 变量地址表已恢复为 `VB300~VB303` 四个字节通道的抽象，Modbus 读取 VW300/VW302 后拆分为 VB300~VB303。报告中的 `U1_VB300_AlarmByte0` ~ `U1_VB303_AlarmByte3` 等变量名在 Web HMI 方案中继续使用。
 
 ## 一、核对概览
 
@@ -129,10 +129,10 @@
 |---|---|---|---|---|---|
 | DT:DT10 | 未指定 | 未指定 | DT_TankB_FullTime / DT(日期时间) | MD | 确认是否预留/废弃；若废弃则从文档/CSV移除 |
 | I_bit:I2.2 | BOOL | 未指定 | —（备用） / 预留 | MD | 确认是否预留/废弃；若废弃则从文档/CSV移除 |
-| VB:VB300 | BYTE | 只读 | U1_VB300_AlarmByte0 / 报警字节0(漫溢+急停) | CSV,CSV,CSV,CSV,CSV,CSV,CSV,CSV | 确认是否预留/废弃；若废弃则从文档/CSV移除 |
-| VB:VB301 | BYTE | 只读 | U1_VB301_AlarmByte1 / 报警字节1(阀A诊断) | CSV,CSV,CSV,CSV,CSV,CSV,CSV,CSV | 确认是否预留/废弃；若废弃则从文档/CSV移除 |
-| VB:VB302 | BYTE | 只读 | U1_VB302_AlarmByte2 / 报警字节2(阀B诊断) | CSV,CSV,CSV,CSV,CSV,CSV,CSV,CSV | 确认是否预留/废弃；若废弃则从文档/CSV移除 |
-| VB:VB303 | BYTE | 只读 | U1_VB303_AlarmByte3 / 报警字节3(其他) | CSV,CSV,CSV,CSV,CSV,CSV,CSV,CSV | 确认是否预留/废弃；若废弃则从文档/CSV移除 |
+| VB:VB300 | BYTE | 只读 | U1_VB300_AlarmByte0 / 报警字节0(漫溢+急停) | CSV,CSV,CSV,CSV,CSV,CSV,CSV,CSV | 已确认使用；Web HMI 按 VB300~VB303 抽象读取 |
+| VB:VB301 | BYTE | 只读 | U1_VB301_AlarmByte1 / 报警字节1(阀A诊断) | CSV,CSV,CSV,CSV,CSV,CSV,CSV,CSV | 已确认使用；Web HMI 按 VB300~VB303 抽象读取 |
+| VB:VB302 | BYTE | 只读 | U1_VB302_AlarmByte2 / 报警字节2(阀B诊断) | CSV,CSV,CSV,CSV,CSV,CSV,CSV,CSV | 已确认使用；Web HMI 按 VB300~VB303 抽象读取 |
+| VB:VB303 | BYTE | 只读 | U1_VB303_AlarmByte3 / 报警字节3(其他) | CSV,CSV,CSV,CSV,CSV,CSV,CSV,CSV | 已确认使用；Web HMI 按 VB300~VB303 抽象读取 |
 | VD:VD100 | REAL | 未指定 | 配液节奏纠偏变量 / REAL | MD | 确认是否预留/废弃；若废弃则从文档/CSV移除 |
 | VD:VD104 | REAL | 未指定 | VD_T_Default / s | MD | 确认是否预留/废弃；若废弃则从文档/CSV移除 |
 | VD:VD108 | REAL | 未指定 | VD_S6_Default / s | MD | 确认是否预留/废弃；若废弃则从文档/CSV移除 |
