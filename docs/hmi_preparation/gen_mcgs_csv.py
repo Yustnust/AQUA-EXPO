@@ -95,15 +95,13 @@ word_rows = [
 ]
 rows.extend(word_rows)
 
-# 报警字节
-alarm_bytes = [
-    (300, "VB300_AlarmByte0", "报警字VB300(漫溢+急停+安全继电器+节奏滞后)"),
-    (301, "VB301_AlarmByte1", "报警字VB301(阀A诊断)"),
-    (302, "VB302_AlarmByte2", "报警字VB302(阀B/C/泵诊断)"),
-    (303, "VB303_AlarmByte3", "报警字VB303(其他)"),
+# 报警字（McgsPro 西门子_Smart200 驱动对 8位无符号支持不完整，
+# 改用 16位有符号二进制读取 VW300/VW302，HMI 端用位运算提取 V300.0~V303.7）
+alarm_words = [
+    ("V区变量", "16位有符号二进制", 300, 1, "只读", "VW300_AlarmWord0", "报警字V300+V301(V300.0~V301.7,漫溢/急停/阀A/节奏)"),
+    ("V区变量", "16位有符号二进制", 302, 1, "只读", "VW302_AlarmWord2", "报警字V302+V303(V302.0~V303.7,阀BC/泵/其他)"),
 ]
-for addr, name, note in alarm_bytes:
-    rows.append(("V区变量", "8位无符号", addr, 1, "只读", name, note))
+rows.extend(alarm_words)
 
 # 手动命令位 V2.4~V3.5
 manual_bits = [
@@ -146,7 +144,7 @@ def parse_dtype(dtype: str):
     mapping = {
         "16位有符号二进制": "16位 有符号二进制",
         "32位浮点数": "32位 浮点数",
-        "8位无符号": "8位 无符号二进制",
+        "8位无符号": "8位无符号二进制",
     }
     if dtype in mapping:
         return mapping[dtype], None
