@@ -1,87 +1,91 @@
-﻿通道类型,数据类型,通道地址,通道个数,读写方式,连接变量,备注
-V区变量,第00位,0,1,读写,U8_CMD_Start,启动实验命令
-V区变量,第01位,0,1,读写,U8_Reserved_CMD_Pause,"暂停命令(PLC未实现,预留)"
-V区变量,第02位,0,1,读写,U8_CMD_Stop,停止实验命令
-V区变量,第03位,0,1,读写,U8_CMD_AckAlarm,报警确认命令
-V区变量,第04位,0,1,读写,U8_CMD_Mute,消音命令
-V区变量,第05位,0,1,读写,U8_Reserved_CMD_ForceTankA_Empty,"强制上缸=空(PLC未实现,预留)"
-V区变量,第06位,0,1,读写,U8_Reserved_CMD_ForceTankA_Full,"强制上缸=满(PLC未实现,预留)"
-V区变量,第07位,0,1,读写,U8_CMD_SafetyRelayAck,安全继电器故障高权限确认
-V区变量,第00位,1,1,只读,U8_STA_StartAck,启动命令已接收
-V区变量,第01位,1,1,只读,U8_Reserved_STA_PauseAck,暂停命令已接收(预留)
-V区变量,第02位,1,1,只读,U8_STA_StopAck,停止命令已接收
-V区变量,第03位,1,1,只读,U8_STA_AlarmAckDone,报警确认已执行
-V区变量,第04位,1,1,只读,U8_STA_MuteDone,消音已执行
-V区变量,第05位,1,1,只读,U8_STA_ForceDone,状态强制修正已执行
-V区变量,第06位,1,1,只读,U8_STA_TankA_State,上缸状态 0=空 1=满
-V区变量,第07位,1,1,只读,U8_STA_TankB_State,下缸状态 0=空 1=满
-V区变量,16位有符号二进制,2,1,只读,U8_VW2_StateMachine,状态机当前状态(S0~S7/S_ERROR)
-V区变量,16位有符号二进制,4,1,只读,U8_VW4_PumpStatus,注射泵状态码(映射41001)
-V区变量,16位有符号二进制,6,1,只读,U8_VW6_AlarmCode,当前最高优先级报警码
-V区变量,16位有符号二进制,8,1,只读,U8_VW8_RoundCount,实验轮次计数
-V区变量,32位浮点数,10,1,读写,U8_VD_C_Set,目标浓度设定值(%)
-V区变量,32位浮点数,14,1,读写,U8_VD_C_Stock,母液浓度(%)
-V区变量,32位浮点数,24,1,读写,U8_VD_ExperimentTarget,实验时长目标(min)
-V区变量,32位浮点数,28,1,读写,U8_VD_PreMixTime,预循环标称时长S2(s)
-V区变量,32位浮点数,32,1,读写,U8_VD_PreMixTime_MinSafe,预循环压缩下限(s)
-V区变量,32位浮点数,36,1,读写,U8_VD_RestTime,静止等候标称S3.5(s)
-V区变量,32位浮点数,40,1,读写,U8_VD_RestTime_Min,静止等候压缩下限(s)
-V区变量,32位浮点数,44,1,读写,U8_VD_CycleExtend_Max,换水周期顺延上限(min)
-V区变量,32位浮点数,54,1,读写,U8_VD_Timeout_ValveC,阀C动作超时(s)
-V区变量,32位浮点数,58,1,读写,U8_VD_Timeout_Pump1,潜水泵1动作超时(s)
-V区变量,32位浮点数,62,1,读写,U8_VD_Timeout_Pump2,潜水泵2动作超时(s)
-V区变量,32位浮点数,66,1,读写,U8_VD_Delay_ValveA_Verify,阀A关闭后延时验证时长(s)
-V区变量,32位浮点数,70,1,只读,U8_VD_S1_Actual,S1上缸进水实测时长(s)
-V区变量,32位浮点数,74,1,只读,U8_VD_S4_Actual,S4上→下转移实测时长(s)
-V区变量,32位浮点数,78,1,只读,U8_VD_S6_Actual,S6下缸排水实测时长(s)
-V区变量,32位浮点数,82,1,只读,U8_VD_FlowMeter_Snapshot,阀A开启瞬间流量计累计快照
-V区变量,32位浮点数,86,1,只读,U8_VD_FlowMeter_Current,流量计当前累计值(L)
-V区变量,32位浮点数,90,1,只读,U8_VD_Current_InletVolume,本次进水量=Current-Snapshot(L)
-V区变量,32位浮点数,94,1,只读,U8_VD_FlowRate_Instant,瞬时流速(L/min)
-V区变量,32位浮点数,102,1,只读,U8_VD_Dose_Steps,本轮加药目标步数
-V区变量,32位浮点数,112,1,读写,U8_VD_T_Rolling,滚动实测T总时长(s)
-V区变量,32位浮点数,116,1,读写,U8_VD_S6_Rolling,滚动实测S6排水时长(s)
-V区变量,32位浮点数,120,1,读写,U8_VD_S2_Target,本轮S2实际执行目标(s)
-V区变量,32位浮点数,124,1,读写,U8_VD_RestTime_Target,本轮S3.5实际执行目标(s)
-V区变量,32位浮点数,132,1,读写,U8_VD_PumpSpeed_Start,注射泵启动速度(Hz)
-V区变量,32位浮点数,136,1,读写,U8_VD_PumpSpeed_Max,注射泵最高速度(Hz)
-V区变量,32位浮点数,140,1,读写,U8_VD_PumpSpeed_Cutoff,注射泵截止速度(Hz)
-V区变量,32位浮点数,150,1,只读,U8_VD_Available,剩余可用时间(min)
-V区变量,32位浮点数,154,1,只读,U8_VD_Corr_Needed,纠偏Needed(min)
-V区变量,32位浮点数,174,1,读写,U8_VD_S3_Estimate,S3估算时长(s)
-V区变量,32位浮点数,178,1,只读,U8_VD_S5_Elapsed,S5累计运行时长(min)
-V区变量,16位有符号二进制,182,1,读写,U8_VW_Corr_Mode,纠偏模式
-V区变量,16位有符号二进制,184,1,读写,U8_VW_Corr_Result,纠偏结果
-V区变量,32位浮点数,308,1,只读,U8_VD_FlowMeter_CloseSnapshot,阀A关闭后流量计快照(内漏诊断)
-V区变量,32位浮点数,312,1,只读,U8_VD_LeakDiff,阀A内漏差值
-V区变量,32位浮点数,316,1,只读,U8_VD_TargetInletVolume,PLC计算的目标进水量(L)
-V区变量,32位浮点数,328,1,只读,U8_VD_Timeout_ValveC_x10,阀C超时×10校验值
-V区变量,32位浮点数,350,1,读写,U8_VD_StepResolution,注射泵单步分辨率(µL/步) AQEX-36:VD18→VD350
-V区变量,32位浮点数,354,1,读写,U8_VD_CycleSetpoint,换水周期设定(min) AQEX-36:VD20→VD354
-V区变量,32位浮点数,358,1,读写,U8_VD_Timeout_ValveA,阀A动作超时(s) AQEX-36:VD48→VD358
-V区变量,32位浮点数,362,1,读写,U8_VD_Timeout_ValveB,阀B动作超时(s) AQEX-36:VD50→VD362
-V区变量,32位浮点数,366,1,只读,U8_VD_ExperimentDuration_Accum,实验时长累加(min) AQEX-36:VD96→VD366
-V区变量,32位浮点数,370,1,只读,U8_VD_Vol_Target,本轮目标抽取母液体积(µL) AQEX-36:VD98→VD370
-V区变量,8位无符号,300,1,只读,U8_VB300_AlarmByte0,报警字VB300(漫溢+急停+安全继电器+节奏滞后)
-V区变量,8位无符号,301,1,只读,U8_VB301_AlarmByte1,报警字VB301(阀A诊断)
-V区变量,8位无符号,302,1,只读,U8_VB302_AlarmByte2,报警字VB302(阀B/C/泵诊断)
-V区变量,8位无符号,303,1,只读,U8_VB303_AlarmByte3,报警字VB303(其他)
-V区变量,第04位,2,1,读写,U8_CMD_Manual_ValveA_Open,手动开阀A
-V区变量,第05位,2,1,读写,U8_CMD_Manual_ValveA_Close,手动关阀A
-V区变量,第06位,2,1,读写,U8_CMD_Manual_ValveB_Open,手动开阀B
-V区变量,第07位,2,1,读写,U8_CMD_Manual_ValveB_Close,手动关阀B
-V区变量,第00位,3,1,读写,U8_CMD_Manual_ValveC_Open,手动开阀C
-V区变量,第01位,3,1,读写,U8_CMD_Manual_ValveC_Close,手动关阀C
-V区变量,第02位,3,1,读写,U8_CMD_Manual_Pump1_On,手动启动潜水泵1
-V区变量,第03位,3,1,读写,U8_CMD_Manual_Pump1_Off,手动停止潜水泵1
-V区变量,第04位,3,1,读写,U8_CMD_Manual_Pump2_On,"手动启动潜水泵2(预留,V3.4)"
-V区变量,第05位,3,1,读写,U8_CMD_Manual_Pump2_Off,"手动停止潜水泵2(预留,V3.5)"
-V区变量,16位有符号二进制,202,1,读写,U8_MB_Pump_Reset,注射泵复位命令 40003
-V区变量,16位有符号二进制,204,1,读写,U8_MB_Pump_Aspirate,注射泵抽液目标步数 40006
-V区变量,16位有符号二进制,206,1,读写,U8_MB_Pump_Dispense,注射泵排液目标步数 40007
-V区变量,16位有符号二进制,208,1,读写,U8_MB_Pump_SpeedStart,注射泵启动速度 40009(Hz)
-V区变量,16位有符号二进制,210,1,读写,U8_MB_Pump_SpeedMax,注射泵最高速度 40010(Hz)
-V区变量,16位有符号二进制,212,1,读写,U8_MB_Pump_SpeedCutoff,注射泵截止速度 40011(Hz)
-V区变量,16位有符号二进制,222,1,只读,U8_MB_Pump_Position,注射泵位置反馈 41007
-V区变量,第00位,200,1,读写,U8_M_AlarmAckMode,报警确认模式 0=自动恢复 1=人工确认
-V区变量,第00位,304,1,只读,U8_M_InitDone,PLC初始化完成标志
+��̬�豸����:�豸7
+�������ļ�·��:d:\program files\mcgspro\program\drivers\plc\������\smart200\smart200_ex.ui
+������������:������_S7_Smart200_��̫��
+���������汾:7.001
+ͨ����,������,��������,ͨ������,��д����,�Ĵ�������,��������,�Ĵ�����ַ,��ַƫ��,ͨ���ɼ�Ƶ��,ͨ������
+0,U8_CMD_Start,INTEGER,��дV000.0,��д,V���ݼĴ���,ͨ���ĵ�00λ,0,,1,
+1,U8_Reserved_CMD_Pause,INTEGER,��дV000.1,��д,V���ݼĴ���,ͨ���ĵ�01λ,0,,1,
+2,U8_CMD_Stop,INTEGER,��дV000.2,��д,V���ݼĴ���,ͨ���ĵ�02λ,0,,1,
+3,U8_CMD_AckAlarm,INTEGER,��дV000.3,��д,V���ݼĴ���,ͨ���ĵ�03λ,0,,1,
+4,U8_CMD_Mute,INTEGER,��дV000.4,��д,V���ݼĴ���,ͨ���ĵ�04λ,0,,1,
+5,U8_Reserved_CMD_ForceTankA_Empty,INTEGER,��дV000.5,��д,V���ݼĴ���,ͨ���ĵ�05λ,0,,1,
+6,U8_Reserved_CMD_ForceTankA_Full,INTEGER,��дV000.6,��д,V���ݼĴ���,ͨ���ĵ�06λ,0,,1,
+7,U8_CMD_SafetyRelayAck,INTEGER,��дV000.7,��д,V���ݼĴ���,ͨ���ĵ�07λ,0,,1,
+8,U8_STA_StartAck,INTEGER,ֻ��V001.0,ֻ��,V���ݼĴ���,ͨ���ĵ�00λ,1,,1,
+9,U8_Reserved_STA_PauseAck,INTEGER,ֻ��V001.1,ֻ��,V���ݼĴ���,ͨ���ĵ�01λ,1,,1,
+10,U8_STA_StopAck,INTEGER,ֻ��V001.2,ֻ��,V���ݼĴ���,ͨ���ĵ�02λ,1,,1,
+11,U8_STA_AlarmAckDone,INTEGER,ֻ��V001.3,ֻ��,V���ݼĴ���,ͨ���ĵ�03λ,1,,1,
+12,U8_STA_MuteDone,INTEGER,ֻ��V001.4,ֻ��,V���ݼĴ���,ͨ���ĵ�04λ,1,,1,
+13,U8_STA_ForceDone,INTEGER,ֻ��V001.5,ֻ��,V���ݼĴ���,ͨ���ĵ�05λ,1,,1,
+14,U8_STA_TankA_State,INTEGER,ֻ��V001.6,ֻ��,V���ݼĴ���,ͨ���ĵ�06λ,1,,1,
+15,U8_STA_TankB_State,INTEGER,ֻ��V001.7,ֻ��,V���ݼĴ���,ͨ���ĵ�07λ,1,,1,
+16,U8_VW2_StateMachine,SINGLE,ֻ��VWB002,ֻ��,V���ݼĴ���,16λ �з��Ŷ�����,2,,1,
+17,U8_VW4_PumpStatus,SINGLE,ֻ��VWB004,ֻ��,V���ݼĴ���,16λ �з��Ŷ�����,4,,1,
+18,U8_VW6_AlarmCode,SINGLE,ֻ��VWB006,ֻ��,V���ݼĴ���,16λ �з��Ŷ�����,6,,1,
+19,U8_VW8_RoundCount,SINGLE,ֻ��VWB008,ֻ��,V���ݼĴ���,16λ �з��Ŷ�����,8,,1,
+20,U8_VD_C_Set,SINGLE,��дVDF010,��д,V���ݼĴ���,32λ ������,10,,1,
+21,U8_VD_C_Stock,SINGLE,��дVDF014,��д,V���ݼĴ���,32λ ������,14,,1,
+22,U8_VD_ExperimentTarget,SINGLE,��дVDF024,��д,V���ݼĴ���,32λ ������,24,,1,
+23,U8_VD_PreMixTime,SINGLE,��дVDF028,��д,V���ݼĴ���,32λ ������,28,,1,
+24,U8_VD_PreMixTime_MinSafe,SINGLE,��дVDF032,��д,V���ݼĴ���,32λ ������,32,,1,
+25,U8_VD_RestTime,SINGLE,��дVDF036,��д,V���ݼĴ���,32λ ������,36,,1,
+26,U8_VD_RestTime_Min,SINGLE,��дVDF040,��д,V���ݼĴ���,32λ ������,40,,1,
+27,U8_VD_CycleExtend_Max,SINGLE,��дVDF044,��д,V���ݼĴ���,32λ ������,44,,1,
+28,U8_VD_Timeout_ValveC,SINGLE,��дVDF054,��д,V���ݼĴ���,32λ ������,54,,1,
+29,U8_VD_Timeout_Pump1,SINGLE,��дVDF058,��д,V���ݼĴ���,32λ ������,58,,1,
+30,U8_VD_Timeout_Pump2,SINGLE,��дVDF062,��д,V���ݼĴ���,32λ ������,62,,1,
+31,U8_VD_Delay_ValveA_Verify,SINGLE,��дVDF066,��д,V���ݼĴ���,32λ ������,66,,1,
+32,U8_VD_S1_Actual,SINGLE,ֻ��VDF070,ֻ��,V���ݼĴ���,32λ ������,70,,1,
+33,U8_VD_S4_Actual,SINGLE,ֻ��VDF074,ֻ��,V���ݼĴ���,32λ ������,74,,1,
+34,U8_VD_S6_Actual,SINGLE,ֻ��VDF078,ֻ��,V���ݼĴ���,32λ ������,78,,1,
+35,U8_VD_FlowMeter_Snapshot,SINGLE,ֻ��VDF082,ֻ��,V���ݼĴ���,32λ ������,82,,1,
+36,U8_VD_FlowMeter_Current,SINGLE,ֻ��VDF086,ֻ��,V���ݼĴ���,32λ ������,86,,1,
+37,U8_VD_Current_InletVolume,SINGLE,ֻ��VDF090,ֻ��,V���ݼĴ���,32λ ������,90,,1,
+38,U8_VD_FlowRate_Instant,SINGLE,ֻ��VDF094,ֻ��,V���ݼĴ���,32λ ������,94,,1,
+39,U8_VD_Dose_Steps,SINGLE,ֻ��VDF102,ֻ��,V���ݼĴ���,32λ ������,102,,1,
+40,U8_VD_T_Rolling,SINGLE,��дVDF112,��д,V���ݼĴ���,32λ ������,112,,1,
+41,U8_VD_S6_Rolling,SINGLE,��дVDF116,��д,V���ݼĴ���,32λ ������,116,,1,
+42,U8_VD_S2_Target,SINGLE,��дVDF120,��д,V���ݼĴ���,32λ ������,120,,1,
+43,U8_VD_RestTime_Target,SINGLE,��дVDF124,��д,V���ݼĴ���,32λ ������,124,,1,
+44,U8_VD_PumpSpeed_Start,SINGLE,��дVDF132,��д,V���ݼĴ���,32λ ������,132,,1,
+45,U8_VD_PumpSpeed_Max,SINGLE,��дVDF136,��д,V���ݼĴ���,32λ ������,136,,1,
+46,U8_VD_PumpSpeed_Cutoff,SINGLE,��дVDF140,��д,V���ݼĴ���,32λ ������,140,,1,
+47,U8_VD_Available,SINGLE,ֻ��VDF150,ֻ��,V���ݼĴ���,32λ ������,150,,1,
+48,U8_VD_Corr_Needed,SINGLE,ֻ��VDF154,ֻ��,V���ݼĴ���,32λ ������,154,,1,
+49,U8_VD_S3_Estimate,SINGLE,��дVDF174,��д,V���ݼĴ���,32λ ������,174,,1,
+50,U8_VD_S5_Elapsed,SINGLE,ֻ��VDF178,ֻ��,V���ݼĴ���,32λ ������,178,,1,
+51,U8_VW_Corr_Mode,SINGLE,��дVWB182,��д,V���ݼĴ���,16λ �з��Ŷ�����,182,,1,
+52,U8_VW_Corr_Result,SINGLE,��дVWB184,��д,V���ݼĴ���,16λ �з��Ŷ�����,184,,1,
+53,U8_VD_FlowMeter_CloseSnapshot,SINGLE,ֻ��VDF308,ֻ��,V���ݼĴ���,32λ ������,308,,1,
+54,U8_VD_LeakDiff,SINGLE,ֻ��VDF312,ֻ��,V���ݼĴ���,32λ ������,312,,1,
+55,U8_VD_TargetInletVolume,SINGLE,ֻ��VDF316,ֻ��,V���ݼĴ���,32λ ������,316,,1,
+56,U8_VD_Timeout_ValveC_x10,SINGLE,ֻ��VDF328,ֻ��,V���ݼĴ���,32λ ������,328,,1,
+57,U8_VD_StepResolution,SINGLE,��дVDF350,��д,V���ݼĴ���,32λ ������,350,,1,
+58,U8_VD_CycleSetpoint,SINGLE,��дVDF354,��д,V���ݼĴ���,32λ ������,354,,1,
+59,U8_VD_Timeout_ValveA,SINGLE,��дVDF358,��д,V���ݼĴ���,32λ ������,358,,1,
+60,U8_VD_Timeout_ValveB,SINGLE,��дVDF362,��д,V���ݼĴ���,32λ ������,362,,1,
+61,U8_VD_ExperimentDuration_Accum,SINGLE,ֻ��VDF366,ֻ��,V���ݼĴ���,32λ ������,366,,1,
+62,U8_VD_Vol_Target,SINGLE,ֻ��VDF370,ֻ��,V���ݼĴ���,32λ ������,370,,1,
+63,U8_VB300_AlarmByte0,SINGLE,ֻ��VBB300,ֻ��,V���ݼĴ���,8λ �޷���,300,,1,
+64,U8_VB301_AlarmByte1,SINGLE,ֻ��VBB301,ֻ��,V���ݼĴ���,8λ �޷���,301,,1,
+65,U8_VB302_AlarmByte2,SINGLE,ֻ��VBB302,ֻ��,V���ݼĴ���,8λ �޷���,302,,1,
+66,U8_VB303_AlarmByte3,SINGLE,ֻ��VBB303,ֻ��,V���ݼĴ���,8λ �޷���,303,,1,
+67,U8_CMD_Manual_ValveA_Open,INTEGER,��дV002.4,��д,V���ݼĴ���,ͨ���ĵ�04λ,2,,1,
+68,U8_CMD_Manual_ValveA_Close,INTEGER,��дV002.5,��д,V���ݼĴ���,ͨ���ĵ�05λ,2,,1,
+69,U8_CMD_Manual_ValveB_Open,INTEGER,��дV002.6,��д,V���ݼĴ���,ͨ���ĵ�06λ,2,,1,
+70,U8_CMD_Manual_ValveB_Close,INTEGER,��дV002.7,��д,V���ݼĴ���,ͨ���ĵ�07λ,2,,1,
+71,U8_CMD_Manual_ValveC_Open,INTEGER,��дV003.0,��д,V���ݼĴ���,ͨ���ĵ�00λ,3,,1,
+72,U8_CMD_Manual_ValveC_Close,INTEGER,��дV003.1,��д,V���ݼĴ���,ͨ���ĵ�01λ,3,,1,
+73,U8_CMD_Manual_Pump1_On,INTEGER,��дV003.2,��д,V���ݼĴ���,ͨ���ĵ�02λ,3,,1,
+74,U8_CMD_Manual_Pump1_Off,INTEGER,��дV003.3,��д,V���ݼĴ���,ͨ���ĵ�03λ,3,,1,
+75,U8_CMD_Manual_Pump2_On,INTEGER,��дV003.4,��д,V���ݼĴ���,ͨ���ĵ�04λ,3,,1,
+76,U8_CMD_Manual_Pump2_Off,INTEGER,��дV003.5,��д,V���ݼĴ���,ͨ���ĵ�05λ,3,,1,
+77,U8_MB_Pump_Reset,SINGLE,��дVWB202,��д,V���ݼĴ���,16λ �з��Ŷ�����,202,,1,
+78,U8_MB_Pump_Aspirate,SINGLE,��дVWB204,��д,V���ݼĴ���,16λ �з��Ŷ�����,204,,1,
+79,U8_MB_Pump_Dispense,SINGLE,��дVWB206,��д,V���ݼĴ���,16λ �з��Ŷ�����,206,,1,
+80,U8_MB_Pump_SpeedStart,SINGLE,��дVWB208,��д,V���ݼĴ���,16λ �з��Ŷ�����,208,,1,
+81,U8_MB_Pump_SpeedMax,SINGLE,��дVWB210,��д,V���ݼĴ���,16λ �з��Ŷ�����,210,,1,
+82,U8_MB_Pump_SpeedCutoff,SINGLE,��дVWB212,��д,V���ݼĴ���,16λ �з��Ŷ�����,212,,1,
+83,U8_MB_Pump_Position,SINGLE,ֻ��VWB222,ֻ��,V���ݼĴ���,16λ �з��Ŷ�����,222,,1,
+84,U8_M_AlarmAckMode,INTEGER,��дV200.0,��д,V���ݼĴ���,ͨ���ĵ�00λ,200,,1,
+85,U8_M_InitDone,INTEGER,ֻ��V304.0,ֻ��,V���ݼĴ���,ͨ���ĵ�00λ,304,,1,

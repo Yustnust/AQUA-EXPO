@@ -1,14 +1,24 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""生成 McgsPro 变量导入 CSV v2.1，按 HMI-PLC 变量地址表 v1.3 同步变量名/地址/读写属性。"""
+"""生成 McgsPro 设备信息导入 CSV，格式与 McgsPro 3.3.6 导出格式一致。
+
+每个子设备（设备0~7）对应一个 CSV 文件，可直接通过"设备信息导入"批量导入。
+文件头中的"组态设备名称"必须与子设备名一致，否则报"设备名称不符合"。
+"""
 
 import csv
 import os
+import re
 
-OUT = os.path.join(os.path.dirname(__file__), "McgsPro变量导入_8单元_v2.1.csv")
+OUT_DIR = os.path.dirname(__file__)
 
-# 每单元变量定义： (类型, 数据类型, 地址, 个数, 读写, 基础变量名, 备注)
-# 类型固定为 V区变量；数据类型为 McgsPro 通道数据类型中文描述；地址为整数（位地址用字节地址）
+# 驱动信息头（从 McgsPro 导出文件复制）
+DRV_PATH = r"d:\program files\mcgspro\program\drivers\plc\西门子\smart200\smart200_ex.ui"
+DRV_NAME = "西门子_S7_Smart200_以太网"
+DRV_VER = "7.001"
+
+# 每单元变量定义： (通道类型, 数据类型, 地址, 个数, 读写, 基础变量名, 备注)
+# 数据类型：位变量用"第XX位"，字/双字用 McgsPro 下拉框中的中文名称
 rows = []
 
 # V0/V1 位区
@@ -128,7 +138,44 @@ rows.append(("V区变量", "第00位", 200, 1, "读写", "M_AlarmAckMode", "报�
 rows.append(("V区变量", "第00位", 304, 1, "只读", "M_InitDone", "PLC初始化完成标志"))
 
 
-def unit_rows(unit):
+def parse_dtype(dtype: str):
+    """解析数据类型，返回 (mcgs数据类型, 位号或None)。"""
+    m = re.match(r"第(\d{2})位", dtype)
+    if m:
+        return "通道的第" + m.group(1) + "位", int(m.group(1))
+    mapping = {
+        "16位有符号二进制": "16位 有符号二进制",
+        "32位浮点数": "32位 浮点数",
+        "8位无符号": "8位 无符号",
+    }
+    if dtype in mapping:
+        return mapping[dtype], None
+    raise ValueError(f"未映射的数据类型: {dtype}")
+
+
+def mcgs_var_type(mcgs_dtype: str, bit: int | None) -> str:
+    """McgsPro 变量类型：只有位通道用 INTEGER，字/字节/浮点数值用 SINGLE。"""
+    if bit is not None:
+        return "INTEGER"
+    return "SINGLE"
+
+
+def mcgs_channel_name(rw: str, addr: int, mcgs_dtype: str, bit: int | None) -> str:
+    """生成 McgsPro 通道名称列（如"读写V000.0"、"只读VWB002"、"读写VDF010"）。"""
+    action = "读写" if rw == "读写" else "只读"
+    if bit is not None:
+        return f"{action}V{addr:03d}.{bit}"
+    if "16位" in mcgs_dtype:
+        return f"{action}VWB{addr:03d}"
+    if "32位" in mcgs_dtype:
+        return f"{action}VDF{addr:03d}"
+    if "8位" in mcgs_dtype:
+        return f"{action}VBB{addr:03d}"
+    raise ValueError(f"无法生成通道名称: {mcgs_dtype}")
+
+
+def unit_rows(unit: int):
+    """为指定单元添加 U{unit}_ 前缀。"""
     prefix = f"U{unit}_"
     out = []
     for typ, dtype, addr, count, rw, name, note in rows:
@@ -136,15 +183,50 @@ def unit_rows(unit):
     return out
 
 
-with open(OUT, "w", newline="", encoding="utf-8-sig") as f:
-    w = csv.writer(f)
-    w.writerow(["通道类型", "数据类型", "通道地址", "通道个数", "读写方式", "连接变量", "备注"])
+def write_unit_csv(unit: int) -> int:
+    dev_id = unit - 1
+    filename = os.path.join(OUT_DIR, f"McgsPro变量导入_单元{unit}.csv")
+    with open(filename, "w", newline="", encoding="gbk") as f:
+        w = csv.writer(f)
+        # McgsPro 设备信息文件头
+        w.writerow([f"组态设备名称:设备{dev_id}"])
+        w.writerow([f"驱动库文件路径:{DRV_PATH}"])
+        w.writerow([f"驱动构件名称:{DRV_NAME}"])
+        w.writerow([f"驱动构件版本:{DRV_VER}"])
+        # 表头
+        w.writerow([
+            "通道号", "变量名", "变量类型", "通道名称", "读写类型",
+            "寄存器名称", "数据类型", "寄存器地址", "地址偏移",
+            "通道采集频次", "通道处理"
+        ])
+
+        channel_no = 0
+        for _typ, dtype, addr, _count, rw, name, _note in unit_rows(unit):
+            mcgs_dtype, bit = parse_dtype(dtype)
+            var_type = mcgs_var_type(mcgs_dtype, bit)
+            ch_name = mcgs_channel_name(rw, addr, mcgs_dtype, bit)
+            rw_type = "读写" if rw == "读写" else "只读"
+            w.writerow([
+                channel_no,      # 通道号
+                name,            # 变量名
+                var_type,        # 变量类型
+                ch_name,         # 通道名称
+                rw_type,         # 读写类型
+                "V数据寄存器",   # 寄存器名称
+                mcgs_dtype,      # 数据类型
+                addr,            # 寄存器地址
+                "",              # 地址偏移
+                "1",             # 通道采集频次
+                "",              # 通道处理
+            ])
+            channel_no += 1
+
+    print(f"单元{unit}: {channel_no} 通道 -> {filename}")
+    return channel_no
+
+
+if __name__ == "__main__":
     total = 0
     for unit in range(1, 9):
-        w.writerow([f"# ===== Unit {unit} (PLC_0{unit}, 192.168.2.10{unit}) ====="])
-        for row in unit_rows(unit):
-            w.writerow(row)
-            total += 1
-
-print(f"已生成 {OUT}")
-print(f"每单元变量数: {len(rows)}，总通道数: {total}")
+        total += write_unit_csv(unit)
+    print(f"\n全部完成：8 单元，共 {total} 通道")

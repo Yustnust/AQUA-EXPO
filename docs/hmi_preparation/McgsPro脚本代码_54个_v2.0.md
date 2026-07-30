@@ -2,7 +2,7 @@
 
 **项目**: 8套缸单元药液配置加注控制系统
 **HMI**: 昆仑通态 McgsPro 3.3.6 (TPC 触摸屏)
-**配套文档**: McgsPro变量导入_8单元_v2.1.csv / HMI用户权限矩阵_v1.0.md / HMI画面架构规划文档.md
+**配套文档**: McgsPro变量导入_单元1.csv ~ 单元8.csv / HMI用户权限矩阵_v1.0.md / HMI画面架构规划文档.md
 **用途**: 直接粘贴到 McgsPro 脚本编辑器,完成8画面+策略+子窗口的脚本组态
 **Story**: AQEX-12 Story 2.1 (8画面组态) — v2.0 重写为纯正 McgsPro 类Basic语法
 
@@ -2174,7 +2174,7 @@ ParamSrcUnit = SelectedUnit
 ' ============================================
 ' 恢复默认按钮脚本
 ' 功能: 权限校验 → 弹出恢复默认确认子窗口(脚本53负责执行)
-' 默认值清单(参考 McgsPro变量导入_8单元_v2.1.csv 备注):
+' 默认值清单(参考 McgsPro变量导入_单元1.csv ~ 单元8.csv 备注):
 '   C_Set=5.0  C_Stock=100.0  StepRes=0.5  CycleSet=3.0
 '   ExpTarget=5.0  PreMixTime=12.0  PreMixTime_MinSafe=3.0
 '   RestTime=6.0  RestTime_Min=1.5  CycleExtend_Max=0.5
@@ -3273,7 +3273,7 @@ EndIf
 ' 恢复默认确认子窗口 - 确认按钮
 ' 功能: 把 Param_* 编辑缓冲变量重置为默认值
 '       (实际写回 PLC 由用户再次点击"保存参数"按钮完成,脚本28)
-' 默认值参考 McgsPro变量导入_8单元_v2.1.csv 备注
+' 默认值参考 McgsPro变量导入_单元1.csv ~ 单元8.csv 备注
 ' ============================================
 
 Param_C_Set = 5.0
