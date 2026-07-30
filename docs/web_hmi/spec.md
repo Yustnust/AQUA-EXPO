@@ -4,7 +4,7 @@
 **文档用途**：替代昆仑通态 McgsPro 触摸屏方案，采用触屏电脑 + Web HMI 实现 8 套缸单元集中监控  
 **版本**：v1.0  
 **编制日期**：2026-07-30  
-**关联 JIRA**：AQEX-2（Epic: HMI 组态开发）、AQEX-39（CSV 导入适配）、AQEX-15（变量地址表整理）  
+**关联 JIRA**：AQEX-49（Epic: Web HMI 替代 McgsPro 触屏方案）  
 
 ---
 
@@ -398,19 +398,20 @@ CREATE TABLE user_settings (
 
 ## 10. 开发计划
 
-| 阶段 | 任务 | 输出物 | 建议 JIRA |
+| 阶段 | 任务 | 输出物 | JIRA |
 |---|---|---|---|
-| 1 | 后端 Modbus TCP 通信框架 | `backend/` 后端代码 | AQEX-XX |
-| 2 | 实时数据 API + WebSocket | API 文档、测试用例 | AQEX-XX |
-| 3 | 前端框架 + 登录/权限 | `frontend/` 基础框架 | AQEX-XX |
-| 4 | 8 画面 UI 实现 | 页面组件 | AQEX-XX |
-| 5 | 报警/历史数据/趋势 | 报警模块、SQLite 记录 | AQEX-XX |
-| 6 | 手动控制 + 参数设置 | 写入 API + 二次确认 | AQEX-XX |
-| 7 | 系统设置 + 单元使能 | 设置页面 | AQEX-XX |
-| 8 | 部署脚本 + 自启动 | Windows 部署脚本 | AQEX-XX |
-| 9 | 联调测试 + 文档 | 测试报告、更新 SOP | AQEX-XX |
+| 1 | 后端 Modbus TCP 通信框架 | `backend/` 后端代码 | [AQEX-50](https://yusongtao.atlassian.net/browse/AQEX-50) |
+| 2 | 实时数据 API + WebSocket | API 文档、测试用例 | [AQEX-51](https://yusongtao.atlassian.net/browse/AQEX-51) |
+| 3 | SQLite 历史数据库与归档策略 | SQLite 表结构、归档脚本 | [AQEX-52](https://yusongtao.atlassian.net/browse/AQEX-52) |
+| 4 | 报警处理与声光联动 | 报警模块、蜂鸣/灯光联动 | [AQEX-53](https://yusongtao.atlassian.net/browse/AQEX-53) |
+| 5 | 用户登录与两级权限控制 | 登录页、权限中间件 | [AQEX-54](https://yusongtao.atlassian.net/browse/AQEX-54) |
+| 6 | 前端框架与 8 画面 UI 实现 | `frontend/` 基础框架与页面组件 | [AQEX-55](https://yusongtao.atlassian.net/browse/AQEX-55) |
+| 7 | 2D SVG 工程图动画效果 | P&ID 动画组件 | [AQEX-56](https://yusongtao.atlassian.net/browse/AQEX-56) |
+| 8 | 参数设置与手动控制 | 写入 API + 二次确认 | [AQEX-57](https://yusongtao.atlassian.net/browse/AQEX-57) |
+| 9 | 系统设置与触屏电脑部署 | Windows/Android 部署脚本 | [AQEX-58](https://yusongtao.atlassian.net/browse/AQEX-58) |
+| 10 | 联调测试与文档更新 | 测试报告、更新 SOP | [AQEX-59](https://yusongtao.atlassian.net/browse/AQEX-59) |
 
-> 注：JIRA 任务编号需根据实际创建的 Epic/Story 填充。
+> **Epic**：[AQEX-49 Web HMI 替代 McgsPro 触屏方案](https://yusongtao.atlassian.net/browse/AQEX-49)
 
 ---
 
@@ -441,8 +442,7 @@ CREATE TABLE user_settings (
 
 ## 13. 待确认事项
 
-1. 是否需要为 Web HMI 新建独立 JIRA Epic/Story？
-2. 画面尺寸按 1280×800 设计是否合适？
-3. 是否需要在总览页显示 P&ID 流程图，还是仅卡片式展示？
-4. 历史曲线默认记录哪些变量？是否需要客户自定义选择？
-5. 是否需要支持远程访问（非触屏电脑本地）？
+1. 画面尺寸按 1280×800 设计是否合适？
+2. 是否需要在总览页显示 P&ID 流程图，还是仅卡片式展示？
+3. 历史曲线默认记录哪些变量？是否需要客户自定义选择？
+4. 是否需要支持远程访问（非触屏电脑本地）？
