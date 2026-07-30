@@ -146,7 +146,7 @@ def parse_dtype(dtype: str):
     mapping = {
         "16位有符号二进制": "16位 有符号二进制",
         "32位浮点数": "32位 浮点数",
-        "8位无符号": "8位 无符号",
+        "8位无符号": "8位 无符号二进制",
     }
     if dtype in mapping:
         return mapping[dtype], None
