@@ -1,0 +1,38 @@
+# Web HMI 后端配置
+# 关联 JIRA: AQEX-50
+
+plc:
+  # 默认 PLC IP（S7-200 SMART 默认网关网段通常为 192.168.2.x）
+  host: "192.168.2.101"
+  port: 502
+  unit_id: 1
+  # 轮询周期（秒）
+  poll_interval: 0.5
+  # 断线重连间隔（秒）
+  reconnect_interval: 3.0
+  # 通讯超时（秒）
+  timeout: 1.0
+  # 连续失败多少次判定为离线
+  max_failures: 5
+
+server:
+  host: "0.0.0.0"
+  port: 8000
+  # 是否开启 API 文档（生产环境可关闭）
+  docs: true
+
+history:
+  db_path: "data/history.db"
+  # 默认保留天数
+  default_retention_days: 30
+  # 允许配置：7, 30, 90, 365
+  allowed_retention_days: [7, 30, 90, 365]
+  # 采样分组（秒）
+  fast_sample_interval: 1
+  slow_sample_interval: 10
+
+logging:
+  level: INFO
+  path: "logs/backend.log"
+  max_bytes: 10485760
+  backup_count: 5
