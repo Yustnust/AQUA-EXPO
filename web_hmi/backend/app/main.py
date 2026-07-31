@@ -11,7 +11,7 @@ import asyncio
 import logging
 import os
 from contextlib import asynccontextmanager
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from typing import Any, Dict, List, Optional
 
 import yaml
@@ -21,6 +21,7 @@ from pydantic import BaseModel
 
 from app.plc import PlcClient, VARIABLES, get_variable
 from app.ws_manager import ws_manager, build_update_message, build_status_message
+from app.history import HistoryStore, get_available_trend_variables
 
 # 日志配置
 logging.basicConfig(
@@ -31,6 +32,7 @@ logger = logging.getLogger(__name__)
 
 # 全局状态
 plc_clients: Dict[int, PlcClient] = {}  # unit_id -> PlcClient
+history_store: Optional[HistoryStore] = None
 app_config: Dict[str, Any] = {}
 
 # 数据节流：记录每个单元上次推送时间，避免过于频繁的 WebSocket 广播
@@ -50,7 +52,11 @@ def _make_plc_data_callback(unit_id: int):
     """为指定单元创建 PLC 数据更新回调——广播到 WebSocket。"""
 
     def _on_data(data: Dict[str, Any]):
-        # 避免过于频繁的广播
+        # 历史数据记录（每条都记录，内部有采样节流）
+        if history_store:
+            asyncio.ensure_future(history_store.record(unit_id, data))
+
+        # 避免过于频繁的 WebSocket 广播
         import time as _time
         now = _time.monotonic()
         if unit_id in _last_broadcast and now - _last_broadcast[unit_id] < BROADCAST_MIN_INTERVAL:
@@ -106,10 +112,21 @@ async def _create_plc_clients(cfg: Dict[str, Any]) -> Dict[int, PlcClient]:
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """应用生命周期管理：启动时连接所有 PLC，关闭时断开。"""
-    global plc_clients, app_config
+    global plc_clients, history_store, app_config
 
     config_path = os.environ.get("WEB_HMI_CONFIG", "config.yaml")
     app_config = load_config(config_path)
+
+    # 初始化历史数据库
+    hist_cfg = app_config.get("history", {})
+    history_store = HistoryStore(
+        db_path=hist_cfg.get("db_path", "data/history.db"),
+        retention_days=hist_cfg.get("default_retention_days", 30),
+        fast_interval=hist_cfg.get("fast_sample_interval", 1),
+        slow_interval=hist_cfg.get("slow_sample_interval", 10),
+    )
+    await history_store.initialize()
+    await history_store.start()
 
     plc_clients = await _create_plc_clients(app_config)
     logger.info("Web HMI backend started, %d PLC clients", len(plc_clients))
@@ -119,6 +136,8 @@ async def lifespan(app: FastAPI):
     for client in plc_clients.values():
         await client.stop()
     plc_clients.clear()
+    if history_store:
+        await history_store.stop()
     logger.info("Web HMI backend stopped")
 
 
@@ -159,6 +178,10 @@ class WritePulseRequest(BaseModel):
     unit: int = 1
     name: str
     duration: float = 0.5
+
+
+class RetentionRequest(BaseModel):
+    days: int
 
 
 # ============================================================
@@ -303,6 +326,80 @@ async def get_config():
         "history": app_config.get("history", {}),
     }
     return safe_config
+
+
+# ============================================================
+# 历史数据 API
+# ============================================================
+@app.get("/api/v1/history/variables")
+async def get_history_variables():
+    """获取所有支持趋势曲线的变量列表。"""
+    return get_available_trend_variables()
+
+
+@app.get("/api/v1/history/query/{unit_id}")
+async def query_history(
+    unit_id: int,
+    vars: str = "",
+    start: str = "",
+    end: str = "",
+    minutes: int = 60,
+):
+    """查询历史数据。
+
+    Query params:
+    - vars: 逗号分隔的变量名（如 "state_machine,alarm_code"）
+    - start: 开始时间 ISO 格式
+    - end: 结束时间 ISO 格式
+    - minutes: 如未指定 start/end，默认查最近 N 分钟
+    """
+    if not history_store:
+        raise HTTPException(status_code=503, detail="History store not initialized")
+
+    if vars:
+        var_names = [v.strip() for v in vars.split(",") if v.strip()]
+    else:
+        var_names = list(get_available_trend_variables())
+
+    if start and end:
+        try:
+            start_dt = datetime.fromisoformat(start)
+            end_dt = datetime.fromisoformat(end)
+        except ValueError:
+            raise HTTPException(status_code=400, detail="Invalid start/end format, use ISO 8601")
+    else:
+        end_dt = datetime.now(timezone.utc)
+        start_dt = end_dt - timedelta(minutes=minutes)
+
+    data = await history_store.query(unit_id, var_names, start_dt, end_dt)
+    return {
+        "unit": unit_id,
+        "start": start_dt.isoformat(),
+        "end": end_dt.isoformat(),
+        "variables": var_names,
+        "data": data,
+    }
+
+
+@app.get("/api/v1/history/retention")
+async def get_retention():
+    """获取历史数据保留天数。"""
+    if not history_store:
+        raise HTTPException(status_code=503, detail="History store not initialized")
+    days = await history_store.get_retention_days()
+    return {"retention_days": days}
+
+
+@app.post("/api/v1/history/retention")
+async def set_retention(req: RetentionRequest):
+    """设置历史数据保留天数。"""
+    if not history_store:
+        raise HTTPException(status_code=503, detail="History store not initialized")
+    allowed = app_config.get("history", {}).get("allowed_retention_days", [7, 30, 90, 365])
+    if req.days not in allowed:
+        raise HTTPException(status_code=400, detail=f"Allowed values: {allowed}")
+    await history_store.set_retention_days(req.days)
+    return {"retention_days": req.days}
 
 
 # ============================================================
