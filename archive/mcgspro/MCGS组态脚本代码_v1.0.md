@@ -25,6 +25,8 @@ MCGS脚本语言类似VBScript,特点:
 
 ---
 
+> ⚠️ **v2.0 更新提示**：本文件为 v1.0 版本，使用 VBScript 语法。当前工程已升级为两级菜单导航，新增菜单窗口脚本和返回按钮脚本请参见《McgsPro脚本代码_54个_v2.0.md》（已更新为66个脚本）。本文件中的画面切换脚本（!OpenWindow）已被 !CloseAllWindow 替代，返回按钮目标已从画面1_总览改为各自上级菜单窗口。详见《McgsPro两级菜单改造方案_v1.0》。
+
 ## 二、全局初始化脚本(工程启动时执行一次)
 
 **位置**：MCGS组态→主控窗口→启动脚本
@@ -69,6 +71,9 @@ CommStatus_08 = 0
 ' 记录启动时间
 Dim startTime
 startTime = Now()
+
+' 初始化当前菜单组(0=主菜单)
+CurrentMenuGroup = 0
 ```
 
 ---
@@ -317,7 +322,7 @@ End Select
 ' ============================================
 If LoginLevel < 2 Then
     !MsgBox("权限不足!手动控制需维护(L2)或管理员(L3)权限", 0, "权限提示")
-    !SwitchWindow("画面1_总览")
+    !CloseAllWindow("菜单_单元操作")
     Exit Sub
 End If
 
@@ -428,7 +433,7 @@ End If
 ' 参数设置需L2或L3权限
 If LoginLevel < 2 Then
     !MsgBox("权限不足!参数设置需维护(L2)或管理员(L3)权限", 0, "权限提示")
-    !SwitchWindow("画面1_总览")
+    !CloseAllWindow("菜单_单元操作")
     Exit Sub
 End If
 LoginTime = CStr(Now())
@@ -685,7 +690,7 @@ End Select
 ' 通讯与使能配置需L3管理员权限
 If LoginLevel < 3 Then
     !MsgBox("权限不足!系统配置需管理员(L3)权限", 0, "权限提示")
-    !SwitchWindow("画面1_总览")
+    !CloseAllWindow("菜单_监控诊断")
     Exit Sub
 End If
 LoginTime = CStr(Now())

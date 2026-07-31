@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>McgsPro 3.3.6 HMI 两级菜单改造方案 v1.0</title>
+<style>
+  :root {
+    --bg: #1a1a2e;
+    --card: #16213e;
+    --accent: #0f3460;
+    --accent2: #e94560;
+    --text: #eaeaea;
+    --text-dim: #a0a0b0;
+    --code-bg: #0d1117;
+    --code-border: #30363d;
+    --green: #27ae60;
+    --yellow: #f39c12;
+    --blue: #3498db;
+    --red: #e74c3c;
+    --table-header: #0f3460;
+    --table-alt: #1a2744;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    padding: 0;
+  }
+  .container { max-width: 1100px; margin: 0 auto; padding: 40px 24px; }
+  h1 {
+    font-size: 28px; color: var(--accent2); margin-bottom: 8px;
+    border-bottom: 2px solid var(--accent); padding-bottom: 12px;
+  }
+  h2 {
+    font-size: 22px; color: var(--blue); margin: 36px 0 16px;
+    padding-left: 12px; border-left: 4px solid var(--blue);
+  }
+  h3 {
+    font-size: 18px; color: var(--green); margin: 24px 0 12px;
+  }
+  h4 { font-size: 16px; color: var(--yellow); margin: 20px 0 8px; }
+  p { margin-bottom: 12px; }
+  .meta {
+    background: var(--card); border-radius: 8px; padding: 16px 20px;
+    margin: 16px 0 24px; border: 1px solid var(--accent);
+  }
+  .meta table { width: 100%; border-collapse: collapse; }
+  .meta td { padding: 4px 12px; font-size: 14px; }
+  .meta td:first-child { color: var(--text-dim); width: 120px; }
+  table {
+    width: 100%; border-collapse: collapse; margin: 12px 0 20px;
+    font-size: 14px;
+  }
+  th {
+    background: var(--table-header); color: var(--text);
+    padding: 8px 12px; text-align: left; font-weight: 600;
+    border: 1px solid var(--accent);
+  }
+  td {
+    padding: 8px 12px; border: 1px solid var(--accent);
+    vertical-align: top;
+  }
+  tr:nth-child(even) td { background: var(--table-alt); }
+  tr:nth-child(odd) td { background: var(--card); }
+  code {
+    background: var(--code-bg); color: #c9d1d9;
+    padding: 2px 6px; border-radius: 4px; font-size: 13px;
+    font-family: 'Consolas', 'Courier New', monospace;
+    border: 1px solid var(--code-border);
+  }
+  pre {
+    background: var(--code-bg); border: 1px solid var(--code-border);
+    border-radius: 8px; padding: 16px; margin: 12px 0 20px;
+    overflow-x: auto;
+  }
+  pre code {
+    background: none; border: none; padding: 0;
+    color: #c9d1d9; font-size: 13px; line-height: 1.6;
+  }
+  .comment { color: #8b949e; }
+  .keyword { color: #ff7b72; }
+  .string { color: #a5d6ff; }
+  .func { color: #d2a8ff; }
+  .number { color: #79c0ff; }
+  .ascii {
+    background: var(--code-bg); border: 1px solid var(--code-border);
+    border-radius: 8px; padding: 16px; margin: 12px 0 20px;
+    overflow-x: auto; font-family: 'Consolas', monospace;
+    font-size: 13px; line-height: 1.5; color: #7ee787;
+    white-space: pre;
+  }
+  .note {
+    background: rgba(52, 152, 219, 0.1); border-left: 4px solid var(--blue);
+    padding: 12px 16px; margin: 12px 0; border-radius: 0 8px 8px 0;
+  }
+  .warn {
+    background: rgba(243, 156, 18, 0.1); border-left: 4px solid var(--yellow);
+    padding: 12px 16px; margin: 12px 0; border-radius: 0 8px 8px 0;
+  }
+  .danger {
+    background: rgba(231, 76, 60, 0.1); border-left: 4px solid var(--red);
+    padding: 12px 16px; margin: 12px 0; border-radius: 0 8px 8px 0;
+  }
+  .checklist { list-style: none; }
+  .checklist li {
+    padding: 6px 0 6px 28px; position: relative;
+  }
+  .checklist li::before {
+    content: "☐"; position: absolute; left: 0; color: var(--yellow);
+    font-size: 18px;
+  }
+  .badge {
+    display: inline-block; padding: 2px 10px; border-radius: 12px;
+    font-size: 12px; font-weight: 600;
+  }
+  .badge-new { background: var(--green); color: #fff; }
+  .badge-mod { background: var(--yellow); color: #000; }
+  .badge-del { background: var(--red); color: #fff; }
+  .badge-keep { background: var(--blue); color: #fff; }
+  .toc {
+    background: var(--card); border: 1px solid var(--accent);
+    border-radius: 8px; padding: 20px 24px; margin: 20px 0 32px;
+  }
+  .toc ol { padding-left: 20px; }
+  .toc li { margin-bottom: 4px; }
+  .toc a { color: var(--blue); text-decoration: none; }
+  .toc a:hover { text-decoration: underline; }
+  .flow-box {
+    display: inline-block; padding: 6px 16px; margin: 4px;
+    border-radius: 6px; font-size: 14px; font-weight: 600;
+  }
+  .flow-main { background: var(--accent); color: var(--text); }
+  .flow-sub { background: var(--accent2); color: #fff; }
+  .flow-page { background: var(--green); color: #fff; }
+  .arrow { color: var(--text-dim); margin: 0 4px; }
+</style>
+</head>
+<body>
+<div class="container">
+
+<h1>McgsPro 3.3.6 HMI 两级菜单改造方案</h1>
+
+<div class="meta">
+<table>
+<tr><td><strong>项目</strong></td><td>药液配置与加注控制系统（AQUA-EXPO）</td></tr>
+<tr><td><strong>HMI平台</strong></td><td>昆仑通态 McgsPro 3.3.6（TPC 12寸 1280×800 横屏，Linux）</td></tr>
+<tr><td><strong>文档版本</strong></td><td>v1.0</td></tr>
+<tr><td><strong>编制日期</strong></td><td>2026-07-31</td></tr>
+<tr><td><strong>配套文档</strong></td><td>《McgsPro画面组态SOP_8画面_v2.0》、《McgsPro动态显隐与单元使能SOP_v2.0》、《MCGS组态脚本代码_v1.0》、《McgsProHelp.chm》</td></tr>
+<tr><td><strong>目标</strong></td><td>将 HMI 画面导航从"扁平单级8标签"改为"两级菜单"，每屏显示 ≤4 个页面标签</td></tr>
+</table>
+</div>
+
+<div class="toc">
+<strong>目录</strong>
+<ol>
+<li><a href="#s1">方案总览</a></li>
+<li><a href="#s2">窗口规划清单</a></li>
+<li><a href="#s3">新增变量定义</a></li>
+<li><a href="#s4">主控窗口配置修改</a></li>
+<li><a href="#s5">菜单窗口组态 — 主菜单</a></li>
+<li><a href="#s6">菜单窗口组态 — 子菜单</a></li>
+<li><a href="#s7">业务画面改造</a></li>
+<li><a href="#s8">画面8拆分</a></li>
+<li><a href="#s9">完整脚本清单</a></li>
+<li><a href="#s10">实施步骤顺序</a></li>
+<li><a href="#s11">验收清单</a></li>
+</ol>
+</div>
+
+<!-- ==================== 1. 方案总览 ==================== -->
+<h2 id="s1">一、方案总览</h2>
+
+<h3>1.1 现状</h3>
+<p>当前 HMI 共 8 个画面，顶部导航栏一排放 8 个画面切换按钮（<code>总览</code> <code>详情</code> <code>手动</code> <code>参数</code> <code>报警</code> <code>趋势</code> <code>通讯</code> <code>设置</code>），画面2~7 另有一条单元选择器放 8 个单元按钮。单屏最多 16 个标签，过于拥挤。</p>
+
+<h3>1.2 目标</h3>
+<p>改为两级菜单：主菜单 4 个分组标签，点击后进入子菜单，子菜单显示 ≤4 个画面标签。每屏标签数不超过 4 个。</p>
+
+<h3>1.3 菜单层级结构</h3>
+<div class="ascii">
+菜单_主菜单（4个标签）
+├── 总览 ───────────────────→ 画面1_总览
+│
+├── 单元操作 ──→ 菜单_单元操作（3标签+返回）
+│                 ├── 详情 ──→ 画面2_单元详情
+│                 ├── 手动 ──→ 画面3_手动控制
+│                 └── 参数 ──→ 画面4_参数设置
+│
+├── 监控诊断 ──→ 菜单_监控诊断（3标签+返回）
+│                 ├── 报警 ──→ 画面5_报警日志
+│                 ├── 趋势 ──→ 画面6_趋势曲线
+│                 └── 通讯 ──→ 画面7_通讯维护
+│
+└── 系统 ─────→ 菜单_系统（2标签+返回）
+                  ├── 单元使能 ──→ 画面8a_单元使能（从画面8拆出）
+                  └── 权限管理 ──→ 画面8b_权限管理（从画面8拆出）
+</div>
+
+<h3>1.4 分组依据</h3>
+<table>
+<tr><th>主菜单组</th><th>包含画面</th><th>分组逻辑</th></tr>
+<tr><td>总览</td><td>画面1</td><td>直接入口，开机首页</td></tr>
+<tr><td>单元操作</td><td>画面2/3/4</td><td>随单元切换的操作类画面（详情/手动/参数）</td></tr>
+<tr><td>监控诊断</td><td>画面5/6/7</td><td>查看运行状态的诊断类画面（报警/趋势/通讯）</td></tr>
+<tr><td>系统</td><td>画面8a/8b</td><td>全局系统管理（使能配置/权限管理）</td></tr>
+</table>
+
+<h3>1.5 核心技术依据</h3>
+<div class="note">
+<p><strong>窗口切换函数</strong>（来源：<code>McgsProHelp.chm</code> → 脚本函数 → 运行环境操作函数）：</p>
+<ul style="padding-left:20px; margin-top:8px;">
+<li><code>!CloseAllWindow("窗口名")</code> — 关闭除指定窗口外的所有窗口；若指定窗口未打开则同时打开它。<strong>一行即可实现"关闭当前 + 打开目标"的切换效果</strong></li>
+<li><code>!CloseAllWindow("")</code> — 关闭所有窗口</li>
+<li><code>!SetWindow("窗口名", 1)</code> — 打开窗口并使其可见</li>
+</ul>
+</div>
+
+<div class="note">
+<p><strong>脚本语法</strong>（来源：《McgsPro动态显隐与单元使能SOP_v2.0》§0.2，已替代 v1.0 的 VBScript）：</p>
+<ul style="padding-left:20px; margin-top:8px;">
+<li>变量声明：<code>DIM x AS integer</code>（必须用 DIM...AS）</li>
+<li>循环：<code>While/EndWhile</code>（无 For/Next）</li>
+<li>条件：<code>If/Then/Else/EndIf</code>（无 ElseIf）</li>
+<li>弹窗：用标准按钮"弹窗确认"安全属性或标签可见性（无 MsgBox）</li>
+<li>注释：英文单引号 <code>'</code></li>
+</ul>
+</div>
+
+<!-- ==================== 2. 窗口规划 ==================== -->
+<h2 id="s2">二、窗口规划清单</h2>
+
+<h3>2.1 新增菜单窗口（4个）</h3>
+<table>
+<tr><th>窗口名</th><th>类型</th><th>用途</th><th>标签数</th><th>标记</th></tr>
+<tr><td><code>菜单_主菜单</code></td><td>用户窗口</td><td>主入口，4个分组标签</td><td>4</td><td><span class="badge badge-new">新增</span></td></tr>
+<tr><td><code>菜单_单元操作</code></td><td>用户窗口</td><td>子菜单：详情/手动/参数</td><td>3+返回</td><td><span class="badge badge-new">新增</span></td></tr>
+<tr><td><code>菜单_监控诊断</code></td><td>用户窗口</td><td>子菜单：报警/趋势/通讯</td><td>3+返回</td><td><span class="badge badge-new">新增</span></td></tr>
+<tr><td><code>菜单_系统</code></td><td>用户窗口</td><td>子菜单：单元使能/权限管理</td><td>2+返回</td><td><span class="badge badge-new">新增</span></td></tr>
+</table>
+
+<h3>2.2 业务画面窗口变更</h3>
+<table>
+<tr><th>窗口名</th><th>变更类型</th><th>说明</th><th>标记</th></tr>
+<tr><td><code>画面1_总览</code></td><td>修改</td><td>删除8按钮导航栏，加返回按钮</td><td><span class="badge badge-mod">修改</span></td></tr>
+<tr><td><code>画面2_单元详情</code></td><td>修改</td><td>同上，保留单元选择器</td><td><span class="badge badge-mod">修改</span></td></tr>
+<tr><td><code>画面3_手动控制</code></td><td>修改</td><td>同上</td><td><span class="badge badge-mod">修改</span></td></tr>
+<tr><td><code>画面4_参数设置</code></td><td>修改</td><td>同上</td><td><span class="badge badge-mod">修改</span></td></tr>
+<tr><td><code>画面5_报警日志</code></td><td>修改</td><td>同上</td><td><span class="badge badge-mod">修改</span></td></tr>
+<tr><td><code>画面6_趋势曲线</code></td><td>修改</td><td>同上</td><td><span class="badge badge-mod">修改</span></td></tr>
+<tr><td><code>画面7_通讯维护</code></td><td>修改</td><td>同上</td><td><span class="badge badge-mod">修改</span></td></tr>
+<tr><td><code>画面8_系统设置</code></td><td>拆分</td><td>拆为 8a + 8b 两个画面</td><td><span class="badge badge-del">拆分</span></td></tr>
+<tr><td><code>画面8a_单元使能</code></td><td>新增</td><td>8单元使能开关+状态指示</td><td><span class="badge badge-new">新增</span></td></tr>
+<tr><td><code>画面8b_权限管理</code></td><td>新增</td><td>登录/注销/修改密码/退出</td><td><span class="badge badge-new">新增</span></td></tr>
+</table>
+
+<h3>2.3 顶部区域改造对照</h3>
+<table>
+<tr><th>区域</th><th>改造前</th><th>改造后</th><th>标记</th></tr>
+<tr><td>顶部导航栏（80px）</td><td>8个画面切换按钮 + 时钟</td><td>画面标题 + 返回按钮 + 时钟</td><td><span class="badge badge-mod">修改</span></td></tr>
+<tr><td>单元选择器（40px）</td><td>8个单元按钮（画面2~7）</td><td>保留不变</td><td><span class="badge badge-keep">保留</span></td></tr>
+<tr><td>底部状态栏（60px）</td><td>报警/时间/用户</td><td>保留不变</td><td><span class="badge badge-keep">保留</span></td></tr>
+</table>
+
+<!-- ==================== 3. 变量定义 ==================== -->
+<h2 id="s3">三、新增变量定义</h2>
+
+<p>在 McgsPro → 实时数据 → 数据对象 → 新建，添加以下 HMI 内部变量：</p>
+
+<table>
+<tr><th>变量名</th><th>类型</th><th>初值</th><th>断电保持</th><th>用途</th></tr>
+<tr><td><code>CurrentMenuGroup</code></td><td>整数</td><td>0</td><td>是</td><td>当前菜单组（0=主菜单 / 1=单元操作 / 2=监控诊断 / 3=系统），用于返回按钮判断返回目标和高亮当前组</td></tr>
+</table>
+
+<div class="note">
+<p>原有变量 <code>SelectedUnit</code>、<code>LoginLevel</code>、<code>LoginUserText</code>、<code>GlobalAlarmActive</code>、<code>GlobalMuteState</code>、<code>Unit1~8_Enabled</code>、<code>CommStatus_01~08</code> 等保持不变。</p>
+</div>
+
+<!-- ==================== 4. 主控窗口配置 ==================== -->
+<h2 id="s4">四、主控窗口配置修改</h2>
+
+<p><strong>操作位置</strong>：McgsPro → 主控窗口 → 双击 → 属性</p>
+
+<h3>4.1 启动窗口修改</h3>
+<table>
+<tr><th>属性页</th><th>字段</th><th>原值</th><th>新值</th></tr>
+<tr><td>启动窗口</td><td>自动运行窗口</td><td><code>画面1_总览</code></td><td><code>菜单_主菜单</code></td></tr>
+</table>
+
+<div class="warn">
+<p><strong>注意</strong>：帮助文件明确"只能设置一个用户窗口为自动运行窗口"。开机后先进入 <code>菜单_主菜单</code>，再由用户选择进入具体画面。</p>
+</div>
+
+<h3>4.2 启动脚本修改</h3>
+<p>在原有启动脚本末尾追加菜单初始化：</p>
+<pre><code><span class="comment">' === 菜单系统初始化（追加到原有启动脚本末尾）===</span>
+CurrentMenuGroup = 0</code></pre>
+
+<!-- ==================== 5. 菜单_主菜单 ==================== -->
+<h2 id="s5">五、菜单窗口组态 — 主菜单</h2>
+
+<h3>5.1 窗口创建</h3>
+<p><strong>操作</strong>：工作台 → 用户窗口 → 新建窗口 → 命名 <code>菜单_主菜单</code></p>
+<table>
+<tr><th>属性</th><th>取值</th></tr>
+<tr><td>窗口名称</td><td><code>菜单_主菜单</code></td></tr>
+<tr><td>窗口背景</td><td>#2C3E50（深灰底）</td></tr>
+<tr><td>窗口宽度</td><td>1280</td></tr>
+<tr><td>窗口高度</td><td>800</td></tr>
+</table>
+
+<h3>5.2 布局图</h3>
+<div class="ascii">
+┌─────────────────────────────────────────────────────────────────┐
+│                    药液配置与加注控制系统                         │ 80px 标题栏
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌──────────┐       │
+│  │          │  │          │  │          │  │          │       │
+│  │  总览    │  │ 单元操作 │  │ 监控诊断 │  │   系统   │       │ 560px
+│  │          │  │          │  │          │  │          │       │
+│  └──────────┘  └──────────┘  └──────────┘  └──────────┘       │
+│                                                                 │
+├─────────────────────────────────────────────────────────────────┤
+│ ⚠ 无报警 | 2026-07-31 14:30:25 | 权限:未登录                    │ 60px 状态栏
+└─────────────────────────────────────────────────────────────────┘
+</div>
+
+<h3>5.3 元素清单</h3>
+<table>
+<tr><th>编号</th><th>构件类型</th><th>名称</th><th>位置(x,y,w,h)</th><th>内容/绑定</th></tr>
+<tr><td>M-001</td><td>标签</td><td>lblTitle</td><td>(0,0,1280,80)</td><td>"药液配置与加注控制系统"，24pt 加粗，居中</td></tr>
+<tr><td>M-002</td><td>标准按钮</td><td>btnOverview</td><td>(40,200,280,200)</td><td>"总览"</td></tr>
+<tr><td>M-003</td><td>标准按钮</td><td>btnUnitOps</td><td>(340,200,280,200)</td><td>"单元操作"</td></tr>
+<tr><td>M-004</td><td>标准按钮</td><td>btnDiag</td><td>(640,200,280,200)</td><td>"监控诊断"</td></tr>
+<tr><td>M-005</td><td>标准按钮</td><td>btnSystem</td><td>(940,200,280,200)</td><td>"系统"</td></tr>
+<tr><td>M-006</td><td>标签</td><td>lblStatus</td><td>(0,740,1280,60)</td><td>底部状态栏（复制自原公共元素）</td></tr>
+</table>
+
+<h3>5.4 主菜单按钮属性（以 btnOverview 为例）</h3>
+<table>
+<tr><th>属性页</th><th>字段</th><th>取值</th></tr>
+<tr><td>基本属性 → 抬起状态</td><td>文本</td><td>"总览"</td></tr>
+<tr><td>基本属性 → 抬起状态</td><td>背景色</td><td>#34495E（中灰）</td></tr>
+<tr><td>基本属性 → 抬起状态</td><td>字符颜色</td><td>#ECF0F1（白）</td></tr>
+<tr><td>基本属性 → 抬起状态</td><td>字体</td><td>黑体 20pt 加粗</td></tr>
+<tr><td>基本属性 → 按下状态</td><td>背景色</td><td>#3498DB（蓝，高亮）</td></tr>
+<tr><td>操作属性 → 抬起状态</td><td>执行运行策略块</td><td>不勾选（用脚本切换）</td></tr>
+<tr><td>安全属性</td><td>使能控制</td><td>不启用（所有用户可见）</td></tr>
+</table>
+
+<div class="note">
+<p>其余 3 个按钮（btnUnitOps / btnDiag / btnSystem）属性同理，仅文本和脚本不同。按钮间距 20px，每个 280×200px，4 个共占 1120px + 3×20px = 1180px，左右各留 50px 边距。</p>
+</div>
+
+<h3>5.5 主菜单按钮脚本</h3>
+
+<h4>btnOverview（总览）抬起脚本</h4>
+<pre><code><span class="comment">' 切换到画面1_总览（关闭其他窗口并打开总览）</span>
+CurrentMenuGroup = 0
+!CloseAllWindow("画面1_总览")</code></pre>
+
+<h4>btnUnitOps（单元操作）抬起脚本</h4>
+<pre><code><span class="comment">' 切换到单元操作子菜单</span>
+CurrentMenuGroup = 1
+!CloseAllWindow("菜单_单元操作")</code></pre>
+
+<h4>btnDiag（监控诊断）抬起脚本</h4>
+<pre><code><span class="comment">' 切换到监控诊断子菜单</span>
+CurrentMenuGroup = 2
+!CloseAllWindow("菜单_监控诊断")</code></pre>
+
+<h4>btnSystem（系统）抬起脚本</h4>
+<pre><code><span class="comment">' 切换到系统子菜单</span>
+CurrentMenuGroup = 3
+!CloseAllWindow("菜单_系统")</code></pre>
+
+<!-- ==================== 6. 子菜单窗口 ==================== -->
+<h2 id="s6">六、菜单窗口组态 — 子菜单（3个）</h2>
+
+<h3>6.1 菜单_单元操作</h3>
+
+<h4>布局图</h4>
+<div class="ascii">
+┌─────────────────────────────────────────────────────────────────┐
+│ [←返回]              单元操作                             14:30  │ 80px
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│  ┌──────────┐  ┌──────────┐  ┌──────────┐                      │
+│  │          │  │          │  │          │                      │
+│  │  详情    │  │  手动    │  │  参数    │                      │ 560px
+│  │          │  │          │  │          │                      │
+│  └──────────┘  └──────────┘  └──────────┘                      │
+│                                                                 │
+├─────────────────────────────────────────────────────────────────┤
+│ ⚠ 无报警 | 2026-07-31 14:30:25 | 权限:未登录                    │ 60px
+└─────────────────────────────────────────────────────────────────┘
+</div>
+
+<h4>元素清单</h4>
+<table>
+<tr><th>编号</th><th>构件类型</th><th>名称</th><th>位置(x,y,w,h)</th><th>内容</th></tr>
+<tr><td>U-001</td><td>标签</td><td>lblTitle</td><td>(0,0,1280,80)</td><td>"单元操作"，24pt 加粗居中</td></tr>
+<tr><td>U-002</td><td>标准按钮</td><td>btnBack</td><td>(10,15,120,50)</td><td>"←返回"</td></tr>
+<tr><td>U-003</td><td>标签</td><td>lblClock</td><td>(1050,15,220,50)</td><td>显示输出 $Time</td></tr>
+<tr><td>U-004</td><td>标准按钮</td><td>btnDetail</td><td>(100,250,340,200)</td><td>"详情"</td></tr>
+<tr><td>U-005</td><td>标准按钮</td><td>btnManual</td><td>(470,250,340,200)</td><td>"手动"</td></tr>
+<tr><td>U-006</td><td>标准按钮</td><td>btnParam</td><td>(840,250,340,200)</td><td>"参数"</td></tr>
+<tr><td>U-007</td><td>标签</td><td>lblStatus</td><td>(0,740,1280,60)</td><td>底部状态栏</td></tr>
+</table>
+
+<h4>按钮脚本</h4>
+<pre><code><span class="comment">' btnDetail（详情）抬起脚本</span>
+!CloseAllWindow("画面2_单元详情")
+
+<span class="comment">' btnManual（手动）抬起脚本</span>
+!CloseAllWindow("画面3_手动控制")
+
+<span class="comment">' btnParam（参数）抬起脚本</span>
+!CloseAllWindow("画面4_参数设置")
+
+<span class="comment">' btnBack（返回）抬起脚本</span>
+CurrentMenuGroup = 0
+!CloseAllWindow("菜单_主菜单")</code></pre>
+
+<h3>6.2 菜单_监控诊断</h3>
+
+<h4>元素清单</h4>
+<table>
+<tr><th>编号</th><th>构件类型</th><th>名称</th><th>位置(x,y,w,h)</th><th>内容</th></tr>
+<tr><td>D-001</td><td>标签</td><td>lblTitle</td><td>(0,0,1280,80)</td><td>"监控诊断"，24pt 加粗居中</td></tr>
+<tr><td>D-002</td><td>标准按钮</td><td>btnBack</td><td>(10,15,120,50)</td><td>"←返回"</td></tr>
+<tr><td>D-003</td><td>标签</td><td>lblClock</td><td>(1050,15,220,50)</td><td>显示输出 $Time</td></tr>
+<tr><td>D-004</td><td>标准按钮</td><td>btnAlarm</td><td>(100,250,340,200)</td><td>"报警"</td></tr>
+<tr><td>D-005</td><td>标准按钮</td><td>btnTrend</td><td>(470,250,340,200)</td><td>"趋势"</td></tr>
+<tr><td>D-006</td><td>标准按钮</td><td>btnComm</td><td>(840,250,340,200)</td><td>"通讯"</td></tr>
+<tr><td>D-007</td><td>标签</td><td>lblStatus</td><td>(0,740,1280,60)</td><td>底部状态栏</td></tr>
+</table>
+
+<h4>按钮脚本</h4>
+<pre><code><span class="comment">' btnAlarm（报警）抬起脚本</span>
+!CloseAllWindow("画面5_报警日志")
+
+<span class="comment">' btnTrend（趋势）抬起脚本</span>
+!CloseAllWindow("画面6_趋势曲线")
+
+<span class="comment">' btnComm（通讯）抬起脚本</span>
+!CloseAllWindow("画面7_通讯维护")
+
+<span class="comment">' btnBack（返回）抬起脚本</span>
+CurrentMenuGroup = 0
+!CloseAllWindow("菜单_主菜单")</code></pre>
+
+<h3>6.3 菜单_系统</h3>
+
+<h4>元素清单</h4>
+<table>
+<tr><th>编号</th><th>构件类型</th><th>名称</th><th>位置(x,y,w,h)</th><th>内容</th></tr>
+<tr><td>S-001</td><td>标签</td><td>lblTitle</td><td>(0,0,1280,80)</td><td>"系统"，24pt 加粗居中</td></tr>
+<tr><td>S-002</td><td>标准按钮</td><td>btnBack</td><td>(10,15,120,50)</td><td>"←返回"</td></tr>
+<tr><td>S-003</td><td>标签</td><td>lblClock</td><td>(1050,15,220,50)</td><td>显示输出 $Time</td></tr>
+<tr><td>S-004</td><td>标准按钮</td><td>btnEnConfig</td><td>(200,250,400,200)</td><td>"单元使能"</td></tr>
+<tr><td>S-005</td><td>标准按钮</td><td>btnUserMgmt</td><td>(680,250,400,200)</td><td>"权限管理"</td></tr>
+<tr><td>S-006</td><td>标签</td><td>lblStatus</td><td>(0,740,1280,60)</td><td>底部状态栏</td></tr>
+</table>
+
+<h4>按钮脚本</h4>
+<pre><code><span class="comment">' btnEnConfig（单元使能）抬起脚本</span>
+!CloseAllWindow("画面8a_单元使能")
+
+<span class="comment">' btnUserMgmt（权限管理）抬起脚本</span>
+!CloseAllWindow("画面8b_权限管理")
+
+<span class="comment">' btnBack（返回）抬起脚本</span>
+CurrentMenuGroup = 0
+!CloseAllWindow("菜单_主菜单")</code></pre>
+
+<!-- ==================== 7. 业务画面改造 ==================== -->
+<h2 id="s7">七、业务画面改造</h2>
+
+<h3>7.1 顶部区域改造（9个画面统一）</h3>
+
+<p><strong>改造前</strong>（原 G-NAV-01~09，80px 高）：</p>
+<div class="ascii">
+[总览][详情][手动][参数][报警][趋势][通讯][设置]  时钟     ← 8个导航按钮(8×130px)
+</div>
+
+<p><strong>改造后</strong>（80px 高）：</p>
+<div class="ascii">
+[←返回]  画面标题 - X号单元                        时钟     ← 1返回+标题+时钟
+</div>
+
+<h4>改造后顶部元素清单（以画面4_参数设置为例）</h4>
+<table>
+<tr><th>编号</th><th>构件类型</th><th>名称</th><th>位置(x,y,w,h)</th><th>内容/绑定</th></tr>
+<tr><td>4-NAV-01</td><td>标准按钮</td><td>btnReturn</td><td>(10,15,120,50)</td><td>"←返回"</td></tr>
+<tr><td>4-NAV-02</td><td>标签</td><td>lblPageTitle</td><td>(140,15,900,50)</td><td>"参数设置 - " + Str(SelectedUnit) + "号单元"，20pt 加粗</td></tr>
+<tr><td>4-NAV-03</td><td>标签</td><td>lblClock</td><td>(1050,15,220,50)</td><td>显示输出 $Time</td></tr>
+</table>
+
+<h4>各画面标题与返回目标对照</h4>
+<table>
+<tr><th>画面</th><th>标题文字</th><th>标题绑定表达式</th><th>返回目标</th><th>返回脚本</th></tr>
+<tr><td>画面1_总览</td><td>总览</td><td>"总览"</td><td>菜单_主菜单</td><td><code>!CloseAllWindow("菜单_主菜单")</code></td></tr>
+<tr><td>画面2_单元详情</td><td>单元详情</td><td>"单元详情 - " + Str(SelectedUnit) + "号单元"</td><td>菜单_单元操作</td><td><code>!CloseAllWindow("菜单_单元操作")</code></td></tr>
+<tr><td>画面3_手动控制</td><td>手动控制</td><td>"手动控制 - " + Str(SelectedUnit) + "号单元"</td><td>菜单_单元操作</td><td><code>!CloseAllWindow("菜单_单元操作")</code></td></tr>
+<tr><td>画面4_参数设置</td><td>参数设置</td><td>"参数设置 - " + Str(SelectedUnit) + "号单元"</td><td>菜单_单元操作</td><td><code>!CloseAllWindow("菜单_单元操作")</code></td></tr>
+<tr><td>画面5_报警日志</td><td>报警日志</td><td>"报警日志 - " + Str(SelectedUnit) + "号单元"</td><td>菜单_监控诊断</td><td><code>!CloseAllWindow("菜单_监控诊断")</code></td></tr>
+<tr><td>画面6_趋势曲线</td><td>趋势曲线</td><td>"趋势曲线 - " + Str(SelectedUnit) + "号单元"</td><td>菜单_监控诊断</td><td><code>!CloseAllWindow("菜单_监控诊断")</code></td></tr>
+<tr><td>画面7_通讯维护</td><td>通讯维护</td><td>"通讯维护"</td><td>菜单_监控诊断</td><td><code>!CloseAllWindow("菜单_监控诊断")</code></td></tr>
+<tr><td>画面8a_单元使能</td><td>单元使能配置</td><td>"单元使能配置"</td><td>菜单_系统</td><td><code>!CloseAllWindow("菜单_系统")</code></td></tr>
+<tr><td>画面8b_权限管理</td><td>权限管理</td><td>"权限管理"</td><td>菜单_系统</td><td><code>!CloseAllWindow("菜单_系统")</code></td></tr>
+</table>
+
+<h3>7.2 需删除的原有元素</h3>
+<table>
+<tr><th>原编号</th><th>名称</th><th>操作</th><th>影响画面</th></tr>
+<tr><td>G-NAV-01~08</td><td>btnNav_01~08（8个导航按钮）</td><td><span class="badge badge-del">删除</span></td><td>全部8画面</td></tr>
+<tr><td>G-NAV-00</td><td>NavBackground（导航背景）</td><td><span class="badge badge-del">删除</span></td><td>全部8画面</td></tr>
+<tr><td>G-NAV-09</td><td>lblClock（导航栏时钟）</td><td><span class="badge badge-mod">移位</span> 保留，移到新标题栏右侧</td><td>全部8画面</td></tr>
+</table>
+
+<div class="warn">
+<p><strong>保留不变的区域</strong>：</p>
+<ul style="padding-left:20px; margin-top:8px;">
+<li><strong>单元选择器</strong>（G-SEL-00~09，画面2~7）：保持原位置 (0,80,1280,40) 不变</li>
+<li><strong>底部状态栏</strong>（G-STS-00~03）：保持原位置 (0,740,1280,60) 不变</li>
+<li><strong>主内容区</strong>：保持原位置不变（画面1/8/8a/8b 从 Y=80 开始，画面2~7 从 Y=120 开始）</li>
+</ul>
+</div>
+
+<h3>7.3 返回按钮属性配置</h3>
+<table>
+<tr><th>属性页</th><th>字段</th><th>取值</th></tr>
+<tr><td>基本属性 → 抬起状态</td><td>文本</td><td>"←返回"</td></tr>
+<tr><td>基本属性 → 抬起状态</td><td>背景色</td><td>#34495E（中灰）</td></tr>
+<tr><td>基本属性 → 抬起状态</td><td>字符颜色</td><td>#ECF0F1（白）</td></tr>
+<tr><td>基本属性 → 抬起状态</td><td>字体</td><td>黑体 18pt</td></tr>
+<tr><td>基本属性 → 按下状态</td><td>背景色</td><td>#E74C3C（红，提示返回）</td></tr>
+<tr><td>操作属性 → 抬起状态</td><td>执行运行策略块</td><td>不勾选（用脚本切换）</td></tr>
+<tr><td>安全属性</td><td>使能控制</td><td>不启用（所有用户可返回）</td></tr>
+</table>
+
+<!-- ==================== 8. 画面8拆分 ==================== -->
+<h2 id="s8">八、画面8拆分</h2>
+
+<p>将原 <code>画面8_系统设置</code>（16元素）拆分为两个独立画面，充实"系统"菜单组。</p>
+
+<h3>8.1 画面8a_单元使能</h3>
+
+<h4>布局图</h4>
+<div class="ascii">
+┌─────────────────────────────────────────────────────────────────┐
+│ [←返回]  单元使能配置                                    14:30  │ 80px
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│  ┌──────单元使能配置(1240×500px)──────────────────────────┐     │
+│  │ 1号单元: [●ON ] 已使能 ●在线                            │     │
+│  │ 2号单元: [○OFF] 未使能                                  │     │
+│  │ 3号单元: [○OFF] 未使能                                  │     │
+│  │ 4号单元: [○OFF] 未使能                                  │     │
+│  │ 5号单元: [○OFF] 未使能                                  │     │
+│  │ 6号单元: [○OFF] 未使能                                  │     │
+│  │ 7号单元: [○OFF] 未使能                                  │     │
+│  │ 8号单元: [○OFF] 未使能                                  │     │
+│  └─────────────────────────────────────────────────────────┘     │
+│                                                                 │
+├─────────────────────────────────────────────────────────────────┤
+│ ⚠ 无报警 | 2026-07-31 14:30:25 | 权限:管理员                    │ 60px
+└─────────────────────────────────────────────────────────────────┘
+</div>
+
+<h4>元素清单（迁移自原画面8上半部分）</h4>
+<table>
+<tr><th>编号</th><th>构件类型</th><th>名称</th><th>位置(x,y,w,h)</th><th>绑定/属性</th></tr>
+<tr><td>8a-001~003</td><td colspan="4">顶部标题栏+返回+时钟（同 §7.1 统一模板）</td></tr>
+<tr><td>8a-004</td><td>标准按钮</td><td>btnEnUnit1</td><td>(50,100,80,40)</td><td>Unit1_Enabled 取反</td></tr>
+<tr><td>8a-005</td><td>标签</td><td>lblEnStaUnit1</td><td>(140,100,200,40)</td><td>"已使能 ●在线"/"未使能"</td></tr>
+<tr><td>8a-006~019</td><td colspan="4">btnEnUnit2~8 + lblEnStaUnit2~8（同上，Y 递增 50px）</td></tr>
+<tr><td>8a-020</td><td>标签</td><td>lblStatus</td><td>(0,740,1280,60)</td><td>底部状态栏</td></tr>
+</table>
+
+<div class="note">
+<p>使能开关按钮属性、状态指示标签属性、ToggleEnable 策略脚本均与原画面8完全一致，直接迁移。详见《McgsPro动态显隐与单元使能SOP_v2.0》§3~4。</p>
+</div>
+
+<h3>8.2 画面8b_权限管理</h3>
+
+<h4>布局图</h4>
+<div class="ascii">
+┌─────────────────────────────────────────────────────────────────┐
+│ [←返回]  权限管理                                        14:30  │ 80px
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│  ┌──────权限管理(1240×300px)─────────────────────────────┐     │
+│  │ 当前权限: 管理员                                        │     │
+│  │ [登录操作员] [登录维护] [登录管理员] [注销]            │     │
+│  │ [修改密码] [退出系统]                                   │     │
+│  └─────────────────────────────────────────────────────────┘     │
+│                                                                 │
+│  ┌──────系统信息(1240×200px)──────────────────────────────┐     │
+│  │ 运行时长: 02:15:30    启动时间: 2026-07-31 12:00:00   │     │
+│  │ 工程版本: v2.0        PLC连接数: 1/8                   │     │
+│  └─────────────────────────────────────────────────────────┘     │
+│                                                                 │
+├─────────────────────────────────────────────────────────────────┤
+│ ⚠ 无报警 | 2026-07-31 14:30:25 | 权限:管理员                    │ 60px
+└─────────────────────────────────────────────────────────────────┘
+</div>
+
+<h4>元素清单（迁移自原画面8下半部分）</h4>
+<table>
+<tr><th>编号</th><th>构件类型</th><th>名称</th><th>位置(x,y,w,h)</th><th>绑定/属性</th></tr>
+<tr><td>8b-001~003</td><td colspan="4">顶部标题栏+返回+时钟（同 §7.1 统一模板）</td></tr>
+<tr><td>8b-004</td><td>标签</td><td>lblLoginLevel</td><td>(50,100,400,40)</td><td>"当前权限:" + LoginUserText</td></tr>
+<tr><td>8b-005</td><td>标准按钮</td><td>btnLoginOperator</td><td>(50,150,150,40)</td><td>登录操作员</td></tr>
+<tr><td>8b-006</td><td>标准按钮</td><td>btnLoginMaintainer</td><td>(210,150,150,40)</td><td>登录维护</td></tr>
+<tr><td>8b-007</td><td>标准按钮</td><td>btnLoginAdmin</td><td>(370,150,150,40)</td><td>登录管理员</td></tr>
+<tr><td>8b-008</td><td>标准按钮</td><td>btnLogout</td><td>(530,150,150,40)</td><td>注销</td></tr>
+<tr><td>8b-009</td><td>标准按钮</td><td>btnChangePwd</td><td>(50,200,150,40)</td><td>修改密码</td></tr>
+<tr><td>8b-010</td><td>标准按钮</td><td>btnExit</td><td>(210,200,150,40)</td><td>退出系统</td></tr>
+<tr><td>8b-011</td><td>标签</td><td>lblRunTime</td><td>(50,300,400,40)</td><td>"运行时长:" + Str($RunTime)</td></tr>
+<tr><td>8b-012</td><td>标签</td><td>lblVersion</td><td>(50,340,400,40)</td><td>"工程版本: v2.0"</td></tr>
+<tr><td>8b-013</td><td>标签</td><td>lblStatus</td><td>(0,740,1280,60)</td><td>底部状态栏</td></tr>
+</table>
+
+<div class="note">
+<p>权限管理按钮脚本（登录/修改密码/退出）与原画面8完全一致，直接迁移。详见《MCGS组态脚本代码_v1.0》及原画面8 SOP §10.5。</p>
+</div>
+
+<!-- ==================== 9. 完整脚本清单 ==================== -->
+<h2 id="s9">九、完整脚本清单</h2>
+
+<h3>9.1 主控窗口启动脚本（追加部分）</h3>
+<pre><code><span class="comment">' === 菜单系统初始化（追加到原有启动脚本末尾）===</span>
+CurrentMenuGroup = 0</code></pre>
+
+<h3>9.2 菜单_主菜单 — 按钮脚本</h3>
+<pre><code><span class="comment">' === btnOverview（总览）抬起脚本 ===</span>
+CurrentMenuGroup = 0
+!CloseAllWindow("画面1_总览")
+
+<span class="comment">' === btnUnitOps（单元操作）抬起脚本 ===</span>
+CurrentMenuGroup = 1
+!CloseAllWindow("菜单_单元操作")
+
+<span class="comment">' === btnDiag（监控诊断）抬起脚本 ===</span>
+CurrentMenuGroup = 2
+!CloseAllWindow("菜单_监控诊断")
+
+<span class="comment">' === btnSystem（系统）抬起脚本 ===</span>
+CurrentMenuGroup = 3
+!CloseAllWindow("菜单_系统")</code></pre>
+
+<h3>9.3 菜单_单元操作 — 按钮脚本</h3>
+<pre><code><span class="comment">' === btnDetail（详情）抬起脚本 ===</span>
+!CloseAllWindow("画面2_单元详情")
+
+<span class="comment">' === btnManual（手动）抬起脚本 ===</span>
+!CloseAllWindow("画面3_手动控制")
+
+<span class="comment">' === btnParam（参数）抬起脚本 ===</span>
+!CloseAllWindow("画面4_参数设置")
+
+<span class="comment">' === btnBack（返回主菜单）抬起脚本 ===</span>
+CurrentMenuGroup = 0
+!CloseAllWindow("菜单_主菜单")</code></pre>
+
+<h3>9.4 菜单_监控诊断 — 按钮脚本</h3>
+<pre><code><span class="comment">' === btnAlarm（报警）抬起脚本 ===</span>
+!CloseAllWindow("画面5_报警日志")
+
+<span class="comment">' === btnTrend（趋势）抬起脚本 ===</span>
+!CloseAllWindow("画面6_趋势曲线")
+
+<span class="comment">' === btnComm（通讯）抬起脚本 ===</span>
+!CloseAllWindow("画面7_通讯维护")
+
+<span class="comment">' === btnBack（返回主菜单）抬起脚本 ===</span>
+CurrentMenuGroup = 0
+!CloseAllWindow("菜单_主菜单")</code></pre>
+
+<h3>9.5 菜单_系统 — 按钮脚本</h3>
+<pre><code><span class="comment">' === btnEnConfig（单元使能）抬起脚本 ===</span>
+!CloseAllWindow("画面8a_单元使能")
+
+<span class="comment">' === btnUserMgmt（权限管理）抬起脚本 ===</span>
+!CloseAllWindow("画面8b_权限管理")
+
+<span class="comment">' === btnBack（返回主菜单）抬起脚本 ===</span>
+CurrentMenuGroup = 0
+!CloseAllWindow("菜单_主菜单")</code></pre>
+
+<h3>9.6 业务画面 — 返回按钮脚本汇总</h3>
+<table>
+<tr><th>画面</th><th>按钮</th><th>脚本</th></tr>
+<tr><td>画面1_总览</td><td>btnReturn</td><td><code>!CloseAllWindow("菜单_主菜单")</code></td></tr>
+<tr><td>画面2_单元详情</td><td>btnReturn</td><td><code>!CloseAllWindow("菜单_单元操作")</code></td></tr>
+<tr><td>画面3_手动控制</td><td>btnReturn</td><td><code>!CloseAllWindow("菜单_单元操作")</code></td></tr>
+<tr><td>画面4_参数设置</td><td>btnReturn</td><td><code>!CloseAllWindow("菜单_单元操作")</code></td></tr>
+<tr><td>画面5_报警日志</td><td>btnReturn</td><td><code>!CloseAllWindow("菜单_监控诊断")</code></td></tr>
+<tr><td>画面6_趋势曲线</td><td>btnReturn</td><td><code>!CloseAllWindow("菜单_监控诊断")</code></td></tr>
+<tr><td>画面7_通讯维护</td><td>btnReturn</td><td><code>!CloseAllWindow("菜单_监控诊断")</code></td></tr>
+<tr><td>画面8a_单元使能</td><td>btnReturn</td><td><code>!CloseAllWindow("菜单_系统")</code></td></tr>
+<tr><td>画面8b_权限管理</td><td>btnReturn</td><td><code>!CloseAllWindow("菜单_系统")</code></td></tr>
+</table>
+
+<h3>9.7 画面标题动态显示脚本（窗口加载事件）</h3>
+<p>在每个业务画面的"窗口事件 → 加载时"脚本中，设置标题标签的文本（以画面4为例）：</p>
+<pre><code><span class="comment">' 画面4_参数设置 → 窗口加载事件</span>
+画面4_参数设置.控件lblPageTitle.Caption = "参数设置 - " + Str(SelectedUnit) + "号单元"</code></pre>
+
+<div class="note">
+<p>画面1/7/8a/8b 标题不含单元号（全局画面），加载脚本可省略或固定文本。</p>
+</div>
+
+<!-- ==================== 10. 实施步骤 ==================== -->
+<h2 id="s10">十、实施步骤顺序</h2>
+
+<table>
+<tr><th>步骤</th><th>操作</th><th>涉及窗口</th><th>预计工时</th></tr>
+<tr><td>1</td><td>新增变量 <code>CurrentMenuGroup</code>（实时数据 → 数据对象 → 新建）</td><td>—</td><td>5min</td></tr>
+<tr><td>2</td><td>新建 4 个菜单窗口（用户窗口 → 新建）</td><td>菜单_主菜单/单元操作/监控诊断/系统</td><td>10min</td></tr>
+<tr><td>3</td><td>组态 <code>菜单_主菜单</code>：标题栏 + 4 个按钮 + 状态栏 + 按钮脚本</td><td>菜单_主菜单</td><td>30min</td></tr>
+<tr><td>4</td><td>组态 <code>菜单_单元操作</code>：标题栏 + 返回 + 3 个按钮 + 状态栏 + 脚本</td><td>菜单_单元操作</td><td>25min</td></tr>
+<tr><td>5</td><td>组态 <code>菜单_监控诊断</code>（同上结构，3 个画面按钮）</td><td>菜单_监控诊断</td><td>25min</td></tr>
+<tr><td>6</td><td>组态 <code>菜单_系统</code>（同上结构，2 个画面按钮）</td><td>菜单_系统</td><td>20min</td></tr>
+<tr><td>7</td><td>修改主控窗口启动窗口为 <code>菜单_主菜单</code>，启动脚本追加初始化</td><td>主控窗口</td><td>5min</td></tr>
+<tr><td>8</td><td>改造画面1~7 顶部：删除 8 个导航按钮，加返回按钮 + 标题标签 + 时钟</td><td>画面1~7</td><td>60min</td></tr>
+<tr><td>9</td><td>拆分画面8 → 新建画面8a_单元使能 + 画面8b_权限管理，迁移原有元素</td><td>画面8a/8b</td><td>40min</td></tr>
+<tr><td>10</td><td>为每个业务画面添加返回按钮脚本 + 标题加载脚本</td><td>画面1~7/8a/8b</td><td>30min</td></tr>
+<tr><td>11</td><td>模拟运行验证全部导航路径</td><td>—</td><td>30min</td></tr>
+<tr><td colspan="3" style="text-align:right;"><strong>合计</strong></td><td><strong>~5h</strong></td></tr>
+</table>
+
+<!-- ==================== 11. 验收清单 ==================== -->
+<h2 id="s11">十一、验收清单</h2>
+
+<h3>11.1 导航流程验证</h3>
+<ul class="checklist">
+<li>开机后自动进入 <code>菜单_主菜单</code>（非画面1_总览）</li>
+<li>主菜单显示 4 个标签（总览 / 单元操作 / 监控诊断 / 系统），不超过 4 个</li>
+<li>点击"总览" → 进入画面1_总览</li>
+<li>点击"单元操作" → 进入菜单_单元操作，显示 3 个标签 + 返回</li>
+<li>点击"监控诊断" → 进入菜单_监控诊断，显示 3 个标签 + 返回</li>
+<li>点击"系统" → 进入菜单_系统，显示 2 个标签 + 返回</li>
+<li>每个子菜单点击画面标签可进入对应画面</li>
+<li>每个子菜单"返回"按钮回到主菜单</li>
+<li>每个业务画面"返回"按钮回到对应子菜单（画面2~4→单元操作，画面5~7→监控诊断，画面8a/8b→系统）</li>
+<li>切换窗口时无画面叠加（<code>!CloseAllWindow</code> 正确关闭旧窗口）</li>
+</ul>
+
+<h3>11.2 画面内容验证</h3>
+<ul class="checklist">
+<li>画面1~7 原有功能元素全部保留，仅顶部导航栏改变</li>
+<li>画面2~7 单元选择器（8个单元按钮）正常工作</li>
+<li>画面标题正确显示画面名 + 当前单元号（画面2~6）</li>
+<li>底部状态栏在所有窗口正常显示（报警/时间/用户）</li>
+</ul>
+
+<h3>11.3 画面8拆分验证</h3>
+<ul class="checklist">
+<li>画面8a_单元使能：8个使能开关 + 状态指示正常（迁移自原画面8上半部分）</li>
+<li>画面8b_权限管理：登录/注销/修改密码/退出系统正常（迁移自原画面8下半部分）</li>
+<li>原画面8的所有功能无丢失</li>
+<li>画面8a/8b 返回按钮回到菜单_系统</li>
+</ul>
+
+<h3>11.4 权限验证</h3>
+<ul class="checklist">
+<li>未登录用户可浏览所有菜单和画面（导航不受限）</li>
+<li>画面4 参数设置的浓度/步进分辨率输入框仍需管理员权限（LoginLevel >= 3）</li>
+<li>画面8a 单元使能开关仍需管理员权限 + 弹窗确认</li>
+<li>画面7 通讯重启仍需管理员权限 + 弹窗确认</li>
+</ul>
+
+<div class="note" style="margin-top:32px;">
+<p><strong>文档说明</strong>：本方案基于 McgsPro 3.3.6 帮助文件（<code>McgsProHelp.chm</code>）确认的窗口操作函数和现有 SOP v2.0 的脚本语法编写。核心切换函数 <code>!CloseAllWindow("窗口名")</code> 经帮助文件"运行环境操作函数"章节验证可用。实施前建议先在模拟运行环境中验证 <code>!CloseAllWindow</code> 的切换行为。</p>
+</div>
+
+</div>
+</body>
+</html>
