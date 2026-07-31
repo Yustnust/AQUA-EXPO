@@ -1,6 +1,6 @@
 """
 Web HMI 后端入口
-关联 JIRA: AQEX-50, AQEX-51, AQEX-53
+关联 JIRA: AQEX-50, AQEX-51, AQEX-53, AQEX-54
 
 启动方式：
     cd web_hmi/backend
@@ -23,6 +23,11 @@ from app.plc import PlcClient, VARIABLES, get_variable
 from app.ws_manager import ws_manager, build_update_message, build_status_message, build_alarm_message
 from app.history import HistoryStore, get_available_trend_variables
 from app.alarm import AlarmStore, get_active_alarms, ALARM_DEFINITIONS
+from app.auth import (
+    user_store, TokenResponse, LoginRequest, ChangePasswordRequest, UserInfo,
+    create_access_token, get_current_user, require_permission, require_role,
+    ROLE_ADMIN,
+)
 
 # 日志配置
 logging.basicConfig(
@@ -145,6 +150,9 @@ async def lifespan(app: FastAPI):
     await alarm_store.initialize()
     await alarm_store.start()
 
+    # 初始化用户存储
+    await user_store.initialize()
+
     plc_clients = await _create_plc_clients(app_config)
     logger.info("Web HMI backend started, %d PLC clients", len(plc_clients))
 
@@ -209,6 +217,90 @@ class RetentionRequest(BaseModel):
 @app.get("/")
 async def root():
     return {"message": "AQUA-EXPO Web HMI Backend", "version": "1.0.0"}
+
+
+# ============================================================
+# 认证 API
+# ============================================================
+@app.post("/api/v1/auth/login", response_model=TokenResponse)
+async def login(req: LoginRequest):
+    """用户登录，返回 JWT 访问令牌。"""
+    user = await user_store.authenticate(req.username, req.password)
+    if not user:
+        raise HTTPException(status_code=401, detail="Invalid username or password")
+    token = create_access_token(user["username"], user["role"], user["password_changed"])
+    return TokenResponse(
+        access_token=token,
+        username=user["username"],
+        role=user["role"],
+        expires_in=8 * 3600,  # 8 小时
+        password_changed=user["password_changed"],
+    )
+
+
+@app.post("/api/v1/auth/change-password")
+async def change_password(
+    req: ChangePasswordRequest,
+    user: Dict[str, Any] = Depends(get_current_user),
+):
+    """修改当前用户密码。"""
+    ok = await user_store.change_password(user["username"], req.old_password, req.new_password)
+    if not ok:
+        raise HTTPException(status_code=400, detail="Old password is incorrect")
+    return {"success": True, "message": "Password changed successfully"}
+
+
+@app.get("/api/v1/auth/me", response_model=UserInfo)
+async def get_me(user: Dict[str, Any] = Depends(get_current_user)):
+    """获取当前登录用户信息。"""
+    return UserInfo(
+        username=user["username"],
+        role=user["role"],
+        password_changed=user["password_changed"],
+    )
+
+
+@app.get("/api/v1/auth/users")
+async def list_users(user: Dict[str, Any] = Depends(require_role(ROLE_ADMIN))):
+    """获取所有用户列表（仅管理员）。"""
+    return await user_store.get_all_users()
+
+
+class CreateUserRequest(BaseModel):
+    username: str
+    password: str
+    role: str = "operator"
+
+
+@app.post("/api/v1/auth/users")
+async def create_user(
+    req: CreateUserRequest,
+    user: Dict[str, Any] = Depends(require_role(ROLE_ADMIN)),
+):
+    """创建新用户（仅管理员）。"""
+    ok = await user_store.create_user(req.username, req.password, req.role)
+    if not ok:
+        raise HTTPException(status_code=400, detail="Failed to create user (duplicate or invalid role)")
+    return {"success": True, "username": req.username}
+
+
+@app.delete("/api/v1/auth/users/{username}")
+async def delete_user(
+    username: str,
+    current_user: Dict[str, Any] = Depends(require_role(ROLE_ADMIN)),
+):
+    """删除用户（仅管理员，不能删除自己）。"""
+    if username == current_user["username"]:
+        raise HTTPException(status_code=400, detail="Cannot delete yourself")
+    ok = await user_store.delete_user(username)
+    if not ok:
+        raise HTTPException(status_code=400, detail="Failed to delete user (not found or last admin)")
+    return {"success": True, "username": username}
+
+
+# ============================================================
+# PLC 状态与数据 API
+# ============================================================
 
 
 @app.get("/api/v1/plc/status")
@@ -286,7 +378,10 @@ async def get_variables():
 
 
 @app.post("/api/v1/plc/write")
-async def write_variable(req: WriteRequest):
+async def write_variable(
+    req: WriteRequest,
+    user: Dict[str, Any] = Depends(require_permission("param_write")),
+):
     """写入指定单元的 PLC 变量。"""
     client = plc_clients.get(req.unit)
     if not client:
@@ -307,7 +402,10 @@ async def write_variable(req: WriteRequest):
 
 
 @app.post("/api/v1/plc/write-pulse")
-async def write_pulse(req: WritePulseRequest):
+async def write_pulse(
+    req: WritePulseRequest,
+    user: Dict[str, Any] = Depends(require_permission("start_stop")),
+):
     """写入位变量脉冲（如启动/停止/消音命令）。"""
     client = plc_clients.get(req.unit)
     if not client:
