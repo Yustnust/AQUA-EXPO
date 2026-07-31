@@ -91,3 +91,22 @@ def build_status_message(
         "online": online,
         "timestamp": datetime.now(timezone.utc).isoformat(),
     }
+
+
+def build_alarm_message(
+    unit_id: int,
+    active_alarms: List[Dict[str, Any]],
+    data: Dict[str, Any],
+) -> Dict[str, Any]:
+    """构建报警状态推送消息（含声光联动状态）。"""
+    return {
+        "type": "plc_alarm",
+        "unit": unit_id,
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "alarm_code": data.get("alarm_code", 0),
+        "alarm_ack_mode": data.get("m_alarm_ack_mode", False),
+        "sound_active": data.get("do_alarm_sound", False),
+        "light_active": data.get("do_alarm_light", False),
+        "mute_done": data.get("sta_mute_done", False),
+        "active_alarms": active_alarms,
+    }

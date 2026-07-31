@@ -1,6 +1,6 @@
 """
 Web HMI 后端入口
-关联 JIRA: AQEX-50, AQEX-51
+关联 JIRA: AQEX-50, AQEX-51, AQEX-53
 
 启动方式：
     cd web_hmi/backend
@@ -20,8 +20,9 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
 from app.plc import PlcClient, VARIABLES, get_variable
-from app.ws_manager import ws_manager, build_update_message, build_status_message
+from app.ws_manager import ws_manager, build_update_message, build_status_message, build_alarm_message
 from app.history import HistoryStore, get_available_trend_variables
+from app.alarm import AlarmStore, get_active_alarms, ALARM_DEFINITIONS
 
 # 日志配置
 logging.basicConfig(
@@ -33,6 +34,7 @@ logger = logging.getLogger(__name__)
 # 全局状态
 plc_clients: Dict[int, PlcClient] = {}  # unit_id -> PlcClient
 history_store: Optional[HistoryStore] = None
+alarm_store: Optional[AlarmStore] = None
 app_config: Dict[str, Any] = {}
 
 # 数据节流：记录每个单元上次推送时间，避免过于频繁的 WebSocket 广播
@@ -52,6 +54,10 @@ def _make_plc_data_callback(unit_id: int):
     """为指定单元创建 PLC 数据更新回调——广播到 WebSocket。"""
 
     def _on_data(data: Dict[str, Any]):
+        # 报警处理（检测状态变化，记录事件）
+        if alarm_store:
+            asyncio.ensure_future(alarm_store.process(unit_id, data))
+
         # 历史数据记录（每条都记录，内部有采样节流）
         if history_store:
             asyncio.ensure_future(history_store.record(unit_id, data))
@@ -67,6 +73,12 @@ def _make_plc_data_callback(unit_id: int):
         msg = build_update_message(unit_id, data, client.connected if client else False)
         # 非阻塞广播
         asyncio.ensure_future(ws_manager.broadcast(msg))
+
+        # 若有活动报警，单独推送报警消息
+        active_alarms = get_active_alarms(data)
+        if active_alarms:
+            alarm_msg = build_alarm_message(unit_id, active_alarms, data)
+            asyncio.ensure_future(ws_manager.broadcast(alarm_msg))
 
     return _on_data
 
@@ -112,7 +124,7 @@ async def _create_plc_clients(cfg: Dict[str, Any]) -> Dict[int, PlcClient]:
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """应用生命周期管理：启动时连接所有 PLC，关闭时断开。"""
-    global plc_clients, history_store, app_config
+    global plc_clients, history_store, alarm_store, app_config
 
     config_path = os.environ.get("WEB_HMI_CONFIG", "config.yaml")
     app_config = load_config(config_path)
@@ -128,6 +140,11 @@ async def lifespan(app: FastAPI):
     await history_store.initialize()
     await history_store.start()
 
+    # 初始化报警存储
+    alarm_store = AlarmStore(db_path=hist_cfg.get("db_path", "data/history.db"))
+    await alarm_store.initialize()
+    await alarm_store.start()
+
     plc_clients = await _create_plc_clients(app_config)
     logger.info("Web HMI backend started, %d PLC clients", len(plc_clients))
 
@@ -138,6 +155,8 @@ async def lifespan(app: FastAPI):
     plc_clients.clear()
     if history_store:
         await history_store.stop()
+    if alarm_store:
+        await alarm_store.stop()
     logger.info("Web HMI backend stopped")
 
 
@@ -403,6 +422,95 @@ async def set_retention(req: RetentionRequest):
 
 
 # ============================================================
+# 报警 API
+# ============================================================
+@app.get("/api/v1/alarm/definitions")
+async def get_alarm_definitions():
+    """获取所有 32 位报警定义（用于前端报警指示灯阵列）。"""
+    return [
+        {
+            "bit_index": d.bit_index,
+            "symbol": d.symbol,
+            "alarm_code": d.alarm_code,
+            "level": d.level,
+            "color": d.color,
+            "forced_ack": d.forced_ack,
+            "text": d.text,
+        }
+        for d in ALARM_DEFINITIONS
+    ]
+
+
+@app.get("/api/v1/alarm/active/{unit_id}")
+async def get_active_alarms_api(unit_id: int):
+    """获取指定单元当前活动报警列表。"""
+    if not alarm_store:
+        raise HTTPException(status_code=503, detail="Alarm store not initialized")
+    alarms = await alarm_store.get_active_summary(unit_id)
+    return {"unit": unit_id, "active_alarms": alarms}
+
+
+@app.get("/api/v1/alarm/active")
+async def get_all_active_alarms():
+    """获取所有单元当前活动报警列表。"""
+    if not alarm_store:
+        raise HTTPException(status_code=503, detail="Alarm store not initialized")
+    all_alarms = {}
+    for unit_id in plc_clients:
+        all_alarms[str(unit_id)] = await alarm_store.get_active_summary(unit_id)
+    return {"active_alarms": all_alarms}
+
+
+@app.get("/api/v1/alarm/events")
+async def query_alarm_events(
+    unit_id: int = None,
+    level: str = None,
+    action: str = None,
+    start: str = "",
+    end: str = "",
+    minutes: int = 60,
+    limit: int = 100,
+):
+    """查询报警事件日志。
+
+    Query params:
+    - unit_id: 单元过滤（可选）
+    - level: 级别过滤（critical/overflow/rhythm/general）
+    - action: 动作过滤（trigger/reset/mute）
+    - start/end: 时间范围 ISO 格式
+    - minutes: 默认查最近 N 分钟
+    - limit: 最大返回条数
+    """
+    if not alarm_store:
+        raise HTTPException(status_code=503, detail="Alarm store not initialized")
+
+    if start and end:
+        try:
+            start_dt = datetime.fromisoformat(start)
+            end_dt = datetime.fromisoformat(end)
+        except ValueError:
+            raise HTTPException(status_code=400, detail="Invalid start/end format, use ISO 8601")
+    else:
+        end_dt = datetime.now(timezone.utc)
+        start_dt = end_dt - timedelta(minutes=minutes)
+
+    events = await alarm_store.query(
+        unit_id=unit_id,
+        level=level,
+        action=action,
+        start=start_dt,
+        end=end_dt,
+        limit=limit,
+    )
+    return {
+        "start": start_dt.isoformat(),
+        "end": end_dt.isoformat(),
+        "count": len(events),
+        "events": events,
+    }
+
+
+# ============================================================
 # WebSocket 端点
 # ============================================================
 @app.websocket("/ws")
@@ -412,6 +520,7 @@ async def websocket_endpoint(ws: WebSocket):
     前端连接后，可接收以下消息类型：
     - plc_update:    PLC 变量数据更新
     - plc_status:    PLC 连接状态变化
+    - plc_alarm:     报警状态更新（活动报警 + 声光状态）
 
     消息格式：
     {
