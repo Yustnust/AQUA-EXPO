@@ -127,7 +127,7 @@ class PlcClient:
                 await asyncio.sleep(self.reconnect_interval)
 
     async def _connect(self) -> bool:
-        """尝试连接 PLC。"""
+        """尝试连接 PLC（同步调用放到线程池，避免阻塞事件循环）。"""
         try:
             if self._client:
                 self._client.close()
@@ -136,14 +136,14 @@ class PlcClient:
                 port=self.port,
                 timeout=self.timeout,
             )
-            ok = self._client.connect()
-            self._set_connected(ok)
+            ok = await asyncio.to_thread(self._client.connect)
+            self._set_connected(bool(ok))
             if ok:
                 logger.info("Connected to PLC %s:%s", self.host, self.port)
                 self._failures = 0
             else:
                 logger.warning("Failed to connect PLC %s:%s", self.host, self.port)
-            return ok
+            return bool(ok)
         except Exception:
             logger.exception("PLC connect error")
             self._set_connected(False)
@@ -160,7 +160,7 @@ class PlcClient:
                     logger.exception("on_status callback error")
 
     async def _read_all_blocks(self) -> Optional[Dict[int, int]]:
-        """读取所有寄存器块，返回地址->值的字典。"""
+        """读取所有寄存器块（同步调用放到线程池，避免阻塞事件循环）。"""
         if not self._client:
             return None
 
@@ -172,7 +172,8 @@ class PlcClient:
                 start_addr = start_v // 2
                 count = (end_v - start_v) // 2 + 1
 
-                resp = self._client.read_holding_registers(
+                resp = await asyncio.to_thread(
+                    self._client.read_holding_registers,
                     address=start_addr,
                     count=count,
                     slave=self.unit_id,
@@ -218,7 +219,8 @@ class PlcClient:
             if var.dtype in (DataType.BOOL, DataType.INT16, DataType.UINT16):
                 # 位变量需要先读-改-写
                 if var.dtype == DataType.BOOL:
-                    read_resp = self._client.read_holding_registers(
+                    read_resp = await asyncio.to_thread(
+                        self._client.read_holding_registers,
                         address=var.reg_addr, count=1, slave=self.unit_id
                     )
                     if read_resp is None or read_resp.isError():
@@ -229,7 +231,8 @@ class PlcClient:
                     current_word = 0
 
                 new_word = encode_value(var, current_word, value)
-                resp = self._client.write_register(
+                resp = await asyncio.to_thread(
+                    self._client.write_register,
                     address=var.reg_addr, value=new_word, slave=self.unit_id
                 )
                 if resp is None or resp.isError():
@@ -239,7 +242,8 @@ class PlcClient:
 
             elif var.dtype == DataType.FLOAT32:
                 regs = encode_float32(value)
-                resp = self._client.write_registers(
+                resp = await asyncio.to_thread(
+                    self._client.write_registers,
                     address=var.reg_addr, values=regs, slave=self.unit_id
                 )
                 if resp is None or resp.isError():
@@ -249,7 +253,8 @@ class PlcClient:
 
             elif var.dtype == DataType.INT32:
                 regs = encode_int32(value)
-                resp = self._client.write_registers(
+                resp = await asyncio.to_thread(
+                    self._client.write_registers,
                     address=var.reg_addr, values=regs, slave=self.unit_id
                 )
                 if resp is None or resp.isError():
