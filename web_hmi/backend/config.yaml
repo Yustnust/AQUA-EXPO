@@ -1,33 +1,65 @@
 # Web HMI 后端配置
-# 关联 JIRA: AQEX-50
+# 关联 JIRA: AQEX-50, AQEX-51
 
-plc:
-  # 默认 PLC IP（S7-200 SMART 默认网关网段通常为 192.168.2.x）
-  host: "192.168.2.101"
-  port: 502
-  unit_id: 1
-  # 轮询周期（秒）
+# 8 套单元 PLC 列表
+plcs:
+  - host: "192.168.2.101"
+    port: 502
+    unit_id: 1
+    name: "单元1"
+    enabled: true
+  - host: "192.168.2.102"
+    port: 502
+    unit_id: 1
+    name: "单元2"
+    enabled: true
+  - host: "192.168.2.103"
+    port: 502
+    unit_id: 1
+    name: "单元3"
+    enabled: true
+  - host: "192.168.2.104"
+    port: 502
+    unit_id: 1
+    name: "单元4"
+    enabled: true
+  - host: "192.168.2.105"
+    port: 502
+    unit_id: 1
+    name: "单元5"
+    enabled: true
+  - host: "192.168.2.106"
+    port: 502
+    unit_id: 1
+    name: "单元6"
+    enabled: true
+  - host: "192.168.2.107"
+    port: 502
+    unit_id: 1
+    name: "单元7"
+    enabled: true
+  - host: "192.168.2.108"
+    port: 502
+    unit_id: 1
+    name: "单元8"
+    enabled: true
+
+# 全局 PLC 参数
+plc_defaults:
   poll_interval: 0.5
-  # 断线重连间隔（秒）
   reconnect_interval: 3.0
-  # 通讯超时（秒）
   timeout: 1.0
-  # 连续失败多少次判定为离线
   max_failures: 5
 
 server:
   host: "0.0.0.0"
   port: 8000
-  # 是否开启 API 文档（生产环境可关闭）
   docs: true
 
 history:
   db_path: "data/history.db"
-  # 默认保留天数
   default_retention_days: 30
-  # 允许配置：7, 30, 90, 365
   allowed_retention_days: [7, 30, 90, 365]
-  # 采样分组（秒）
   fast_sample_interval: 1
   slow_sample_interval: 10
 
