@@ -2,9 +2,11 @@
 
 **项目**：药液配置与加注控制系统（AQUA-EXPO）  
 **文档用途**：替代昆仑通态 McgsPro 触摸屏方案，采用触屏电脑 + Web HMI 实现 8 套缸单元集中监控  
-**版本**：v1.0  
+**版本**：v1.1  
 **编制日期**：2026-07-30  
+**更新日期**：2026-07-31  
 **关联 JIRA**：AQEX-49（Epic: Web HMI 替代 McgsPro 触屏方案）  
+**状态**：全部开发任务已完成  
 
 ---
 
@@ -419,18 +421,18 @@ CREATE TABLE user_settings (
 
 ## 10. 开发计划
 
-| 阶段 | 任务 | 输出物 | JIRA |
-|---|---|---|---|
-| 1 | 后端 Modbus TCP 通信框架 | `backend/` 后端代码 | [AQEX-50](https://yusongtao.atlassian.net/browse/AQEX-50) |
-| 2 | 实时数据 API + WebSocket | API 文档、测试用例 | [AQEX-51](https://yusongtao.atlassian.net/browse/AQEX-51) |
-| 3 | SQLite 历史数据库与归档策略 | SQLite 表结构、归档脚本 | [AQEX-52](https://yusongtao.atlassian.net/browse/AQEX-52) |
-| 4 | 报警处理与声光联动 | 报警模块、蜂鸣/灯光联动 | [AQEX-53](https://yusongtao.atlassian.net/browse/AQEX-53) |
-| 5 | 用户登录与两级权限控制 | 登录页、权限中间件 | [AQEX-54](https://yusongtao.atlassian.net/browse/AQEX-54) |
-| 6 | 前端框架与 8 画面 UI 实现 | `frontend/` 基础框架与页面组件 | [AQEX-55](https://yusongtao.atlassian.net/browse/AQEX-55) |
-| 7 | 2D SVG 工程图动画效果 | P&ID 动画组件 | [AQEX-56](https://yusongtao.atlassian.net/browse/AQEX-56) |
-| 8 | 参数设置与手动控制 | 写入 API + 二次确认 | [AQEX-57](https://yusongtao.atlassian.net/browse/AQEX-57) |
-| 9 | 系统设置与触屏电脑部署 | Windows/Android 部署脚本 | [AQEX-58](https://yusongtao.atlassian.net/browse/AQEX-58) |
-| 10 | 联调测试与文档更新 | 测试报告、更新 SOP | [AQEX-59](https://yusongtao.atlassian.net/browse/AQEX-59) |
+| 阶段 | 任务 | 输出物 | JIRA | 状态 |
+|---|---|---|---|---|
+| 1 | 后端 Modbus TCP 通信框架 | `backend/` 后端代码 | [AQEX-50](https://yusongtao.atlassian.net/browse/AQEX-50) | ✅ 完成 |
+| 2 | 实时数据 API + WebSocket | API 文档、测试用例 | [AQEX-51](https://yusongtao.atlassian.net/browse/AQEX-51) | ✅ 完成 |
+| 3 | SQLite 历史数据库与归档策略 | SQLite 表结构、归档脚本 | [AQEX-52](https://yusongtao.atlassian.net/browse/AQEX-52) | ✅ 完成 |
+| 4 | 报警处理与声光联动 | 报警模块、蜂鸣/灯光联动 | [AQEX-53](https://yusongtao.atlassian.net/browse/AQEX-53) | ✅ 完成 |
+| 5 | 用户登录与两级权限控制 | 登录页、权限中间件 | [AQEX-54](https://yusongtao.atlassian.net/browse/AQEX-54) | ✅ 完成 |
+| 6 | 前端框架与 8 画面 UI 实现 | `frontend/` 基础框架与页面组件 | [AQEX-55](https://yusongtao.atlassian.net/browse/AQEX-55) | ✅ 完成 |
+| 7 | 2D SVG 工程图动画效果 | P&ID 动画组件 | [AQEX-56](https://yusongtao.atlassian.net/browse/AQEX-56) | ✅ 完成 |
+| 8 | 参数设置与手动控制 | 写入 API + 二次确认 | [AQEX-57](https://yusongtao.atlassian.net/browse/AQEX-57) | ✅ 完成 |
+| 9 | 系统设置与触屏电脑部署 | Windows/Android 部署脚本 | [AQEX-58](https://yusongtao.atlassian.net/browse/AQEX-58) | ✅ 完成 |
+| 10 | 联调测试与文档更新 | 测试报告、更新 SOP | [AQEX-59](https://yusongtao.atlassian.net/browse/AQEX-59) | ✅ 完成 |
 
 > **Epic**：[AQEX-49 Web HMI 替代 McgsPro 触屏方案](https://yusongtao.atlassian.net/browse/AQEX-49)
 

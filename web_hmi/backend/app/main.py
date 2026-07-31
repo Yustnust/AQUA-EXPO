@@ -15,8 +15,9 @@ from datetime import datetime, timedelta, timezone
 from typing import Any, Dict, List, Optional
 
 import yaml
-from fastapi import FastAPI, HTTPException, WebSocket, WebSocketDisconnect
+from fastapi import Depends, FastAPI, HTTPException, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
 from pydantic import BaseModel
 
 from app.plc import PlcClient, VARIABLES, get_variable
@@ -650,3 +651,19 @@ async def websocket_endpoint(ws: WebSocket):
                 break
     finally:
         await ws_manager.disconnect(ws)
+
+
+# ============================================================
+# 生产模式：静态文件服务（前端构建产物）
+# ============================================================
+STATIC_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), "static")
+if os.path.isdir(STATIC_DIR):
+    @app.get("/{full_path:path}")
+    async def serve_spa(full_path: str):
+        """SPA 回退：所有非 API 路径返回前端静态文件"""
+        if full_path.startswith("api/") or full_path == "ws":
+            raise HTTPException(status_code=404)
+        file_path = os.path.join(STATIC_DIR, full_path)
+        if os.path.isfile(file_path):
+            return FileResponse(file_path)
+        return FileResponse(os.path.join(STATIC_DIR, "index.html"))
