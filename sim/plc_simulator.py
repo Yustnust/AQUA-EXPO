@@ -104,7 +104,7 @@ class PLCSim:
         # 默认工艺参数 (测试友好: 较小超时, 快速推进)
         self.set_vd(10, 5.0)       # VD_C_Set 目标浓度
         self.set_vd(14, 100.0)     # VD_C_Stock 母液浓度
-        self.set_vd(350, 0.5)      # VD_StepResolution 步进分辨率 (AQEX-36: VD18→VD350)
+        self.set_vd(350, 4.1667)   # VD_StepResolution 步进分辨率 (AQEX-36: VD18→VD350, 25ml标准6000步模式)
         self.set_vd(354, 3.0)      # VD_CycleSetpoint 换水周期(min) (AQEX-36: VD20→VD354)
         self.set_vd(24, 5.0)       # VD_ExperimentTarget 实验目标(min)
         self.set_vd(28, 12.0)      # VD_PreMixTime 预循环
@@ -123,7 +123,7 @@ class PLCSim:
         self.set_vd(120, 12.0)     # VD_S2_Target
         self.set_vd(124, 6.0)      # VD_RestTime_Target
         self.set_vd(174, 5.0)      # VD_S3_Estimate
-        self.set_vd(316, 10.0)     # 目标进水量(FC30用)
+        self.set_vd(316, 100.0)    # 目标进水量(FC30用), 确保25ml注射器下仍能有正步数
         self.set_vd(86, 0.0)       # VD_FlowMeter_Cumulative
         self.set_v_bit(200, 0, True)  # M_AlarmAckMode=1(默认人工确认模式)
         # 急停常闭触点默认ON
@@ -593,33 +593,95 @@ class PLCSim:
             self.set_v_bit(303, 3, True)
             self.vw2 = self.S_ERROR
         # 预循环完成
+        # 注: S3期间潜水泵继续运行(搅拌+加药同时进行),此处不停止
         if self.get_t(38):
-            self.q[(0, 0)] = False
-            self.q[(0, 1)] = False
             self.vw2 = self.S3_DOSING
 
     # ===== FC13 S3 加药 =====
     def fc13(self, first: bool):
+        # 子状态0: 进入计算(仅first周期)
         if first:
-            # 简化剂量计算
             vol = self.get_vd(10) * self.get_vd(90) / self.get_vd(14)
             steps = vol / self.get_vd(350)  # VD350 (AQEX-36: VD18→VD350)
             self.set_vd(370, vol)           # VD370 (AQEX-36: VD98→VD370)
             self.set_vd(102, steps)
             self.set_vw(204, int(round(steps)))
             self.set_vw(206, int(round(steps)))
-            self.m[(10, 3)] = True
-            # 模拟从站初始响应:运行中(等待HMI/测试set_vw(4,0)模拟完成)
-            # 避免VW4默认0被NETWORK3立即判定为完成跳过S3
-            self.vw4 = 1
-        # 轮询注射泵状态码(first周期不检查,避免立即转出)
-        if not first:
-            if self.vw4 == 0:
-                self.vw2 = self.S35_REST
-                self.m[(10, 3)] = False
-            elif self.vw4 >= 4:
-                self.set_v_bit(303, 4, True)
-                self.vw2 = self.S_ERROR
+            # S3期间保持潜水泵运行
+            self.q[(0, 0)] = True
+            self.q[(0, 1)] = True
+            # 清写握手位
+            self.m[(11, 6)] = False
+            self.m[(12, 0)] = False
+            self.m[(12, 1)] = False
+            self.m[(12, 2)] = False
+            self.set_vw(226, 1)             # 子状态1:写抽液步数
+
+        sub = self.get_vw(226)
+
+        # 全局错误检测
+        if self.get_v_bit(303, 4) or self.vw4 >= 4:
+            self.q[(0, 0)] = False
+            self.q[(0, 1)] = False
+            self.set_v_bit(303, 4, True)
+            self.vw2 = self.S_ERROR
+            self.set_vw(226, 0)
+            self.m[(11, 6)] = False
+            self.m[(11, 7)] = False
+            self.m[(12, 0)] = False
+            self.m[(12, 1)] = False
+            self.m[(12, 2)] = False
+            return
+
+        # 子状态1: 写抽液指令(40006)
+        if sub == 1 and not self.m[(11, 6)] and not self.m[(11, 7)] and not self.m[(12, 0)]:
+            self.set_vw(228, 40006)
+            self.set_vw(230, int(round(self.get_vd(102))))
+            self.m[(11, 6)] = True
+        # 写完成处理
+        if self.m[(12, 0)] and sub == 1:
+            self.m[(12, 0)] = False
+            self.m[(11, 6)] = False
+            if not self.get_v_bit(303, 4):
+                self.set_vw(226, 2)
+
+        # 子状态2: 等抽液完成(VW4=1忙,=0就绪)
+        if sub == 2:
+            if self.vw4 == 1:
+                self.m[(12, 1)] = True
+            if self.m[(12, 1)] and self.vw4 == 0:
+                self.set_vw(226, 3)
+
+        # 子状态3: 写排液指令(40007)
+        if sub == 3 and not self.m[(11, 6)] and not self.m[(11, 7)] and not self.m[(12, 0)]:
+            self.set_vw(228, 40007)
+            self.set_vw(230, int(round(self.get_vd(102))))
+            self.m[(11, 6)] = True
+        # 写完成处理
+        if self.m[(12, 0)] and sub == 3:
+            self.m[(12, 0)] = False
+            self.m[(11, 6)] = False
+            if not self.get_v_bit(303, 4):
+                self.set_vw(226, 4)
+
+        # 子状态4: 等排液完成(VW4=1忙,=0就绪)
+        if sub == 4:
+            if self.vw4 == 1:
+                self.m[(12, 2)] = True
+            if self.m[(12, 2)] and self.vw4 == 0:
+                self.set_vw(226, 5)
+
+        # 子状态5: 完成转S3.5
+        if sub == 5:
+            self.q[(0, 0)] = False
+            self.q[(0, 1)] = False
+            self.m[(11, 6)] = False
+            self.m[(11, 7)] = False
+            self.m[(12, 0)] = False
+            self.m[(12, 1)] = False
+            self.m[(12, 2)] = False
+            self.set_vw(226, 0)
+            self.vw2 = self.S35_REST
 
     # ===== FC14 S3.5 静止等候 =====
     def fc14(self, first: bool):

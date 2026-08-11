@@ -43,10 +43,10 @@ def drive_s1_to_s2(plc: PLCSim):
     # fc30 sub-state=2: 开启完成检查流量
     plc.set_di(0, 0, True)   # I0.0 流量开关A ON
     plc.run_cycle()
-    # fc30 sub-state=3: 差值法计量, VD90=VD86-VD82, 目标VD316=10
+    # fc30 sub-state=3: 差值法计量, VD90=VD86-VD82, 目标VD316=100
     # 每周期递增VD86, 直到VD90>=VD316(阀A关断)
     # 注: 阀A关断后(VW260=5)必须停止递增VD86,否则VD312=VD86-VD308>0.1会触发V301.1内漏报警
-    for _ in range(30):
+    for _ in range(120):
         if plc.get_vw(260) < 5:  # 仅在state=3及以前递增
             plc.set_vd(86, plc.get_vd(86) + 1.0)
         plc.run_cycle()
@@ -66,9 +66,47 @@ def drive_s2_to_s3(plc: PLCSim):
 
 
 def drive_s3_to_s35(plc: PLCSim):
-    """驱动S3→S3.5: 注射泵状态码VW4=0(完成)"""
-    plc.vw4 = 0
+    """驱动S3→S3.5: 模拟注射泵抽液→排液完整序列
+    FC13子状态机: 1写抽液→2等抽液完成→3写排液→4等排液完成→5完成
+    """
+    # 子状态1: 等待FC13发出写请求(M11.6=1)
+    for _ in range(10):
+        plc.run_cycle()
+        if plc.m[(11, 6)]:
+            break
+    # 模拟FC4完成抽液写命令(清请求/忙,置完成)
+    plc.m[(11, 6)] = False
+    plc.m[(11, 7)] = False
+    plc.m[(12, 0)] = True
+    plc.run_cycle()  # FC13进入子状态2
+    plc.m[(12, 0)] = False
+    # 子状态2: 抽液中→完成
+    plc.vw4 = 1  # 忙(运行中)
     plc.run_cycle()
+    plc.vw4 = 0  # 就绪(完成)
+    for _ in range(10):
+        plc.run_cycle()
+        if plc.get_vw(226) == 3:
+            break
+    # 子状态3: 等待FC13发出排液写请求
+    for _ in range(10):
+        plc.run_cycle()
+        if plc.m[(11, 6)]:
+            break
+    # 模拟FC4完成排液写命令
+    plc.m[(11, 6)] = False
+    plc.m[(11, 7)] = False
+    plc.m[(12, 0)] = True
+    plc.run_cycle()  # FC13进入子状态4
+    plc.m[(12, 0)] = False
+    # 子状态4: 排液中→完成
+    plc.vw4 = 1  # 忙(运行中)
+    plc.run_cycle()
+    plc.vw4 = 0  # 就绪(完成)
+    for _ in range(10):
+        plc.run_cycle()
+        if plc.vw2 == PLCSim.S35_REST:
+            break
 
 
 def drive_s35_to_s4(plc: PLCSim):
@@ -175,8 +213,9 @@ class TestStateMachine:
         drive_s1_to_s2(plc)
         drive_s2_to_s3(plc)
         assert plc.vw2 == 3                 # S3
-        assert plc.q[(0, 0)] == False       # 泵1停
-        assert plc.q[(0, 1)] == False       # 泵2停
+        # S3期间潜水泵保持运行(搅拌+加药同时进行)
+        assert plc.q[(0, 0)] == True        # 泵1运行
+        assert plc.q[(0, 1)] == True        # 泵2运行
         assert plc.get_vw(204) > 0          # 抽液步数已写
         assert plc.get_vw(206) > 0          # 排液步数已写
 
@@ -300,7 +339,7 @@ class TestValveDiagnosis:
         # 驱动到sub-state=5 (关阀后延时验证)
         plc.set_di(1, 3, True); plc.run_cycle()  # 开到位
         plc.set_di(0, 0, True); plc.run_cycle()  # 流量A ON → state 3
-        for _ in range(30):
+        for _ in range(120):
             plc.set_vd(86, plc.get_vd(86) + 1.0)
             plc.run_cycle()
             if plc.get_vw(260) == 5:
@@ -318,7 +357,7 @@ class TestValveDiagnosis:
         send_start(plc)
         plc.set_di(1, 3, True); plc.run_cycle()
         plc.set_di(0, 0, True); plc.run_cycle()
-        for _ in range(30):
+        for _ in range(120):
             plc.set_vd(86, plc.get_vd(86) + 1.0)
             plc.run_cycle()
             if plc.get_vw(260) == 5:
@@ -342,7 +381,7 @@ class TestValveDiagnosis:
         send_start(plc)
         plc.set_di(1, 3, True); plc.run_cycle()
         plc.set_di(0, 0, True); plc.run_cycle()
-        for _ in range(30):
+        for _ in range(120):
             plc.set_vd(86, plc.get_vd(86) + 1.0)
             plc.run_cycle()
             if plc.get_vw(260) == 5:
@@ -362,7 +401,7 @@ class TestValveDiagnosis:
         send_start(plc)
         plc.set_di(1, 3, True); plc.run_cycle()
         plc.set_di(0, 0, True); plc.run_cycle()
-        for _ in range(30):
+        for _ in range(120):
             plc.set_vd(86, plc.get_vd(86) + 1.0)
             plc.run_cycle()
             if plc.get_vw(260) == 5:
