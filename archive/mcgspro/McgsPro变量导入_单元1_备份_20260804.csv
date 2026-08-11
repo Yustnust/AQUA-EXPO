@@ -1,7 +1,7 @@
-组态设备名称:设备0,,,,,,,,,,
-驱动库文件路径:d:\program files\mcgspro\program\drivers\plc\西门子\smart200\smart200_ex.ui,,,,,,,,,,
-驱动构件名称:西门子_S7_Smart200_以太网,,,,,,,,,,
-驱动构件版本:7.001,,,,,,,,,,
+组态设备名称:设备0
+驱动库文件路径:d:\program files\mcgspro\program\drivers\plc\西门子\smart200\smart200_ex.ui
+驱动构件名称:西门子_S7_Smart200_以太网
+驱动构件版本:7.001
 通道号,变量名,变量类型,通道名称,读写类型,寄存器名称,数据类型,寄存器地址,地址偏移,通道采集频次,通道处理
 0,U1_CMD_Start,INTEGER,读写V000.0,读写,V数据寄存器,通道的第00位,0,,1,
 1,U1_Reserved_CMD_Pause,INTEGER,读写V000.1,读写,V数据寄存器,通道的第01位,0,,1,
@@ -66,6 +66,8 @@
 60,U1_VD_Timeout_ValveB,SINGLE,读写VDF362,读写,V数据寄存器,32位 浮点数,362,,1,
 61,U1_VD_ExperimentDuration_Accum,SINGLE,只读VDF366,只读,V数据寄存器,32位 浮点数,366,,1,
 62,U1_VD_Vol_Target,SINGLE,只读VDF370,只读,V数据寄存器,32位 浮点数,370,,1,
+63,U1_VW300_AlarmWord0,SINGLE,只读VWB300,只读,V数据寄存器,16位 有符号二进制,300,,1,
+64,U1_VW302_AlarmWord2,SINGLE,只读VWB302,只读,V数据寄存器,16位 有符号二进制,302,,1,
 65,U1_CMD_Manual_ValveA_Open,INTEGER,读写V002.4,读写,V数据寄存器,通道的第04位,2,,1,
 66,U1_CMD_Manual_ValveA_Close,INTEGER,读写V002.5,读写,V数据寄存器,通道的第05位,2,,1,
 67,U1_CMD_Manual_ValveB_Open,INTEGER,读写V002.6,读写,V数据寄存器,通道的第06位,2,,1,

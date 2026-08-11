@@ -95,13 +95,47 @@ word_rows = [
 ]
 rows.extend(word_rows)
 
-# 报警字（McgsPro 西门子_Smart200 驱动对 8位无符号支持不完整，
-# 改用 16位有符号二进制读取 VW300/VW302，HMI 端用位运算提取 V300.0~V303.7）
-alarm_words = [
-    ("V区变量", "16位有符号二进制", 300, 1, "只读", "VW300_AlarmWord0", "报警字V300+V301(V300.0~V301.7,漫溢/急停/阀A/节奏)"),
-    ("V区变量", "16位有符号二进制", 302, 1, "只读", "VW302_AlarmWord2", "报警字V302+V303(V302.0~V303.7,阀BC/泵/其他)"),
+# 报警字：按位读取 V300.0~V303.7，用于报警滚动条/指示灯阵列
+alarm_bits = [
+    # VB300 高优先级
+    (300, 0, "Alarm_Overflow_AHigh", "上缸漫溢-立即检查液位计A与进水阀A"),
+    (300, 1, "Alarm_Overflow_BHigh", "下缸漫溢-立即检查液位计B与转移阀B"),
+    (300, 2, "Alarm_NCValve_Top", "上缸NC阀已动作-阀A失效保护触发"),
+    (300, 3, "Alarm_NCValve_Bottom", "下缸NC阀已动作-阀B/液位计B故障保护触发"),
+    (300, 4, "EStop_Latch", "急停触发-现场已急停，等待物理系统复位"),
+    (300, 5, "Alarm_SafetyRelay", "安全继电器故障-立即检查动力回路"),
+    (300, 6, "Alarm_ScheduleLag", "配液节奏严重滞后-三层纠偏已用尽"),
+    (300, 7, "Alarm_ScheduleLag_Warn", "配液节奏滞后提示-已启用第2层顺延"),
+    # VB301 阀门A类一般故障
+    (301, 0, "Alarm_ValveA_CloseFlow", "阀A关闭后延时验证仍有流-检查阀A内漏"),
+    (301, 1, "Alarm_ValveA_Leak", "阀A内漏-已关但流量计计量值仍增长"),
+    (301, 2, "Alarm_ValveA_CloseTimeout", "阀A关到位超时-检查阀A机械或限位"),
+    (301, 3, "Alarm_ValveA_CloseLeak", "阀A关到位但仍有流-内漏"),
+    (301, 4, "Alarm_ValveA_OpenTimeout", "阀A开到位超时-检查阀A机械或限位"),
+    (301, 5, "Alarm_ValveA_OpenNoFlow", "阀A开到位但无流-检查上游供水/堵塞"),
+    (301, 6, "Alarm_ValveA_S1Start", "S5触发新一轮S1时上缸状态非空"),
+    (301, 7, "Alarm_Reserved_301_7", "预留扩展位"),
+    # VB302 阀门B/C类一般故障
+    (302, 0, "Alarm_ValveB_Diag", "阀B四态诊断异常-检查阀B与液位"),
+    (302, 1, "Alarm_ValveB_OpenTimeout", "阀B开到位超时-检查阀B机械或限位"),
+    (302, 2, "Alarm_ValveB_OpenNoFlow", "阀B开到位但无流-检查管路"),
+    (302, 3, "Alarm_ValveB_CloseTimeout", "阀B关到位超时-检查阀B机械或限位"),
+    (302, 4, "Alarm_ValveB_CloseLeak", "阀B关到位但仍有流-内漏"),
+    (302, 5, "Alarm_ValveC_Diag", "阀C四态诊断异常-检查阀C与液位"),
+    (302, 6, "Alarm_ValveC_OpenTimeout", "阀C开到位超时-检查阀C机械或限位"),
+    (302, 7, "Alarm_ValveC_OpenNoFlow", "阀C开到位但无流-检查排水管路"),
+    # VB303 其他一般故障
+    (303, 0, "Alarm_ValveC_CloseTimeout", "阀C关到位超时-检查阀C机械或限位"),
+    (303, 1, "Alarm_ValveC_CloseLeak", "阀C关到位但仍有流-内漏"),
+    (303, 2, "Alarm_Pump1_Abnormal", "潜水泵1启动后超时无流-检查泵1或管路"),
+    (303, 3, "Alarm_Pump2_Abnormal", "潜水泵2启动后超时无流-检查泵2或管路"),
+    (303, 4, "Alarm_SyringePump", "注射泵通讯/动作异常-检查Modbus与泵状态"),
+    (303, 5, "Alarm_RTC_Lost", "RTC时钟丢失-请校时"),
+    (303, 6, "Alarm_FlowSwitch_Instant", "流量开关瞬时异常-检查流量开关信号"),
+    (303, 7, "Alarm_Reserved_303_7", "预留扩展位"),
 ]
-rows.extend(alarm_words)
+for byte, bit, name, note in alarm_bits:
+    rows.append(("V区变量", f"第{bit:02d}位", byte, 1, "只读", name, note))
 
 # 手动命令位 V2.4~V3.5
 manual_bits = [
