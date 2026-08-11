@@ -4,3 +4,13 @@ jira_token.ps1
 # Temporary files
 *.tmp
 commit_msg.txt
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# MCGS backup/lock files
+*.bak
+*.user.bak
+*.ldb
