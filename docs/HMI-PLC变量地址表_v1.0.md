@@ -499,7 +499,7 @@ S5上升沿触发预规划、S1完成后二次校正使用的中间变量，REAL
 
 | PLC侧地址 | Modbus寄存器 | HEX | 符号 | 说明 | 待确认 |
 |---|---|---|---|---|---|
-| VW228 | 0x0012 | 0x0012 | MB_Flow_Unit | 单位编码（默认0x03=升L）。完整编码：0x01=夸脱美制QTS/0x02=品脱美制PTS/0x03=升L/0x04=加仑美制GAL/0x05=压强PA/0x06=立方米m³/0x07=千克KG | 否（已确认默认0x03=升L，现场首期无需修改） |
+| VD232 | — | — | PumpWrite_Addr | 注射泵FC06写目标Modbus地址（DWORD），由FC13写入40006/40007 | 否 |
 
 ### 11.4 差值法进水计量逻辑（S1阶段）
 
@@ -703,7 +703,7 @@ HMI工程中配置8个PLC连接（站点），每个连接对应1台PLC：
 | VB0 | VB9 | 10 | 系统命令位/状态位/状态机/泵状态/报警码/轮次 |
 | VB10 | VB149 | 140 | HMI设定参数+实测值+纠偏变量（VD10~VD140） |
 | VB150 | VB199 | 50 | 纠偏中间变量（VD150~VD190）+断电恢复中间量（VD194/VW198）【Story1.4/1.7新增】 |
-| VB200 | VB229 | 30 | Modbus寄存器映射缓冲区（VW200~VW228） |
+| VB200 | VB235 | 36 | Modbus寄存器映射缓冲区（VW200~VW230 + VD232 PumpWrite_Addr） |
 | VB230 | VB289 | 60 | 阀门诊断子状态/结果/PT转换值（VW230~VW289）【Story1.3新增，2026-07-18静态分析修复】 |
 | VB300 | VB303 | 4 | 报警字（4字节32位按位编码；HMI经VW300/VW302拆分读取） |
 | VB304 | VB304 | 1 | M_InitDone初始化完成标志（V304.0，Story1.7新增） |
@@ -735,7 +735,7 @@ HMI工程中配置8个PLC连接（站点），每个连接对应1台PLC：
 | VD104~VD140 | VD_xxx | REAL | 纠偏变量+泵速度 |
 | VD350~VD370 | VD_xxx | REAL | AQEX-36迁移的6个VD参数（VD350=StepResolution/VD354=CycleSetpoint/VD358=Timeout_ValveA/VD362=Timeout_ValveB/VD366=ExperimentDuration_Accum/VD370=Vol_Target，原VD18/20/48/50/96/98） |
 | VB300~VB303 | M_Alarm_xxx | BYTE×4 | 报警字（4 字节 32 位按位编码；经 VW300/VW302 拆分读取） |
-| VW200~VW228 | MB_xxx | INT/WORD | Modbus寄存器映射缓冲区 |
+| VW200~VW230 / VD232 | MB_xxx / PumpWrite_Addr | INT/WORD / DWORD | Modbus寄存器映射缓冲区（VW230=PumpWrite_Data, VD232=PumpWrite_Addr） |
 | VW230~VW289 | Diag_xxx | INT/WORD | 阀门诊断子状态/结果/PT转换值（VW252 S2 PT/VW254 S3.5 PT/VW260~270诊断子状态结果/VW274~284超时PT） |
 | VW290~VW297 | FC4_Poll_xxx | INT/WORD | FC4 Modbus轮询内部计数器（VW290轮询计数/VW292重试计数/VW294泵连续失败/VW296流量计连续失败）【AQEX-48修复：原VW250~VW256与VD250/FC12/FC14冲突，迁移至此】 |
 | VD308~VD344 | Diag_Data_xxx | REAL/DWORD | 阀门诊断数据/运算中间变量（VD308阀A快照/VD312阀A差值/VD316目标进水量/VD320~344各FC运算中间变量） |

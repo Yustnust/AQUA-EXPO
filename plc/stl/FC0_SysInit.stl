@@ -80,13 +80,13 @@ MOVB   0, VB379                    // 清MBUS_MSG Error(注射泵)
 MOVB   0, VB384                    // 清MBUS_MSG Error(流量计)
 MOVR   0.0, VD374                  // 流量计降级值清零
 MOVW   0, VW226                    // 清S3子状态
-MOVW   0, VW228                    // 清写目标地址
+MOVD   0, VD232                    // 清写目标地址
 MOVW   0, VW230                    // 清写数据
 // 冷启动时自动下发注射泵复位(40003=1),确保泵上电后初始化
 // 由FC4任务4执行,待S3进入时泵应已完成复位
 LD     SM0.1
 AN     V304.0
-MOVW   40003, VW228
+MOVD   40003, VD232
 MOVW   1, VW230
 S      M11.6, 1
 // VD参数区(VD10~VD140)不初始化,保留HMI设定值

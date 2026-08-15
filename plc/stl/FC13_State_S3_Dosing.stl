@@ -15,7 +15,7 @@
 // VD102 : VD_Dose_Steps    目标步数(REAL)
 // VW204 : MB_Pump_Aspirate 抽液步数缓冲(映射40006)
 // VW206 : MB_Pump_Dispense 排液步数缓冲(映射40007)
-// VW228 : PumpWrite_Addr   FC06写目标Modbus地址
+// VD232 : PumpWrite_Addr   FC06写目标Modbus地址
 // VW230 : PumpWrite_Data   FC06写数据
 // M11.6 : PumpWrite_Req    写请求(FC13置位,FC4执行后清零)
 // M11.7 : PumpWrite_Busy   写忙标志(FC4管理)
@@ -89,7 +89,7 @@ AN     M12.0
 LPS
 ROUND  VD102, AC0
 MOVW   AC0, VW230                    // 写数据=目标步数
-MOVW   40006, VW228                  // 目标地址=抽液寄存器
+MOVD   40006, VD232                  // 目标地址=抽液寄存器
 S      M11.6, 1                      // 置写请求
 LPP
 
@@ -140,7 +140,7 @@ AN     M12.0
 LPS
 ROUND  VD102, AC0
 MOVW   AC0, VW230
-MOVW   40007, VW228
+MOVD   40007, VD232
 S      M11.6, 1
 LPP
 
