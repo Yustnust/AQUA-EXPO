@@ -1,5 +1,5 @@
 # List AQEX project issues
-. $PSScriptRoot\jira_token.ps1
+. (Join-Path (Join-Path $PSScriptRoot '..') 'jira_token.ps1')
 $base = 'https://yusongtao.atlassian.net'
 $pair = "$email`:$token"
 $bytes = [System.Text.Encoding]::ASCII.GetBytes($pair)
