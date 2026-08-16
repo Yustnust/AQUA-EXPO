@@ -90,6 +90,7 @@ word_rows = [
     ("V区变量", "32位浮点数", 354, 1, "读写", "VD_CycleSetpoint", "换水周期设定(min) AQEX-36:VD20→VD354"),
     ("V区变量", "32位浮点数", 358, 1, "读写", "VD_Timeout_ValveA", "阀A动作超时(s) AQEX-36:VD48→VD358"),
     ("V区变量", "32位浮点数", 362, 1, "读写", "VD_Timeout_ValveB", "阀B动作超时(s) AQEX-36:VD50→VD362"),
+    ("V区变量", "32位浮点数", 364, 1, "只读", "VD_ExpTotal_Flow", "本次实验累计流量(L)"),
     ("V区变量", "32位浮点数", 366, 1, "只读", "VD_ExperimentDuration_Accum", "实验时长累加(min) AQEX-36:VD96→VD366"),
     ("V区变量", "32位浮点数", 370, 1, "只读", "VD_Vol_Target", "本轮目标抽取母液体积(µL) AQEX-36:VD98→VD370"),
 ]
