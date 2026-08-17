@@ -61,6 +61,8 @@ R      V1.0, 6                     // V1.0~V1.5=0
 MOVW   0, VW8                      // VW8=0
 // 本次实验累计流量清零
 MOVR   0.0, VD364                  // VD_ExpTotal_Flow=0(L)
+// 本次实验累计加药量清零
+MOVR   0.0, VD378                  // VD_Dosed_Volume_Total=0(µL)
 // 清下缸满计时器+预规划标志
 MOVR   0.0, VD178                  // VD_S5_Elapsed=0
 R      M10.7, 1                    // 清预规划触发标志

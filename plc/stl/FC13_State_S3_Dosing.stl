@@ -178,6 +178,9 @@ S      M12.2, 1
 LD     M12.2
 AW=    VW226, 4
 AW=    VW4, 0
+// 累加本次排出药量到累计加药量
+MOVR   VD370, AC0                    // AC0 = VD_Vol_Target(µL)
++R     AC0, VD378                    // VD_Dosed_Volume_Total += 本次排出药量
 MOVW   5, VW226                      // 进入子状态5:完成
 
 

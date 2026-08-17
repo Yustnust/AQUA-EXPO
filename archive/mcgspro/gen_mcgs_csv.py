@@ -93,6 +93,7 @@ word_rows = [
     ("V区变量", "32位浮点数", 364, 1, "只读", "VD_ExpTotal_Flow", "本次实验累计流量(L)"),
     ("V区变量", "32位浮点数", 366, 1, "只读", "VD_ExperimentDuration_Accum", "实验时长累加(min) AQEX-36:VD96→VD366"),
     ("V区变量", "32位浮点数", 370, 1, "只读", "VD_Vol_Target", "本轮目标抽取母液体积(µL) AQEX-36:VD98→VD370"),
+    ("V区变量", "32位浮点数", 378, 1, "只读", "VD_Dosed_Volume_Total", "本次实验累计加药量(µL)"),
 ]
 rows.extend(word_rows)
 
