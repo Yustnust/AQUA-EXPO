@@ -88,18 +88,18 @@ MOVR   VD372, VD346                  // VD346 = VD_Remaining_Vol(µL)
 // 限制最大6000步(25ml注射器容量)
 LD     SM0.0
 AR>=   VD346, 6000.0                 // steps >= 6000 ?
-JMP    10                            // 是 -> 限制为6000
+JMP    20                            // 是 -> 限制为6000
 ROUND  VD346, AC0
 MOVR   AC0, VD102                    // VD_Dose_Steps < 6000
-JMP    11                            // 跳过限制分支
-LBL    10
+JMP    21                            // 跳过限制分支
+LBL    20
 MOVR   6000.0, VD102                 // 限制为6000步
-LBL    11
+LBL    21
 // 检查步数有效性(ROUND后剩余量不足一步时直接完成)
 ROUND  VD102, AC0
 LD     SM0.0
 AR<=   AC0, 0.0                      // 本次循环步数 <= 0 ?
-JMP    12                            // 是 -> 直接转完成
+JMP    22                            // 是 -> 直接转完成
 // 同步写入抽/排液步数缓冲(供HMI/调试查看)
 MOVW   AC0, VW204
 MOVW   AC0, VW206
@@ -112,11 +112,11 @@ AN     M12.0
 MOVW   AC0, VW230                    // 写数据=本次循环步数
 MOVD   40006, VD232                  // 目标地址=抽液寄存器
 S      M11.6, 1                      // 置写请求
-JMP    13
-LBL    12
+JMP    23
+LBL    22
 // 剩余量不足一步,无需再加药,直接转完成
 MOVW   5, VW226
-LBL    13
+LBL    23
 
 
 NETWORK 4
@@ -213,7 +213,7 @@ MOVR   VD102, AC0                    // AC0 = 本次循环步数(REAL)
 // 判断是否完成全部加药量
 LD     SM0.0
 AR>=   VD378, VD370                  // 累计加药量 >= 目标量 ?
-JMP    10                            // 是 -> 完成
+JMP    30                            // 是 -> 完成
 // 未完成: 清本轮握手位,返回子状态1继续下一轮
 LD     SM0.0
 R      M12.0, 1
@@ -222,10 +222,10 @@ R      M12.2, 1
 R      M11.6, 1
 R      M11.7, 1
 MOVW   1, VW226                      // 返回子状态1:下一轮抽液
-JMP    11
-LBL    10
+JMP    31
+LBL    30
 MOVW   5, VW226                      // 进入子状态5:完成
-LBL    11
+LBL    31
 
 
 NETWORK 9
