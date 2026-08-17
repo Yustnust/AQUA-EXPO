@@ -8,11 +8,12 @@
 
 // 符号说明:
 // VW226 : S3_SubState  S3子状态机
-//          0=进入计算  1=写抽液步数  2=等抽液完成
+//          0=进入计算  1=计算/写抽液步数  2=等抽液完成
 //          3=写排液步数  4=等排液完成  5=完成转S3.5
 // VD90  : VD_Current_InletVolume 本次进水量(S1差值法结果)
 // VD370 : VD_Vol_Target    目标抽取母液体积(µL)
-// VD102 : VD_Dose_Steps    目标步数(REAL)
+// VD372 : VD_Remaining_Vol 本轮剩余待加药量(µL),S3进入时=VD_Vol_Target
+// VD102 : VD_Dose_Steps    本次循环目标步数(REAL)
 // VW204 : MB_Pump_Aspirate 抽液步数缓冲(映射40006)
 // VW206 : MB_Pump_Dispense 排液步数缓冲(映射40007)
 // VD232 : PumpWrite_Addr   FC06写目标Modbus地址
@@ -28,7 +29,7 @@
 
 
 NETWORK 1
-// S3进入/子状态0 - 计算加药步数,启动潜水泵搅拌,初始化握手位
+// S3进入/子状态0 - 计算目标加药量,初始化剩余量,启动潜水泵搅拌,清握手位
 // 仅在VW226=0时执行一次(FC12进入S3时已清VW226=0)
 LD     SM0.0
 AW=    VW226, 0
@@ -37,14 +38,8 @@ LPS
 MOVR   VD90, VD346
 *R     VD10, VD346
 /R     VD14, VD346
-MOVR   VD346, VD370                  // VD_Vol_Target
-// 目标步数 = 目标体积 / 单步分辨率(VD350)
-/R     VD350, VD346
-ROUND  VD346, AC0
-MOVR   AC0, VD102                    // VD_Dose_Steps(REAL)
-// 同步写入抽/排液步数缓冲(供HMI/调试查看,实际由FC13通过写任务下发)
-MOVW   AC0, VW204
-MOVW   AC0, VW206
+MOVR   VD346, VD370                  // VD_Vol_Target(µL)
+MOVR   VD346, VD372                  // VD_Remaining_Vol = 目标量
 // S3期间保持潜水泵运行(搅拌+加药同时进行)
 S      Q0.0, 1
 S      Q0.1, 1
@@ -53,7 +48,8 @@ R      M12.0, 1
 R      M12.1, 1
 R      M12.2, 1
 R      M11.6, 1
-MOVW   1, VW226                      // 进入子状态1:写抽液步数
+R      M11.7, 1
+MOVW   1, VW226                      // 进入子状态1:计算并写抽液步数
 LPP
 
 
@@ -79,19 +75,48 @@ LPP
 
 
 NETWORK 3
-// 子状态1 - 下发抽液指令(40006)
+// 子状态1 - 计算本次循环步数并下发抽液指令(40006)
 // 条件: 无进行中的写请求/写忙/写完成
 LD     SM0.0
 AW=    VW226, 1
 AN     M11.6
 AN     M11.7
 AN     M12.0
-LPS
+// 计算本次循环步数 = VD_Remaining_Vol / VD_StepResolution
+MOVR   VD372, VD346                  // VD346 = VD_Remaining_Vol(µL)
+/R     VD350, VD346                  // VD346 = steps(REAL)
+// 限制最大6000步(25ml注射器容量)
+LD     SM0.0
+AR>=   VD346, 6000.0                 // steps >= 6000 ?
+JMP    10                            // 是 -> 限制为6000
+ROUND  VD346, AC0
+MOVR   AC0, VD102                    // VD_Dose_Steps < 6000
+JMP    11                            // 跳过限制分支
+LBL    10
+MOVR   6000.0, VD102                 // 限制为6000步
+LBL    11
+// 检查步数有效性(ROUND后剩余量不足一步时直接完成)
 ROUND  VD102, AC0
-MOVW   AC0, VW230                    // 写数据=目标步数
+LD     SM0.0
+AR<=   AC0, 0.0                      // 本次循环步数 <= 0 ?
+JMP    12                            // 是 -> 直接转完成
+// 同步写入抽/排液步数缓冲(供HMI/调试查看)
+MOVW   AC0, VW204
+MOVW   AC0, VW206
+// 重新建立执行条件后下发抽液指令
+LD     SM0.0
+AW=    VW226, 1
+AN     M11.6
+AN     M11.7
+AN     M12.0
+MOVW   AC0, VW230                    // 写数据=本次循环步数
 MOVD   40006, VD232                  // 目标地址=抽液寄存器
 S      M11.6, 1                      // 置写请求
-LPP
+JMP    13
+LBL    12
+// 剩余量不足一步,无需再加药,直接转完成
+MOVW   5, VW226
+LBL    13
 
 
 NETWORK 4
@@ -178,10 +203,29 @@ S      M12.2, 1
 LD     M12.2
 AW=    VW226, 4
 AW=    VW4, 0
-// 累加本次排出药量到累计加药量
-MOVR   VD370, AC0                    // AC0 = VD_Vol_Target(µL)
-+R     AC0, VD378                    // VD_Dosed_Volume_Total += 本次排出药量
+// 计算本次循环实际排出药量 = VD_Dose_Steps × VD_StepResolution
+MOVR   VD102, AC0                    // AC0 = 本次循环步数(REAL)
+*R     VD350, AC0                    // AC0 = 本次循环体积(µL)
+// 累加本次循环排出药量到累计加药量
++R     AC0, VD378                    // VD_Dosed_Volume_Total += 本次循环体积
+// 扣减剩余待加药量
+-R     AC0, VD372                    // VD_Remaining_Vol -= 本次循环体积
+// 判断是否完成全部加药量
+LD     SM0.0
+AR>=   VD378, VD370                  // 累计加药量 >= 目标量 ?
+JMP    10                            // 是 -> 完成
+// 未完成: 清本轮握手位,返回子状态1继续下一轮
+LD     SM0.0
+R      M12.0, 1
+R      M12.1, 1
+R      M12.2, 1
+R      M11.6, 1
+R      M11.7, 1
+MOVW   1, VW226                      // 返回子状态1:下一轮抽液
+JMP    11
+LBL    10
 MOVW   5, VW226                      // 进入子状态5:完成
+LBL    11
 
 
 NETWORK 9
@@ -205,8 +249,10 @@ LPP
 // 文件结束
 // 说明:
 //   1. 采用VW226子状态机,抽液/排液分两步下发,每步等待FC4写完成(M12.0)
-//   2. 动作完成以41001状态码(VW4)归一化后=0(就绪)为准,并用M12.1/M12.2
+//   2. 支持多次抽液+排液循环:单循环步数限制6000步(25ml注射器容量),
+//      每次排液后累加实际体积到VD378并扣减VD372,直到累计>=目标量
+//   3. 动作完成以41001状态码(VW4)归一化后=0(就绪)为准,并用M12.1/M12.2
 //      记录"曾忙(VW4=1)",防止未开始即判定完成
-//   3. 任何时刻V303.4置位或VW4>=4立即转S_ERROR并安全停泵
-//   4. S3期间Q0.0/Q0.1保持运行,完成/出错时停止
+//   4. 任何时刻V303.4置位或VW4>=4立即转S_ERROR并安全停泵
+//   5. S3期间Q0.0/Q0.1保持运行,完成/出错时停止
 // ============================================================
