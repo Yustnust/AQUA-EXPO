@@ -181,4 +181,9 @@ M11.3_Edge_I1_1,M11.3,I1.1边沿上一周期(建议保持)
 M_FC4_Done_Pump,M12.0,FC4注射泵轮询完成位
 M_FC4_Done_Flow,M12.1,FC4流量计轮询完成位
 M_FC4_DegradedMode,M12.2,FC4降级模式(连续5次失败)
+M_Manual_ValveA_Latch,M13.0,手动阀A锁存
+M_Manual_ValveB_Latch,M13.1,手动阀B锁存
+M_Manual_ValveC_Latch,M13.2,手动阀C锁存
+M_Manual_Pump1_Latch,M13.3,手动泵1锁存
+M_Manual_Pump2_Latch,M13.4,手动泵2锁存
 M_FC4_Retry_Count,MW14,FC4当前重试计数(0~3)

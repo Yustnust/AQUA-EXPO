@@ -1,4 +1,4 @@
-符号,地址,数据类型,注释
+﻿符号,地址,数据类型,注释
 // ============================================================
 // 药液配置加注控制系统 — STEP 7-Micro/WIN SMART 符号表 v1.0
 // 适用: 8套缸单元通用 (1~8号PLC程序完全相同,差异仅在IP)
@@ -209,6 +209,11 @@ M11.2_PrevAlarm,M11.2,BOOL,FC3上一周期有报警标志(新报警检测用)
 M11.3_Edge_I0_0,M11.3,BOOL,FC3 I0.0边沿上一周期状态
 M11.4_Edge_I0_1,M11.4,BOOL,FC3 I0.1边沿上一周期状态
 M11.5_Edge_I0_2,M11.5,BOOL,FC3 I0.2边沿上一周期状态
+M_Manual_ValveA_Latch,M13.0,BOOL,手动阀A锁存(FC20手动控制页)
+M_Manual_ValveB_Latch,M13.1,BOOL,手动阀B锁存(FC20手动控制页)
+M_Manual_ValveC_Latch,M13.2,BOOL,手动阀C锁存(FC20手动控制页)
+M_Manual_Pump1_Latch,M13.3,BOOL,手动泵1锁存(FC20手动控制页)
+M_Manual_Pump2_Latch,M13.4,BOOL,手动泵2锁存(FC20手动控制页)
 // === FC4 Modbus轮询错误码 (LAD引脚输出,2026-07-27新增) ===
 VB378_MBUS_CTRL_Error,VB378,BYTE,MBUS_CTRL Error错误码(LAD引脚)
 VB379_MBUS_MSG_Pump_Error,VB379,BYTE,MBUS_MSG注射泵轮询错误码(LAD引脚,任务0输出)

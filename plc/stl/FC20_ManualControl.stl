@@ -1,124 +1,140 @@
 // ============================================================
 // 文件: FC20_ManualControl.stl
-// 功能: 手动控制处理 (HMI画面3手动控制命令位响应)
-// Story: AQEX-12 新增(修复AQEX-34: 原无FC处理V2.4~V3.3)
-// 调用方: OB1 NETWORK7(每周期调用,在FC1状态调度之后)
-// 说明: 处理V2.4~V3.3共8个手动命令位,上升沿触发+PLC清零握手
-//       仅VW2=0(S0)或VW2=99(S_ERROR)态响应(避免运行中误操作)
-//       含安全联锁:阀B开启需上缸满下缸空,阀C开启需下缸满
+// 功能: 手动控制FC (由OB1仅在S0态调用)
+// Story: AQEX-60 手动控制页
+// 说明:
+//       由OB1在S0态调用；非S0态不调用，避免覆盖其他状态输出
+//       手动命令为脉冲方式(按1松0),由M位锁存输出状态
+//       手动开阀自动打开串联的NC电磁阀,关阀自动关闭
+// 修复记录:
+//   P1-改为M位锁存,解决FC10每周期清QB0导致手动输出无法保持的问题
+//   P2-NC电磁阀串联主路,手动开阀时自动打开对应NC阀
 // ============================================================
 
-// 符号说明:
-// V2.4  : CMD_Manual_ValveA_Open   手动开阀A
-// V2.5  : CMD_Manual_ValveA_Close  手动关阀A
-// V2.6  : CMD_Manual_ValveB_Open   手动开阀B
-// V2.7  : CMD_Manual_ValveB_Close  手动关阀B
-// V3.0  : CMD_Manual_ValveC_Open   手动开阀C
-// V3.1  : CMD_Manual_ValveC_Close  手动关阀C
-// V3.2  : CMD_Manual_Pump1_On      手动启动潜水泵1
-// V3.3  : CMD_Manual_Pump1_Off     手动停止潜水泵1
-// VW2   : 状态机(0=S0,99=S_ERROR时允许手动)
-// V1.6  : STA_TankA_State 上缸状态(0=空,1=满)
-// V1.7  : STA_TankB_State 下缸状态(0=空,1=满)
+// 符号表:
+// V2.4  : CMD_Manual_ValveA_Open 手动开阀A
+// V2.5  : CMD_Manual_ValveA_Close 手动关阀A
+// V2.6  : CMD_Manual_ValveB_Open 手动开阀B
+// V2.7  : CMD_Manual_ValveB_Close 手动关阀B
+// V3.0  : CMD_Manual_ValveC_Open 手动开阀C
+// V3.1  : CMD_Manual_ValveC_Close 手动关阀C
+// V3.2  : CMD_Manual_Pump1_On 手动启泵1
+// V3.3  : CMD_Manual_Pump1_Off 手动停泵1
+// V3.4  : CMD_Manual_Pump2_On 手动启泵2
+// V3.5  : CMD_Manual_Pump2_Off 手动停泵2
+// V1.6  : STA_TankA_State 上缸状态 1=满
+// V1.7  : STA_TankB_State 下缸状态 1=满
+// M13.0 : Manual_ValveA_Latch 手动阀A锁存
+// M13.1 : Manual_ValveB_Latch 手动阀B锁存
+// M13.2 : Manual_ValveC_Latch 手动阀C锁存
+// M13.3 : Manual_Pump1_Latch  手动泵1锁存
+// M13.4 : Manual_Pump2_Latch  手动泵2锁存
 // Q0.0  : DO_Pump1 潜水泵1
+// Q0.1  : DO_Pump2 潜水泵2
 // Q0.2  : DO_ValveA 阀A
 // Q0.3  : DO_ValveB 阀B
 // Q0.4  : DO_ValveC 阀C
-
+// Q0.5  : DO_NCValve_Top NC电磁阀-上缸(常闭型,得电打开)
+// Q0.6  : DO_NCValve_Bottom NC电磁阀-下缸(常闭型,得电打开)
+// ============================================================
 
 NETWORK 1
-// 手动控制允许条件
-// 仅S0或S_ERROR态允许手动(避免运行中误操作)
-// 用L60.1暂存"允许手动"标志
+// 手动阀A控制(开/关)
 LD     SM0.0
-LPS
-LDW=   VW2, 0                       // S0
-OW=    VW2, 99                      // 或S_ERROR
-=      L60.1                         // L60.1=允许手动
-LPP
-
-
-NETWORK 2
-// 阀A手动控制(无特殊联锁)
-LBL    1
-LD     L60.1                         // 允许手动
-A      V2.4                          // 开阀A命令
-EU                                   // 上升沿触发
-S      Q0.2, 1                       // 开阀A
-R      V2.4, 1                       // PLC清零握手
-
-LD     L60.1
-A      V2.5                          // 关阀A命令
+A      V2.4
 EU
-R      Q0.2, 1                       // 关阀A
+S      M13.0, 1
+R      V2.4, 1
+
+LD     SM0.0
+A      V2.5
+EU
+R      M13.0, 1
 R      V2.5, 1
 
-
-NETWORK 3
-// 阀B手动控制(联锁:上缸=满 AND 下缸=空)
-LBL    2
-LD     L60.1
-A      V2.6                          // 开阀B命令
+NETWORK 2
+// 手动阀B控制(开/关)
+LD     SM0.0
+A      V2.6
 EU
-A      V1.6                          // 联锁:上缸=满
-AN     V1.7                          // 联锁:下缸=空
-S      Q0.3, 1                       // 满足联锁才开阀B
-R      V2.6, 1                       // 无论联锁是否满足,均清命令位(避免残留)
+A      V1.6
+AN     V1.7
+S      M13.1, 1
+R      V2.6, 1
 
-LD     L60.1
-A      V2.7                          // 关阀B命令
+LD     SM0.0
+A      V2.7
 EU
-R      Q0.3, 1                       // 关阀B(关阀无联锁)
+R      M13.1, 1
 R      V2.7, 1
 
-
-NETWORK 4
-// 阀C手动控制(联锁:下缸=满)
-LBL    3
-LD     L60.1
-A      V3.0                          // 开阀C命令
+NETWORK 3
+// 手动阀C控制(开/关)
+LD     SM0.0
+A      V3.0
 EU
-A      V1.7                          // 联锁:下缸=满
-S      Q0.4, 1                       // 满足联锁才开阀C
+A      V1.7
+S      M13.2, 1
 R      V3.0, 1
 
-LD     L60.1
-A      V3.1                          // 关阀C命令
+LD     SM0.0
+A      V3.1
 EU
-R      Q0.4, 1                       // 关阀C
+R      M13.2, 1
 R      V3.1, 1
 
-
-NETWORK 5
-// 潜水泵1手动控制(无特殊联锁,但建议阀A或B开启时有水)
-LBL    4
-LD     L60.1
-A      V3.2                          // 启动泵1命令
+NETWORK 4
+// 手动泵1控制(启/停)
+LD     SM0.0
+A      V3.2
 EU
-S      Q0.0, 1                       // 启动潜水泵1
+S      M13.3, 1
 R      V3.2, 1
 
-LD     L60.1
-A      V3.3                          // 停止泵1命令
+LD     SM0.0
+A      V3.3
 EU
-R      Q0.0, 1                       // 停止潜水泵1
+R      M13.3, 1
 R      V3.3, 1
 
+NETWORK 5
+// 手动泵2控制(启/停)
+LD     SM0.0
+A      V3.4
+EU
+S      M13.4, 1
+R      V3.4, 1
+
+LD     SM0.0
+A      V3.5
+EU
+R      M13.4, 1
+R      V3.5, 1
 
 NETWORK 6
-// FC20结束
-LBL    5
+// 手动输出映射到Q点
+// 在S0态用=线圈覆盖FC10_State_S0_Init中的QB0清零
+LD     M13.0
+=      Q0.2
 
+LD     M13.1
+=      Q0.3
 
-// ============================================================
-// 文件结束
-// 说明:
-//   1. 手动命令采用上升沿触发+PLC清零握手(变量表4.4注1)
-//   2. 仅S0或S_ERROR态响应,运行中(S1~S7)手动命令无效(变量表4.4)
-//   3. 阀B开启联锁:上缸=满(V1.6) AND 下缸=空(!V1.7)
-//      阀C开启联锁:下缸=满(V1.7)
-//      关阀操作无联锁(允许任何时候关阀,失效安全)
-//   4. 联锁不满足时命令位仍清零(避免HMI侧残留1值重复触发)
-//   5. 潜水泵2手动扩展预留V3.4/V3.5(变量表4.4注2)
-//   6. 手动操作时安全联锁仍生效,由本FC校验,HMI侧仅下发命令
-// ============================================================
+LD     M13.2
+=      Q0.4
+
+LD     M13.3
+=      Q0.0
+
+LD     M13.4
+=      Q0.1
+
+NETWORK 7
+// NC电磁阀自动跟随(串联主路,保证手动开阀有水流通)
+// 上缸NC阀跟随阀A;下缸NC阀跟随阀B或阀C
+LD     Q0.2
+=      Q0.5
+
+LD     Q0.3
+O      Q0.4
+=      Q0.6

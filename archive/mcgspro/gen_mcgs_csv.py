@@ -10,7 +10,7 @@ import csv
 import os
 import re
 
-OUT_DIR = os.path.dirname(__file__)
+OUT_DIR = os.environ.get("MCGS_CSV_OUT", os.path.dirname(__file__))
 
 # 驱动信息头（从 McgsPro 导出文件复制）
 DRV_PATH = r"d:\program files\mcgspro\program\drivers\plc\西门子\smart200\smart200_ex.ui"
@@ -42,6 +42,24 @@ bit_rows = [
 ]
 for byte, bit, name, note in bit_rows:
     rows.append(("V区变量", f"第{bit:02d}位", byte, 1, "读写" if byte == 0 else "只读", name, note))
+
+# DI 输入继电器（手动控制页阀门/泵反馈等）
+dio_rows = [
+    # I 输入继电器
+    (0, 0, "DI_FlowSwitch_A", "流量开关A(阀A开启后有流)"),
+    (0, 1, "DI_FlowSwitch_B", "流量开关B(阀B开启后有流)"),
+    (0, 2, "DI_FlowSwitch_C", "流量开关C(阀C开启后有流)"),
+    (1, 1, "DI_EStop", "急停信号反馈(ON=正常 OFF=急停触发)"),
+    (1, 2, "DI_SafetyRelay_FB", "安全继电器反馈(ON=正常)"),
+    (1, 3, "DI_ValveA_Open", "阀A开到位反馈"),
+    (1, 4, "DI_ValveA_Close", "阀A关到位反馈"),
+    (1, 5, "DI_ValveB_Open", "阀B开到位反馈"),
+    (1, 6, "DI_ValveB_Close", "阀B关到位反馈"),
+    (1, 7, "DI_ValveC_Open", "阀C开到位反馈"),
+    (2, 0, "DI_ValveC_Close", "阀C关到位反馈"),
+]
+for byte, bit, name, note in dio_rows:
+    rows.append(("I输入继电器", f"第{bit:02d}位", byte, 1, "只读", name, note))
 
 # 字/双字区（按地址排序）
 word_rows = [
@@ -93,6 +111,7 @@ word_rows = [
     ("V区变量", "32位浮点数", 364, 1, "只读", "VD_ExpTotal_Flow", "本次实验累计流量(L)"),
     ("V区变量", "32位浮点数", 366, 1, "只读", "VD_ExperimentDuration_Accum", "实验时长累加(min) AQEX-36:VD96→VD366"),
     ("V区变量", "32位浮点数", 370, 1, "只读", "VD_Vol_Target", "本轮目标抽取母液体积(µL) AQEX-36:VD98→VD370"),
+    ("V区变量", "32位浮点数", 372, 1, "只读", "VD_Remaining_Vol", "S3加药剩余待加体积(µL)"),
     ("V区变量", "32位浮点数", 378, 1, "只读", "VD_Dosed_Volume_Total", "本次实验累计加药量(µL)"),
 ]
 rows.extend(word_rows)
@@ -149,8 +168,8 @@ manual_bits = [
     (3, 1, "CMD_Manual_ValveC_Close", "手动关阀C"),
     (3, 2, "CMD_Manual_Pump1_On", "手动启动潜水泵1"),
     (3, 3, "CMD_Manual_Pump1_Off", "手动停止潜水泵1"),
-    (3, 4, "CMD_Manual_Pump2_On", "手动启动潜水泵2(预留,V3.4)"),
-    (3, 5, "CMD_Manual_Pump2_Off", "手动停止潜水泵2(预留,V3.5)"),
+    (3, 4, "CMD_Manual_Pump2_On", "手动启动潜水泵2(V3.4)"),
+    (3, 5, "CMD_Manual_Pump2_Off", "手动停止潜水泵2(V3.5)"),
 ]
 for byte, bit, name, note in manual_bits:
     rows.append(("V区变量", f"第{bit:02d}位", byte, 1, "读写", name, note))
@@ -194,11 +213,16 @@ def mcgs_var_type(mcgs_dtype: str, bit: int | None) -> str:
     return "SINGLE"
 
 
-def mcgs_channel_name(rw: str, addr: int, mcgs_dtype: str, bit: int | None) -> str:
-    """生成 McgsPro 通道名称列（如"读写V000.0"、"只读VWB002"、"读写VDF010"）。"""
+def mcgs_channel_name(rw: str, addr: int, mcgs_dtype: str, bit: int | None, typ: str) -> str:
+    """生成 McgsPro 通道名称列（如"读写V000.0"、"只读VWB002"、"只读I001.3"）。"""
     action = "读写" if rw == "读写" else "只读"
     if bit is not None:
-        return f"{action}V{addr:03d}.{bit}"
+        prefix = "V"
+        if typ == "I输入继电器":
+            prefix = "I"
+        elif typ == "Q输出继电器":
+            prefix = "Q"
+        return f"{action}{prefix}{addr:03d}.{bit}"
     if "16位" in mcgs_dtype:
         return f"{action}VWB{addr:03d}"
     if "32位" in mcgs_dtype:
@@ -235,18 +259,26 @@ def write_unit_csv(unit: int) -> int:
         ])
 
         channel_no = 0
-        for _typ, dtype, addr, _count, rw, name, _note in unit_rows(unit):
+        for typ, dtype, addr, _count, rw, name, _note in unit_rows(unit):
             mcgs_dtype, bit = parse_dtype(dtype)
             var_type = mcgs_var_type(mcgs_dtype, bit)
-            ch_name = mcgs_channel_name(rw, addr, mcgs_dtype, bit)
+            ch_name = mcgs_channel_name(rw, addr, mcgs_dtype, bit, typ)
             rw_type = "读写" if rw == "读写" else "只读"
+            if typ == "V区变量":
+                reg_name = "V数据寄存器"
+            elif typ == "I输入继电器":
+                reg_name = "I输入继电器"
+            elif typ == "Q输出继电器":
+                reg_name = "Q输出继电器"
+            else:
+                reg_name = typ
             w.writerow([
                 channel_no,      # 通道号
                 name,            # 变量名
                 var_type,        # 变量类型
                 ch_name,         # 通道名称
                 rw_type,         # 读写类型
-                "V数据寄存器",   # 寄存器名称
+                reg_name,        # 寄存器名称
                 mcgs_dtype,      # 数据类型
                 addr,            # 寄存器地址
                 "",              # 地址偏移
