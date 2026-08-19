@@ -73,7 +73,7 @@
   </g>
   <line x1="740" y1="226" x2="740" y2="240" stroke="#1976D2" stroke-width="3"/>
 
-  <!-- NC电磁阀-上缸 (阀A旁路) -->
+  <!-- NC球阀-上缸 (阀A旁路) -->
   <g>
     <!-- 旁路管路从阀A前引出 -->
     <line x1="700" y1="108" x2="660" y2="108" stroke="#1976D2" stroke-width="2.5"/>
@@ -83,7 +83,7 @@
     <polygon points="648,160 672,160 660,172" fill="#FFEBEE" stroke="#B71C1C" stroke-width="1.5"/>
     <polygon points="648,172 672,172 660,160" fill="#FFEBEE" stroke="#B71C1C" stroke-width="1.5"/>
     <line x1="648" y1="160" x2="672" y2="172" stroke="#B71C1C" stroke-width="1.2"/>
-    <text x="660" y="190" text-anchor="middle" font-size="10" fill="#B71C1C" font-weight="bold">NC电磁阀-上缸</text>
+    <text x="660" y="190" text-anchor="middle" font-size="10" fill="#B71C1C" font-weight="bold">NC球阀-上缸</text>
     <text x="660" y="203" text-anchor="middle" font-size="9" fill="#757575">DO Q0.5→KA6 常闭失效安全</text>
     <text x="660" y="215" text-anchor="middle" font-size="9" fill="#999" font-style="italic">阀A失效第二道保护</text>
   </g>
@@ -123,11 +123,6 @@
       <path d="M 630 388 L 630 412 L 654 400 z" fill="#0277BD"/>
       <text x="640" y="438" text-anchor="middle" font-size="11" font-weight="bold" fill="#0277BD">潜水泵1</text>
       <text x="640" y="452" text-anchor="middle" font-size="9" fill="#757575">搅拌 Q0.0→KA1</text>
-      <!-- 流量开关-泵1 FS -->
-      <circle cx="640" cy="362" r="12" fill="#FFF" stroke="#424242" stroke-width="1.2"/>
-      <text x="640" y="360" text-anchor="middle" font-size="9" font-weight="bold" fill="#424242">FS</text>
-      <text x="640" y="369" text-anchor="middle" font-size="7" fill="#616161">103</text>
-      <text x="664" y="366" font-size="9" fill="#2E7D32">I0.3</text>
     </g>
     <!-- 潜水泵2 -->
     <g>
@@ -135,10 +130,6 @@
       <path d="M 830 388 L 830 412 L 854 400 z" fill="#0277BD"/>
       <text x="840" y="438" text-anchor="middle" font-size="11" font-weight="bold" fill="#0277BD">潜水泵2</text>
       <text x="840" y="452" text-anchor="middle" font-size="9" fill="#757575">搅拌 Q0.1→KA2</text>
-      <circle cx="840" cy="362" r="12" fill="#FFF" stroke="#424242" stroke-width="1.2"/>
-      <text x="840" y="360" text-anchor="middle" font-size="9" font-weight="bold" fill="#424242">FS</text>
-      <text x="840" y="369" text-anchor="middle" font-size="7" fill="#616161">104</text>
-      <text x="864" y="366" font-size="9" fill="#2E7D32">I0.4</text>
     </g>
 
     <!-- 加药入口(左侧顶部) -->
@@ -254,7 +245,7 @@
   <line x1="740" y1="882" x2="740" y2="905" stroke="#1976D2" stroke-width="3" marker-end="url(#arrow-blue)"/>
   <text x="740" y="922" text-anchor="middle" font-size="12" font-weight="bold" fill="#1976D2">▼ 排水</text>
 
-  <!-- NC电磁阀-下缸 (阀B旁路,失效保护) -->
+  <!-- NC球阀-下缸 (阀B旁路,失效保护) -->
   <g>
     <line x1="700" y1="488" x2="660" y2="488" stroke="#1976D2" stroke-width="2.5"/>
     <line x1="660" y1="488" x2="660" y2="528" stroke="#1976D2" stroke-width="2.5"/>
@@ -262,7 +253,7 @@
     <polygon points="648,533 672,533 660,545" fill="#FFEBEE" stroke="#B71C1C" stroke-width="1.5"/>
     <polygon points="648,545 672,545 660,533" fill="#FFEBEE" stroke="#B71C1C" stroke-width="1.5"/>
     <line x1="648" y1="533" x2="672" y2="545" stroke="#B71C1C" stroke-width="1.2"/>
-    <text x="660" y="563" text-anchor="middle" font-size="10" fill="#B71C1C" font-weight="bold">NC电磁阀-下缸</text>
+    <text x="660" y="563" text-anchor="middle" font-size="10" fill="#B71C1C" font-weight="bold">NC球阀-下缸</text>
     <text x="660" y="576" text-anchor="middle" font-size="9" fill="#757575">DO Q0.6→KA7</text>
     <text x="660" y="588" text-anchor="middle" font-size="9" fill="#999" font-style="italic">阀B/液位B报警保护</text>
   </g>
@@ -318,10 +309,10 @@
 
     <!-- 信号汇总标注 -->
     <text x="1100" y="544" font-size="10" font-weight="bold" fill="#2E7D32">DI 信号输入(19点):</text>
-    <text x="1100" y="558" font-size="9" fill="#616161">I0.0~I0.4 流量开关×5 | I0.5~I1.0 液位计×4 | I1.1 急停 I1.2 安全继电器</text>
+    <text x="1100" y="558" font-size="9" fill="#616161">I0.0~I0.2 流量开关×3 | I0.3~I0.4 预留/未用 | I0.5~I1.0 液位计×4 | I1.1 急停 I1.2 安全继电器</text>
     <text x="1100" y="572" font-size="9" fill="#616161">I1.3~I2.0 阀位反馈×6(经KA10~15转换) | I2.1 消音 I2.3 复位</text>
     <text x="1100" y="592" font-size="10" font-weight="bold" fill="#2E7D32">DO 输出(9点):</text>
-    <text x="1100" y="606" font-size="9" fill="#616161">Q0.0~Q0.1 泵×2 | Q0.2~Q0.4 阀ABC×3 | Q0.5~Q0.6 NC电磁阀×2 | Q0.7蜂鸣 Q2.0指示灯</text>
+    <text x="1100" y="606" font-size="9" fill="#616161">Q0.0~Q0.1 泵×2 | Q0.2~Q0.4 阀ABC×3 | Q0.5~Q0.6 NC球阀×2 | Q0.7蜂鸣 Q2.0指示灯</text>
   </g>
 
   <!-- ============================================================
@@ -454,7 +445,7 @@
     <polygon points="300,958 320,958 310,970" fill="#FFEBEE" stroke="#B71C1C" stroke-width="1.2"/>
     <polygon points="300,970 320,970 310,958" fill="#FFEBEE" stroke="#B71C1C" stroke-width="1.2"/>
     <line x1="300" y1="958" x2="320" y2="970" stroke="#B71C1C" stroke-width="1"/>
-    <text x="328" y="966" font-size="10" fill="#616161">NC电磁阀(常闭)</text>
+    <text x="328" y="966" font-size="10" fill="#616161">NC球阀(常闭)</text>
 
     <circle cx="430" cy="964" r="10" fill="#FFF" stroke="#424242" stroke-width="1.2"/>
     <text x="430" y="967" text-anchor="middle" font-size="8" font-weight="bold" fill="#424242">XX</text>
@@ -493,15 +484,15 @@
     <text x="730" y="946" font-size="9" fill="#616161">1. 本图适用于8套缸单元(每套设备完全相同,区别仅PLC IP: 192.168.2.101~108)</text>
     <text x="730" y="960" font-size="9" fill="#616161">2. AQEX-42流量计选型变更: K24微小流量计→涡轮流量计+BPM32FC积算仪,累积流量寄存器0x08(40009)</text>
     <text x="730" y="974" font-size="9" fill="#616161">3. 温度/压力/密度修正参数不启用(BPM32FC内部完成累积,PLC仅读40009做差值法)</text>
-    <text x="730" y="988" font-size="9" fill="#616161">4. NC电磁阀旁路管路位置(阀A/阀B并联或上游)待现场确认,功能为阀失效第二道保护</text>
+    <text x="730" y="988" font-size="9" fill="#616161">4. NC球阀旁路管路位置(阀A/阀B并联或上游)待现场确认,功能为阀失效第二道保护</text>
     <text x="730" y="1010" font-size="9" fill="#616161">5. 急停双通道: 第1/3组→安全继电器切动力电(硬件); 第2组→PLC I1.1(感知)</text>
     <text x="730" y="1024" font-size="9" fill="#616161">6. Modbus总线2从站: 站号1=注射泵(SY11), 站号2=BPM32FC积算仪; 9600 8/N/1</text>
 
     <text x="1080" y="930" font-size="10" fill="#424242" font-weight="bold">待确认型号:</text>
     <text x="1080" y="946" font-size="9" fill="#999">电动球阀A/B/C</text>
-    <text x="1080" y="960" font-size="9" fill="#999">NC电磁阀×2</text>
+    <text x="1080" y="960" font-size="9" fill="#999">NC球阀×2</text>
     <text x="1080" y="974" font-size="9" fill="#999">潜水泵1/2</text>
-    <text x="1080" y="988" font-size="9" fill="#999">流量开关×5</text>
+    <text x="1080" y="988" font-size="9" fill="#999">流量开关×3</text>
     <text x="1080" y="1002" font-size="9" fill="#999">液位计A/B</text>
     <text x="1080" y="1016" font-size="9" fill="#999">涡轮流量计</text>
   </g>

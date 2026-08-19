@@ -64,8 +64,6 @@
 | 0.0 | I0.0 | DI_FlowSwitch_A | 流量开关A | 无源常开 | 0.75 | 蓝 | 触点一端→I0.0，另端→24V L+ |
 | 0.1 | I0.1 | DI_FlowSwitch_B | 流量开关B | 无源常开 | 0.75 | 蓝 | 同上 |
 | 0.2 | I0.2 | DI_FlowSwitch_C | 流量开关C | 无源常开 | 0.75 | 蓝 | 同上 |
-| 0.3 | I0.3 | DI_FlowSwitch_Pump1 | 流量开关-泵1 | 无源常开 | 0.75 | 蓝 | 同上 |
-| 0.4 | I0.4 | DI_FlowSwitch_Pump2 | 流量开关-泵2 | 无源常开 | 0.75 | 蓝 | 同上 |
 | 0.5 | I0.5 | DI_LevelA_High | 液位计A-高位 | 无源常开 | 0.75 | 蓝 | 同上 |
 | 0.6 | I0.6 | DI_LevelA_Low | 液位计A-低位 | 无源常开 | 0.75 | 蓝 | 同上 |
 | 0.7 | I0.7 | DI_LevelB_High | 液位计B-高位 | 无源常开 | 0.75 | 蓝 | 同上 |
@@ -87,8 +85,8 @@
 | 0.2 | Q0.2 | DO_ValveA | KA3 | 电动球阀A开/关接触器 | 0.75 | 红 |
 | 0.3 | Q0.3 | DO_ValveB | KA4 | 电动球阀B开/关接触器 | 0.75 | 红 |
 | 0.4 | Q0.4 | DO_ValveC | KA5 | 电动球阀C开/关接触器 | 0.75 | 红 |
-| 0.5 | Q0.5 | DO_NCValve_Top | KA6 | NC电磁阀-上缸 | 0.75 | 红 |
-| 0.6 | Q0.6 | DO_NCValve_Bottom | KA7 | NC电磁阀-下缸 | 0.75 | 红 |
+| 0.5 | Q0.5 | DO_NCValve_Top | KA6 | NC球阀-上缸 | 0.75 | 红 |
+| 0.6 | Q0.6 | DO_NCValve_Bottom | KA7 | NC球阀-下缸 | 0.75 | 红 |
 | 0.7 | Q0.7 | DO_Alarm_Sound | KA8 | 报警蜂鸣器 | 0.75 | 红 |
 
 **公共端**：1L+接24V L+，2L+接24V L+，1M/2M接24V 0V (M)。
@@ -253,8 +251,8 @@ DO晶体管输出驱动中间继电器线圈，继电器触点接通负载电源
 | KA3 | Q0.2 | 电动球阀A接触器 | 5A/AC250V |
 | KA4 | Q0.3 | 电动球阀B接触器 | 5A/AC250V |
 | KA5 | Q0.4 | 电动球阀C接触器 | 5A/AC250V |
-| KA6 | Q0.5 | NC电磁阀-上缸 | 5A/AC250V |
-| KA7 | Q0.6 | NC电磁阀-下缸 | 5A/AC250V |
+| KA6 | Q0.5 | NC球阀-上缸 | 5A/AC250V |
+| KA7 | Q0.6 | NC球阀-下缸 | 5A/AC250V |
 | KA8 | Q0.7 | 报警蜂鸣器 | 5A/AC250V |
 | KA9 | Q2.0 | 报警指示灯 | 5A/AC250V |
 
@@ -331,8 +329,6 @@ DO晶体管输出驱动中间继电器线圈，继电器触点接通负载电源
 | 本体 | 0.0 | I0.0 | DI_FlowSwitch_A | DI | 无源 |
 | 本体 | 0.1 | I0.1 | DI_FlowSwitch_B | DI | 无源 |
 | 本体 | 0.2 | I0.2 | DI_FlowSwitch_C | DI | 无源 |
-| 本体 | 0.3 | I0.3 | DI_FlowSwitch_Pump1 | DI | 无源 |
-| 本体 | 0.4 | I0.4 | DI_FlowSwitch_Pump2 | DI | 无源 |
 | 本体 | 0.5 | I0.5 | DI_LevelA_High | DI | 无源 |
 | 本体 | 0.6 | I0.6 | DI_LevelA_Low | DI | 无源 |
 | 本体 | 0.7 | I0.7 | DI_LevelB_High | DI | 无源 |

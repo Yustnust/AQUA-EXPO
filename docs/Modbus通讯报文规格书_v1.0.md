@@ -603,8 +603,8 @@ MBUS_SERVER指令将V区映射为Modbus TCP保持寄存器,映射规则:
 | 40026-40027 | 0x0019 | VD48 | VD_Timeout_ValveA | REAL | 2 | 阀A动作超时(默认60.0s) | 变量地址表6.3 |
 | 40028-40029 | 0x001B | VD50 | VD_Timeout_ValveB | REAL | 2 | 阀B动作超时(默认60.0s) | 变量地址表6.3 |
 | 40030-40031 | 0x001D | VD54 | VD_Timeout_ValveC | REAL | 2 | 阀C动作超时(默认60.0s) | 变量地址表6.3 |
-| 40032-40033 | 0x001F | VD58 | VD_Timeout_Pump1 | REAL | 2 | 潜水泵1超时(默认10.0s) | 变量地址表6.3 |
-| 40034-40035 | 0x0021 | VD62 | VD_Timeout_Pump2 | REAL | 2 | 潜水泵2超时(默认10.0s) | 变量地址表6.3 |
+| 40032-40033 | 0x001F | VD58 | VD_Timeout_Pump1 | REAL | 2 | 预留未用（原潜水泵1超时，水流开关取消） | 变量地址表6.3 |
+| 40034-40035 | 0x0021 | VD62 | VD_Timeout_Pump2 | REAL | 2 | 预留未用（原潜水泵2超时，水流开关取消） | 变量地址表6.3 |
 | 40036-40037 | 0x0023 | VD66 | VD_Delay_ValveA_Verify | REAL | 2 | 阀A延时验证(默认5.0s) | 变量地址表6.3 |
 | 40038-40039 | 0x0025 | VD70 | VD_S1_Actual | REAL | 2 | S1实测时长(s) | 变量地址表7.1 |
 | 40040-40041 | 0x0027 | VD74 | VD_S4_Actual | REAL | 2 | S4实测时长(s) | 变量地址表7.1 |

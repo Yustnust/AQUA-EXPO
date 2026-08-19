@@ -148,9 +148,7 @@ alarm_bits = [
     # VB303 其他一般故障
     (303, 0, "Alarm_ValveC_CloseTimeout", "阀C关到位超时-检查阀C机械或限位"),
     (303, 1, "Alarm_ValveC_CloseLeak", "阀C关到位但仍有流-内漏"),
-    (303, 2, "Alarm_Pump1_Abnormal", "潜水泵1启动后超时无流-检查泵1或管路"),
-    (303, 3, "Alarm_Pump2_Abnormal", "潜水泵2启动后超时无流-检查泵2或管路"),
-    (303, 4, "Alarm_SyringePump", "注射泵通讯/动作异常-检查Modbus与泵状态"),
+    (303, 2, "Alarm_SyringePump", "注射泵通讯/动作异常-检查Modbus与泵状态"),
     (303, 5, "Alarm_RTC_Lost", "RTC时钟丢失-请校时"),
     (303, 6, "Alarm_FlowSwitch_Instant", "流量开关瞬时异常-检查流量开关信号"),
     (303, 7, "Alarm_Reserved_303_7", "预留扩展位"),

@@ -2,8 +2,6 @@
 DI_FlowSwitch_A,I0.0,流量开关A-阀A进水
 DI_FlowSwitch_B,I0.1,流量开关B-上下转移
 DI_FlowSwitch_C,I0.2,流量开关C-下缸排水
-DI_FlowSwitch_Pump1,I0.3,潜水泵1流量反馈
-DI_FlowSwitch_Pump2,I0.4,潜水泵2流量反馈
 DI_LevelA_High,I0.5,上缸液位高位(漫溢保护)
 DI_LevelA_Low,I0.6,上缸液位低位(排空)
 DI_LevelB_High,I0.7,下缸液位高位(漫溢保护)
@@ -64,8 +62,8 @@ VD_RestTime,VD36,S3.5静止等候标称时长(s)
 VD_RestTime_Min,VD40,静止等候压缩下限(s)
 VD_CycleExtend_Max,VD44,换水周期顺延最大允许幅度(min)
 VD_Timeout_ValveC,VD54,阀C动作超时保护时长(s)
-VD_Timeout_Pump1,VD58,潜水泵1动作超时保护时长(s)
-VD_Timeout_Pump2,VD62,潜水泵2动作超时保护时长(s)
+VD_Timeout_Pump1,VD58,预留未用（原潜水泵1超时保护，水流开关取消）(s)
+VD_Timeout_Pump2,VD62,预留未用（原潜水泵2超时保护，水流开关取消）(s)
 VD_Delay_ValveA_Verify,VD66,阀A关闭后延时验证时长(s)
 VD_StepResolution,VD350,注射泵单步分辨率(µL/步,原VD18)
 VD_CycleSetpoint,VD354,换水周期设定值(min,原VD20)
@@ -120,8 +118,6 @@ M_Alarm_ValveC_OpenTimeout,V302.6,阀C开到位反馈超时
 M_Alarm_ValveC_OpenNoFlow,V302.7,阀C开到位但无流
 M_Alarm_ValveC_CloseTimeout,V303.0,阀C关到位反馈超时
 M_Alarm_ValveC_CloseLeak,V303.1,阀C关到位但仍有流(内漏)
-M_Alarm_Pump1_Abnormal,V303.2,潜水泵1启动后超时无流
-M_Alarm_Pump2_Abnormal,V303.3,潜水泵2启动后超时无流
 M_Alarm_SyringePump,V303.4,注射泵通讯/动作异常
 M_Alarm_RTC_Lost,V303.5,RTC时钟丢失
 M_Alarm_FlowSwitch_Instant,V303.6,流量开关瞬时异常(2秒窗口≥5次翻转)

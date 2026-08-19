@@ -174,7 +174,7 @@ Day 3 下午: 8单元联调验证(总览页/通讯/报警联动)
 
 ### 3.4 阶段4: IO打点验证(30 min)
 
-#### 3.4.1 DI打点(20点)
+#### 3.4.1 DI打点(18点)
 
 操作方式: 现场逐点触发传感器/按钮,STEP7状态图监控对应I点位变1
 
@@ -183,23 +183,21 @@ Day 3 下午: 8单元联调验证(总览页/通讯/报警联动)
 | 1 | I0.0 | DI_FlowSwitch_A | 阀A开启+水流过 | =1 | ___ | |
 | 2 | I0.1 | DI_FlowSwitch_B | 阀B开启+水流过 | =1 | ___ | |
 | 3 | I0.2 | DI_FlowSwitch_C | 阀C开启+水流过 | =1 | ___ | |
-| 4 | I0.3 | DI_FlowSwitch_Pump1 | 潜水泵1运行 | =1 | ___ | |
-| 5 | I0.4 | DI_FlowSwitch_Pump2 | 潜水泵2运行 | =1 | ___ | |
-| 6 | I0.5 | DI_LevelA_High | 上缸注水至高位 | =1 | ___ | |
-| 7 | I0.6 | DI_LevelA_Low | 上缸排空 | =1 | ___ | |
-| 8 | I0.7 | DI_LevelB_High | 下缸注水至高位 | =1 | ___ | |
-| 9 | I1.0 | DI_LevelB_Low | 下缸排空 | =1 | ___ | |
-| 10 | I1.1 | DI_EStop | 正常状态 | =1(常闭) | ___ | |
-| 11 | I1.1 | DI_EStop | 按下急停 | =0 | ___ | |
-| 12 | I1.2 | DI_SafetyRelay_FB | 继电器正常 | =1 | ___ | |
-| 13 | I1.3 | DI_ValveA_Open | 阀A全开 | =1 | ___ | |
-| 14 | I1.4 | DI_ValveA_Close | 阀A全关 | =1 | ___ | |
-| 15 | I1.5 | DI_ValveB_Open | 阀B全开 | =1 | ___ | |
-| 16 | I1.6 | DI_ValveB_Close | 阀B全关 | =1 | ___ | |
-| 17 | I1.7 | DI_ValveC_Open | 阀C全开 | =1 | ___ | |
-| 18 | I2.0 | DI_ValveC_Close | 阀C全关 | =1 | ___ | |
-| 19 | I2.1 | DI_Btn_Mute | 按消音按钮 | =1(点动) | ___ | |
-| 20 | I2.3 | DI_Btn_SystemReset | 按复位按钮 | =1(点动) | ___ | |
+| 4 | I0.5 | DI_LevelA_High | 上缸注水至高位 | =1 | ___ | |
+| 5 | I0.6 | DI_LevelA_Low | 上缸排空 | =1 | ___ | |
+| 6 | I0.7 | DI_LevelB_High | 下缸注水至高位 | =1 | ___ | |
+| 7 | I1.0 | DI_LevelB_Low | 下缸排空 | =1 | ___ | |
+| 8 | I1.1 | DI_EStop | 正常状态 | =1(常闭) | ___ | |
+| 9 | I1.1 | DI_EStop | 按下急停 | =0 | ___ | |
+| 10 | I1.2 | DI_SafetyRelay_FB | 继电器正常 | =1 | ___ | |
+| 11 | I1.3 | DI_ValveA_Open | 阀A全开 | =1 | ___ | |
+| 12 | I1.4 | DI_ValveA_Close | 阀A全关 | =1 | ___ | |
+| 13 | I1.5 | DI_ValveB_Open | 阀B全开 | =1 | ___ | |
+| 14 | I1.6 | DI_ValveB_Close | 阀B全关 | =1 | ___ | |
+| 15 | I1.7 | DI_ValveC_Open | 阀C全开 | =1 | ___ | |
+| 16 | I2.0 | DI_ValveC_Close | 阀C全关 | =1 | ___ | |
+| 17 | I2.1 | DI_Btn_Mute | 按消音按钮 | =1(点动) | ___ | |
+| 18 | I2.3 | DI_Btn_SystemReset | 按复位按钮 | =1(点动) | ___ | |
 
 #### 3.4.2 DO打点(9点)
 

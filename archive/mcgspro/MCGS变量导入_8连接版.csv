@@ -57,8 +57,8 @@ U1_VD_PumpSpeed_Max,Float,PLC_01,VD136,RW,是,注射泵最高速度(Hz),4
 U1_VD_PumpSpeed_Cutoff,Float,PLC_01,VD140,RW,是,注射泵截止速度(Hz),4
 U1_V300_0_Alarm_Overflow_AHigh,Bool,PLC_01,V300.0,R,是,上缸漫溢,5
 U1_V300_1_Alarm_Overflow_BHigh,Bool,PLC_01,V300.1,R,是,下缸漫溢,5
-U1_V300_2_Alarm_NCValve_Top,Bool,PLC_01,V300.2,R,是,NC电磁阀-上缸动作,5
-U1_V300_3_Alarm_NCValve_Bottom,Bool,PLC_01,V300.3,R,是,NC电磁阀-下缸动作,5
+U1_V300_2_Alarm_NCValve_Top,Bool,PLC_01,V300.2,R,是,NC球阀-上缸动作,5
+U1_V300_3_Alarm_NCValve_Bottom,Bool,PLC_01,V300.3,R,是,NC球阀-下缸动作,5
 U1_V300_4_EStop_Latch,Bool,PLC_01,V300.4,R,是,急停触发锁存,5
 U1_V300_5_Alarm_SafetyRelay,Bool,PLC_01,V300.5,R,是,安全继电器故障(最高级),5
 U1_V300_6_Alarm_ScheduleLag,Bool,PLC_01,V300.6,R,是,配液节奏严重滞后,5
@@ -80,8 +80,6 @@ U1_V302_6_Alarm_ValveC_OpenTimeout,Bool,PLC_01,V302.6,R,是,阀C开超时,5
 U1_V302_7_Alarm_ValveC_OpenNoFlow,Bool,PLC_01,V302.7,R,是,阀C开到位无流,5
 U1_V303_0_Alarm_ValveC_CloseTimeout,Bool,PLC_01,V303.0,R,是,阀C关超时,5
 U1_V303_1_Alarm_ValveC_CloseLeak,Bool,PLC_01,V303.1,R,是,阀C关到位有流,5
-U1_V303_2_Alarm_Pump1_Abnormal,Bool,PLC_01,V303.2,R,是,潜水泵1超时无流,5
-U1_V303_3_Alarm_Pump2_Abnormal,Bool,PLC_01,V303.3,R,是,潜水泵2超时无流,5
 U1_V303_4_Alarm_SyringePump,Bool,PLC_01,V303.4,R,是,注射泵通讯/动作异常,5
 U1_V303_5_Alarm_RTC_Lost,Bool,PLC_01,V303.5,R,是,RTC时钟丢失,5
 U1_V303_6_Alarm_FlowSwitch_Instant,Bool,PLC_01,V303.6,R,是,流量开关瞬时异常,5
@@ -151,8 +149,8 @@ U2_VD_PumpSpeed_Max,Float,PLC_02,VD136,RW,是,注射泵最高速度(Hz),4
 U2_VD_PumpSpeed_Cutoff,Float,PLC_02,VD140,RW,是,注射泵截止速度(Hz),4
 U2_V300_0_Alarm_Overflow_AHigh,Bool,PLC_02,V300.0,R,是,上缸漫溢,5
 U2_V300_1_Alarm_Overflow_BHigh,Bool,PLC_02,V300.1,R,是,下缸漫溢,5
-U2_V300_2_Alarm_NCValve_Top,Bool,PLC_02,V300.2,R,是,NC电磁阀-上缸动作,5
-U2_V300_3_Alarm_NCValve_Bottom,Bool,PLC_02,V300.3,R,是,NC电磁阀-下缸动作,5
+U2_V300_2_Alarm_NCValve_Top,Bool,PLC_02,V300.2,R,是,NC球阀-上缸动作,5
+U2_V300_3_Alarm_NCValve_Bottom,Bool,PLC_02,V300.3,R,是,NC球阀-下缸动作,5
 U2_V300_4_EStop_Latch,Bool,PLC_02,V300.4,R,是,急停触发锁存,5
 U2_V300_5_Alarm_SafetyRelay,Bool,PLC_02,V300.5,R,是,安全继电器故障(最高级),5
 U2_V300_6_Alarm_ScheduleLag,Bool,PLC_02,V300.6,R,是,配液节奏严重滞后,5
@@ -174,8 +172,6 @@ U2_V302_6_Alarm_ValveC_OpenTimeout,Bool,PLC_02,V302.6,R,是,阀C开超时,5
 U2_V302_7_Alarm_ValveC_OpenNoFlow,Bool,PLC_02,V302.7,R,是,阀C开到位无流,5
 U2_V303_0_Alarm_ValveC_CloseTimeout,Bool,PLC_02,V303.0,R,是,阀C关超时,5
 U2_V303_1_Alarm_ValveC_CloseLeak,Bool,PLC_02,V303.1,R,是,阀C关到位有流,5
-U2_V303_2_Alarm_Pump1_Abnormal,Bool,PLC_02,V303.2,R,是,潜水泵1超时无流,5
-U2_V303_3_Alarm_Pump2_Abnormal,Bool,PLC_02,V303.3,R,是,潜水泵2超时无流,5
 U2_V303_4_Alarm_SyringePump,Bool,PLC_02,V303.4,R,是,注射泵通讯/动作异常,5
 U2_V303_5_Alarm_RTC_Lost,Bool,PLC_02,V303.5,R,是,RTC时钟丢失,5
 U2_V303_6_Alarm_FlowSwitch_Instant,Bool,PLC_02,V303.6,R,是,流量开关瞬时异常,5
@@ -245,8 +241,8 @@ U3_VD_PumpSpeed_Max,Float,PLC_03,VD136,RW,是,注射泵最高速度(Hz),4
 U3_VD_PumpSpeed_Cutoff,Float,PLC_03,VD140,RW,是,注射泵截止速度(Hz),4
 U3_V300_0_Alarm_Overflow_AHigh,Bool,PLC_03,V300.0,R,是,上缸漫溢,5
 U3_V300_1_Alarm_Overflow_BHigh,Bool,PLC_03,V300.1,R,是,下缸漫溢,5
-U3_V300_2_Alarm_NCValve_Top,Bool,PLC_03,V300.2,R,是,NC电磁阀-上缸动作,5
-U3_V300_3_Alarm_NCValve_Bottom,Bool,PLC_03,V300.3,R,是,NC电磁阀-下缸动作,5
+U3_V300_2_Alarm_NCValve_Top,Bool,PLC_03,V300.2,R,是,NC球阀-上缸动作,5
+U3_V300_3_Alarm_NCValve_Bottom,Bool,PLC_03,V300.3,R,是,NC球阀-下缸动作,5
 U3_V300_4_EStop_Latch,Bool,PLC_03,V300.4,R,是,急停触发锁存,5
 U3_V300_5_Alarm_SafetyRelay,Bool,PLC_03,V300.5,R,是,安全继电器故障(最高级),5
 U3_V300_6_Alarm_ScheduleLag,Bool,PLC_03,V300.6,R,是,配液节奏严重滞后,5
@@ -268,8 +264,6 @@ U3_V302_6_Alarm_ValveC_OpenTimeout,Bool,PLC_03,V302.6,R,是,阀C开超时,5
 U3_V302_7_Alarm_ValveC_OpenNoFlow,Bool,PLC_03,V302.7,R,是,阀C开到位无流,5
 U3_V303_0_Alarm_ValveC_CloseTimeout,Bool,PLC_03,V303.0,R,是,阀C关超时,5
 U3_V303_1_Alarm_ValveC_CloseLeak,Bool,PLC_03,V303.1,R,是,阀C关到位有流,5
-U3_V303_2_Alarm_Pump1_Abnormal,Bool,PLC_03,V303.2,R,是,潜水泵1超时无流,5
-U3_V303_3_Alarm_Pump2_Abnormal,Bool,PLC_03,V303.3,R,是,潜水泵2超时无流,5
 U3_V303_4_Alarm_SyringePump,Bool,PLC_03,V303.4,R,是,注射泵通讯/动作异常,5
 U3_V303_5_Alarm_RTC_Lost,Bool,PLC_03,V303.5,R,是,RTC时钟丢失,5
 U3_V303_6_Alarm_FlowSwitch_Instant,Bool,PLC_03,V303.6,R,是,流量开关瞬时异常,5
@@ -339,8 +333,8 @@ U4_VD_PumpSpeed_Max,Float,PLC_04,VD136,RW,是,注射泵最高速度(Hz),4
 U4_VD_PumpSpeed_Cutoff,Float,PLC_04,VD140,RW,是,注射泵截止速度(Hz),4
 U4_V300_0_Alarm_Overflow_AHigh,Bool,PLC_04,V300.0,R,是,上缸漫溢,5
 U4_V300_1_Alarm_Overflow_BHigh,Bool,PLC_04,V300.1,R,是,下缸漫溢,5
-U4_V300_2_Alarm_NCValve_Top,Bool,PLC_04,V300.2,R,是,NC电磁阀-上缸动作,5
-U4_V300_3_Alarm_NCValve_Bottom,Bool,PLC_04,V300.3,R,是,NC电磁阀-下缸动作,5
+U4_V300_2_Alarm_NCValve_Top,Bool,PLC_04,V300.2,R,是,NC球阀-上缸动作,5
+U4_V300_3_Alarm_NCValve_Bottom,Bool,PLC_04,V300.3,R,是,NC球阀-下缸动作,5
 U4_V300_4_EStop_Latch,Bool,PLC_04,V300.4,R,是,急停触发锁存,5
 U4_V300_5_Alarm_SafetyRelay,Bool,PLC_04,V300.5,R,是,安全继电器故障(最高级),5
 U4_V300_6_Alarm_ScheduleLag,Bool,PLC_04,V300.6,R,是,配液节奏严重滞后,5
@@ -362,8 +356,6 @@ U4_V302_6_Alarm_ValveC_OpenTimeout,Bool,PLC_04,V302.6,R,是,阀C开超时,5
 U4_V302_7_Alarm_ValveC_OpenNoFlow,Bool,PLC_04,V302.7,R,是,阀C开到位无流,5
 U4_V303_0_Alarm_ValveC_CloseTimeout,Bool,PLC_04,V303.0,R,是,阀C关超时,5
 U4_V303_1_Alarm_ValveC_CloseLeak,Bool,PLC_04,V303.1,R,是,阀C关到位有流,5
-U4_V303_2_Alarm_Pump1_Abnormal,Bool,PLC_04,V303.2,R,是,潜水泵1超时无流,5
-U4_V303_3_Alarm_Pump2_Abnormal,Bool,PLC_04,V303.3,R,是,潜水泵2超时无流,5
 U4_V303_4_Alarm_SyringePump,Bool,PLC_04,V303.4,R,是,注射泵通讯/动作异常,5
 U4_V303_5_Alarm_RTC_Lost,Bool,PLC_04,V303.5,R,是,RTC时钟丢失,5
 U4_V303_6_Alarm_FlowSwitch_Instant,Bool,PLC_04,V303.6,R,是,流量开关瞬时异常,5
@@ -433,8 +425,8 @@ U5_VD_PumpSpeed_Max,Float,PLC_05,VD136,RW,是,注射泵最高速度(Hz),4
 U5_VD_PumpSpeed_Cutoff,Float,PLC_05,VD140,RW,是,注射泵截止速度(Hz),4
 U5_V300_0_Alarm_Overflow_AHigh,Bool,PLC_05,V300.0,R,是,上缸漫溢,5
 U5_V300_1_Alarm_Overflow_BHigh,Bool,PLC_05,V300.1,R,是,下缸漫溢,5
-U5_V300_2_Alarm_NCValve_Top,Bool,PLC_05,V300.2,R,是,NC电磁阀-上缸动作,5
-U5_V300_3_Alarm_NCValve_Bottom,Bool,PLC_05,V300.3,R,是,NC电磁阀-下缸动作,5
+U5_V300_2_Alarm_NCValve_Top,Bool,PLC_05,V300.2,R,是,NC球阀-上缸动作,5
+U5_V300_3_Alarm_NCValve_Bottom,Bool,PLC_05,V300.3,R,是,NC球阀-下缸动作,5
 U5_V300_4_EStop_Latch,Bool,PLC_05,V300.4,R,是,急停触发锁存,5
 U5_V300_5_Alarm_SafetyRelay,Bool,PLC_05,V300.5,R,是,安全继电器故障(最高级),5
 U5_V300_6_Alarm_ScheduleLag,Bool,PLC_05,V300.6,R,是,配液节奏严重滞后,5
@@ -456,8 +448,6 @@ U5_V302_6_Alarm_ValveC_OpenTimeout,Bool,PLC_05,V302.6,R,是,阀C开超时,5
 U5_V302_7_Alarm_ValveC_OpenNoFlow,Bool,PLC_05,V302.7,R,是,阀C开到位无流,5
 U5_V303_0_Alarm_ValveC_CloseTimeout,Bool,PLC_05,V303.0,R,是,阀C关超时,5
 U5_V303_1_Alarm_ValveC_CloseLeak,Bool,PLC_05,V303.1,R,是,阀C关到位有流,5
-U5_V303_2_Alarm_Pump1_Abnormal,Bool,PLC_05,V303.2,R,是,潜水泵1超时无流,5
-U5_V303_3_Alarm_Pump2_Abnormal,Bool,PLC_05,V303.3,R,是,潜水泵2超时无流,5
 U5_V303_4_Alarm_SyringePump,Bool,PLC_05,V303.4,R,是,注射泵通讯/动作异常,5
 U5_V303_5_Alarm_RTC_Lost,Bool,PLC_05,V303.5,R,是,RTC时钟丢失,5
 U5_V303_6_Alarm_FlowSwitch_Instant,Bool,PLC_05,V303.6,R,是,流量开关瞬时异常,5
@@ -527,8 +517,8 @@ U6_VD_PumpSpeed_Max,Float,PLC_06,VD136,RW,是,注射泵最高速度(Hz),4
 U6_VD_PumpSpeed_Cutoff,Float,PLC_06,VD140,RW,是,注射泵截止速度(Hz),4
 U6_V300_0_Alarm_Overflow_AHigh,Bool,PLC_06,V300.0,R,是,上缸漫溢,5
 U6_V300_1_Alarm_Overflow_BHigh,Bool,PLC_06,V300.1,R,是,下缸漫溢,5
-U6_V300_2_Alarm_NCValve_Top,Bool,PLC_06,V300.2,R,是,NC电磁阀-上缸动作,5
-U6_V300_3_Alarm_NCValve_Bottom,Bool,PLC_06,V300.3,R,是,NC电磁阀-下缸动作,5
+U6_V300_2_Alarm_NCValve_Top,Bool,PLC_06,V300.2,R,是,NC球阀-上缸动作,5
+U6_V300_3_Alarm_NCValve_Bottom,Bool,PLC_06,V300.3,R,是,NC球阀-下缸动作,5
 U6_V300_4_EStop_Latch,Bool,PLC_06,V300.4,R,是,急停触发锁存,5
 U6_V300_5_Alarm_SafetyRelay,Bool,PLC_06,V300.5,R,是,安全继电器故障(最高级),5
 U6_V300_6_Alarm_ScheduleLag,Bool,PLC_06,V300.6,R,是,配液节奏严重滞后,5
@@ -550,8 +540,6 @@ U6_V302_6_Alarm_ValveC_OpenTimeout,Bool,PLC_06,V302.6,R,是,阀C开超时,5
 U6_V302_7_Alarm_ValveC_OpenNoFlow,Bool,PLC_06,V302.7,R,是,阀C开到位无流,5
 U6_V303_0_Alarm_ValveC_CloseTimeout,Bool,PLC_06,V303.0,R,是,阀C关超时,5
 U6_V303_1_Alarm_ValveC_CloseLeak,Bool,PLC_06,V303.1,R,是,阀C关到位有流,5
-U6_V303_2_Alarm_Pump1_Abnormal,Bool,PLC_06,V303.2,R,是,潜水泵1超时无流,5
-U6_V303_3_Alarm_Pump2_Abnormal,Bool,PLC_06,V303.3,R,是,潜水泵2超时无流,5
 U6_V303_4_Alarm_SyringePump,Bool,PLC_06,V303.4,R,是,注射泵通讯/动作异常,5
 U6_V303_5_Alarm_RTC_Lost,Bool,PLC_06,V303.5,R,是,RTC时钟丢失,5
 U6_V303_6_Alarm_FlowSwitch_Instant,Bool,PLC_06,V303.6,R,是,流量开关瞬时异常,5
@@ -621,8 +609,8 @@ U7_VD_PumpSpeed_Max,Float,PLC_07,VD136,RW,是,注射泵最高速度(Hz),4
 U7_VD_PumpSpeed_Cutoff,Float,PLC_07,VD140,RW,是,注射泵截止速度(Hz),4
 U7_V300_0_Alarm_Overflow_AHigh,Bool,PLC_07,V300.0,R,是,上缸漫溢,5
 U7_V300_1_Alarm_Overflow_BHigh,Bool,PLC_07,V300.1,R,是,下缸漫溢,5
-U7_V300_2_Alarm_NCValve_Top,Bool,PLC_07,V300.2,R,是,NC电磁阀-上缸动作,5
-U7_V300_3_Alarm_NCValve_Bottom,Bool,PLC_07,V300.3,R,是,NC电磁阀-下缸动作,5
+U7_V300_2_Alarm_NCValve_Top,Bool,PLC_07,V300.2,R,是,NC球阀-上缸动作,5
+U7_V300_3_Alarm_NCValve_Bottom,Bool,PLC_07,V300.3,R,是,NC球阀-下缸动作,5
 U7_V300_4_EStop_Latch,Bool,PLC_07,V300.4,R,是,急停触发锁存,5
 U7_V300_5_Alarm_SafetyRelay,Bool,PLC_07,V300.5,R,是,安全继电器故障(最高级),5
 U7_V300_6_Alarm_ScheduleLag,Bool,PLC_07,V300.6,R,是,配液节奏严重滞后,5
@@ -644,8 +632,6 @@ U7_V302_6_Alarm_ValveC_OpenTimeout,Bool,PLC_07,V302.6,R,是,阀C开超时,5
 U7_V302_7_Alarm_ValveC_OpenNoFlow,Bool,PLC_07,V302.7,R,是,阀C开到位无流,5
 U7_V303_0_Alarm_ValveC_CloseTimeout,Bool,PLC_07,V303.0,R,是,阀C关超时,5
 U7_V303_1_Alarm_ValveC_CloseLeak,Bool,PLC_07,V303.1,R,是,阀C关到位有流,5
-U7_V303_2_Alarm_Pump1_Abnormal,Bool,PLC_07,V303.2,R,是,潜水泵1超时无流,5
-U7_V303_3_Alarm_Pump2_Abnormal,Bool,PLC_07,V303.3,R,是,潜水泵2超时无流,5
 U7_V303_4_Alarm_SyringePump,Bool,PLC_07,V303.4,R,是,注射泵通讯/动作异常,5
 U7_V303_5_Alarm_RTC_Lost,Bool,PLC_07,V303.5,R,是,RTC时钟丢失,5
 U7_V303_6_Alarm_FlowSwitch_Instant,Bool,PLC_07,V303.6,R,是,流量开关瞬时异常,5
@@ -715,8 +701,8 @@ U8_VD_PumpSpeed_Max,Float,PLC_08,VD136,RW,是,注射泵最高速度(Hz),4
 U8_VD_PumpSpeed_Cutoff,Float,PLC_08,VD140,RW,是,注射泵截止速度(Hz),4
 U8_V300_0_Alarm_Overflow_AHigh,Bool,PLC_08,V300.0,R,是,上缸漫溢,5
 U8_V300_1_Alarm_Overflow_BHigh,Bool,PLC_08,V300.1,R,是,下缸漫溢,5
-U8_V300_2_Alarm_NCValve_Top,Bool,PLC_08,V300.2,R,是,NC电磁阀-上缸动作,5
-U8_V300_3_Alarm_NCValve_Bottom,Bool,PLC_08,V300.3,R,是,NC电磁阀-下缸动作,5
+U8_V300_2_Alarm_NCValve_Top,Bool,PLC_08,V300.2,R,是,NC球阀-上缸动作,5
+U8_V300_3_Alarm_NCValve_Bottom,Bool,PLC_08,V300.3,R,是,NC球阀-下缸动作,5
 U8_V300_4_EStop_Latch,Bool,PLC_08,V300.4,R,是,急停触发锁存,5
 U8_V300_5_Alarm_SafetyRelay,Bool,PLC_08,V300.5,R,是,安全继电器故障(最高级),5
 U8_V300_6_Alarm_ScheduleLag,Bool,PLC_08,V300.6,R,是,配液节奏严重滞后,5
@@ -738,8 +724,6 @@ U8_V302_6_Alarm_ValveC_OpenTimeout,Bool,PLC_08,V302.6,R,是,阀C开超时,5
 U8_V302_7_Alarm_ValveC_OpenNoFlow,Bool,PLC_08,V302.7,R,是,阀C开到位无流,5
 U8_V303_0_Alarm_ValveC_CloseTimeout,Bool,PLC_08,V303.0,R,是,阀C关超时,5
 U8_V303_1_Alarm_ValveC_CloseLeak,Bool,PLC_08,V303.1,R,是,阀C关到位有流,5
-U8_V303_2_Alarm_Pump1_Abnormal,Bool,PLC_08,V303.2,R,是,潜水泵1超时无流,5
-U8_V303_3_Alarm_Pump2_Abnormal,Bool,PLC_08,V303.3,R,是,潜水泵2超时无流,5
 U8_V303_4_Alarm_SyringePump,Bool,PLC_08,V303.4,R,是,注射泵通讯/动作异常,5
 U8_V303_5_Alarm_RTC_Lost,Bool,PLC_08,V303.5,R,是,RTC时钟丢失,5
 U8_V303_6_Alarm_FlowSwitch_Instant,Bool,PLC_08,V303.6,R,是,流量开关瞬时异常,5

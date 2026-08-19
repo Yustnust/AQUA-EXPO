@@ -1,9 +1,7 @@
-﻿符号,地址,注释
+符号,地址,注释
 DI_FlowSwitch_A,I0.0,流量开关A-阀A进水
 DI_FlowSwitch_B,I0.1,流量开关B-上下转移
 DI_FlowSwitch_C,I0.2,流量开关C-下缸排水
-DI_FlowSwitch_Pump1,I0.3,潜水泵1流量反馈
-DI_FlowSwitch_Pump2,I0.4,潜水泵2流量反馈
 DI_LevelA_High,I0.5,上缸液位高位(漫溢保护)
 DI_LevelA_Low,I0.6,上缸液位低位(排空)
 DI_LevelB_High,I0.7,下缸液位高位(漫溢保护)
@@ -23,8 +21,8 @@ DO_Pump2,Q0.1,潜水泵2(上缸搅拌)
 DO_ValveA,Q0.2,电动球阀A(上缸进水)
 DO_ValveB,Q0.3,电动球阀B(上下转移)
 DO_ValveC,Q0.4,电动球阀C(下缸排水)
-DO_NCValve_Top,Q0.5,NC电磁阀-上缸(常闭失效安全)
-DO_NCValve_Bottom,Q0.6,NC电磁阀-下缸(常闭失效安全)
+DO_NCValve_Top,Q0.5,NC球阀-上缸(常闭失效安全)
+DO_NCValve_Bottom,Q0.6,NC球阀-下缸(常闭失效安全)
 DO_Alarm_Sound,Q0.7,报警蜂鸣器(独立消音)
 DO_Alarm_Light,Q1.0,报警指示灯(独立消光)
 CMD_Start,V0.0,启动实验(S0→S1)
@@ -64,8 +62,8 @@ VD_RestTime,VD36,S3.5静止等候标称时长(s)
 VD_RestTime_Min,VD40,静止等候压缩下限(s)
 VD_CycleExtend_Max,VD44,换水周期顺延最大允许幅度(min)
 VD_Timeout_ValveC,VD54,阀C动作超时保护时长(s)
-VD_Timeout_Pump1,VD58,潜水泵1动作超时保护时长(s)
-VD_Timeout_Pump2,VD62,潜水泵2动作超时保护时长(s)
+VD_Timeout_Pump1,VD58,预留未用（原潜水泵1超时保护，水流开关取消）
+VD_Timeout_Pump2,VD62,预留未用（原潜水泵2超时保护，水流开关取消）
 VD_Delay_ValveA_Verify,VD66,阀A关闭后延时验证时长(s)
 VD_StepResolution,VD350,注射泵单步分辨率(µL/步,原VD18)
 VD_CycleSetpoint,VD354,换水周期设定值(min,原VD20)
@@ -97,8 +95,8 @@ VB302_AlarmWord3,VB302,报警字3(阀B/C类故障)
 VB303_AlarmWord4,VB303,报警字4(泵/注射泵/RTC/流量瞬时)
 M_Alarm_Overflow_AHigh,V300.0,上缸漫溢(液位计A高位)
 M_Alarm_Overflow_BHigh,V300.1,下缸漫溢(液位计B高位)
-M_Alarm_NCValve_Top,V300.2,NC电磁阀-上缸动作(阀A失效保护)
-M_Alarm_NCValve_Bottom,V300.3,NC电磁阀-下缸动作(阀B/液位计B报警)
+M_Alarm_NCValve_Top,V300.2,NC球阀-上缸动作(阀A失效保护)
+M_Alarm_NCValve_Bottom,V300.3,NC球阀-下缸动作(阀B/液位计B报警)
 M_EStop_Latch,V300.4,急停触发锁存
 M_Alarm_SafetyRelay,V300.5,安全继电器/接触器故障(最高优先级)
 M_Alarm_ScheduleLag,V300.6,配液节奏严重滞后(三层纠偏用尽)
@@ -120,8 +118,6 @@ M_Alarm_ValveC_OpenTimeout,V302.6,阀C开到位反馈超时
 M_Alarm_ValveC_OpenNoFlow,V302.7,阀C开到位但无流
 M_Alarm_ValveC_CloseTimeout,V303.0,阀C关到位反馈超时
 M_Alarm_ValveC_CloseLeak,V303.1,阀C关到位但仍有流(内漏)
-M_Alarm_Pump1_Abnormal,V303.2,潜水泵1启动后超时无流
-M_Alarm_Pump2_Abnormal,V303.3,潜水泵2启动后超时无流
 M_Alarm_SyringePump,V303.4,注射泵通讯/动作异常
 M_Alarm_RTC_Lost,V303.5,RTC时钟丢失
 M_Alarm_FlowSwitch_Instant,V303.6,流量开关瞬时异常(2秒窗口≥5次翻转)
