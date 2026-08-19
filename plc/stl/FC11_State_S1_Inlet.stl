@@ -24,8 +24,9 @@ EU
 LPS
 // 记录流量计快照（差值法基准，供FC30使用）
 MOVD   VD86, VD82                  // VD_FlowMeter_Snapshot
-// 开启阀A
+// 开启阀A + 上缸NC球阀(串联主路,需得电导通)
 S      Q0.2, 1
+S      Q0.5, 1
 // 启动S1计时器
 R      T37, 1
 TON    T37, 32767

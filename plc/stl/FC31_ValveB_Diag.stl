@@ -19,16 +19,17 @@
 // I1.5  : 阀B开到位反馈
 // I1.6  : 阀B关到位反馈
 // Q0.3  : 阀B
-// Q0.6  : NC电磁阀-下缸
+// Q0.6  : NC球阀-下缸
 
 
 NETWORK 1
 // 漫溢保护（全程，优先级最高）
-// 液位计B高位=ON立即报警+NC阀+转S_ERROR
+// 液位计B高位=ON立即报警+关NC阀+关阀B+转S_ERROR
+// NC球阀与电动球阀串联冗余:高位时关闭NC球阀切断水流,防止球阀关不严持续注水
 LD     I0.7
 S      V300.1, 1                   // M_Alarm_Overflow_BHigh
-S      V300.3, 1                   // M_Alarm_NCValve_Bottom(NC阀下缸动作报警,漫溢风险级)
-S      Q0.6, 1                     // NC电磁阀-下缸动作
+S      V300.3, 1                   // M_Alarm_NCValve_Bottom(NC球阀下缸关闭报警,漫溢风险级)
+R      Q0.6, 1                     // 关闭下缸NC球阀(切断水流)
 R      Q0.3, 1                     // 关阀B
 MOVW   99, VW2
 MOVB   2, VB268                    // 故障
