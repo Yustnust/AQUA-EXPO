@@ -1,4 +1,4 @@
-# MCGS画面组态详细SOP v1.0
+﻿# MCGS画面组态详细SOP v1.0
 
 **项目**：药液配置与加注控制系统（AQUA-EXPO）
 **配套文档**：《HMI画面布局线框图v1.0》《画面变量绑定清单v1.0》《MCGS组态脚本代码v1.0》《HMI用户权限矩阵v1.0》《报警字32位解析映射表》
@@ -581,7 +581,7 @@ End If
 | 13 | 文本显示 | lblAlarm | (740,220,200,32) | 报警:●无 | 黑体16pt | U{X}_VW6_AlarmCode |
 | 14 | 状态指示灯 | indSafetyRelay | (60,260,20,20) | — | — | U{X}_I1.2 |
 | 15 | 文本显示 | lblSafetyRelay | (90,260,200,32) | 安全继电器:正常 | 黑体14pt | U{X}_I1.2 |
-| 16~21 | 状态指示灯 | indValveAOpen, indValveAClose, indValveBOpen, indValveBClose, indValveCOpen, indValveCClose | (340~940,260,各20×20) | — | — | U{X}_I1.3~I2.0 |
+| 16~21 | 状态指示灯 | indValveAOpen, indValveAClose, indValveBOpen, indValveBClose, indValveCOpen, indValveCClose | (340~940,260,各20×20) | — | — | U{X}_I8.0~I8.5 |
 | 22 | 文本显示 | lblValves | (980,260,200,32) | 阀A/B/C反馈 | 黑体12pt | — |
 
 #### 4.2.2 实时数据面板（y=360~560，200px高）
@@ -749,9 +749,9 @@ End Select
 | 元素 | 1号单元绑定（其余套U{X}前缀） | 读写 |
 |---|---|---|
 | 阀A状态 | U1_STA_TankA_State (V1.6) | R |
-| 阀A开到位 | U1_I1.3 | R |
-| 阀A关到位 | U1_I1.4 | R |
-| (阀B/C同上) | U1_I1.5~I2.0 | R |
+| 阀A开到位 | U1_I8.0 | R |
+| 阀A关到位 | U1_I8.1 | R |
+| (阀B/C同上) | U1_I8.2~I8.5 | R |
 | 潜水泵1状态 | U1_Q0.0 | R |
 | 潜水泵2状态 | U1_Q0.1 | R |
 | NC球阀-上 | U1_Q0.5 | R |
@@ -1075,7 +1075,7 @@ canEdit = (LoginLevel >= 3)
 | 9 | 状态指示灯 | indAckDone | (700,225,20,20) | — | U{X}_STA_AlarmAckDone (V1.3) |
 | 10 | 状态指示灯 | indMuteDone | (730,225,20,20) | — | U{X}_STA_MuteDone (V1.4) |
 | 11 | 状态指示灯 | indSoundOut | (760,225,20,20) | — | U{X}_Q0.7 |
-| 12 | 状态指示灯 | indLightOut | (790,225,20,20) | — | U{X}_Q1.0 |
+| 12 | 状态指示灯 | indLightOut | (790,225,20,20) | — | U{X}_Q8.0 |
 
 #### 7.2.2 32位报警指示灯阵列（y=240~520，280px高）
 
@@ -1145,7 +1145,7 @@ canEdit = (LoginLevel >= 3)
 | 继电器高权限确认 | U1_CMD_SafetyRelayAck (V0.7) | RW |
 | 报警确认握手 | U1_STA_AlarmAckDone (V1.3) | R |
 | 消音握手 | U1_STA_MuteDone (V1.4) | R |
-| 灯光输出状态 | U1_Q1.0 | R |
+| 灯光输出状态 | U1_Q8.0 | R |
 | 声音输出状态 | U1_Q0.7 | R |
 | 历史日志 | U1_VB500~VB599 | R |
 

@@ -104,15 +104,20 @@ word_rows = [
     ("V区变量", "32位浮点数", 312, 1, "只读", "VD_LeakDiff", "阀A内漏差值"),
     ("V区变量", "32位浮点数", 316, 1, "只读", "VD_TargetInletVolume", "PLC计算的目标进水量(L)"),
     ("V区变量", "32位浮点数", 328, 1, "只读", "VD_Timeout_ValveC_x10", "阀C超时×10校验值"),
-    ("V区变量", "32位浮点数", 350, 1, "读写", "VD_StepResolution", "注射泵单步分辨率(µL/步) AQEX-36:VD18→VD350"),
+    ("V区变量", "32位浮点数", 350, 1, "读写", "VD_StepResolution", "注射泵单步分辨率(uL/步) AQEX-36:VD18→VD350"),
     ("V区变量", "32位浮点数", 354, 1, "读写", "VD_CycleSetpoint", "换水周期设定(min) AQEX-36:VD20→VD354"),
     ("V区变量", "32位浮点数", 358, 1, "读写", "VD_Timeout_ValveA", "阀A动作超时(s) AQEX-36:VD48→VD358"),
     ("V区变量", "32位浮点数", 362, 1, "读写", "VD_Timeout_ValveB", "阀B动作超时(s) AQEX-36:VD50→VD362"),
     ("V区变量", "32位浮点数", 364, 1, "只读", "VD_ExpTotal_Flow", "本次实验累计流量(L)"),
     ("V区变量", "32位浮点数", 366, 1, "只读", "VD_ExperimentDuration_Accum", "实验时长累加(min) AQEX-36:VD96→VD366"),
-    ("V区变量", "32位浮点数", 370, 1, "只读", "VD_Vol_Target", "本轮目标抽取母液体积(µL) AQEX-36:VD98→VD370"),
-    ("V区变量", "32位浮点数", 372, 1, "只读", "VD_Remaining_Vol", "S3加药剩余待加体积(µL)"),
-    ("V区变量", "32位浮点数", 378, 1, "只读", "VD_Dosed_Volume_Total", "本次实验累计加药量(µL)"),
+    ("V区变量", "32位浮点数", 370, 1, "只读", "VD_Vol_Target", "本轮目标抽取母液体积(uL) AQEX-36:VD98→VD370"),
+    ("V区变量", "32位浮点数", 372, 1, "只读", "VD_Remaining_Vol", "S3加药剩余待加体积(uL)"),
+    ("V区变量", "32位浮点数", 378, 1, "只读", "VD_Dosed_Volume_Total", "本次实验累计加药量(uL)"),
+    ("V区变量", "32位浮点数", 384, 1, "读写", "VD_ManualDose_Target", "手动注射泵总加药量(uL)"),
+    ("V区变量", "32位浮点数", 392, 1, "只读", "VD_ManualDose_Dosed", "手动注射泵累计加药量(uL)"),
+    ("V区变量", "32位浮点数", 396, 1, "只读", "VD_ManualDose_Remaining", "手动注射泵剩余加药量(uL)"),
+    ("V区变量", "16位有符号二进制", 388, 1, "读写", "VW_ManualDose_Mode", "手动注射泵模式 0=单次 1=循环"),
+    ("V区变量", "16位有符号二进制", 390, 1, "只读", "VW_ManualDose_State", "手动注射泵状态 0空闲/1抽液/2排液/3回零/4完成/99错误"),
 ]
 rows.extend(word_rows)
 
@@ -156,7 +161,7 @@ alarm_bits = [
 for byte, bit, name, note in alarm_bits:
     rows.append(("V区变量", f"第{bit:02d}位", byte, 1, "只读", name, note))
 
-# 手动命令位 V2.4~V3.5
+# 手动命令位 V2.4~V3.7
 manual_bits = [
     (2, 4, "CMD_Manual_ValveA_Open", "手动开阀A"),
     (2, 5, "CMD_Manual_ValveA_Close", "手动关阀A"),
@@ -168,6 +173,8 @@ manual_bits = [
     (3, 3, "CMD_Manual_Pump1_Off", "手动停止潜水泵1"),
     (3, 4, "CMD_Manual_Pump2_On", "手动启动潜水泵2(V3.4)"),
     (3, 5, "CMD_Manual_Pump2_Off", "手动停止潜水泵2(V3.5)"),
+    (3, 6, "CMD_Manual_SyringePump_Start", "手动注射泵启动(V3.6)"),
+    (3, 7, "CMD_Manual_SyringePump_Stop", "手动注射泵停止回零(V3.7)"),
 ]
 for byte, bit, name, note in manual_bits:
     rows.append(("V区变量", f"第{bit:02d}位", byte, 1, "读写", name, note))

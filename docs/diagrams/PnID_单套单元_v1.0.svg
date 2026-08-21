@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1480 1040" font-family="'Microsoft YaHei','SimHei',Arial,sans-serif">
   <!-- ============================================================
        药液配置加注控制系统 AQUA-EXPO — 单套缸单元 P&amp;ID 工艺管道仪表流程图 v1.0
@@ -293,13 +293,13 @@
     <rect x="1080" y="354" width="340" height="56" rx="3" fill="#FFF" stroke="#F57F17" stroke-width="1.5"/>
     <text x="1100" y="376" font-size="12" font-weight="bold" fill="#E65100">CPU ST20</text>
     <text x="1100" y="392" font-size="10" fill="#616161">6ES7-288-1ST20-0AA0</text>
-    <text x="1100" y="404" font-size="9" fill="#757575">本体12DI(I0.0~I1.3)/8DO(Q0.0~Q0.7) + 以太网 + Port0(RS485)</text>
+    <text x="1100" y="404" font-size="9" fill="#757575">本体12DI(I0.0~I8.0)/8DO(Q0.0~Q0.7) + 以太网 + Port0(RS485)</text>
 
     <!-- EM DT16 -->
     <rect x="1080" y="418" width="340" height="48" rx="3" fill="#FFF" stroke="#F57F17" stroke-width="1.5"/>
     <text x="1100" y="438" font-size="12" font-weight="bold" fill="#E65100">EM DT16</text>
     <text x="1230" y="438" font-size="10" fill="#616161">6ES7-288-2DE08-0AA0</text>
-    <text x="1100" y="456" font-size="9" fill="#757575">8DI(I2.0~I2.7) 纯DI扩展</text>
+    <text x="1100" y="456" font-size="9" fill="#757575">8DI(I8.5~I2.7) 纯DI扩展</text>
 
     <!-- EM DR16 -->
     <rect x="1080" y="474" width="340" height="48" rx="3" fill="#FFF" stroke="#F57F17" stroke-width="1.5"/>
@@ -310,7 +310,7 @@
     <!-- 信号汇总标注 -->
     <text x="1100" y="544" font-size="10" font-weight="bold" fill="#2E7D32">DI 信号输入(19点):</text>
     <text x="1100" y="558" font-size="9" fill="#616161">I0.0~I0.2 流量开关×3 | I0.3~I0.4 预留/未用 | I0.5~I1.0 液位计×4 | I1.1 急停 I1.2 安全继电器</text>
-    <text x="1100" y="572" font-size="9" fill="#616161">I1.3~I2.0 阀位反馈×6(经KA10~15转换) | I2.1 消音 I2.3 复位</text>
+    <text x="1100" y="572" font-size="9" fill="#616161">I8.0~I8.5 阀位反馈×6(经KA10~15转换) | I0.4 消音 I0.3 复位</text>
     <text x="1100" y="592" font-size="10" font-weight="bold" fill="#2E7D32">DO 输出(9点):</text>
     <text x="1100" y="606" font-size="9" fill="#616161">Q0.0~Q0.1 泵×2 | Q0.2~Q0.4 阀ABC×3 | Q0.5~Q0.6 NC球阀×2 | Q0.7蜂鸣 Q2.0指示灯</text>
   </g>
@@ -346,7 +346,7 @@
       <circle cx="1280" cy="700" r="14" fill="#E3F2FD" stroke="#1565C0" stroke-width="1.5"/>
       <text x="1280" y="704" text-anchor="middle" font-size="9" font-weight="bold" fill="#1565C0">M</text>
       <text x="1280" y="730" text-anchor="middle" font-size="10" fill="#424242">消音</text>
-      <text x="1280" y="744" text-anchor="middle" font-size="9" fill="#2E7D32">I2.1 点动</text>
+      <text x="1280" y="744" text-anchor="middle" font-size="9" fill="#2E7D32">I0.4 点动</text>
     </g>
 
     <!-- 复位按钮 -->
@@ -354,7 +354,7 @@
       <circle cx="1340" cy="700" r="14" fill="#E8F5E9" stroke="#2E7D32" stroke-width="1.5"/>
       <text x="1340" y="704" text-anchor="middle" font-size="9" font-weight="bold" fill="#2E7D32">R</text>
       <text x="1340" y="730" text-anchor="middle" font-size="10" fill="#424242">复位</text>
-      <text x="1340" y="744" text-anchor="middle" font-size="9" fill="#2E7D32">I2.3 点动</text>
+      <text x="1340" y="744" text-anchor="middle" font-size="9" fill="#2E7D32">I0.3 点动</text>
     </g>
 
     <!-- 蜂鸣器 -->
@@ -393,9 +393,9 @@
     <text x="76" y="716" font-size="9" fill="#616161">KA6 NC阀上 | KA7 NC阀下 | KA8蜂鸣 | KA9指示灯</text>
 
     <text x="76" y="744" font-size="10" font-weight="bold" fill="#1565C0">DI有源转换(KA10~KA15,6个):</text>
-    <text x="76" y="760" font-size="9" fill="#616161">KA10阀A开到位→I1.3 | KA11阀A关到位→I1.4</text>
-    <text x="76" y="774" font-size="9" fill="#616161">KA12阀B开到位→I1.5 | KA13阀B关到位→I1.6</text>
-    <text x="76" y="788" font-size="9" fill="#616161">KA14阀C开到位→I1.7 | KA15阀C关到位→I2.0</text>
+    <text x="76" y="760" font-size="9" fill="#616161">KA10阀A开到位→I8.0 | KA11阀A关到位→I8.1</text>
+    <text x="76" y="774" font-size="9" fill="#616161">KA12阀B开到位→I8.2 | KA13阀B关到位→I8.3</text>
+    <text x="76" y="788" font-size="9" fill="#616161">KA14阀C开到位→I8.4 | KA15阀C关到位→I8.5</text>
 
     <text x="76" y="816" font-size="9" fill="#757575" font-style="italic">注: 阀门限位反馈为有源正极输出,必须经继电器转换为无源触点后接入PLC DI</text>
   </g>

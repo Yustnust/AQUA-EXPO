@@ -1,4 +1,4 @@
-# 药液配置与加注控制系统 — HMI-PLC 变量地址表 v1.3
+﻿# 药液配置与加注控制系统 — HMI-PLC 变量地址表 v1.3
 
 **配套文档**：《药液配置加注控制系统_PLC设计文档》v9.3、《HMI画面架构规划文档》v9.3
 **适用范围**：8套缸单元（每套1台S7-200 SMART CPU ST20 + EM DT16/DR16），1台本地集中HMI
@@ -40,8 +40,8 @@
 
 | 地址区 | 用途 | 数据类型 | 断电保持 |
 |---|---|---|---|
-| I0.0 ~ I2.3 | DI物理输入（17点；I0.3/I0.4未使用） | BOOL | — |
-| Q0.0 ~ Q1.0 | DO物理输出（9点） | BOOL | — |
+| I0.0 ~ I8.7 | DI物理输入（DR32扩展I8.x） | BOOL | — |
+| Q0.0 ~ Q8.0 | DO物理输出（9点） | BOOL | — |
 | V0.0 ~ V0.7 | 系统命令位（HMI→PLC） | BOOL | 是 |
 | V1.0 ~ V1.7 | 系统状态位（PLC→HMI） | BOOL | 是 |
 | VW2 | 状态机当前状态 | WORD(INT) | 是 |
@@ -56,6 +56,8 @@
 | VD150 ~ VD199 | 断电恢复、节奏纠偏运算中间值（VD150 Available、VD154 Needed、VD178 S5_Elapsed、VD186/190 RTC转换等） | REAL | 是 |
 | VD308 ~ VD344 | 阀门诊断与状态机运算中间变量（VD308关阀快照、VD312关阀差值、VD316目标进水量、VD320~VD344转换中间值） | REAL/DWORD | 否 |
 | VD350 ~ VD373 | AQEX-36迁移的6个VD参数（VD350/354/358/362/366/370）+ 内部降级/暂存（VD374流量计上一有效值、VD380共享定时器转换暂存区） | REAL | 是 |
+| VD384/VD392/VD396 | 手动注射泵参数：VD384总加药量（HMI设定）、VD392累计加药量、VD396剩余加药量（FC21内部） | REAL | 是 |
+| VW388/VW390 | 手动注射泵模式（VW388：0单次/1循环）与子状态（VW390：0空闲/1抽液/2排液/3回零/4完成/99错误） | WORD | 是 |
 | VW380 | 共享定时器转换暂存区（与VD380同一物理地址的字视图，FC11/FC15/FC17/FC3共用） | WORD | 否 |
 | VB300 ~ VB303 | 报警字（4 字节 32 位，按位编码；HMI 经 Modbus 读取 VW300/VW302 后拆分为 VB300~VB303） | BYTE×4 | 是 |
 | VB500 ~ VB599 | 报警日志缓冲区（FC3，6条×16字节） | BYTE | 是 |
@@ -80,17 +82,17 @@
 | I1.0 | DI_LevelB_Low | 液位计B-低位 | 无源常开 | 下缸已排空（阀C四态诊断用） |
 | I1.1 | DI_EStop | 急停信号反馈 | **常闭** | 急停按钮第二组常闭触点；ON=正常，OFF=急停触发 |
 | I1.2 | DI_SafetyRelay_FB | 安全继电器反馈 | 强制导向触点 | 确认动力回路是否真实切断（主触点粘连检测） |
-| I1.3 | DI_ValveA_Open | 阀A开到位反馈 | 有源→继电器转换 | 阀A全开位置确认 |
-| I1.4 | DI_ValveA_Close | 阀A关到位反馈 | 有源→继电器转换 | 阀A全关位置确认 |
-| I1.5 | DI_ValveB_Open | 阀B开到位反馈 | 有源→继电器转换 | 阀B全开位置确认 |
-| I1.6 | DI_ValveB_Close | 阀B关到位反馈 | 有源→继电器转换 | 阀B全关位置确认 |
-| I1.7 | DI_ValveC_Open | 阀C开到位反馈 | 有源→继电器转换 | 阀C全开位置确认 |
-| I2.0 | DI_ValveC_Close | 阀C关到位反馈 | 有源→继电器转换 | 阀C全关位置确认 |
-| I2.1 | DI_Btn_Mute | 消音按钮 | 无源常开点动 | 就地面板消音，仅关声音DO |
+| I8.0 | DI_ValveA_Open | 阀A开到位反馈 | 有源→继电器转换 | 阀A全开位置确认 |
+| I8.1 | DI_ValveA_Close | 阀A关到位反馈 | 有源→继电器转换 | 阀A全关位置确认 |
+| I8.2 | DI_ValveB_Open | 阀B开到位反馈 | 有源→继电器转换 | 阀B全开位置确认 |
+| I8.3 | DI_ValveB_Close | 阀B关到位反馈 | 有源→继电器转换 | 阀B全关位置确认 |
+| I8.4 | DI_ValveC_Open | 阀C开到位反馈 | 有源→继电器转换 | 阀C全开位置确认 |
+| I8.5 | DI_ValveC_Close | 阀C关到位反馈 | 有源→继电器转换 | 阀C全关位置确认 |
+| I0.4 | DI_Btn_Mute | 消音按钮 | 无源常开点动 | 就地面板消音，仅关声音DO |
 | I2.2 | —（备用） | 预留 | — | 原规划报警确认，v9.1改由HMI执行，暂备用 |
-| I2.3 | DI_Btn_SystemReset | 系统复位按钮 | 无源常开点动 | 急停解除后的系统复位，清除M_EStop_Latch回S0 |
+| I0.3 | DI_Btn_SystemReset | 系统复位按钮 | 无源常开点动 | 急停解除后的系统复位，清除M_EStop_Latch回S0 |
 
-**容量**：本体12DI + 扩展8DI = 20DI，使用17点，I0.3/I0.4/I2.2预留3点备用。
+**容量**：本体12DI（I0.0~I0.7, I1.0~I8.0）+ DR32扩展8DI（I8.0~I8.7）= 20DI，使用17点，I8.0/I2.2/I8.6/I8.7预留4点备用。
 
 ---
 
@@ -108,7 +110,7 @@
 | Q0.5 | DO_NCValve_Top | NC球阀-上缸 | 是 | 常闭型，得电打开/失电关闭 | 阀A失效的第二道保护 |
 | Q0.6 | DO_NCValve_Bottom | NC球阀-下缸 | 是 | 常闭型，失效安全 | 阀B/液位计B最高报警时的第二道保护 |
 | Q0.7 | DO_Alarm_Sound | 报警-声音 | 无源触点驱动 | — | 报警蜂鸣器，独立消音控制 |
-| Q1.0 | DO_Alarm_Light | 报警-灯光 | 无源触点驱动 | — | 报警指示灯，独立消光控制（需人工确认复位） |
+| Q8.0 | DO_Alarm_Light | 报警-灯光 | 无源触点驱动 | — | 报警指示灯，独立消光控制（需人工确认复位） |
 
 ---
 
@@ -154,9 +156,9 @@ PLC当前状态反馈给HMI，用于画面显示。
 | 安全继电器反馈 | I1.2 | 正常/故障（I1.1=OFF且I1.2超时未反馈→继电器故障最高报警） |
 | 急停已解除待复位 | I1.1=ON 且 M_EStop_Latch=1 | 黄色"急停已释放，等待系统复位" |
 
-### 4.4 手动控制命令位（V2.4~V3.5区，HMI→PLC，断电保持）【校验修复新增】
+### 4.4 手动控制命令位（V2.4~V3.7区，HMI→PLC，断电保持）【校验修复新增】
 
-V0区8位已满（系统命令位），手动调试用命令位扩展至V2.4~V3.5区。仅S0态响应（避免运行中误操作），由OB1条件调用FC20。对应HMI画面3"手动控制"。
+V0区8位已满（系统命令位），手动调试用命令位扩展至V2.4~V3.7区。仅S0态响应（避免运行中误操作），阀门/泵由OB1条件调用FC20，注射泵由OB1条件调用FC21。对应HMI画面3"手动控制"。
 
 | 地址 | 符号 | 说明 | 响应条件 | 握手确认 |
 |---|---|---|---|---|
@@ -170,10 +172,13 @@ V0区8位已满（系统命令位），手动调试用命令位扩展至V2.4~V3.
 | V3.3 | CMD_Manual_Pump1_Off | 手动停止潜水泵1 | VW2=0 | PLC置V3.3=0确认 |
 | V3.4 | CMD_Manual_Pump2_On | 手动启动潜水泵2 | VW2=0 | PLC置V3.4=0确认 |
 | V3.5 | CMD_Manual_Pump2_Off | 手动停止潜水泵2 | VW2=0 | PLC置V3.5=0确认 |
+| V3.6 | CMD_Manual_SyringePump_Start | 手动注射泵启动 | VW2=0 | PLC置V3.6=0确认 |
+| V3.7 | CMD_Manual_SyringePump_Stop | 手动注射泵停止/回零 | VW2=0 | PLC置V3.7=0确认 |
 
 **注1**：手动命令位采用"上升沿触发+PLC清零握手"机制（区别于V0区的置位握手），避免HMI侧残留1值导致重复触发。
 **注2**：潜水泵2手动启停由V3.4/V3.5控制，FC20中映射到Q0.1。
 **注3**：手动操作时安全联锁仍生效（如阀B开启需上缸=满下缸=空，阀C开启需下缸=满），由PLC在响应逻辑中校验，HMI侧仅下发命令不负责联锁。
+**注4**：注射泵手动控制由新增FC21实现，参数为VD384（总加药量）和VW388（模式），状态反馈为VW390。
 
 ---
 
@@ -366,9 +371,9 @@ S5上升沿触发预规划、S1完成后二次校正使用的中间变量，REAL
 |---|---|---|
 | V301.0 | M_Alarm_ValveA_CloseFlow | 阀A关后延时验证仍有流（流量开关A=ON） |
 | V301.1 | M_Alarm_ValveA_Leak | 阀A已关但流量计计量值仍增长（内漏） |
-| V301.2 | M_Alarm_ValveA_CloseTimeout | 阀A关到位反馈（I1.4）超时 |
+| V301.2 | M_Alarm_ValveA_CloseTimeout | 阀A关到位反馈（I8.1）超时 |
 | V301.3 | M_Alarm_ValveA_CloseLeak | 阀A关到位但仍有流（内漏） |
-| V301.4 | M_Alarm_ValveA_OpenTimeout | 阀A开到位反馈（I1.3）超时 |
+| V301.4 | M_Alarm_ValveA_OpenTimeout | 阀A开到位反馈（I8.0）超时 |
 | V301.5 | M_Alarm_ValveA_OpenNoFlow | 阀A开到位但无流（上游缺水/堵塞） |
 | V301.6 | M_Alarm_ValveA_S1Start | S5触发新一轮S1时上缸状态≠空 |
 
@@ -377,19 +382,19 @@ S5上升沿触发预规划、S1完成后二次校正使用的中间变量，REAL
 | 位 | 符号 | 报警类型 |
 |---|---|---|
 | V302.0 | M_Alarm_ValveB_Diag | 阀B四态诊断异常（流量开关B=OFF 且 液位计A-低位=OFF） |
-| V302.1 | M_Alarm_ValveB_OpenTimeout | 阀B开到位反馈（I1.5）超时 |
+| V302.1 | M_Alarm_ValveB_OpenTimeout | 阀B开到位反馈（I8.2）超时 |
 | V302.2 | M_Alarm_ValveB_OpenNoFlow | 阀B开到位但无流 |
-| V302.3 | M_Alarm_ValveB_CloseTimeout | 阀B关到位反馈（I1.6）超时 |
+| V302.3 | M_Alarm_ValveB_CloseTimeout | 阀B关到位反馈（I8.3）超时 |
 | V302.4 | M_Alarm_ValveB_CloseLeak | 阀B关到位但仍有流（内漏） |
 | V302.5 | M_Alarm_ValveC_Diag | 阀C四态诊断异常 |
-| V302.6 | M_Alarm_ValveC_OpenTimeout | 阀C开到位反馈（I1.7）超时 |
+| V302.6 | M_Alarm_ValveC_OpenTimeout | 阀C开到位反馈（I8.4）超时 |
 | V302.7 | M_Alarm_ValveC_OpenNoFlow | 阀C开到位但无流 |
 
 **报警字4（VB303，一般故障级-其他（阀C关/注射泵/RTC/流量））**
 
 | 位 | 符号 | 报警类型 |
 |---|---|---|
-| V303.0 | M_Alarm_ValveC_CloseTimeout | 阀C关到位反馈（I2.0）超时 |
+| V303.0 | M_Alarm_ValveC_CloseTimeout | 阀C关到位反馈（I8.5）超时 |
 | V303.1 | M_Alarm_ValveC_CloseLeak | 阀C关到位但仍有流（内漏） |
 
 | V303.4 | M_Alarm_SyringePump | 注射泵通讯/动作异常（状态码报错或无响应） |
@@ -709,6 +714,7 @@ HMI工程中配置8个PLC连接（站点），每个连接对应1台PLC：
 | VB304 | VB304 | 1 | M_InitDone初始化完成标志（V304.0，Story1.7新增） |
 | VB305 | VB349 | 45 | 阀门诊断数据/运算中间变量（VD308~VD344）【2026-07-18静态分析修复：原VD250~VD296区间编址冲突，迁移至此】 |
 | VB350 | VB373 | 24 | AQEX-36迁移的6个VD参数（VD350/354/358/362/366/370，原VD18/20/48/50/96/98，避免步长2冲突） |
+| VB384 | VB399 | 16 | 手动注射泵参数（VD384目标量、VD392累计量、VD396剩余量）+ VW388/VW390 |
 | VB500 | VB599 | 100 | 报警日志缓冲区（FC3 NETWORK6，Story1.6新增） |
 | DT10 | DT10 | 8 | DT_TankB_FullTime时间戳 |
 
@@ -722,10 +728,11 @@ HMI工程中配置8个PLC连接（站点），每个连接对应1台PLC：
 
 | 地址 | 符号 | 类型 | 说明 |
 |---|---|---|---|
-| I0.0~I2.3 | DI_xxx | BOOL | 17点数字量输入（I0.3/I0.4未使用） |
-| Q0.0~Q1.0 | DO_xxx | BOOL | 9点数字量输出 |
+| I0.0~I0.3 | DI_xxx | BOOL | 17点数字量输入（I0.3/I0.4未使用） |
+| Q0.0~Q8.0 | DO_xxx | BOOL | 9点数字量输出 |
 | V0.0~V0.7 | CMD_xxx | BOOL | 8个系统命令位（HMI→PLC） |
 | V1.0~V1.7 | STA_xxx | BOOL | 8个系统状态位（PLC→HMI） |
+| V2.4~V3.7 | CMD_Manual_xxx | BOOL | 手动控制命令位（阀/泵/注射泵） |
 | VW2 | — | INT | 状态机当前状态（0~8, 99） |
 | VW4 | — | INT | 注射泵状态码（映射自41001） |
 | VW6 | — | INT | 当前最高优先级报警码 |
@@ -734,6 +741,11 @@ HMI工程中配置8个PLC连接（站点），每个连接对应1台PLC：
 | VD70~VD102 | VD_xxx | REAL/DWORD | PLC实测值（时长/流量/加药计算；VD96/VD98已迁移至VD366/370） |
 | VD104~VD140 | VD_xxx | REAL | 纠偏变量+泵速度 |
 | VD350~VD370 | VD_xxx | REAL | AQEX-36迁移的6个VD参数（VD350=StepResolution/VD354=CycleSetpoint/VD358=Timeout_ValveA/VD362=Timeout_ValveB/VD366=ExperimentDuration_Accum/VD370=Vol_Target，原VD18/20/48/50/96/98） |
+| VD384 | VD_ManualDose_Target | REAL | 手动注射泵总加药量（µL，HMI设定） |
+| VD392 | VD_ManualDose_Dosed | REAL | 手动注射泵累计加药量（µL，FC21内部） |
+| VD396 | VD_ManualDose_Remaining | REAL | 手动注射泵剩余加药量（µL，FC21内部） |
+| VW388 | VW_ManualDose_Mode | INT | 手动注射泵模式：0=单次，1=循环 |
+| VW390 | VW_ManualDose_State | INT | 手动注射泵子状态：0空闲/1抽液/2排液/3回零/4完成/99错误 |
 | VB300~VB303 | M_Alarm_xxx | BYTE×4 | 报警字（4 字节 32 位按位编码；经 VW300/VW302 拆分读取） |
 | VW200~VW230 / VD232 | MB_xxx / PumpWrite_Addr | INT/WORD / DWORD | Modbus寄存器映射缓冲区（VW230=PumpWrite_Data, VD232=PumpWrite_Addr） |
 | VW230~VW289 | Diag_xxx | INT/WORD | 阀门诊断子状态/结果/PT转换值（VW252 S2 PT/VW254 S3.5 PT/VW260~270诊断子状态结果/VW274~284超时PT） |
@@ -751,7 +763,7 @@ HMI工程中配置8个PLC连接（站点），每个连接对应1台PLC：
 
 ---
 
-**文档版本**：v1.2
-**编制日期**：2026-07-15（v1.0）/ 2026-07-27（v1.1新增11.5节Modbus通讯状态字+附录B索引更新）/ 2026-07-28（v1.2修正FC4轮询计数器地址VW250→VW290~VW296，标注VD250/VW250冲突）
+**文档版本**：v1.3
+**编制日期**：2026-07-15（v1.0）/ 2026-07-27（v1.1新增11.5节Modbus通讯状态字+附录B索引更新）/ 2026-07-28（v1.2修正FC4轮询计数器地址VW250→VW290~VW296，标注VD250/VW250冲突）/ 2026-08-17（v1.3新增手动注射泵控制变量V3.6/V3.7/VD384/VW388/VW390/VD392/VD396）
 **配套文档版本**：PLC设计文档v9.3、HMI画面架构文档v9.3
 **下次更新触发**：待确认事项闭环、HMI选型确认、PLC编程地址调整时

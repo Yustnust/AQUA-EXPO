@@ -11,8 +11,8 @@
 //          0=进入计算  1=计算/写抽液步数  2=等抽液完成
 //          3=写排液步数  4=等排液完成  5=完成转S3.5
 // VD90  : VD_Current_InletVolume 本次进水量(S1差值法结果)
-// VD370 : VD_Vol_Target    目标抽取母液体积(µL)
-// VD372 : VD_Remaining_Vol 本轮剩余待加药量(µL),S3进入时=VD_Vol_Target
+// VD370 : VD_Vol_Target    目标抽取母液体积(??L)
+// VD372 : VD_Remaining_Vol 本轮剩余待加药量(??L),S3进入时=VD_Vol_Target
 // VD102 : VD_Dose_Steps    本次循环目标步数(REAL)
 // VW204 : MB_Pump_Aspirate 抽液步数缓冲(映射40006)
 // VW206 : MB_Pump_Dispense 排液步数缓冲(映射40007)
@@ -38,7 +38,7 @@ LPS
 MOVR   VD90, VD346
 *R     VD10, VD346
 /R     VD14, VD346
-MOVR   VD346, VD370                  // VD_Vol_Target(µL)
+MOVR   VD346, VD370                  // VD_Vol_Target(??L)
 MOVR   VD346, VD372                  // VD_Remaining_Vol = 目标量
 // S3期间保持潜水泵运行(搅拌+加药同时进行)
 S      Q0.0, 1
@@ -83,7 +83,7 @@ AN     M11.6
 AN     M11.7
 AN     M12.0
 // 计算本次循环步数 = VD_Remaining_Vol / VD_StepResolution
-MOVR   VD372, VD346                  // VD346 = VD_Remaining_Vol(µL)
+MOVR   VD372, VD346                  // VD346 = VD_Remaining_Vol(??L)
 /R     VD350, VD346                  // VD346 = steps(REAL)
 // 限制最大6000步(25ml注射器容量)
 LD     SM0.0
@@ -205,7 +205,7 @@ AW=    VW226, 4
 AW=    VW4, 0
 // 计算本次循环实际排出药量 = VD_Dose_Steps × VD_StepResolution
 MOVR   VD102, AC0                    // AC0 = 本次循环步数(REAL)
-*R     VD350, AC0                    // AC0 = 本次循环体积(µL)
+*R     VD350, AC0                    // AC0 = 本次循环体积(??L)
 // 累加本次循环排出药量到累计加药量
 +R     AC0, VD378                    // VD_Dosed_Volume_Total += 本次循环体积
 // 扣减剩余待加药量

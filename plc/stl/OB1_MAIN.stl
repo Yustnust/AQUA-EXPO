@@ -18,7 +18,7 @@
 // V0.2    : CMD_Stop  (HMI→PLC停止命令)
 // V1.0    : STA_StartAck (PLC→HMI启动确认)
 // I1.1    : DI_EStop (急停反馈，常闭，ON=正常)
-// I2.3    : DI_Btn_SystemReset (系统复位按钮)
+// I0.3    : DI_Btn_SystemReset (系统复位按钮)
 
 
 NETWORK 1
@@ -72,11 +72,21 @@ CALL   ManualControl
 
 
 NETWORK 8
-// 非S0态清除手动输出锁存,防止返回S0时误动作
+// 手动注射泵控制（仅在S0态调用,在手动阀门控制之后）
+// 处理V3.6/V3.7命令位,由FC21使用VD384/VW388/VW390执行单次/循环抽排(详见FC21)
+LD     SM0.0
+LDW=   VW2, 0
+CALL   ManualSyringePump
+
+
+NETWORK 9
+// 非S0态清除手动控制锁存与手动注射泵状态,防止返回S0时误动作
 LD     SM0.0
 LDW=   VW2, 0
 NOT
-R      M13.0, 5
+R      M13.0, 5                      // 清阀门/泵手动锁存
+R      M13.5, 3                      // 清手动注射泵标志(M13.5~M13.7)
+MOVW   0, VW390                      // 手动注射泵子状态复位为空闲
 
 
 // ============================================================

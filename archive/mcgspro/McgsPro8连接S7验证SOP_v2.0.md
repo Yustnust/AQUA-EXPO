@@ -1,4 +1,4 @@
-# AQUA-EXPO McgsPro 3.3.6 八连接S7驱动并发验证SOP v2.0(本机联调)
+﻿# AQUA-EXPO McgsPro 3.3.6 八连接S7驱动并发验证SOP v2.0(本机联调)
 
 **项目**: 药液配置加注控制系统(AQUA-EXPO,8套缸单元)
 **组态软件**: McgsPro 3.3.6.6354 SP1.3(昆仑通态嵌入版组态软件)
@@ -985,7 +985,7 @@ netsh interface set interface "Loopback" enable
 
 **Python触发急停脚本**:
 ```python
-# 触发U1急停: 置位I2.0(急停按钮输入)
+# 触发U1急停: 置位I8.5(急停按钮输入)
 # 实际s7_server.py内部PLC实例的i_estop属性
 # 需通过s7_server.py进程内访问,或用S7协议写I区(部分驱动支持)
 

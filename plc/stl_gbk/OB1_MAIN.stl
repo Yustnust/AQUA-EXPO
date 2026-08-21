@@ -18,7 +18,7 @@
 // V0.2    : CMD_Stop  (HMI→PLC停止命令)
 // V1.0    : STA_StartAck (PLC→HMI启动确认)
 // I1.1    : DI_EStop (急停反馈，常闭，ON=正常)
-// I2.3    : DI_Btn_SystemReset (系统复位按钮)
+// I0.3    : DI_Btn_SystemReset (系统复位按钮)
 
 
 NETWORK 1

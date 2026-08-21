@@ -1,4 +1,4 @@
-# AQUA-EXPO Web HMI 技术规格书
+﻿# AQUA-EXPO Web HMI 技术规格书
 
 **项目**：药液配置与加注控制系统（AQUA-EXPO）  
 **文档用途**：替代昆仑通态 McgsPro 触摸屏方案，采用触屏电脑 + Web HMI 实现 8 套缸单元集中监控  
@@ -361,7 +361,7 @@ CREATE TABLE user_settings (
 - **强制弹窗**：新报警出现时强制弹出报警确认窗口（操作员可确认）
 - **报警确认**：操作员点击确认后，后端向 PLC 写入 CMD_AckAlarm
 - **消音联动**：
-  - 就地物理消音按钮 I2.1 按下后，PLC 将 Q0.7 置 OFF
+  - 就地物理消音按钮 I0.4 按下后，PLC 将 Q0.7 置 OFF
   - Web HMI 消音按钮写入 V0.4 后，PLC 同样将 Q0.7 置 OFF
   - Web HMI 检测到 Q0.7=OFF 或 STA_MuteDone(V1.4)=1 后，立即停止触屏扬声器
   - **一处消音，两处声音同时停止**

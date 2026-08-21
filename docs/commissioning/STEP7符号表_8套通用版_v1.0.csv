@@ -1,11 +1,11 @@
-符号,地址,数据类型,注释
+﻿符号,地址,数据类型,注释
 // ============================================================
 // 药液配置加注控制系统 — STEP 7-Micro/WIN SMART 符号表 v1.0
 // 适用: 8套缸单元通用 (1~8号PLC程序完全相同,差异仅在IP)
 // 导入方法: STEP7 SMART → 项目树 → 符号表 → 右键 → 导入CSV
 // 编码: UTF-8 with BOM (兼容STEP7 SMART V2.5+)
 // ============================================================
-// === 数字量输入 DI (19点, I0.0~I2.3) ===
+// === 数字量输入 DI (19点, I0.0~I0.3) ===
 DI_FlowSwitch_A,I0.0,BOOL,流量开关A-阀A进水
 DI_FlowSwitch_B,I0.1,BOOL,流量开关B-上下转移
 DI_FlowSwitch_C,I0.2,BOOL,流量开关C-下缸排水
@@ -15,15 +15,15 @@ DI_LevelB_High,I0.7,BOOL,下缸液位高位(漫溢保护)
 DI_LevelB_Low,I1.0,BOOL,下缸液位低位(排空)
 DI_EStop,I1.1,BOOL,急停反馈(常闭ON=正常OFF=急停)
 DI_SafetyRelay_FB,I1.2,BOOL,安全继电器反馈(强制导向触点)
-DI_ValveA_Open,I1.3,BOOL,阀A开到位反馈
-DI_ValveA_Close,I1.4,BOOL,阀A关到位反馈
-DI_ValveB_Open,I1.5,BOOL,阀B开到位反馈
-DI_ValveB_Close,I1.6,BOOL,阀B关到位反馈
-DI_ValveC_Open,I1.7,BOOL,阀C开到位反馈
-DI_ValveC_Close,I2.0,BOOL,阀C关到位反馈
-DI_Btn_Mute,I2.1,BOOL,消音按钮(点动)
-DI_Btn_SystemReset,I2.3,BOOL,系统复位按钮(点动)
-// === 数字量输出 DO (9点, Q0.0~Q1.0, 全部经继电器转换) ===
+DI_ValveA_Open,I8.0,BOOL,阀A开到位反馈
+DI_ValveA_Close,I8.1,BOOL,阀A关到位反馈
+DI_ValveB_Open,I8.2,BOOL,阀B开到位反馈
+DI_ValveB_Close,I8.3,BOOL,阀B关到位反馈
+DI_ValveC_Open,I8.4,BOOL,阀C开到位反馈
+DI_ValveC_Close,I8.5,BOOL,阀C关到位反馈
+DI_Btn_Mute,I0.4,BOOL,消音按钮(点动)
+DI_Btn_SystemReset,I0.3,BOOL,系统复位按钮(点动)
+// === 数字量输出 DO (9点, Q0.0~Q8.0, 全部经继电器转换) ===
 DO_Pump1,Q0.0,BOOL,潜水泵1(上缸搅拌)
 DO_Pump2,Q0.1,BOOL,潜水泵2(上缸搅拌)
 DO_ValveA,Q0.2,BOOL,电动球阀A(上缸进水)
@@ -32,7 +32,7 @@ DO_ValveC,Q0.4,BOOL,电动球阀C(下缸排水)
 DO_NCValve_Top,Q0.5,BOOL,NC球阀-上缸(常闭失效安全)
 DO_NCValve_Bottom,Q0.6,BOOL,NC球阀-下缸(常闭失效安全)
 DO_Alarm_Sound,Q0.7,BOOL,报警蜂鸣器(独立消音)
-DO_Alarm_Light,Q1.0,BOOL,报警指示灯(独立消光)
+DO_Alarm_Light,Q8.0,BOOL,报警指示灯(独立消光)
 // === 系统命令位 V0区 (HMI→PLC, 断电保持) ===
 CMD_Start,V0.0,BOOL,启动实验(S0→S1)
 CMD_Pause,V0.1,BOOL,暂停实验(预留)

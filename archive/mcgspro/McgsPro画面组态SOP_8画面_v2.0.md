@@ -1,4 +1,4 @@
-# McgsPro 3.3.6 画面组态SOP — 两级菜单版 v3.0
+﻿# McgsPro 3.3.6 画面组态SOP — 两级菜单版 v3.0
 
 **项目**：药液配置与加注控制系统（AQUA-EXPO）
 **HMI平台**：昆仑通态 McgsPro 3.3.6（TPC12寸触摸屏 1280×800 横屏）
@@ -1150,7 +1150,7 @@ CurrentMenuGroup = 0
 |---|---|---|
 | 基本属性 | 填充颜色 | #34495E |
 | 基本属性 | 字符颜色 | #ECF0F1 |
-| 动画连接 → 显示输出 | 表达式 | "阀A状态:" + Str(U{SelectedUnit}_STA_ValveA) + " 反馈:" + Str(U{SelectedUnit}_I1.4) |
+| 动画连接 → 显示输出 | 表达式 | "阀A状态:" + Str(U{SelectedUnit}_STA_ValveA) + " 反馈:" + Str(U{SelectedUnit}_I8.1) |
 | 动画连接 → 显示输出 | 显示类型 | 字符串输出 |
 | 动画连接 → 填充颜色 | 表达式 | U{SelectedUnit}_STA_ValveA |
 | 动画连接 → 填充颜色 | 分段点0 | 值=0，颜色=#95A5A6（关，灰） |

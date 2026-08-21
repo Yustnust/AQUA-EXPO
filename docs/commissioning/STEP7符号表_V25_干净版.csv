@@ -1,4 +1,4 @@
-符号,地址,注释
+﻿符号,地址,注释
 DI_FlowSwitch_A,I0.0,流量开关A-阀A进水
 DI_FlowSwitch_B,I0.1,流量开关B-上下转移
 DI_FlowSwitch_C,I0.2,流量开关C-下缸排水
@@ -8,14 +8,14 @@ DI_LevelB_High,I0.7,下缸液位高位(漫溢保护)
 DI_LevelB_Low,I1.0,下缸液位低位(排空)
 DI_EStop,I1.1,急停反馈(常闭ON=正常OFF=急停)
 DI_SafetyRelay_FB,I1.2,安全继电器反馈(强制导向触点)
-DI_ValveA_Open,I1.3,阀A开到位反馈
-DI_ValveA_Close,I1.4,阀A关到位反馈
-DI_ValveB_Open,I1.5,阀B开到位反馈
-DI_ValveB_Close,I1.6,阀B关到位反馈
-DI_ValveC_Open,I1.7,阀C开到位反馈
-DI_ValveC_Close,I2.0,阀C关到位反馈
-DI_Btn_Mute,I2.1,消音按钮(点动)
-DI_Btn_SystemReset,I2.3,系统复位按钮(点动)
+DI_ValveA_Open,I8.0,阀A开到位反馈
+DI_ValveA_Close,I8.1,阀A关到位反馈
+DI_ValveB_Open,I8.2,阀B开到位反馈
+DI_ValveB_Close,I8.3,阀B关到位反馈
+DI_ValveC_Open,I8.4,阀C开到位反馈
+DI_ValveC_Close,I8.5,阀C关到位反馈
+DI_Btn_Mute,I0.4,消音按钮(点动)
+DI_Btn_SystemReset,I0.3,系统复位按钮(点动)
 DO_Pump1,Q0.0,潜水泵1(上缸搅拌)
 DO_Pump2,Q0.1,潜水泵2(上缸搅拌)
 DO_ValveA,Q0.2,电动球阀A(上缸进水)
@@ -24,7 +24,7 @@ DO_ValveC,Q0.4,电动球阀C(下缸排水)
 DO_NCValve_Top,Q0.5,NC球阀-上缸(常闭失效安全)
 DO_NCValve_Bottom,Q0.6,NC球阀-下缸(常闭失效安全)
 DO_Alarm_Sound,Q0.7,报警蜂鸣器(独立消音)
-DO_Alarm_Light,Q1.0,报警指示灯(独立消光)
+DO_Alarm_Light,Q8.0,报警指示灯(独立消光)
 CMD_Start,V0.0,启动实验(S0到S1)
 CMD_Pause,V0.1,暂停实验(预留)
 CMD_Stop,V0.2,停止实验(进入S7)
@@ -49,6 +49,10 @@ CMD_Manual_ValveC_Open,V3.0,手动开阀C
 CMD_Manual_ValveC_Close,V3.1,手动关阀C
 CMD_Manual_Pump1_On,V3.2,手动启动潜水泵1
 CMD_Manual_Pump1_Off,V3.3,手动停止潜水泵1
+CMD_Manual_Pump2_On,V3.4,手动启动潜水泵2
+CMD_Manual_Pump2_Off,V3.5,手动停止潜水泵2
+CMD_Manual_SyringePump_Start,V3.6,手动注射泵启动(单次/循环)
+CMD_Manual_SyringePump_Stop,V3.7,手动注射泵停止/回零
 VW2_State,VW2,状态机当前状态(0=S0...8=S7 99=S_ERROR)
 VW4_PumpStatus,VW4,注射泵状态码(0空闲1运行2抽液3排液其他错误)
 VW6_AlarmCode,VW6,当前最高优先级未确认报警码(0=无)
