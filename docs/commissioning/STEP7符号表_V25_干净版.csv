@@ -1,4 +1,4 @@
-﻿符号,地址,注释
+符号,地址,注释
 DI_FlowSwitch_A,I0.0,流量开关A-阀A进水
 DI_FlowSwitch_B,I0.1,流量开关B-上下转移
 DI_FlowSwitch_C,I0.2,流量开关C-下缸排水
@@ -83,8 +83,8 @@ VD_FlowMeter_Current,VD86,流量计当前累计值(轮询读取)
 VD_Current_InletVolume,VD90,本次进水量(L)
 VD_FlowRate_Instant,VD94,瞬时流速(L/min)
 VD_Dose_Steps,VD102,本轮加药目标步数(写40006/40007)
-VD_T_Default,VD104,T的初始默认值(s)
-VD_S6_Default,VD108,S6排水时长初始默认值(s)
+VD_T_Default,VD144,T的初始默认值(s,HMI设定,原VD104与VD102冲突迁此)
+VD_S6_Default,VD108,S6排水时长初始默认值(s,HMI设定)
 VD_T_Rolling,VD112,滚动实测S1-S3+静止等候总时长T(s)
 VD_S6_Rolling,VD116,滚动实测S6排水时长(s)
 VD_S2_Target,VD120,本轮S2实际执行目标时长(s)

@@ -144,3 +144,5 @@
 138,U1_VW_ManualDose_State,SINGLE,只读VWB390,只读,V数据寄存器,16位 有符号二进制,390,,1,
 139,U1_VD_ManualDose_Dosed,SINGLE,只读VDF392,只读,V数据寄存器,32位 浮点数,392,,1,
 140,U1_VD_ManualDose_Remaining,SINGLE,只读VDF396,只读,V数据寄存器,32位 浮点数,396,,1,
+141,U1_VD_T_Default,SINGLE,读写VDF144,读写,V数据寄存器,32位 浮点数,144,,1,
+142,U1_VD_S6_Default,SINGLE,读写VDF108,读写,V数据寄存器,32位 浮点数,108,,1,

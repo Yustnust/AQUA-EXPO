@@ -19,6 +19,13 @@ LD     V0.0                        // CMD_Start
 EU                                 // 上升沿检测
 LPS
 AW=    VW6, 0                      // 无活动报警
+// 【首轮播种】滚动值初始化为HMI设定的默认值
+// VD112(T_Rolling)←VD144(T_Default),VD116(S6_Rolling)←VD108(S6_Default)
+// 每次新实验启动都重新播种;首轮S1完成后VD112由实测值自动学习覆盖,
+// 首轮S6完成后VD116由实测值自动学习覆盖
+// 注: T_Default原地址VD104与VD102(VD_Dose_Steps)重叠(VB104~105),已迁移至VD144
+MOVR   VD144, VD112                // T滚动值 ← T默认值(HMI设定)
+MOVR   VD108, VD116                // S6滚动值 ← S6默认值(HMI设定)
 // 状态转移：S0→S1
 MOVW   1, VW2                     // VW2=1(S1)
 // 握手确认
