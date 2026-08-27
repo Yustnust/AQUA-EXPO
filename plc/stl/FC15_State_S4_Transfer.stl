@@ -2,15 +2,21 @@
 // 文件: FC15_State_S4_Transfer.stl
 // 功能: S4上→下转移 (VW2=5)
 // Story: AQEX-6 状态机骨架 + AQEX-7 阀门诊断(已集成) + AQEX-8 节奏纠偏(已集成下缸满计时器清零)
-// 说明: 开阀B转移，调用FC31阀B诊断(四态诊断+开关到位+超时)
+// v1.1: S4入口增加下缸排空互锁(AN V1.7),静默等待 S6 排空后自动开阀
+// v1.2: 新增 S4 等待计时(VD_S4Wait_Time)与超时报警(V303.2),用于补偿 S4 等待对
+//       VD_S5_Elapsed 的影响,确保下缸有效实验时间严格按 VD_CycleSetpoint 跑满
+// 说明: 开阀B转移,调用FC31阀B诊断(四态诊断+开关到位+超时)
 //       诊断结果VW268: 0进行中/1正常完成/2故障
-//       诊断正常完成 → 清零VD_S5_Elapsed+M10.7(供S5纠偏) → 转S5
+//       诊断正常完成 → 清零VD_S5_Elapsed+VD_S4Wait_Time+M10.7(供S5纠偏) → 转S5
 // ============================================================
 
 // 符号说明:
-// VW262 : Diag_State_B  阀B诊断子状态
-// VW268 : Diag_Result_B 阀B诊断结果
-// VW274 : VD_Timeout_ValveB×10 转换值(供FC31用)
+// v1.2 新增:
+// VD380 : VD_S4Wait_Time    S4 等待时长(秒), S4 入口 V1.7=1 期间每秒 +1, S4 完成时清零
+// VD382 : VD_S4WaitTimeout  S4 等待超时阈值(秒, 默认 1800=30min, HMI 可调)
+// T61   : S4 等待计时器(100ms 时基, PT=VD_S4WaitTimeout×10)
+// VW286 : VD_S4WaitTimeout×10 转换值(供 T61 用)
+// V303.2: M_Alarm_S4TransferWaitTimeout  S4 等待超时报警(一般级, VW6=49, 仅提示不强制 S_ERROR)
 
 
 NETWORK 1
@@ -55,6 +61,49 @@ LPP
 // 注: 状态转出S4(VW2≠5)后,本段AW=条件不满足,本段所有动作停止。
 
 
+// 【v1.2 新增】S4 等待计时 + 超时报警分支(同 NETWORK 1 内,与转液逻辑并列)
+// 触发条件: 状态=S4 且 V1.7=1(下缸未空,正在等待)
+//   - 启动 T61 计时器(100ms 时基, PT=VD_S4WaitTimeout×10)
+//   - 每秒 VD_S4Wait_Time + 1(由 T62 1s 脉冲驱动)
+//   - 等待时间 >= 阈值 → 置位 V303.2 + VW6=49(仅提示, 不强制 S_ERROR)
+// 等待期间 AN V1.7 失败(转液已开始),T61 在 NETWORK 3 完成后清零
+LD     SM0.0
+AW=    VW2, 5                       // 仅在S4状态
+A      V1.7                         // V1.7=1(下缸满)正在等待
+LPS
+// 首次进入 S4(V1.7=1)时计算 T61 PT(用 VD_S4WaitTimeout×10)
+LD     SM0.0
+EU                                  // 上升沿(仅首次进入时计算一次)
+MOVR   VD382, VD384                 // VD_S4WaitTimeout → 中间变量
+*R     10.0, VD384
+ROUND  VD384, AC0
+MOVW   AC0, VW286                   // VW286 = VD_S4WaitTimeout×10
+LPP
+// T61 计时(每周期执行, V1.7=1 期间计时)
+LD     SM0.0
+A      V1.7                         // 等待期间持续计时
+R      T61, 1
+TON    T61, VW286                   // PT=VD_S4WaitTimeout×10
+// 每秒累加 VD_S4Wait_Time(T62 1s 脉冲)
+LD     SM0.0
+A      V1.7                         // 等待期间
+LPS
+R      T62, 1
+TON    T62, 10                      // 1s(10×100ms)
+LPP
+LD     T62
+EU
++R     1.0, VD380                   // VD_S4Wait_Time + 1s
+R      T62, 1
+// 超时报警: T61 到 → 置位 V303.2 + VW6=49
+LD     T61
+S      V303.2, 1                    // M_Alarm_S4TransferWaitTimeout
+MOVW   49, VW6                      // 报警码 49(归到过程级, 与 V300.6=20 节奏级区分)
+LPP
+// 注: 超时报警不强制 S_ERROR, 系统继续等待, 操作员收到 HMI 提示后
+//     可手动确认/调整 S6 排水, 或修改 VD_S4WaitTimeout
+// 注: T61/T62 在 S4 完成时(NETWORK 3)清零; V303.2 在 S4 完成时清零
+
 NETWORK 2
 // 调用阀B诊断FC31
 // FC31内部处理漫溢保护+四态诊断+开关到位+超时
@@ -90,6 +139,13 @@ MOVB   VB908, VB17
 LD     SM0.0
 MOVR   0.0, VD178                  // VD_S5_Elapsed清零,开始新一轮计时
 R      M10.7, 1                    // 清预规划触发标志(下轮S5重新触发)
+// 【v1.2 新增】S4 等待计时清零(T61/T62/VD_S4Wait_Time/V303.2)
+// 等待时长 VD_S4Wait_Time 已在 NETWORK 1 累加, 此处仅清零, FC16 改用其补偿转 S6 阈值
+LD     SM0.0
+R      T61, 1                      // 停 S4 等待超时计时
+R      T62, 1                      // 停 S4 等待秒累加计时
+MOVR   0.0, VD380                  // VD_S4Wait_Time 清零
+R      V303.2, 1                   // 清 S4 等待超时报警
 // 状态转移 S4→S5
 LD     SM0.0
 MOVW   6, VW2
