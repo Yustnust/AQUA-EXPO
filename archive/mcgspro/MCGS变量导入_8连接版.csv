@@ -23,6 +23,8 @@ U1_VD_C_Set,Float,PLC_01,VD10,RW,是,目标浓度设定值(%),4
 U1_VD_C_Stock,Float,PLC_01,VD14,RW,是,母液浓度(%),4
 U1_VD_StepResolution,Float,PLC_01,VD350,RW,是,注射泵单步分辨率(µL/步),4
 U1_VD_CycleSetpoint,Float,PLC_01,VD354,RW,是,换水周期设定值(min),4
+U1_VD_S4Wait_Time,Float,PLC_01,VD380,R,是,S4等待时长(s),4
+U1_VD_S4WaitTimeout,Float,PLC_01,VD382,RW,是,S4等待超时阈值(s),4
 U1_VD_ExperimentTarget,Float,PLC_01,VD24,RW,是,实验时长目标(min),4
 U1_VD_PreMixTime,Float,PLC_01,VD28,RW,是,S2预循环标称时长(s),4
 U1_VD_PreMixTime_MinSafe,Float,PLC_01,VD32,RW,是,S2压缩下限(s),4
@@ -82,6 +84,7 @@ U1_V303_0_Alarm_ValveC_CloseTimeout,Bool,PLC_01,V303.0,R,是,阀C关超时,5
 U1_V303_1_Alarm_ValveC_CloseLeak,Bool,PLC_01,V303.1,R,是,阀C关到位有流,5
 U1_V303_4_Alarm_SyringePump,Bool,PLC_01,V303.4,R,是,注射泵通讯/动作异常,5
 U1_V303_5_Alarm_RTC_Lost,Bool,PLC_01,V303.5,R,是,RTC时钟丢失,5
+U1_V303_2_Alarm_S4TransferWaitTimeout,Bool,PLC_01,V303.2,R,是,S4转移等待超时,5
 U1_V303_6_Alarm_FlowSwitch_Instant,Bool,PLC_01,V303.6,R,是,流量开关瞬时异常,5
 U1_CMD_Manual_ValveA_Open,Bool,PLC_01,V2.4,RW,是,手动开阀A,3
 U1_CMD_Manual_ValveA_Close,Bool,PLC_01,V2.5,RW,是,手动关阀A,3
@@ -115,6 +118,8 @@ U2_VD_C_Set,Float,PLC_02,VD10,RW,是,目标浓度设定值(%),4
 U2_VD_C_Stock,Float,PLC_02,VD14,RW,是,母液浓度(%),4
 U2_VD_StepResolution,Float,PLC_02,VD350,RW,是,注射泵单步分辨率(µL/步),4
 U2_VD_CycleSetpoint,Float,PLC_02,VD354,RW,是,换水周期设定值(min),4
+U2_VD_S4Wait_Time,Float,PLC_02,VD380,R,是,S4等待时长(s),4
+U2_VD_S4WaitTimeout,Float,PLC_02,VD382,RW,是,S4等待超时阈值(s),4
 U2_VD_ExperimentTarget,Float,PLC_02,VD24,RW,是,实验时长目标(min),4
 U2_VD_PreMixTime,Float,PLC_02,VD28,RW,是,S2预循环标称时长(s),4
 U2_VD_PreMixTime_MinSafe,Float,PLC_02,VD32,RW,是,S2压缩下限(s),4
@@ -173,6 +178,7 @@ U2_V302_7_Alarm_ValveC_OpenNoFlow,Bool,PLC_02,V302.7,R,是,阀C开到位无流,5
 U2_V303_0_Alarm_ValveC_CloseTimeout,Bool,PLC_02,V303.0,R,是,阀C关超时,5
 U2_V303_1_Alarm_ValveC_CloseLeak,Bool,PLC_02,V303.1,R,是,阀C关到位有流,5
 U2_V303_4_Alarm_SyringePump,Bool,PLC_02,V303.4,R,是,注射泵通讯/动作异常,5
+U2_V303_2_Alarm_S4TransferWaitTimeout,Bool,PLC_02,V303.2,R,是,S4转移等待超时,5
 U2_V303_5_Alarm_RTC_Lost,Bool,PLC_02,V303.5,R,是,RTC时钟丢失,5
 U2_V303_6_Alarm_FlowSwitch_Instant,Bool,PLC_02,V303.6,R,是,流量开关瞬时异常,5
 U2_CMD_Manual_ValveA_Open,Bool,PLC_02,V2.4,RW,是,手动开阀A,3
@@ -207,6 +213,8 @@ U3_VD_C_Set,Float,PLC_03,VD10,RW,是,目标浓度设定值(%),4
 U3_VD_C_Stock,Float,PLC_03,VD14,RW,是,母液浓度(%),4
 U3_VD_StepResolution,Float,PLC_03,VD350,RW,是,注射泵单步分辨率(µL/步),4
 U3_VD_CycleSetpoint,Float,PLC_03,VD354,RW,是,换水周期设定值(min),4
+U3_VD_S4Wait_Time,Float,PLC_03,VD380,R,是,S4等待时长(s),4
+U3_VD_S4WaitTimeout,Float,PLC_03,VD382,RW,是,S4等待超时阈值(s),4
 U3_VD_ExperimentTarget,Float,PLC_03,VD24,RW,是,实验时长目标(min),4
 U3_VD_PreMixTime,Float,PLC_03,VD28,RW,是,S2预循环标称时长(s),4
 U3_VD_PreMixTime_MinSafe,Float,PLC_03,VD32,RW,是,S2压缩下限(s),4
@@ -264,6 +272,7 @@ U3_V302_6_Alarm_ValveC_OpenTimeout,Bool,PLC_03,V302.6,R,是,阀C开超时,5
 U3_V302_7_Alarm_ValveC_OpenNoFlow,Bool,PLC_03,V302.7,R,是,阀C开到位无流,5
 U3_V303_0_Alarm_ValveC_CloseTimeout,Bool,PLC_03,V303.0,R,是,阀C关超时,5
 U3_V303_1_Alarm_ValveC_CloseLeak,Bool,PLC_03,V303.1,R,是,阀C关到位有流,5
+U3_V303_2_Alarm_S4TransferWaitTimeout,Bool,PLC_03,V303.2,R,是,S4转移等待超时,5
 U3_V303_4_Alarm_SyringePump,Bool,PLC_03,V303.4,R,是,注射泵通讯/动作异常,5
 U3_V303_5_Alarm_RTC_Lost,Bool,PLC_03,V303.5,R,是,RTC时钟丢失,5
 U3_V303_6_Alarm_FlowSwitch_Instant,Bool,PLC_03,V303.6,R,是,流量开关瞬时异常,5
@@ -299,6 +308,8 @@ U4_VD_C_Set,Float,PLC_04,VD10,RW,是,目标浓度设定值(%),4
 U4_VD_C_Stock,Float,PLC_04,VD14,RW,是,母液浓度(%),4
 U4_VD_StepResolution,Float,PLC_04,VD350,RW,是,注射泵单步分辨率(µL/步),4
 U4_VD_CycleSetpoint,Float,PLC_04,VD354,RW,是,换水周期设定值(min),4
+U4_VD_S4Wait_Time,Float,PLC_04,VD380,R,是,S4等待时长(s),4
+U4_VD_S4WaitTimeout,Float,PLC_04,VD382,RW,是,S4等待超时阈值(s),4
 U4_VD_ExperimentTarget,Float,PLC_04,VD24,RW,是,实验时长目标(min),4
 U4_VD_PreMixTime,Float,PLC_04,VD28,RW,是,S2预循环标称时长(s),4
 U4_VD_PreMixTime_MinSafe,Float,PLC_04,VD32,RW,是,S2压缩下限(s),4
@@ -355,6 +366,7 @@ U4_V302_5_Alarm_ValveC_Diag,Bool,PLC_04,V302.5,R,是,阀C四态诊断异常,5
 U4_V302_6_Alarm_ValveC_OpenTimeout,Bool,PLC_04,V302.6,R,是,阀C开超时,5
 U4_V302_7_Alarm_ValveC_OpenNoFlow,Bool,PLC_04,V302.7,R,是,阀C开到位无流,5
 U4_V303_0_Alarm_ValveC_CloseTimeout,Bool,PLC_04,V303.0,R,是,阀C关超时,5
+U4_V303_2_Alarm_S4TransferWaitTimeout,Bool,PLC_04,V303.2,R,是,S4转移等待超时,5
 U4_V303_1_Alarm_ValveC_CloseLeak,Bool,PLC_04,V303.1,R,是,阀C关到位有流,5
 U4_V303_4_Alarm_SyringePump,Bool,PLC_04,V303.4,R,是,注射泵通讯/动作异常,5
 U4_V303_5_Alarm_RTC_Lost,Bool,PLC_04,V303.5,R,是,RTC时钟丢失,5
@@ -391,6 +403,8 @@ U5_VD_C_Set,Float,PLC_05,VD10,RW,是,目标浓度设定值(%),4
 U5_VD_C_Stock,Float,PLC_05,VD14,RW,是,母液浓度(%),4
 U5_VD_StepResolution,Float,PLC_05,VD350,RW,是,注射泵单步分辨率(µL/步),4
 U5_VD_CycleSetpoint,Float,PLC_05,VD354,RW,是,换水周期设定值(min),4
+U5_VD_S4Wait_Time,Float,PLC_05,VD380,R,是,S4等待时长(s),4
+U5_VD_S4WaitTimeout,Float,PLC_05,VD382,RW,是,S4等待超时阈值(s),4
 U5_VD_ExperimentTarget,Float,PLC_05,VD24,RW,是,实验时长目标(min),4
 U5_VD_PreMixTime,Float,PLC_05,VD28,RW,是,S2预循环标称时长(s),4
 U5_VD_PreMixTime_MinSafe,Float,PLC_05,VD32,RW,是,S2压缩下限(s),4
@@ -446,6 +460,7 @@ U5_V302_4_Alarm_ValveB_CloseLeak,Bool,PLC_05,V302.4,R,是,阀B关到位有流,5
 U5_V302_5_Alarm_ValveC_Diag,Bool,PLC_05,V302.5,R,是,阀C四态诊断异常,5
 U5_V302_6_Alarm_ValveC_OpenTimeout,Bool,PLC_05,V302.6,R,是,阀C开超时,5
 U5_V302_7_Alarm_ValveC_OpenNoFlow,Bool,PLC_05,V302.7,R,是,阀C开到位无流,5
+U5_V303_2_Alarm_S4TransferWaitTimeout,Bool,PLC_05,V303.2,R,是,S4转移等待超时,5
 U5_V303_0_Alarm_ValveC_CloseTimeout,Bool,PLC_05,V303.0,R,是,阀C关超时,5
 U5_V303_1_Alarm_ValveC_CloseLeak,Bool,PLC_05,V303.1,R,是,阀C关到位有流,5
 U5_V303_4_Alarm_SyringePump,Bool,PLC_05,V303.4,R,是,注射泵通讯/动作异常,5
@@ -483,6 +498,8 @@ U6_VD_C_Set,Float,PLC_06,VD10,RW,是,目标浓度设定值(%),4
 U6_VD_C_Stock,Float,PLC_06,VD14,RW,是,母液浓度(%),4
 U6_VD_StepResolution,Float,PLC_06,VD350,RW,是,注射泵单步分辨率(µL/步),4
 U6_VD_CycleSetpoint,Float,PLC_06,VD354,RW,是,换水周期设定值(min),4
+U6_VD_S4Wait_Time,Float,PLC_06,VD380,R,是,S4等待时长(s),4
+U6_VD_S4WaitTimeout,Float,PLC_06,VD382,RW,是,S4等待超时阈值(s),4
 U6_VD_ExperimentTarget,Float,PLC_06,VD24,RW,是,实验时长目标(min),4
 U6_VD_PreMixTime,Float,PLC_06,VD28,RW,是,S2预循环标称时长(s),4
 U6_VD_PreMixTime_MinSafe,Float,PLC_06,VD32,RW,是,S2压缩下限(s),4
@@ -537,6 +554,7 @@ U6_V302_3_Alarm_ValveB_CloseTimeout,Bool,PLC_06,V302.3,R,是,阀B关超时,5
 U6_V302_4_Alarm_ValveB_CloseLeak,Bool,PLC_06,V302.4,R,是,阀B关到位有流,5
 U6_V302_5_Alarm_ValveC_Diag,Bool,PLC_06,V302.5,R,是,阀C四态诊断异常,5
 U6_V302_6_Alarm_ValveC_OpenTimeout,Bool,PLC_06,V302.6,R,是,阀C开超时,5
+U6_V302_7_Alarm_ValveC_OpenNoFlow_V303_2_Alarm_S4TransferWaitTimeout,Bool,PLC_06,V303.2,R,是,S4转移等待超时,5
 U6_V302_7_Alarm_ValveC_OpenNoFlow,Bool,PLC_06,V302.7,R,是,阀C开到位无流,5
 U6_V303_0_Alarm_ValveC_CloseTimeout,Bool,PLC_06,V303.0,R,是,阀C关超时,5
 U6_V303_1_Alarm_ValveC_CloseLeak,Bool,PLC_06,V303.1,R,是,阀C关到位有流,5
@@ -575,6 +593,8 @@ U7_VD_C_Set,Float,PLC_07,VD10,RW,是,目标浓度设定值(%),4
 U7_VD_C_Stock,Float,PLC_07,VD14,RW,是,母液浓度(%),4
 U7_VD_StepResolution,Float,PLC_07,VD350,RW,是,注射泵单步分辨率(µL/步),4
 U7_VD_CycleSetpoint,Float,PLC_07,VD354,RW,是,换水周期设定值(min),4
+U7_VD_S4Wait_Time,Float,PLC_07,VD380,R,是,S4等待时长(s),4
+U7_VD_S4WaitTimeout,Float,PLC_07,VD382,RW,是,S4等待超时阈值(s),4
 U7_VD_ExperimentTarget,Float,PLC_07,VD24,RW,是,实验时长目标(min),4
 U7_VD_PreMixTime,Float,PLC_07,VD28,RW,是,S2预循环标称时长(s),4
 U7_VD_PreMixTime_MinSafe,Float,PLC_07,VD32,RW,是,S2压缩下限(s),4
@@ -628,6 +648,7 @@ U7_V302_2_Alarm_ValveB_OpenNoFlow,Bool,PLC_07,V302.2,R,是,阀B开到位无流,5
 U7_V302_3_Alarm_ValveB_CloseTimeout,Bool,PLC_07,V302.3,R,是,阀B关超时,5
 U7_V302_4_Alarm_ValveB_CloseLeak,Bool,PLC_07,V302.4,R,是,阀B关到位有流,5
 U7_V302_5_Alarm_ValveC_Diag,Bool,PLC_07,V302.5,R,是,阀C四态诊断异常,5
+U7_V302_6_Alarm_ValveC_OpenTimeout_V303_2_Alarm_S4TransferWaitTimeout,Bool,PLC_07,V303.2,R,是,S4转移等待超时,5
 U7_V302_6_Alarm_ValveC_OpenTimeout,Bool,PLC_07,V302.6,R,是,阀C开超时,5
 U7_V302_7_Alarm_ValveC_OpenNoFlow,Bool,PLC_07,V302.7,R,是,阀C开到位无流,5
 U7_V303_0_Alarm_ValveC_CloseTimeout,Bool,PLC_07,V303.0,R,是,阀C关超时,5
@@ -667,6 +688,8 @@ U8_VD_C_Set,Float,PLC_08,VD10,RW,是,目标浓度设定值(%),4
 U8_VD_C_Stock,Float,PLC_08,VD14,RW,是,母液浓度(%),4
 U8_VD_StepResolution,Float,PLC_08,VD350,RW,是,注射泵单步分辨率(µL/步),4
 U8_VD_CycleSetpoint,Float,PLC_08,VD354,RW,是,换水周期设定值(min),4
+U8_VD_S4Wait_Time,Float,PLC_08,VD380,R,是,S4等待时长(s),4
+U8_VD_S4WaitTimeout,Float,PLC_08,VD382,RW,是,S4等待超时阈值(s),4
 U8_VD_ExperimentTarget,Float,PLC_08,VD24,RW,是,实验时长目标(min),4
 U8_VD_PreMixTime,Float,PLC_08,VD28,RW,是,S2预循环标称时长(s),4
 U8_VD_PreMixTime_MinSafe,Float,PLC_08,VD32,RW,是,S2压缩下限(s),4
@@ -719,6 +742,7 @@ U8_V302_1_Alarm_ValveB_OpenTimeout,Bool,PLC_08,V302.1,R,是,阀B开超时,5
 U8_V302_2_Alarm_ValveB_OpenNoFlow,Bool,PLC_08,V302.2,R,是,阀B开到位无流,5
 U8_V302_3_Alarm_ValveB_CloseTimeout,Bool,PLC_08,V302.3,R,是,阀B关超时,5
 U8_V302_4_Alarm_ValveB_CloseLeak,Bool,PLC_08,V302.4,R,是,阀B关到位有流,5
+U8_V302_5_Alarm_ValveC_Diag_V303_2_Alarm_S4TransferWaitTimeout,Bool,PLC_08,V303.2,R,是,S4转移等待超时,5
 U8_V302_5_Alarm_ValveC_Diag,Bool,PLC_08,V302.5,R,是,阀C四态诊断异常,5
 U8_V302_6_Alarm_ValveC_OpenTimeout,Bool,PLC_08,V302.6,R,是,阀C开超时,5
 U8_V302_7_Alarm_ValveC_OpenNoFlow,Bool,PLC_08,V302.7,R,是,阀C开到位无流,5

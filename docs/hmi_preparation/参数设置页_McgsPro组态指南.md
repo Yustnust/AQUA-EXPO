@@ -1,8 +1,8 @@
 # 参数设置页（画面4）McgsPro 组态指南
 
-**版本**: v2.3（整合版）
+**版本**: v2.4(v1.2 新增: S4 等待时长 VD380 只读显示 + S4 等待超时阈值 VD382 可调)
 **创建日期**: 2026-08-23
-**更新日期**: 2026-08-24 (v2.3: T/S6改回HMI设定参数（时间周期组）；VD_T_Default由VD104迁移至VD144——VD104与VD102字节重叠VB104~105，FC13/FC21写加药步数会破坏T值；实验启动时FC10播种VD112←VD144、VD116←VD108)
+**更新日期**: 2026-08-24 (v2.3: T/S6改回HMI设定参数（时间周期组）；VD_T_Default由VD104迁移至VD144——VD104与VD102字节重叠VB104~105，FC13/FC21写加药步数会破坏T值；实验启动时FC10播种VD112←VD144、VD116←VD108);**v2.4 v1.2 新增**:时间周期组增加 S4 等待时长(只读)与 S4 等待超时阈值(可调)
 **说明**: 本文件整合了项目中所有关于参数设置页的组态工作，包括画面布局、控件属性、脚本代码、安全机制等，作为McgsPro组态工程师的唯一参考。
 
 **配套文档**:
@@ -76,6 +76,8 @@
 │  │ 顺延上限 VD_CycleExtend_Max:[  5.0] min        │            │
 │  │ 首轮T时长 VD_T_Default:  [300.0] s             │            │
 │  │ 首轮S6时长 VD_S6_Default:[180.0] s             │            │
+  │ S4等待时长 VD_S4Wait_Time:    [  0.0] s (只读)  │
+  │ S4等待超时 VD_S4WaitTimeout:  [1800.0] s        │
 │  └───────────────────────────────────────────────┘            │
 │                                                                 │
 │  ┌──────超时参数组(1240×180px)────────────────────┐            │
@@ -171,6 +173,8 @@
 | 编号 | 控件类型 | 名称 | 标签 | 绑定变量 | 范围 | 单位 |
 |---|---|---|---|---|---|---|
 | 4-040 | 标签+输入框 | lbl_CycleSet / num_CycleSet | 换水周期 | U{N}_VD_CycleSetpoint | 1~1440 | min |
+| 4-040a | 标签 | lbl_S4WaitTime | S4等待时长(只读) | U{N}_VD_S4Wait_Time(VD380) | 0~86400 | s |
+| 4-040b | 标签+输入框 | lbl_S4WaitTimeout / num_S4WaitTimeout | S4等待超时阈值 | U{N}_VD_S4WaitTimeout(VD382) | 60~7200 | s |
 | 4-041 | 标签+输入框 | lbl_ExpTarget / num_ExpTarget | 实验时长目标 | U{N}_VD_ExperimentTarget | 1~10000 | min |
 | 4-042 | 标签+输入框 | lbl_PreMix / num_PreMix | 预循环标称S2 | U{N}_VD_PreMixTime | 1~600 | s |
 | 4-043 | 标签+输入框 | lbl_PreMixMin / num_PreMixMin | 预循环压缩下限 | U{N}_VD_PreMixTime_MinSafe | 1~300 | s |
@@ -878,6 +882,8 @@ LoginLevel >= X AND U{N}_VW2_StateMachine == 0
 | VD_CycleExtend_Max | 5.0 | min | VD44 |
 | VD_T_Default | 300.0 | s | VD144 |
 | VD_S6_Default | 180.0 | s | VD108 |
+| VD_S4Wait_Time | 0.0 | s | VD380 |
+| VD_S4WaitTimeout | 1800.0 | s | VD382 |
 | VD_Timeout_ValveA | 60.0 | s | VD358 |
 | VD_Timeout_ValveB | 60.0 | s | VD362 |
 | VD_Timeout_ValveC | 60.0 | s | VD54 |
@@ -910,6 +916,8 @@ LoginLevel >= X AND U{N}_VW2_StateMachine == 0
 | VD_Timeout_ValveA/B/C | 1 | 300 | s |
 | VD_Delay_ValveA_Verify | 1 | 30 | s |
 | VD_Timeout_Pump1/Pump2 | 1 | 120 | s |
+| VD_S4Wait_Time | 0 | 86400 | s |
+| VD_S4WaitTimeout | 60 | 7200 | s |
 | VD_ManualDose_Target | 0 | 50 | mL |
 | VD_PumpSpeed_Start | 100 | 6000 | Hz |
 | VD_PumpSpeed_Max | 100 | 6000 | Hz |
@@ -928,6 +936,7 @@ LoginLevel >= X AND U{N}_VW2_StateMachine == 0
 | VD366 | VD_ExperimentDuration_Accum | min | S5运行中自动累加 | 实验时长累计值，HMI只读显示 |
 | VD112 | VD_T_Rolling | s | S1实测+S2标称+S3估算+S3.5标称 | 滚动实测T，首轮由VD144播种，之后自动学习，HMI只读显示 |
 | VD116 | VD_S6_Rolling | s | S6实测 | 滚动实测S6排水时长，首轮由VD108播种，之后自动学习，HMI只读显示 |
+| VD380 | VD_S4Wait_Time | s | S4 等待期间 PLC 自动累加(每秒+1),S4 完成时清零 | S4 入口 V1.7=1 持续时间,HMI 只读显示,操作员可监控 S4 等待 |
 
 **设计说明**：
 - T(VD144)/S6(VD108)为HMI设定参数（时间周期组4-047/4-048），**仅首轮生效**：实验启动时FC10播种VD112←VD144、VD116←VD108，首轮完成后由实测值自动学习覆盖
@@ -941,7 +950,7 @@ LoginLevel >= X AND U{N}_VW2_StateMachine == 0
 | # | 验收项 | 确认 |
 |---|---|---|
 | 1 | 画面4创建完成，尺寸1280×800 | □ |
-| 2 | 24个参数输入框全部创建并绑定到编辑缓冲变量 | □ |
+| 2 | 25个参数输入框全部创建(原 24 + v1.2 新增 1: VD_S4WaitTimeout), 1 个只读显示(VD_S4Wait_Time) | □ |
 | 3 | 单元选择器8按钮创建，点击切换正常 | □ |
 | 4 | 标签页切换5按钮创建，点击显隐对应面板 | □ |
 | 5 | 保存按钮脚本（脚本28）配置完成 | □ |
