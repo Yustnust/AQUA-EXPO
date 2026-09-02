@@ -598,8 +598,8 @@ S5上升沿触发预规划、S1完成后二次校正使用的中间变量，REAL
 |---|---|---|---|---|
 | VW290 | VW_FC4_PollIndex | INT/WORD | 轮询从站计数器（0=注射泵状态码，1=流量计累计值，2=注射泵步数，3=注射泵速度） | 当前 STEP7 中仅实现任务 1（流量计），泵任务待硬件到货后补充 |
 | VW292 | VW_FC4_RetryCount | INT/WORD | 当前任务重试计数（0~3，超 3 次标记本任务失败并报警） | 每次任务成功清零 |
-| VW294 | VW_FC4_PumpFailCount | INT/WORD | 注射泵连续失败计数（≥5 次进入降级模式，使用上一有效值） | 通讯恢复后清零 |
-| VW296 | VW_FC4_FlowFailCount | INT/WORD | 流量计连续失败计数（≥5 次进入降级模式） | 通讯恢复后清零 |
+| VW294 | VW_FC4_PumpFailCount | INT/WORD | 注射泵连续失败计数（≥5 次进入降级模式，使用上一有效值） | 通讯恢复后清零；HMI变量 U1_VW294_PumpContFail 只读，画面7显示 |
+| VW296 | VW_FC4_FlowFailCount | INT/WORD | 流量计连续失败计数（≥5 次进入降级模式） | 通讯恢复后清零；HMI变量 U1_VW296_FlowContFail 只读，画面7显示 |
 
 **注意**：VW290~VW297 由 FC0 在首次扫描时初始化，不配置断电保持。
 
