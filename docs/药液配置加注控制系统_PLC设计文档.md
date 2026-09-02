@@ -144,6 +144,8 @@
 | M_Pump_Status【v6新增】 | 注射泵状态码轮询结果（映射自Modbus寄存器41001），用于判断抽/排液动作完成或故障 |
 | VD_FlowMeter_Snapshot【v8新增】 | 阀A开启瞬间的流量计"计量值"快照，用于差值法计算本次进水量（该流量计无清零功能，见第二章说明） |
 | M_InitDone（V304.0）【Story1.7新增】 | 初始化完成标志（断电保持，首次成功初始化后置1；=0冷启动，=1断电恢复） |
+| M_CommStatus_Syringe（V304.1）【AQEX-49新增】 | 注射泵RTU从站在线标志（FC4任务0轮询成功置1，超时/降级复位0；HMI画面7_通讯维护使用） |
+| M_CommStatus_Flow（V304.2）【AQEX-49新增】 | 流量计RTU从站在线标志（FC4任务1轮询成功置1，超时/降级复位0；HMI画面7_通讯维护使用） |
 | VW252【Story1.2修复】 | S2计时T38的PT转换值（VD_S2_Target×10，由FC12进入时计算写入，100ms时基） |
 | VW254【Story1.2修复】 | S3.5计时T39的PT转换值（VD_RestTime_Target×10，由FC14进入时计算写入，100ms时基） |
 | VW278【校验修复】 | 阀A T50超时PT转换值（VD_Timeout_ValveA×10，由FC11计算写入，FC30读取，与FC32 VW270隔离） |

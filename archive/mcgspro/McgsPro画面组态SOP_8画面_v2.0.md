@@ -1,4 +1,4 @@
-﻿# McgsPro 3.3.6 画面组态SOP — 两级菜单版 v3.0
+# McgsPro 3.3.6 画面组态SOP — 两级菜单版 v3.0
 
 **项目**：药液配置与加注控制系统（AQUA-EXPO）
 **HMI平台**：昆仑通态 McgsPro 3.3.6（TPC12寸触摸屏 1280×800 横屏）
@@ -284,14 +284,34 @@
 
 **2.2.5 全局消音脚本（抬起脚本）**
 
+> McgsPro 不支持 `For...Next` + 动态变量名 + `Sub` 自定义函数。8单元消音必须显式展开。建议用 PLC 侧统一处理（HMI 写一个触发位，PLC 批量清零所有 V0.4 位）。
+
 ```
-' 循环写入所有使能单元 V0.4 CMD_Mute
-Dim i
-For i = 1 To 8
-    If GetValue("Unit" + Str(i) + "_Enabled") = 1 Then
-        Call SetBitByUnit(i, "V0.4", 1)
-    EndIf
-Next
+' 全局消音 - 显式展开8单元
+IF Unit1_Enabled = 1 THEN
+    U1_V0_4_CMD_Mute = 1
+ENDIF
+IF Unit2_Enabled = 1 THEN
+    U2_V0_4_CMD_Mute = 1
+ENDIF
+IF Unit3_Enabled = 1 THEN
+    U3_V0_4_CMD_Mute = 1
+ENDIF
+IF Unit4_Enabled = 1 THEN
+    U4_V0_4_CMD_Mute = 1
+ENDIF
+IF Unit5_Enabled = 1 THEN
+    U5_V0_4_CMD_Mute = 1
+ENDIF
+IF Unit6_Enabled = 1 THEN
+    U6_V0_4_CMD_Mute = 1
+ENDIF
+IF Unit7_Enabled = 1 THEN
+    U7_V0_4_CMD_Mute = 1
+ENDIF
+IF Unit8_Enabled = 1 THEN
+    U8_V0_4_CMD_Mute = 1
+ENDIF
 GlobalMuteState = 1
 ```
 
@@ -341,23 +361,40 @@ McgsPro 通过"安全属性→使能控制→表达式为0构件失效→构件�
 - 当 `Unit{N}_Enabled=0` 时按钮自动隐藏，运行时未使能单元不显示在选择器中
 - 这种方式比脚本控制Visible属性更稳定，且不依赖循环策略刷新
 
-**2.3.5 当前选中单元高亮处理**
+**2.3.5 选中高亮（按钮填充颜色动画，不写脚本）**
 
-在画面"窗口加载事件"和每个 `btnUnit_N` 抬起脚本末尾追加：
+> **重要（2026-08-30 修订）**: McgsPro **不支持** `SetUnitBtnColor` 自定义 Sub、`RGB()` 函数、以及脚本运行时修改构件 BackColor。按钮选中/未选中颜色必须通过**构件属性 → 动画连接 → 填充颜色**绑定变量实现，脚本只负责写变量值。
+
+**按钮选中状态变量（在实时数据库新建）**
+
+| 变量名 | 类型 | 用途 |
+|---|---|---|
+| UnitBtn_1_Sel ~ UnitBtn_8_Sel | integer | 1=选中(蓝), 0=未选中(灰) |
+
+每个 `btnUnit_N` 的**填充颜色动画**绑定：
+
+| 属性 | 取值 |
+|---|---|
+| 表达式 | `UnitBtn_N_Sel` |
+| 分段点 0 | 颜色=#7F8C8D（灰） |
+| 分段点 1 | 颜色=#3498DB（蓝） |
+
+**选中按钮抬起脚本**（以 `btnUnit_3` 为例）：
 
 ```
-' 重新刷新8个按钮的背景色：选中=蓝，未选中=灰
-Dim i
-For i = 1 To 8
-    If i = SelectedUnit Then
-        Call SetUnitBtnColor(i, RGB(52,152,219))   ' 蓝
-    Else
-        Call SetUnitBtnColor(i, RGB(127,140,141))   ' 灰
-    EndIf
-Next
+' 选中单元3 - 显式更新8个选中状态变量
+SelectedUnit = 3
+UnitBtn_1_Sel = 0
+UnitBtn_2_Sel = 0
+UnitBtn_3_Sel = 1
+UnitBtn_4_Sel = 0
+UnitBtn_5_Sel = 0
+UnitBtn_6_Sel = 0
+UnitBtn_7_Sel = 0
+UnitBtn_8_Sel = 0
 ```
 
-`SetUnitBtnColor` 为脚本库全局函数，按单元号索引找到对应按钮设置 BackColor。
+> McgsPro 不支持动态拼 `UnitBtn_" + Str(i) + "_Sel`，必须显式赋值。`btnUnit_1` 选中时写 `SelectedUnit = 1`，同时把 UnitBtn_1_Sel 置 1、其余置 0。8个按钮各写一段。
 
 **2.3.6 当前单元文本标签属性**
 
@@ -958,7 +995,7 @@ CurrentMenuGroup = 0
 | 基本属性 → 抬起状态 | 背景色 | #27AE60（绿） |
 | 基本属性 → 抬起状态 | 文本颜色 | #ECF0F1 |
 | 操作属性 → 抬起状态 | 数据对象值操作 | 置1 U{SelectedUnit}_V0.0（CMD_Start） |
-| 脚本程序 → 抬起脚本 | 内容 | `Call SetBitByUnit(SelectedUnit, "V0.0", 1)` |
+| ~~脚本程序 → 抬起脚本~~ | ~~内容~~ | ~~Call SetBitByUnit (已废弃, 操作属性已处理)~~ |
 | 安全属性 → 使能控制 | 表达式 | U{SelectedUnit}_VW2_StateMachine == 0 OR U{SelectedUnit}_VW2_StateMachine == 8 |
 | 安全属性 → 使能控制 | 表达式为0构件失效 | 选中 |
 | 安全属性 → 使能控制 | 变灰不可用 | 选中 |
@@ -1136,7 +1173,7 @@ CurrentMenuGroup = 0
 | 基本属性 → 抬起状态 | 文本 | 手动开阀A |
 | 基本属性 → 抬起状态 | 背景色 | #27AE60（绿） |
 | 操作属性 → 抬起状态 | 数据对象值操作 | 置1 U{SelectedUnit}_V1.0 |
-| 脚本程序 → 抬起脚本 | 内容 | `Call SetBitByUnit(SelectedUnit, "V1.0", 1)` |
+| ~~脚本程序 → 抬起脚本~~ | ~~内容~~ | ~~Call SetBitByUnit (已废弃, 操作属性已处理)~~ |
 | 安全属性 → 使能控制 | 表达式 | (U{SelectedUnit}_VW2_StateMachine == 0 OR U{SelectedUnit}_VW2_StateMachine == 99) AND LoginLevel >= 2 AND U{SelectedUnit}_I1.1 == 1 |
 | 安全属性 → 使能控制 | 表达式为0构件失效 | 选中 |
 | 安全属性 → 使能控制 | 变灰不可用 | 选中 |
@@ -1296,57 +1333,103 @@ CurrentMenuGroup = 0
 
 ### 7.5 保存参数按钮脚本
 
+**按钮安全属性配置（二次确认）**：
+
+| 属性页 | 字段 | 取值 |
+|---|---|---|
+| 安全属性 → 安全控制 | 弹窗确认 | ✅ 勾选 |
+| 安全属性 → 安全控制 | 确认提示文本 | "将修改当前单元12个参数，确认保存？" |
+
+**抬起脚本**：
+
 ```
-' btnSaveParam 抬起脚本：弹窗确认后批量写入PLC参数区
-Dim i, ret
-ret = !ShowConfirmDialog("将修改" + Str(SelectedUnit) + "号单元" + Str(12) + "个参数，确认保存？")
-If ret = 1 Then
-    ' 12个输入框的值已绑定到对应U{N}_VD_xxx变量，McgsPro自动写入PLC
-    ' 此处仅记录操作日志
-    Call WriteOpLog("保存参数", "单元" + Str(SelectedUnit))
-    !ShowInfoDialog("参数已保存")
-EndIf
+' btnSaveParam: 弹窗确认由按钮安全属性实现, 脚本仅记录操作日志
+' 12个输入框的值已绑定到对应 U{N}_VD_xxx 变量, McgsPro自动写入PLC
+WriteOpLog = "保存参数 单元" + Str(SelectedUnit)
 ```
+
+> **注意**: `For...Next` 循环和动态变量名拼接 (`"U" + Str(i) + "_VDxxx"`) 在 McgsPro 中均不支持。如需遍历多个单元，必须显式展开为 8 条赋值语句（见 McgsPro脚本代码_54个_v2.0.md 的替代方案）。
 
 ### 7.6 恢复默认按钮脚本
 
+**按钮安全属性配置（二次确认）**：
+
+| 属性页 | 字段 | 取值 |
+|---|---|---|
+| 安全属性 → 安全控制 | 弹窗确认 | ✅ 勾选 |
+| 安全属性 → 安全控制 | 确认提示文本 | "将恢复当前单元参数到默认值，确认？" |
+
+**抬起脚本**（以 SelectedUnit=1 为例，其他单元需显式展开）：
+
 ```
-' btnRestoreDefault 抬起脚本：恢复当前单元参数到默认值
-Dim ret
-ret = !ShowConfirmDialog("将恢复" + Str(SelectedUnit) + "号单元参数到默认值，确认？")
-If ret = 1 Then
-    ' 通过脚本写入默认值到各VD变量
-    Call SetValueByUnit(SelectedUnit, "VD_C_Set", 5.0)
-    Call SetValueByUnit(SelectedUnit, "VD_C_Stock", 100.0)
-    Call SetValueByUnit(SelectedUnit, "VD_StepRes", 0.2083)
-    Call SetValueByUnit(SelectedUnit, "VD_CycleSetpoint", 30.0)
-    Call SetValueByUnit(SelectedUnit, "VD_ExperimentTarget", 480.0)
-    Call SetValueByUnit(SelectedUnit, "VD_PreMixTime", 120.0)
-    Call SetValueByUnit(SelectedUnit, "VD_RestTime", 60.0)
-    Call SetValueByUnit(SelectedUnit, "VD_Timeout_ValveA", 10.0)
-    Call SetValueByUnit(SelectedUnit, "VD_Timeout_ValveB", 10.0)
-    Call SetValueByUnit(SelectedUnit, "VD_Timeout_ValveC", 10.0)
-    Call SetValueByUnit(SelectedUnit, "VD_Timeout_Pump1", 10.0)
-    Call SetValueByUnit(SelectedUnit, "VD_Timeout_Pump2", 10.0)
-    !ShowInfoDialog("参数已恢复默认")
-EndIf
+' btnRestoreDefault: 显式写默认值到当前单元变量
+DIM unit AS string
+unit = "U" + Str(SelectedUnit)
+
+' 显式赋值 (McgsPro 不支持动态变量名拼接, 必须按 SelectedUnit 展开)
+' 以下为 unit=1 示例, 实际工程需要 8 段 If SelectedUnit=1/2/.../8 分别赋值
+U1_VD_C_Set = 5.0
+U1_VD_C_Stock = 100.0
+U1_VD_StepRes = 0.2083
+U1_VD_CycleSetpoint = 30.0
+U1_VD_ExperimentTarget = 480.0
+U1_VD_PreMixTime = 120.0
+U1_VD_RestTime = 60.0
+U1_VD_Timeout_ValveA = 10.0
+U1_VD_Timeout_ValveB = 10.0
+U1_VD_Timeout_ValveC = 10.0
+U1_VD_Timeout_Pump1 = 10.0
+U1_VD_Timeout_Pump2 = 10.0
 ```
+
+> **工程建议**: 默认参数值建议在 PLC 侧 FC0_SysInit 中预置，HMI 恢复默认按钮仅执行 PLC 写回操作，通过一个 PLC 寄存器触发默认值回填（如 `U{N}_CMD_RestoreDefault = 1`）。
 
 ### 7.7 复制到其他单元按钮脚本
 
+**按钮安全属性配置（二次确认）**：
+
+| 属性页 | 字段 | 取值 |
+|---|---|---|
+| 安全属性 → 安全控制 | 弹窗确认 | ✅ 勾选 |
+| 安全属性 → 安全控制 | 确认提示文本 | "将当前单元参数复制到其他使能单元，确认？" |
+
+**抬起脚本**：
+
 ```
-' btnCopyToOthers 抬起脚本：将当前单元参数复制到其他使能单元
-Dim ret, i
-ret = !ShowConfirmDialog("将" + Str(SelectedUnit) + "号单元参数复制到其他使能单元，确认？")
-If ret = 1 Then
-    For i = 1 To 8
-        If i <> SelectedUnit AND GetValue("Unit" + Str(i) + "_Enabled") = 1 Then
-            Call CopyParamBetweenUnits(SelectedUnit, i)
-        EndIf
-    Next
-    !ShowInfoDialog("参数已复制到其他使能单元")
-EndIf
+' btnCopyToOthers: 源单元参数 → 逐目标单元显式赋值
+' McgsPro 不支持 For...Next 动态拼接变量名, 需按 SelectedUnit 显式展开
+DIM srcUnit AS string
+srcUnit = "U" + Str(SelectedUnit)
+
+' 先保存源单元 12 个参数到临时变量
+DIM tVD_C_Set AS float
+DIM tVD_C_Stock AS float
+DIM tVD_StepRes AS float
+DIM tVD_CycleSetpoint AS float
+DIM tVD_ExperimentTarget AS float
+DIM tVD_PreMixTime AS float
+DIM tVD_RestTime AS float
+DIM tVD_Timeout_ValveA AS float
+DIM tVD_Timeout_ValveB AS float
+DIM tVD_Timeout_ValveC AS float
+DIM tVD_Timeout_Pump1 AS float
+DIM tVD_Timeout_Pump2 AS float
+
+tVD_C_Set = U1_VD_C_Set
+tVD_C_Stock = U1_VD_C_Stock
+' ... (其余临时变量从源单元读取)
+
+' 逐目标单元赋值 (显式展开, 以下为 U2 示例)
+IF U2_Enabled = 1 AND SelectedUnit <> 2 THEN
+    U2_VD_C_Set = tVD_C_Set
+    U2_VD_C_Stock = tVD_C_Stock
+    ' ... (其余 10 个参数)
+ENDIF
+
+' 同理展开 U3~U8
 ```
+
+> **工程建议**: 参数复制逻辑建议移至 PLC 侧，HMI 仅写一个触发位（如 `U{N}_CMD_CopyFrom = M`），由 PLC 在一个扫描周期内完成全部寄存器搬运，HMI 脚本无需做任何数据搬运。
 
 ### 7.8 画面4组态验收点
 
@@ -1564,32 +1647,89 @@ EndIf
 
 ### 8.7 导出U盘与清除日志脚本
 
-**导出U盘按钮 `btnExportUSB` 抬起脚本**：
+> **重要提示**: McgsPro 3.3.6 **不支持** `!ShowConfirmDialog` / `!ShowInfoDialog` / `!ShowWarnDialog` / `DateAdd` / `DateDiff` / VBScript 风格的多变量 `Dim a, b, c`。二次确认请使用**按钮安全属性 → 安全控制 → 弹窗确认**实现；脚本变量声明必须用 `DIM 变量 AS 类型`。
+
+#### 8.7.1 导出U盘按钮 `btnExportUSB`
+
+**按钮安全属性配置（二次确认）**：
+
+| 属性页 | 字段 | 取值 |
+|---|---|---|
+| 基本属性 → 抬起状态 | 文本 | 导出U盘 |
+| 安全属性 → 安全控制 | 弹窗确认 | ✅ 勾选 |
+| 安全属性 → 安全控制 | 确认提示文本 | "将导出全部历史报警日志到U盘，确认？" |
+
+**抬起脚本**：
 
 ```
-Dim ret, fileName
-ret = !ShowConfirmDialog("将历史报警日志导出至U盘，确认？")
-If ret = 1 Then
-    fileName = "AlarmLog_" + Str($Year) + Str($Month) + Str($Day) + "_" + Str($Hour) + Str($Minute) + ".csv"
-    Call !ExportAlarmLogToUSB(fileName)
-    !ShowInfoDialog("导出完成: " + fileName)
-EndIf
+' ============================================
+' 导出历史报警日志到U盘 (McgsPro 3.3.6)
+' 官方函数: !ExportHisDataToCSV
+' 组对象名: "Mcgs_HistoryAlarm" (McgsPro内置)
+' ============================================
+
+DIM fileName AS string
+DIM ret AS integer
+
+' 生成文件名
+fileName = "AlarmLog_" + Str($Year) + Str($Month) + Str($Day) + "_" + Str($Hour) + Str($Minute) + ".csv"
+
+' 导出全部历史报警到CSV (方案A: 固定起始时间, 避开 DateAdd/DateDiff)
+' 参数说明:
+'   (文件名, Mcgs_HistoryAlarm, 空字段名=全部, "1970-01-01 00:00:00", 当前时间, 最大10万条, 1=覆盖, 空, 进度变量名, 控制变量名)
+' 注意: 进度变量和控制变量需是整数型数据对象 (进度指示 / 控制标志 需在实时数据库预建)
+ret = !ExportHisDataToCSV(fileName, "Mcgs_HistoryAlarm", "", "1970-01-01 00:00:00", $Date + " " + $Time, 100000, 1, "", 进度指示, 控制标志)
 ```
 
-**清除日志按钮 `btnClearLog` 抬起脚本**：
+**必须预建的HMI内部变量**（实时数据 → 新建）：
+
+| 变量名 | 类型 | 用途 |
+|---|---|---|
+| 进度指示 | integer | 导出进度回传 |
+| 控制标志 | integer | 导出结束自动置1, 中途置<0可取消 |
+
+**错误码参考**：
+
+| ret 值 | 含义 |
+|---|---|
+| 0 | 导出成功 |
+| -1021 | U盘未插入 |
+| -1023 | 该时间段内无记录 |
+| 其他负值 | 文件操作失败 |
+
+#### 8.7.2 清除日志按钮 `btnClearLog`
+
+**按钮安全属性配置（二次确认）**：
+
+| 属性页 | 字段 | 取值 |
+|---|---|---|
+| 基本属性 → 抬起状态 | 文本 | 清除日志 |
+| 安全属性 → 安全控制 | 弹窗确认 | ✅ 勾选 |
+| 安全属性 → 安全控制 | 确认提示文本 | "将清除全部历史报警日志，操作不可恢复，确认？" |
+| 安全属性 → 权限 | 权限组 | 管理员组 (或表达式 LoginLevel >= 3) |
+
+**抬起脚本**：
 
 ```
-Dim ret
-ret = !ShowConfirmDialog("将清除全部历史报警日志，操作不可恢复，确认？")
-If ret = 1 Then
-    If LoginLevel >= 3 Then
-        Call !ClearAlarmHistory()
-        !ShowInfoDialog("日志已清除")
-    Else
-        !ShowWarnDialog("权限不足，需管理员级别")
-    EndIf
-EndIf
+' ============================================
+' 清除所有历史报警日志 (McgsPro 3.3.6)
+' 官方函数: !ClearHistoryAlarmData()
+' 注意: 此操作不可逆! 二次确认由按钮安全属性弹窗实现
+' ============================================
+
+DIM ret AS integer
+
+' 管理员权限检查 (与安全属性双重保险)
+IF LoginLevel < 3 THEN
+    EXIT
+ENDIF
+
+' 执行清除
+ret = !ClearHistoryAlarmData()
+' ret = 0 成功, 非0 失败
 ```
+
+> **关于提示反馈**: McgsPro 3.3.6 无内置消息框函数。如需向操作员反馈成功/失败，可在画面上放一个提示标签（如 `lblWarnText`），平时 `Visible = 0`，脚本中用 `!SetObjectProperty("lblWarnText", "Caption", "清除失败错误码:" + Str(ret))` 设置文本并显示。也可直接省略（按钮弹窗已做过确认，成功即可）。
 
 ### 8.8 画面5组态验收点
 
@@ -1750,44 +1890,55 @@ EndIf
 
 ### 9.5 时间范围切换按钮脚本
 
+> **重要（2026-08-30 修订）**: McgsPro **不支持** `Call hisTrend.SetXLength()` / `Call hisTrend.SetXUnit()` 这种 VBScript 对象方法调用风格。趋势曲线的时间范围和单位必须在**构件属性对话框**中预先配置。
+> 
+> **替代方案**: 在画面上**预先放3个历史曲线构件**（分别对应1h/8h/24h），每个构件的"高级属性 → 时间范围"预先固定，切换按钮仅控制构件的 **Visible 属性**。
+
 `btnRange_1h` 抬起脚本：
 
 ```
 TrendTimeRange = 1
-Call hisTrend.SetXLength(60)     ' 1小时=60分钟
-Call hisTrend.SetXUnit("分钟")
-Call rtTrend.SetXLength(60)      ' 实时曲线1小时窗口
+TrendHis_1h_Visible = 1
+TrendHis_8h_Visible = 0
+TrendHis_24h_Visible = 0
+' 历史曲线构件属性中配置 Visible 绑定上述变量 (1=显示 0=隐藏)
 ```
 
 `btnRange_8h` 抬起脚本：
 
 ```
 TrendTimeRange = 2
-Call hisTrend.SetXLength(480)    ' 8小时=480分钟
-Call hisTrend.SetXUnit("分钟")
+TrendHis_1h_Visible = 0
+TrendHis_8h_Visible = 1
+TrendHis_24h_Visible = 0
 ```
 
 `btnRange_24h` 抬起脚本：
 
 ```
 TrendTimeRange = 3
-Call hisTrend.SetXLength(1440)   ' 24小时=1440分钟
-Call hisTrend.SetXUnit("分钟")
+TrendHis_1h_Visible = 0
+TrendHis_8h_Visible = 0
+TrendHis_24h_Visible = 1
 ```
 
+> **推荐做法**: 保持一个历史曲线构件，使用 McgsPro 内置的"时间范围筛选"功能（存盘数据浏览构件支持按时间范围查询），无需脚本切换。
+
 ### 9.6 曲线显隐切换按钮脚本
+
+> **重要（2026-08-30 修订）**: McgsPro **不支持** `Call hisTrend.SetTrendVisible(1, ...)`。曲线显隐通过**构件属性**配置实现。
+> 
+> **正确做法**: 在历史曲线构件的 "高级属性 → 曲线属性" 中，为每条曲线勾选"显隐切换"选项，并绑定一个控制变量。变量值 1=显示、0=隐藏。
 
 `btnShowFlow` 抬起脚本：
 
 ```
 TrendShowFlow = 1 - TrendShowFlow
-Call rtTrend.SetTrendVisible(1, TrendShowFlow)
-Call hisTrend.SetTrendVisible(1, TrendShowFlow)
+' 历史曲线构件属性中: 曲线1 显隐切换表达式 = TrendShowFlow
+' (构件属性直接配置, 无需 rtTrend/hisTrend 对象方法)
 ```
 
-`btnShowInlet`、`btnShowDuration` 同理，曲线索引分别传 2、3。
-
-按钮背景色由 `TrendShowFlow` 等变量驱动（显示=蓝、隐藏=灰），通过填充颜色动画实现。
+`btnShowInlet`、`btnShowDuration` 同理，分别绑定 `TrendShowInlet` / `TrendShowDuration`。按钮背景色由这些变量驱动（显示=蓝、隐藏=灰），通过填充颜色动画实现。
 
 ### 9.7 画面6组态验收点
 
@@ -1882,30 +2033,58 @@ Call hisTrend.SetTrendVisible(1, TrendShowFlow)
 
 ### 10.5 重启通讯按钮脚本
 
+> **重要**: McgsPro 3.3.6 不支持 `For...Next` 循环、`!ShowConfirmDialog` 等伪函数。8单元通讯重启需显式展开8条赋值语句，二次确认用按钮安全属性弹窗。
+
+**按钮安全属性配置（二次确认）**：
+
+| 属性页 | 字段 | 取值 |
+|---|---|---|
+| 安全属性 → 安全控制 | 弹窗确认 | ✅ 勾选 |
+| 安全属性 → 安全控制 | 确认提示文本 | "将重启所有单元通讯连接，期间数据采集暂停约5秒，确认？" |
+| 安全属性 → 权限 | 表达式 | LoginLevel >= 3 |
+
+**抬起脚本**：
+
 ```
-' btnRestartComm 抬起脚本：重启所有使能单元的通讯连接
-Dim ret, i
-ret = !ShowConfirmDialog("将重启所有使能单元通讯连接，期间数据采集暂停约5秒，确认？")
-If ret = 1 Then
-    If LoginLevel >= 3 Then
-        For i = 1 To 8
-            If GetValue("Unit" + Str(i) + "_Enabled") = 1 Then
-                Call !RestartDeviceConnection("PLC_" + Str(i))
-            EndIf
-        Next
-        !ShowInfoDialog("通讯已重启")
-    Else
-        !ShowWarnDialog("权限不足，需管理员级别")
-    EndIf
-EndIf
+' btnRestartComm: 管理员权限由安全属性双重校验, 此处显式重启8个设备
+' McgsPro 不支持 For...Next + 动态变量名, 必须显式展开
+
+IF Unit1_Enabled = 1 THEN
+    !SetDevice("PLC_1", 4, "")
+ENDIF
+IF Unit2_Enabled = 1 THEN
+    !SetDevice("PLC_2", 4, "")
+ENDIF
+IF Unit3_Enabled = 1 THEN
+    !SetDevice("PLC_3", 4, "")
+ENDIF
+IF Unit4_Enabled = 1 THEN
+    !SetDevice("PLC_4", 4, "")
+ENDIF
+IF Unit5_Enabled = 1 THEN
+    !SetDevice("PLC_5", 4, "")
+ENDIF
+IF Unit6_Enabled = 1 THEN
+    !SetDevice("PLC_6", 4, "")
+ENDIF
+IF Unit7_Enabled = 1 THEN
+    !SetDevice("PLC_7", 4, "")
+ENDIF
+IF Unit8_Enabled = 1 THEN
+    !SetDevice("PLC_8", 4, "")
+ENDIF
 ```
+
+> `!SetDevice(设备名, 4, "")` — Op=4 表示"启动一次"通讯。如果设备配置的是"Modbus RTU"，可尝试先 Op=2（停止）再 Op=1（启动）。设备名需与**设备窗口**中的设备命名一致。
 
 ### 10.6 查看详细日志按钮脚本
 
 ```
-' btnViewLog 抬起脚本：弹出通讯日志查看窗口（自定义窗口"通讯日志详情"）
-!OpenWindow("通讯日志详情")
+' btnViewLog: McgsPro 用 !SetWindow 打开用户窗口
+!SetWindow("通讯日志详情", 1)
 ```
+
+> `!SetWindow(窗口名, 1)` — 打开并显示窗口。`!OpenWindow` 在 McgsPro 3.3.6 中不存在。
 
 ### 10.7 画面7组态验收点
 
@@ -2050,52 +2229,48 @@ EndIf
 
 ### 11.7 画面8b 权限管理按钮脚本
 
-`btnLoginOperator` 抬起脚本：
+> **重要提示**: McgsPro 3.3.6 不支持 `!ShowPasswordInputDialog` / `!ShowInfoDialog` / `!ShowWarnDialog` / `!ExitRuntimeSystem`。登录/注销请使用 McgsPro 内置的 `!LogOn()` / `!LogOff()`；修改密码用 `!ChangePassword()`；退出系统用标准按钮属性"操作属性 → 退出运行系统"。
+
+#### 登录按钮（3个，共用同一模式）
+
+**`btnLoginOperator` / `btnLoginMaintainer` / `btnLoginAdmin`** 抬起脚本：
 
 ```
-Dim ret, pwd
-pwd = !ShowPasswordInputDialog("请输入操作员密码：")
-If pwd = "operator_pwd" Then
-    LoginLevel = 1
-    LoginUserText = "操作员"
-    LoginTime = $Time
-    !ShowInfoDialog("登录成功")
-Else
-    !ShowWarnDialog("密码错误")
-EndIf
+' 三个登录按钮均弹出 McgsPro 内置登录窗口
+' 用户/密码在 McgsPro → 运行策略 → 启动策略 → !Editusers() 中预先配置
+!LogOn()
+LoginTime = !TimeGetCurrentTime()
 ```
 
-`btnLoginMaintainer`、`btnLoginAdmin` 同理，对应密码与等级 2、3。
+> McgsPro 3.3.6 **没有** `!ShowPasswordInputDialog` 伪函数。必须使用内置 `!LogOn()` 弹窗。操作员/维护/管理员三个按钮可复用同一个 `!LogOn()`（用户在登录弹窗里自行选择身份），也可在**按钮安全属性**中设置表达式限制哪些用户组可见。
 
-`btnLogout` 抬起脚本：
-
-```
-LoginLevel = 0
-LoginUserText = "未登录"
-!ShowInfoDialog("已注销")
-```
-
-`btnChangePwd` 抬起脚本：
+#### `btnLogout` 注销按钮抬起脚本：
 
 ```
-If LoginLevel = 0 Then
-    !ShowWarnDialog("请先登录")
-Else
-    !OpenWindow("修改密码窗口")
-EndIf
+' McgsPro 内置注销
+!LogOff()
+LoginTime = 0
 ```
 
-`btnExit` 抬起脚本：
+#### `btnChangePwd` 修改密码按钮抬起脚本：
 
 ```
-Dim ret
-ret = !ShowConfirmDialog("将退出HMI运行系统，确认？")
-If ret = 1 Then
-    !ExitRuntimeSystem()
-EndIf
+' McgsPro 内置修改密码窗口 (仅对当前登录用户生效)
+!ChangePassword()
 ```
 
-> 注：McgsPro 标准按钮"操作属性→退出运行系统"可直接配置；此处用脚本方式便于增加确认弹窗。
+#### `btnExit` 退出系统按钮
+
+**推荐方式 — 标准按钮属性配置（不写脚本）**：
+
+| 属性页 | 字段 | 取值 |
+|---|---|---|
+| 基本属性 → 抬起状态 | 文本 | 退出系统 |
+| **操作属性 → 退出运行** | | ✅ 勾选 |
+| 安全属性 → 安全控制 | 弹窗确认 | ✅ 勾选 |
+| 安全属性 → 安全控制 | 确认提示文本 | "将退出HMI运行系统，确认？" |
+
+> McgsPro 3.3.6 没有 `!ExitRuntimeSystem()` 伪函数，退出系统必须通过按钮操作属性配置实现。
 
 ### 11.8 画面8组态验收点
 
@@ -2131,182 +2306,154 @@ CurrentMenuGroup = 0
 ' 加载单元使能状态（从断电保持变量恢复）
 ' Unit1_Enabled~Unit8_Enabled 已配置断电保持，无需重置
 
-' 打开启动画面
-!OpenWindow("菜单_主菜单")
+' 打开启动画面 (McgsPro 用 !SetWindow, 无 !OpenWindow)
+!SetWindow("菜单_主菜单", 1)
 ```
 
 ### 12.2 循环策略 — 通讯状态检测（每1秒）
 
+> McgsPro 不支持 `For...Next` + 动态变量名拼接 + `GetValue()`。8个单元必须显式展开。
+> `!GetDeviceStatus("设备名")` 返回 0=离线、1=在线。
+> **注**: CommStatus 数组在 McgsPro 3.3.6 中若需用，下标**必须从 1 开始**，或直接用 8 个独立变量 CommStatus_1 ~ CommStatus_8。
+
 ```
-' 检测8个PLC连接的通讯状态，写入 CommStatus_01~08
-Dim i, devName
-For i = 1 To 8
-    devName = "PLC_" + Str(i)
-    If GetValue("Unit" + Str(i) + "_Enabled") = 1 Then
-        CommStatus[i] = !GetDeviceStatus(devName)    ' 0=离线 1=在线
-    Else
-        CommStatus[i] = 0
-    EndIf
-Next
+' 检测8个PLC的通讯状态 - 显式展开
+IF Unit1_Enabled = 1 THEN
+    CommStatus_1 = !GetDeviceStatus("PLC_1")
+ELSE
+    CommStatus_1 = 0
+ENDIF
+IF Unit2_Enabled = 1 THEN
+    CommStatus_2 = !GetDeviceStatus("PLC_2")
+ELSE
+    CommStatus_2 = 0
+ENDIF
+' ... 其余6个单元(Unit3~Unit8)同理展开
 ```
+
+> **工程建议**: 通讯状态检测更适合放在**画面构件属性**里（如"填充颜色"直接绑定设备状态表达式），不需要循环策略。
 
 ### 12.3 循环策略 — 全局报警聚合（每1秒）
 
-```
-' 聚合8个使能单元的报警，更新 GlobalAlarmActive/GlobalAlarmText
-Dim i, alarmCode, maxAlarmCode, maxAlarmUnit, maxAlarmText
-maxAlarmCode = 0
-maxAlarmUnit = 0
-maxAlarmText = "无全局报警"
-
-For i = 1 To 8
-    If GetValue("Unit" + Str(i) + "_Enabled") = 1 AND CommStatus[i] = 1 Then
-        alarmCode = GetValue("U" + Str(i) + "_VW6_AlarmCode")
-        If alarmCode > maxAlarmCode Then
-            maxAlarmCode = alarmCode
-            maxAlarmUnit = i
-            maxAlarmText = Str(i) + "号单元:" + GetAlarmTextByCode(alarmCode)
-        EndIf
-    EndIf
-Next
-
-If maxAlarmCode > 0 Then
-    GlobalAlarmActive = 1
-    GlobalAlarmText = maxAlarmText
-Else
-    GlobalAlarmActive = 0
-    GlobalAlarmText = "无全局报警"
-EndIf
-```
+> McgsPro 不支持 `For...Next` + `GetValue()` + 自定义函数 `GetAlarmTextByCode()`。
+> 报警文本映射建议直接在**报警组配置里填报警描述**，McgsPro 自动显示。HMI 仅维护一个"最高优先级报警码"变量 `GlobalMaxAlarmCode`。
+> 
+> **替代方案**: 如果确实需要聚合，可以把逻辑交给 PLC（PLC 在一个扫描周期内比较 8 个单元的 VW6 报警码写入一个全局寄存器，HMI 只读一个变量）。
 
 ### 12.4 循环策略 — 单元状态文本更新（每1秒）
 
-```
-' 按 VW2 值查表更新 U{N}_StateText 字符串变量
-Dim i, stateCode, stateText
-Dim stateTable(0 To 99) As String
-stateTable(0) = "S0 初始化"
-stateTable(1) = "S1 进水"
-stateTable(2) = "S2 预循环"
-stateTable(3) = "S3 加药"
-stateTable(4) = "S3.5 静置"
-stateTable(5) = "S4 转移"
-stateTable(6) = "S5 实验运行"
-stateTable(7) = "S6 排水"
-stateTable(8) = "S7 结束"
-stateTable(99) = "故障"
+> **重要（2026-08-30 修订）**: McgsPro **不支持** `Dim stateTable(0 To 99)` 这种数组下标从0开始的写法、`For...Next` 循环、以及 `Call SetValue()`。
+> 
+> **推荐做法 — 用 PLC 侧字符串变量或 McgsPro 构件直接绑定**:
+> 
+> **方案1（推荐）**: PLC 侧维护 8 个单元的状态文本字符串写入 DB，HMI 标签直接绑定 `U1_StateText` ~ `U8_StateText`，无需任何 HMI 脚本。
+> 
+> **方案2（HMI 侧显式）**: 以下为**单单元**显式写法示例（仅作参考，8个单元×10个状态码=80行，建议移至PLC）:
 
-For i = 1 To 8
-    If GetValue("Unit" + Str(i) + "_Enabled") = 1 Then
-        stateCode = GetValue("U" + Str(i) + "_VW2_StateMachine")
-        If stateCode = 99 Then
-            stateText = stateTable(99)
-        Else
-            If stateCode >= 0 AND stateCode <= 8 Then
-                stateText = stateTable(stateCode)
-            Else
-                stateText = "未知状态"
-            EndIf
-        EndIf
-        Call SetValue("U" + Str(i) + "_StateText", stateText)
-    EndIf
-Next
 ```
+' 单元1状态文本 - 显式嵌套If (仅展示U1, U2~U8同理)
+IF U1_VW2_StateMachine = 0 THEN
+    U1_StateText = "S0 初始化"
+ELSE
+    IF U1_VW2_StateMachine = 1 THEN
+        U1_StateText = "S1 进水"
+    ELSE
+        IF U1_VW2_StateMachine = 2 THEN
+            U1_StateText = "S2 预循环"
+        ELSE
+            IF U1_VW2_StateMachine = 3 THEN
+                U1_StateText = "S3 加药"
+            ELSE
+                IF U1_VW2_StateMachine = 4 THEN
+                    U1_StateText = "S3.5 静置"
+                ELSE
+                    IF U1_VW2_StateMachine = 5 THEN
+                        U1_StateText = "S4 转移"
+                    ELSE
+                        IF U1_VW2_StateMachine = 6 THEN
+                            U1_StateText = "S5 实验运行"
+                        ELSE
+                            IF U1_VW2_StateMachine = 7 THEN
+                                U1_StateText = "S6 排水"
+                            ELSE
+                                IF U1_VW2_StateMachine = 8 THEN
+                                    U1_StateText = "S7 结束"
+                                ELSE
+                                    IF U1_VW2_StateMachine = 99 THEN
+                                        U1_StateText = "故障"
+                                    ELSE
+                                        U1_StateText = "未知状态"
+                                    ENDIF
+                                ENDIF
+                            ENDIF
+                        ENDIF
+                    ENDIF
+                ENDIF
+            ENDIF
+        ENDIF
+    ENDIF
+ENDIF
+```
+
+> **结论**: 状态映射逻辑**强烈建议移至 PLC FCx**，PLC 直接把 VW2 数值转为状态文本字符串写入 VD 区，HMI 仅做显示。
 
 ### 12.5 循环策略 — 登录超时检测（每1秒）
 
+> **重要**: McgsPro 3.3.6 不支持 `DateDiff` / `Now()` / `$Time` 作为时间戳。登录时间必须存储为整数（秒），用 `!TimeGetCurrentTime()` 取当前整数时间再直接相减。
+
 ```
-' 操作员/维护级登录后30分钟无操作自动注销，管理员不超时
-Dim idleMinutes
-If LoginLevel > 0 AND LoginLevel < 3 Then
-    idleMinutes = DateDiff("n", LoginTime, $Time)
-    If idleMinutes >= 30 Then
-        LoginLevel = 0
-        LoginUserText = "未登录"
-        !ShowInfoDialog("登录超时，已自动注销")
-    EndIf
-EndIf
+' 操作员/维护级登录后30分钟无操作自动注销, 管理员不超时
+' LoginTime 必须是 integer 类型, 存储的是 !TimeGetCurrentTime() 返回的整数秒
+
+DIM nowSec AS integer
+DIM lastSec AS integer
+DIM spanSec AS integer
+
+' LoginLevel > 0 AND LoginLevel < 3 = 操作员(1) 或 维护级(2)
+IF LoginLevel > 0 AND LoginLevel < 3 THEN
+    nowSec = !TimeGetCurrentTime()
+    lastSec = LoginTime
+    IF lastSec > 0 THEN
+        spanSec = nowSec - lastSec
+        IF spanSec < 0 THEN
+            spanSec = 0
+        ENDIF
+        ' 30分钟 = 1800秒
+        IF spanSec >= 1800 THEN
+            !LogOff()
+            LoginTime = 0
+        ENDIF
+    ENDIF
+ENDIF
 ```
 
-### 12.6 脚本库全局函数
+> **LoginTime 变量类型**: McgsPro 中必须为 `integer`（整数），用于存储 `!TimeGetCurrentTime()` 的返回值（自1970-01-01起的秒数）。登录成功时赋值 `LoginTime = !TimeGetCurrentTime()`，注销时清零。
 
-在 McgsPro → 脚本库 → 全局函数 中新建以下函数：
+### 12.6 ⚠ 废弃：McgsPro 不支持自定义全局函数/子程序
 
-**`GetValue(varName)`**：按变量名读取实时数据库值
+> **重要说明（2026-08-30 修订）**: 原版本节使用 `Sub ... End Sub` / `Function ... End Function` / `GetValue()` / `SetValue()` / `Select Case` / 数组下标从0开始 等语法，**全部在 McgsPro 3.3.6 中不支持**。
 
-**`SetValue(varName, value)`**：按变量名写入实时数据库值
+McgsPro 3.3.6 脚本语言的硬限制：
 
-**`SetBitByUnit(unitNo, addr, bitVal)`**：按单元号+地址写入对应PLC的位变量
-```
-Sub SetBitByUnit(unitNo, addr, bitVal)
-    Dim fullVarName
-    fullVarName = "U" + Str(unitNo) + "_" + addr
-    Call SetValue(fullVarName, bitVal)
-End Sub
-```
+| 不支持 | 正确做法 |
+|---|---|
+| `Sub` / `Function` 自定义子程序 | 所有逻辑**内联写在按钮/窗口/策略脚本中**，不拆分函数 |
+| `GetValue("变量名")` / `SetValue("变量名", 值)` | 直接引用变量名：`U1_VD_C_Set = 5.0` |
+| 动态拼变量名 `"U" + Str(i) + "_xxx"` | **必须显式展开**，8个单元各写一段赋值 |
+| `For i = 0 To 11 ... Next` | 8个单元×12个参数=96行显式赋值，或把搬运逻辑移至PLC |
+| `Select Case ... End Select` | 嵌套 `If...Then...ElseIf...EndIf` |
+| 数组下标从 0 开始 | McgsPro 数组下标**从 1 开始** |
 
-**`SetValueByUnit(unitNo, addr, value)`**：按单元号+地址写入对应PLC的字/双字变量
-```
-Sub SetValueByUnit(unitNo, addr, value)
-    Dim fullVarName
-    fullVarName = "U" + Str(unitNo) + "_" + addr
-    Call SetValue(fullVarName, value)
-End Sub
-```
+**替代方案 — 把复杂逻辑移至 PLC 侧**：
 
-**`GetAlarmTextByCode(code)`**：按报警码返回报警文本
-```
-Function GetAlarmTextByCode(code)
-    Select Case code
-        Case 10: GetAlarmTextByCode = "上缸漫溢"
-        Case 11: GetAlarmTextByCode = "下缸漫溢"
-        Case 12: GetAlarmTextByCode = "NC上阀动作"
-        Case 13: GetAlarmTextByCode = "NC下阀动作"
-        Case 14: GetAlarmTextByCode = "急停触发"
-        Case 99: GetAlarmTextByCode = "安全继电器故障"
-        Case 20: GetAlarmTextByCode = "节奏严重滞后"
-        Case 21: GetAlarmTextByCode = "节奏滞后提示"
-        Case 30: GetAlarmTextByCode = "阀A关后流"
-        Case 31: GetAlarmTextByCode = "阀A内漏"
-        ' ... 其余报警码参照《报警字32位解析映射表》
-        Case Else: GetAlarmTextByCode = "报警码" + Str(code)
-    End Select
-End Function
-```
+对于"按单元号复制参数""写报警文本""12个默认值回填"等操作，**强烈建议全部由 PLC 侧处理**。HMI 仅写一个触发位（如 `U1_CMD_RestoreDefault = 1`），PLC 在一个扫描周期内完成全部寄存器搬运。这样 HMI 脚本逻辑极简，避免了 McgsPro 的各种限制。
 
-**`CopyParamBetweenUnits(srcUnit, dstUnit)`**：复制单元参数到另一单元
-```
-Sub CopyParamBetweenUnits(srcUnit, dstUnit)
-    Dim paramList(11) As String
-    paramList(0) = "VD_C_Set"
-    paramList(1) = "VD_C_Stock"
-    paramList(2) = "VD_StepRes"
-    paramList(3) = "VD_CycleSetpoint"
-    paramList(4) = "VD_ExperimentTarget"
-    paramList(5) = "VD_PreMixTime"
-    paramList(6) = "VD_RestTime"
-    paramList(7) = "VD_Timeout_ValveA"
-    paramList(8) = "VD_Timeout_ValveB"
-    paramList(9) = "VD_Timeout_ValveC"
-    paramList(10) = "VD_Timeout_Pump1"
-    paramList(11) = "VD_Timeout_Pump2"
-
-    Dim i, value
-    For i = 0 To 11
-        value = GetValue("U" + Str(srcUnit) + "_" + paramList(i))
-        Call SetValue("U" + Str(dstUnit) + "_" + paramList(i), value)
-    Next
-End Sub
-```
-
-**`WriteOpLog(opType, opContent)`**：写操作日志
-```
-Sub WriteOpLog(opType, opContent)
-    Dim logEntry
-    logEntry = $Time + " [" + LoginUserText + "] " + opType + ": " + opContent
-    Call !AppendOperationLog(logEntry)
-End Sub
-```
+| 需要做的事 | PLC 侧实现方式 | HMI 侧脚本（仅1行） |
+|---|---|---|
+| 恢复默认值 | FCx 监控触发位，批量写 VD_C_Set/VD_C_Stock... | `U1_CMD_RestoreDefault = 1` |
+| 复制单元参数 | FCx 监控触发位，从源单元 VD 区搬运到目标单元 VD 区 | `U1_CMD_CopyFrom = 2` |
+| 报警码→文本映射 | PLC 不用做，McgsPro 在报警组配置里直接填报警描述 | 无脚本，构件属性里填 |
+| 写操作日志 | PLC 可选做，McgsPro 内置 `!SaveData(操作日志组对象)` | `!SaveData(操作日志)` |
 
 ---
 

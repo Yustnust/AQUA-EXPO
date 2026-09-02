@@ -1,4 +1,4 @@
-﻿# 药液配置加注控制系统 — PLC代码完整性校验报告 v1.0
+# 药液配置加注控制系统 — PLC代码完整性校验报告 v1.0
 
 **校验对象**: `/workspace/AQUA-EXPO/plc/stl/` 目录全部STL文件
 **校验依据**: PLC设计文档v9.3 + HMI-PLC变量地址表v1.0 + Story 1.2~1.7规格书
@@ -110,6 +110,8 @@
 | VW250~VW286 | 阀诊断中间量 | FC11/FC15/FC17/FC30~FC32 | 【警告】见P2 VW270冲突 |
 | V300.0~V303.7 | 报警字32位 | FC2/FC3/FC11/FC15/FC17/FC30~FC32/FC0 | ✅ 无冲突(按位严格分配) |
 | V304.0 | M_InitDone | FC0 | ✅ 无冲突(FC0新增,专用) |
+| V304.1 | M_CommStatus_Syringe | FC4 | ✅ 无冲突(AQEX-49新增,注射泵RTU在线) |
+| V304.2 | M_CommStatus_Flow | FC4 | ✅ 无冲突(AQEX-49新增,流量计RTU在线) |
 | VB500~VB509 | 报警日志缓冲 | FC3 | ✅ 无冲突 |
 | VB900~VB908 | RTC读取缓冲 | FC0/FC15 | ✅ 无冲突(临时缓冲,同周期用完) |
 | VB10~VB17 | DT10时间戳 | FC0/FC15 | ✅ 无冲突(FC15写,FC0读) |

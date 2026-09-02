@@ -2611,6 +2611,54 @@ SubWndMode = 1
 !OpenSubWnd(子窗口_单元选择, 240, 180, 400, 240, 17)
 ```
 
+### 脚本 34.5:导出历史报警日志按钮(U盘)
+
+- **编号**: 34.5 (画面5区域,插入于脚本34和35之间)
+- **用途**: 二次确认后将历史报警日志导出至U盘CSV文件
+- **位置**: 用户窗口 → 画面5_报警日志 → 导出U盘按钮构件 → Click 事件
+- **触发方式**: 按钮单击
+- **二次确认**: 按钮安全属性 → 安全控制 → 弹窗确认(需在构件属性中配置,提示文本="将导出全部历史报警日志到U盘,确认?")
+
+```
+' ============================================
+' 导出历史报警日志到U盘 (McgsPro 3.3.6)
+' 官方函数: !ExportHisDataToCSV
+' 组对象名: "Mcgs_HistoryAlarm" (McgsPro内置,不需手动建)
+' 说明:
+'   本脚本使用"方案A"固定起始时间("1970-01-01 00:00:00"),
+'   避开 McgsPro 不支持的 DateAdd/DateDiff 函数。
+'   二次确认由按钮安全属性弹窗实现,本脚本不做确认。
+' ============================================
+
+DIM fileName AS string
+DIM ret AS integer
+
+' 生成文件名: AlarmLog_YYYYMMDD_HHMMSS.csv
+fileName = "AlarmLog_" + Str($Year) + Str($Month) + Str($Day) + "_" + Str($Hour) + Str($Minute) + ".csv"
+
+' 导出全部历史报警到CSV
+' 参数:
+'   (文件名, Mcgs_HistoryAlarm, 空字段名=全部,
+'    "1970-01-01 00:00:00", 当前时间, 最大10万条,
+'    1=覆盖, 空, 进度指示, 控制标志)
+'
+' 注意: 进度指示 / 控制标志 必须是实时数据库中已存在的 integer 变量
+'       (需要预先在 McgsPro → 实时数据 → 新建)
+'
+' 错误码:
+'   0=成功, -1021=U盘未插入, -1023=该时间段无记录, 其他=文件操作失败
+ret = !ExportHisDataToCSV(fileName, "Mcgs_HistoryAlarm", "", "1970-01-01 00:00:00", $Date + " " + $Time, 100000, 1, "", 进度指示, 控制标志)
+```
+
+**必须预建的 HMI 内部变量**（实时数据 → 新建 → integer）：
+
+| 变量名 | 类型 | 用途 |
+|---|---|---|
+| 进度指示 | integer | 导出过程中显示进度条数,导出结束自动归零 |
+| 控制标志 | integer | 导出结束自动置1;导出中途手动置负值可取消 |
+
+---
+
 ### 脚本 35:清除历史日志按钮
 
 - **编号**: 35
@@ -2696,25 +2744,48 @@ EndIf
 - **用途**: 1小时/8小时/24小时三档切换(单按钮循环切换)
 - **位置**: 用户窗口 → 画面6_趋势曲线 → 时间范围切换按钮构件 → Click 事件
 - **触发方式**: 按钮单击
+- **前置条件**: 画面上预先放3个历史曲线构件,分别对应1h/8h/24h,每个构件的"高级属性→时间范围"在属性对话框中**静态配置**(不能用变量绑定)
+- **变量依赖**: 预建 `TrendHis_1h_Visible` / `TrendHis_8h_Visible` / `TrendHis_24h_Visible` (integer型)
 
 ```
 ' ============================================
 ' 时间范围切换按钮脚本
 ' 功能: 1h → 8h → 24h → 1h 循环切换
-' 注意: 历史曲线构件的时间范围通过其组态属性绑定 TrendTimeRange,
-'       此处仅切换变量值,构件会自动刷新
+'
+' 重要 (2026-08-30 修订):
+'   McgsPro 历史曲线构件**不支持**运行时动态改变时间范围
+'   (构件属性里的时间范围是静态数值,不能用变量绑定),
+'   也不支持 VBScript 风格 Call hisTrend.SetXLength()。
+'
+'   正确做法:
+'   画面上预先放3个历史曲线构件(HisCurve_1h / HisCurve_8h / HisCurve_24h),
+'   每个构件的"高级属性→时间范围"分别写死为 3600/28800/86400 秒。
+'   切换按钮仅改变3个构件的 Visible 绑定变量值。
+'   每个构件的"基本属性→可见性→显示表达式"绑定对应变量:
+'     HisCurve_1h 的 Visible 绑定 TrendHis_1h_Visible
+'     HisCurve_8h 的 Visible 绑定 TrendHis_8h_Visible
+'     HisCurve_24h 的 Visible 绑定 TrendHis_24h_Visible
 ' ============================================
 
 If TrendTimeRange = 1 Then
     TrendTimeRange = 8
     TrendRangeStr = "最近8小时"
+    TrendHis_1h_Visible = 0
+    TrendHis_8h_Visible = 1
+    TrendHis_24h_Visible = 0
 Else
     If TrendTimeRange = 8 Then
         TrendTimeRange = 24
         TrendRangeStr = "最近24小时"
+        TrendHis_1h_Visible = 0
+        TrendHis_8h_Visible = 0
+        TrendHis_24h_Visible = 1
     Else
         TrendTimeRange = 1
         TrendRangeStr = "最近1小时"
+        TrendHis_1h_Visible = 1
+        TrendHis_8h_Visible = 0
+        TrendHis_24h_Visible = 0
     EndIf
 EndIf
 
@@ -2889,15 +2960,19 @@ SysTimeString = $Date + " " + $Time
 ### 脚本 41:重启通讯按钮
 
 - **编号**: 41
-- **用途**: 二次确认后停止并重新启动指定通讯设备(需管理员组权限)
+- **用途**: 权限校验后停止所有 PLC + Modbus 设备,延时 500ms 再全部启动(全量重启)
 - **位置**: 用户窗口 → 画面7_通讯维护 → 重启通讯按钮构件 → Click 事件
 - **触发方式**: 按钮单击
+- **二次确认**: 按钮安全属性 → 安全控制 → 弹窗确认(需在构件属性中配置,提示文本="将重启所有单元通讯连接,期间数据采集暂停,确认?")
+- **权限**: 按钮安全属性配置 LoginLevel >= 3 或 !CheckUserGroup("管理员组")
+- **设备命名约定**: McgsPro 设备窗口中设备名需与脚本一致。`PLC_01`~`PLC_08` 为 S7-200 SMART 单元 PLC 设备,`MB_Pump_01`~`MB_Pump_08` 为 8 台注射泵 Modbus 从站,`MB_Flow_01`~`MB_Flow_08` 为 8 台流量计 Modbus 从站。如工程实际命名不同(如 `PLC_1` 无前导零),请同步修改脚本
 
 ```
 ' ============================================
 ' 重启通讯按钮脚本
-' 功能: 权限校验 → 停止所有PLC+Modbus设备 → 启动所有设备
-' 注意: 全量重启会影响8套单元通讯,需管理员权限
+' 功能: 权限校验 → 停止所有PLC+Modbus设备 → 延时500ms → 启动所有设备
+' 注意: 全量重启会影响8套单元通讯,约5秒采集暂停
+' 二次确认由按钮安全属性弹窗实现,本脚本不做确认
 ' ============================================
 
 ' --- 1. 校验管理员组权限 ---

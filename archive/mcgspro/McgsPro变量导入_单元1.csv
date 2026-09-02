@@ -136,3 +136,5 @@
 130,U1_MB_Pump_Position,SINGLE,只读VWB222,只读,V数据寄存器,16位 有符号二进制,222,,1,
 131,U1_M_AlarmAckMode,INTEGER,读写V200.0,读写,V数据寄存器,通道的第00位,200,,1,
 132,U1_M_InitDone,INTEGER,只读V304.0,只读,V数据寄存器,通道的第00位,304,,1,
+133,U1_CommStatus_Syringe,INTEGER,只读V304.1,只读,V数据寄存器,通道的第01位,304,,1,注射泵RTU从站在线（AQEX-49）
+134,U1_CommStatus_Flow,INTEGER,只读V304.2,只读,V数据寄存器,通道的第02位,304,,1,流量计RTU从站在线（AQEX-49）
