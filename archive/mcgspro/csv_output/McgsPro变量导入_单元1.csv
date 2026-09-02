@@ -131,3 +131,6 @@
 127,U1_M_InitDone,INTEGER,???V304.0,???,V????????,??????00λ,304,,1,
 128,U1_VD_T_Default,SINGLE,读写VDF144,读写,V数据寄存器,32位 浮点数,144,,1,
 129,U1_VD_S6_Default,SINGLE,读写VDF108,读写,V数据寄存器,32位 浮点数,108,,1,
+137,U1_VD_Vol_Target,SINGLE,只读VDF370,只读,V数据寄存器,32位 浮点数,370,,1,,本轮目标抽取母液体积(μL)
+138,U1_VD_Remaining_Vol,SINGLE,只读VDF372,只读,V数据寄存器,32位 浮点数,372,,1,,本轮剩余待加药量(μL)
+139,U1_VD_Dosed_Volume_Total,SINGLE,只读VDF378,只读,V数据寄存器,32位 浮点数,378,,1,,实验累计加药量(μL,跨轮次累加)

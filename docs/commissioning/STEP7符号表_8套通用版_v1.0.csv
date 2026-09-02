@@ -1,4 +1,4 @@
-﻿符号,地址,数据类型,注释
+符号,地址,数据类型,注释
 // ============================================================
 // 药液配置加注控制系统 — STEP 7-Micro/WIN SMART 符号表 v1.0
 // 适用: 8套缸单元通用 (1~8号PLC程序完全相同,差异仅在IP)
@@ -110,6 +110,8 @@ VB300_AlarmWord1,VB300,BYTE,报警字1(漫溢级+急停+继电器+节奏)
 VB301_AlarmWord2,VB301,BYTE,报警字2(阀A类故障)
 VB302_AlarmWord3,VB302,BYTE,报警字3(阀B/C类故障)
 VB303_AlarmWord4,VB303,BYTE,报警字4(泵/注射泵/RTC/流量瞬时)
+// === 系统总状态字 VB305 (0=良好/1=故障/2=急停, 非断电保持, AQEX-50新增) ===
+VB_SystemStatus,VB305,BYTE,系统总状态字(0=良好/1=故障/2=急停, OB1 NETWORK10计算)
 // 报警字1 详细位 (V300.0~V300.7)
 M_Alarm_Overflow_AHigh,V300.0,BOOL,上缸漫溢(液位计A高位)
 M_Alarm_Overflow_BHigh,V300.1,BOOL,下缸漫溢(液位计B高位)

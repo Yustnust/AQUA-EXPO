@@ -140,3 +140,6 @@
 134,U1_CommStatus_Flow,INTEGER,只读V304.2,只读,V数据寄存器,通道的第02位,304,,1,流量计RTU从站在线（AQEX-49）,
 135,U1_VW294_PumpContFail,SINGLE,只读VWB294,只读,V数据寄存器,16位 有符号二进制,294,,1,注射泵连续失败计数(≥5降级),AQEX-49
 136,U1_VW296_FlowContFail,SINGLE,只读VWB296,只读,V数据寄存器,16位 有符号二进制,296,,1,流量计连续失败计数(≥5降级),AQEX-49
+137,U1_VD_Vol_Target,SINGLE,只读VDF370,只读,V数据寄存器,32位 浮点数,370,,1,,本轮目标抽取母液体积(μL)
+138,U1_VD_Remaining_Vol,SINGLE,只读VDF372,只读,V数据寄存器,32位 浮点数,372,,1,,本轮剩余待加药量(μL)
+139,U1_VD_Dosed_Volume_Total,SINGLE,只读VDF378,只读,V数据寄存器,32位 浮点数,378,,1,,实验累计加药量(μL,跨轮次累加)
