@@ -12,8 +12,8 @@
 // ============================================================
 
 // 符号说明:
-// V3.6  : CMD_Manual_SyringePump_Start 手动注射泵启动(脉冲)
-// V3.7  : CMD_Manual_SyringePump_Stop  手动注射泵停止/回零(脉冲)
+// V307.2 : CMD_Manual_SyringePump_Start 手动注射泵启动(脉冲)   (旧地址V3.6,2026-09-03迁移避开VW2重叠)
+// V307.3 : CMD_Manual_SyringePump_Stop  手动注射泵停止/回零(脉冲)(旧地址V3.7)
 // VD384 : VD_ManualDose_Target 手动总加药量(µL,HMI设定)
 // VW388 : VW_ManualDose_Mode   手动模式 0=单次 1=循环
 // VW390 : VW_ManualDose_State  手动子状态
@@ -40,7 +40,7 @@
 NETWORK 1
 // 启动命令检测 - 仅空闲态(VW390=0)响应
 LD     SM0.0
-A      V3.6
+A      V307.2
 EU
 AW=    VW390, 0
 MOVR   0.0, VD392
@@ -52,17 +52,17 @@ R      M12.0, 1
 R      M11.6, 1
 R      M11.7, 1
 MOVW   1, VW390
-R      V3.6, 1
+R      V307.2, 1
 
 
 NETWORK 2
 // 停止命令检测 - 非空闲态响应
 LD     SM0.0
-A      V3.7
+A      V307.3
 EU
 AW<>   VW390, 0
 S      M13.7, 1
-R      V3.7, 1
+R      V307.3, 1
 
 
 NETWORK 3

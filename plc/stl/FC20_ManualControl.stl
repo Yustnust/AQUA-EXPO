@@ -9,19 +9,23 @@
 // 修复记录:
 //   P1-改为M位锁存,解决FC10每周期清QB0导致手动输出无法保持的问题
 //   P2-NC球阀串联主路,手动开阀时自动打开对应NC阀
+//   P3-【重大修复2026-09-03】手动命令位从V2.4~V3.7迁移至V306.0~V307.3
+//      原地址V2.4~V3.7与VW2(状态机当前状态)物理地址完全重叠(VB2+VB3),
+//      写入任何手动命令位会直接改写VW2,触发非预期状态切换(如V3.1=1→VW2=2→S2预循环→两台泵同时启动)
+//      新地址V306.0~V307.3落在地址表"预留扩展区",与VW2/VW6/VW8等状态/报警字无冲突
 // ============================================================
 
 // 符号表:
-// V2.4  : CMD_Manual_ValveA_Open 手动开阀A
-// V2.5  : CMD_Manual_ValveA_Close 手动关阀A
-// V2.6  : CMD_Manual_ValveB_Open 手动开阀B
-// V2.7  : CMD_Manual_ValveB_Close 手动关阀B
-// V3.0  : CMD_Manual_ValveC_Open 手动开阀C
-// V3.1  : CMD_Manual_ValveC_Close 手动关阀C
-// V3.2  : CMD_Manual_Pump1_On 手动启泵1
-// V3.3  : CMD_Manual_Pump1_Off 手动停泵1
-// V3.4  : CMD_Manual_Pump2_On 手动启泵2
-// V3.5  : CMD_Manual_Pump2_Off 手动停泵2
+// V306.0 : CMD_Manual_ValveA_Open  手动开阀A   (旧地址V2.4,2026-09-03迁移避开VW2重叠)
+// V306.1 : CMD_Manual_ValveA_Close 手动关阀A   (旧地址V2.5)
+// V306.2 : CMD_Manual_ValveB_Open  手动开阀B   (旧地址V2.6)
+// V306.3 : CMD_Manual_ValveB_Close 手动关阀B   (旧地址V2.7)
+// V306.4 : CMD_Manual_ValveC_Open  手动开阀C   (旧地址V3.0)
+// V306.5 : CMD_Manual_ValveC_Close 手动关阀C   (旧地址V3.1)
+// V306.6 : CMD_Manual_Pump1_On     手动启泵1   (旧地址V3.2)
+// V306.7 : CMD_Manual_Pump1_Off    手动停泵1   (旧地址V3.3)
+// V307.0 : CMD_Manual_Pump2_On     手动启泵2   (旧地址V3.4)
+// V307.1 : CMD_Manual_Pump2_Off    手动停泵2   (旧地址V3.5)
 // V1.6  : STA_TankA_State 上缸状态 1=满
 // V1.7  : STA_TankB_State 下缸状态 1=满
 // M13.0 : Manual_ValveA_Latch 手动阀A锁存
@@ -41,75 +45,75 @@
 NETWORK 1
 // 手动阀A控制(开/关)
 LD     SM0.0
-A      V2.4
+A      V306.0
 EU
 S      M13.0, 1
-R      V2.4, 1
+R      V306.0, 1
 
 LD     SM0.0
-A      V2.5
+A      V306.1
 EU
 R      M13.0, 1
-R      V2.5, 1
+R      V306.1, 1
 
 NETWORK 2
 // 手动阀B控制(开/关)
 LD     SM0.0
-A      V2.6
+A      V306.2
 EU
 A      V1.6
 AN     V1.7
 S      M13.1, 1
-R      V2.6, 1
+R      V306.2, 1
 
 LD     SM0.0
-A      V2.7
+A      V306.3
 EU
 R      M13.1, 1
-R      V2.7, 1
+R      V306.3, 1
 
 NETWORK 3
 // 手动阀C控制(开/关)
 LD     SM0.0
-A      V3.0
+A      V306.4
 EU
 A      V1.7
 S      M13.2, 1
-R      V3.0, 1
+R      V306.4, 1
 
 LD     SM0.0
-A      V3.1
+A      V306.5
 EU
 R      M13.2, 1
-R      V3.1, 1
+R      V306.5, 1
 
 NETWORK 4
 // 手动泵1控制(启/停)
 LD     SM0.0
-A      V3.2
+A      V306.6
 EU
 S      M13.3, 1
-R      V3.2, 1
+R      V306.6, 1
 
 LD     SM0.0
-A      V3.3
+A      V306.7
 EU
 R      M13.3, 1
-R      V3.3, 1
+R      V306.7, 1
 
 NETWORK 5
 // 手动泵2控制(启/停)
 LD     SM0.0
-A      V3.4
+A      V307.0
 EU
 S      M13.4, 1
-R      V3.4, 1
+R      V307.0, 1
 
 LD     SM0.0
-A      V3.5
+A      V307.1
 EU
 R      M13.4, 1
-R      V3.5, 1
+R      V307.1, 1
 
 NETWORK 6
 // 手动输出映射到Q点

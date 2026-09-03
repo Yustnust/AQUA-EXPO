@@ -541,24 +541,26 @@ VD_T_Rolling滚动更新时仍取**标称值**（S1实测 + VD_PreMixTime标称 
 
 手动控制用于现场调试、阀门/泵检修、管路吹扫等场景，**仅在 S0 初始化态可用**（由 OB1 条件调用，非 S0 态不响应，返回 S0 前自动清除全部手动锁存）。手动控制划分为两部分：**阀门/潜水泵手动控制（FC20）** 与 **注射泵手动控制（FC21）**。
 
-### 10.5.1 手动命令位（V2.4~V3.7）
+### 10.5.1 手动命令位（V306.0~V307.3）【v9.4 重大修复】
 
 手动命令位采用"上升沿触发 + PLC 清零握手"机制，区别于 V0 区系统命令位的置位握手，避免 HMI 侧残留 1 值导致重复触发。仅 VW2=0（S0）态响应。
 
+**【v9.4历史背景】**：v1.0~v9.3将手动命令位分配在 V2.4~V3.7，**与 VW2 状态机当前状态物理地址完全重叠**（VB2+VB3 同址）。联机调试时发现 STEP 7 写入 V3.1=1 会改写 VW2=2=S2 预循环，导致两台循环泵同时启动；V3.2=1 会进入 S4 并报"阀B开到位超时"。v9.4 已全部迁移至 V306.0~V307.3（预留扩展区），FC20/FC21/OB1 同步更新。
+
 | 地址 | 符号 | 说明 | 响应条件 |
 |---|---|---|---|
-| V2.4 | CMD_Manual_ValveA_Open | 手动开阀A | VW2=0 |
-| V2.5 | CMD_Manual_ValveA_Close | 手动关阀A | VW2=0 |
-| V2.6 | CMD_Manual_ValveB_Open | 手动开阀B | VW2=0 |
-| V2.7 | CMD_Manual_ValveB_Close | 手动关阀B | VW2=0 |
-| V3.0 | CMD_Manual_ValveC_Open | 手动开阀C | VW2=0 |
-| V3.1 | CMD_Manual_ValveC_Close | 手动关阀C | VW2=0 |
-| V3.2 | CMD_Manual_Pump1_On | 手动启动潜水泵1 | VW2=0 |
-| V3.3 | CMD_Manual_Pump1_Off | 手动停止潜水泵1 | VW2=0 |
-| V3.4 | CMD_Manual_Pump2_On | 手动启动潜水泵2 | VW2=0 |
-| V3.5 | CMD_Manual_Pump2_Off | 手动停止潜水泵2 | VW2=0 |
-| V3.6 | CMD_Manual_SyringePump_Start | 手动注射泵启动 | VW2=0 |
-| V3.7 | CMD_Manual_SyringePump_Stop | 手动注射泵停止/回零 | VW2=0 |
+| V306.0 | CMD_Manual_ValveA_Open | 手动开阀A | VW2=0 |
+| V306.1 | CMD_Manual_ValveA_Close | 手动关阀A | VW2=0 |
+| V306.2 | CMD_Manual_ValveB_Open | 手动开阀B | VW2=0 AND V1.6=1 AND V1.7=0 |
+| V306.3 | CMD_Manual_ValveB_Close | 手动关阀B | VW2=0 |
+| V306.4 | CMD_Manual_ValveC_Open | 手动开阀C | VW2=0 AND V1.7=1 |
+| V306.5 | CMD_Manual_ValveC_Close | 手动关阀C | VW2=0 |
+| V306.6 | CMD_Manual_Pump1_On | 手动启动潜水泵1 | VW2=0 |
+| V306.7 | CMD_Manual_Pump1_Off | 手动停止潜水泵1 | VW2=0 |
+| V307.0 | CMD_Manual_Pump2_On | 手动启动潜水泵2 | VW2=0 |
+| V307.1 | CMD_Manual_Pump2_Off | 手动停止潜水泵2 | VW2=0 |
+| V307.2 | CMD_Manual_SyringePump_Start | 手动注射泵启动 | VW2=0 |
+| V307.3 | CMD_Manual_SyringePump_Stop | 手动注射泵停止/回零 | VW2=0 |
 
 **互锁说明**：手动操作时安全联锁仍生效（如阀B开启需上缸=满且下缸=空，阀C开启需下缸=满），由 PLC 在响应逻辑中校验。
 
