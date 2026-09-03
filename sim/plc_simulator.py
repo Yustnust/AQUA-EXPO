@@ -11,7 +11,7 @@
   - 边沿检测 (EU/ED) 快照机制
   - 状态机VW2 (S0~S7/S_ERROR) + FC1状态调度
   - FC0 断电恢复 (冷启动/断电恢复双路径, RTC检测, Elapsed重算)
-  - FC2 急停 (I1.1下降沿锁存, T35继电器故障2秒, 输出安全)
+  - FC2 急停 (I1.1上升沿锁存, T35继电器故障2秒, 输出安全)  v1.3 NO 接法
   - FC3 报警 (32位优先级链, 消音, 消光确认, 自动恢复)
   - FC10~FC19 各状态FC (S0~S7/S_ERROR)
   - FC30 阀A诊断 (差值法+延时验证4项+漫溢)
@@ -126,7 +126,7 @@ class PLCSim:
         self.set_vd(316, 100.0)    # 目标进水量(FC30用), 确保25ml注射器下仍能有正步数
         self.set_vd(86, 0.0)       # VD_FlowMeter_Cumulative
         self.set_v_bit(200, 0, True)  # M_AlarmAckMode=1(默认人工确认模式)
-        # 急停常闭触点默认ON
+        # 急停常开触点默认OFF (v1.3: NO 接 PLC I1.1)
         self.i[(1, 1)] = True
 
     # ===== V区读写 =====
@@ -329,9 +329,9 @@ class PLCSim:
 
     # ===== FC2 急停处理 =====
     def fc2_estop(self):
-        """FC2急停处理: I1.1下降沿锁存+T35继电器故障+输出安全"""
-        # NETWORK1: 急停下降沿检测
-        if self.fell_i(1, 1):
+        """FC2急停处理: I1.1上升沿锁存(NO接法)+T35继电器故障+输出安全  v1.3""
+        # NETWORK1: 急停上升沿检测 (v1.3: NO 接 PLC I1.1,NO 闭合 = 急停)
+        if self.rose_i(1, 1):
             self.m_estop_latch = True
             self.vw2 = self.S_ERROR
             self.m[(10, 7)] = False
