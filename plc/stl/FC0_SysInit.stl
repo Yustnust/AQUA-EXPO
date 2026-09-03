@@ -42,8 +42,41 @@ LD     SM0.1
 AN     V304.0                      // 冷启动(V304.0=0)
 // 注射泵单步分辨率(25ml注射器标准6000步模式)
 MOVR   4.1667, VD350               // VD_StepResolution
-// 注: T/S6默认值(VD144/VD108)为HMI设定参数,此处不初始化(断电保持);
-//     每次实验启动时由FC10播种到VD112/VD116(见FC10 NETWORK 2)
+
+// ---- HMI设定参数默认值（冷启动安全初始化） ----
+// 出厂/长期断电后,HMI未配置时也有合理默认值,防止全0导致TON立即超时(JMP=0触发)
+// 断电恢复路径(V304.0=1)不执行此块,保留用户上次HMI设定值
+
+// 6.1 浓度与容量参数
+MOVR   5.0, VD10                   // VD_C_Set 目标浓度(%)
+MOVR   100.0, VD14                 // VD_C_Stock 母液浓度(%)
+
+// 6.2 时间周期参数
+MOVR   30.0, VD354                 // VD_CycleSetpoint 换水周期(min)
+MOVR   480.0, VD24                 // VD_ExperimentTarget 实验总时长(min)
+MOVR   120.0, VD28                 // VD_PreMixTime S2预循环标称时长(s)
+MOVR   30.0, VD32                  // VD_PreMixTime_MinSafe S2压缩下限(s)
+MOVR   60.0, VD36                  // VD_RestTime S3.5静止等候标称时长(s)
+MOVR   15.0, VD40                  // VD_RestTime_Min S3.5压缩下限(s)
+MOVR   5.0, VD44                   // VD_CycleExtend_Max 换水周期顺延最大幅度(min)
+MOVR   300.0, VD144                // VD_T_Default 首轮配液总时长默认值(s)
+MOVR   180.0, VD108                // VD_S6_Default 首轮S6排水时长默认值(s)
+
+// 6.3 超时保护参数(关键!防止TON PT=0立即超时)
+MOVR   60.0, VD358                 // VD_Timeout_ValveA 阀A开/关到位超时(s)
+MOVR   60.0, VD362                 // VD_Timeout_ValveB 阀B开/关到位超时(s)
+MOVR   60.0, VD54                  // VD_Timeout_ValveC 阀C开/关到位超时(s)
+MOVR   10.0, VD58                  // VD_Timeout_Pump1 (预留未用)
+MOVR   10.0, VD62                  // VD_Timeout_Pump2 (预留未用)
+MOVR   5.0, VD66                   // VD_Delay_ValveA_Verify 阀A关后延时验证(s)
+
+// 8.4 注射泵速度参数(已注释:使用注射泵自身默认速度设置,PLC不干预)
+// MOVR   450.0, VD132                // VD_PumpSpeed_Start 启动速度(Hz)
+// MOVR   700.0, VD136                // VD_PumpSpeed_Max 最高速度(Hz)
+// MOVR   450.0, VD140                // VD_PumpSpeed_Cutoff 截止速度(Hz)
+
+// 7.4 其他超时阈值
+MOVR   1800.0, VD382               // VD_S4WaitTimeout S4等待超时阈值(s,默认30min)
 // 状态机初始化为S0
 MOVW   0, VW2                      // VW2=0(S0)
 // 复位上下缸状态
@@ -88,7 +121,9 @@ R      M13.5, 3                    // 清手动注射泵标志(M13.5~M13.7)
 MOVW   0, VW390                    // 手动注射泵子状态=0(空闲)
 MOVR   0.0, VD392                  // 手动累计加药量=0(内部)
 MOVR   0.0, VD396                  // 手动剩余加药量=0(内部)
-// 注: VD384(总加药量)和VW388(模式)是HMI设定参数,冷启动时保留不清零
+// 手动注射泵参数(冷启动安全默认值)
+MOVR   10000.0, VD384              // VD_ManualDose_Target 手动总加药量(µL,默认10mL)
+MOVW   0, VW388                    // VW_ManualDose_Mode 手动模式(0=单次,1=循环)
 MOVB   0, VB378                    // 清MBUS_CTRL Error
 MOVB   0, VB379                    // 清MBUS_MSG Error(注射泵)
 MOVB   0, VB384                    // 清MBUS_MSG Error(流量计)
@@ -103,7 +138,8 @@ AN     V304.0
 MOVD   40003, VD232
 MOVW   1, VW230
 S      M11.6, 1
-// VD参数区(VD10~VD144)不初始化,保留HMI设定值
+// 冷启动时HMI设定参数(VD10/14/24/28/32/36/40/44/54/58/62/66/108/132/136/140/144/354/358/362/382)已在上方初始化为安全默认值
+// 断电恢复时这些参数保持用户上次HMI设定值(V304.0=1时跳过本块)
 // DT10不初始化(冷启动时DT10无效,后续S4完成时覆盖)
 MOVW   2, VW198                    // 步骤=2(冷启动完成)
 JMP    2                   // → 完成,跳过断电恢复
@@ -274,8 +310,8 @@ S      V304.0, 1                   // M_InitDone=1(初始化完成,断电保持)
 MOVW   0, VW198                    // 步骤=0(完成)
 
 
-// 注: 冷启动(V304.0=0)时全部清零,适合出厂/长期断电后
-// 注: 断电恢复(V304.0=1)时保留断电保持数据,RTC检测+Elapsed重算+状态恢复
+// 注: 冷启动(V304.0=0)时全部清零+HMI设定参数初始化为安全默认值,适合出厂/长期断电后
+// 注: 断电恢复(V304.0=1)时保留断电保持数据(含用户HMI设定值),RTC检测+Elapsed重算+状态恢复
 // 注: 阀门动作态(S1~S6)断电转S_ERROR,因阀门状态未知(可能半开),强制安全
 // 注: S5(实验运行)断电可恢复,无阀门动作,VD_S5_Elapsed由RTC重算连续不跳变
 // 注: RTC丢失(RTC<DT10)触发V303.5,转S_ERROR,需HMI校时后人工复位
