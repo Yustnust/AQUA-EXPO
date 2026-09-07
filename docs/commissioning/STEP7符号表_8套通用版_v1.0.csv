@@ -51,15 +51,22 @@ STA_MuteDone,V1.4,BOOL,消音已执行
 STA_ForceDone,V1.5,BOOL,状态强制修正已执行
 STA_TankA_State,V1.6,BOOL,上缸状态(0=空1=满)
 STA_TankB_State,V1.7,BOOL,下缸状态(0=空1=满)
-// === 手动控制命令位 V2.4~V3.3 (HMI→PLC, 断电保持, 仅S0/S_ERROR响应) ===
-CMD_Manual_ValveA_Open,V2.4,BOOL,手动开阀A
-CMD_Manual_ValveA_Close,V2.5,BOOL,手动关阀A
-CMD_Manual_ValveB_Open,V2.6,BOOL,手动开阀B
-CMD_Manual_ValveB_Close,V2.7,BOOL,手动关阀B
-CMD_Manual_ValveC_Open,V3.0,BOOL,手动开阀C
-CMD_Manual_ValveC_Close,V3.1,BOOL,手动关阀C
-CMD_Manual_Pump1_On,V3.2,BOOL,手动启动潜水泵1
-CMD_Manual_Pump1_Off,V3.3,BOOL,手动停止潜水泵1
+// === 手动控制命令位 V306.0~V307.3 (HMI→PLC, 断电保持, 仅S0/S_ERROR响应) ===
+// v1.2迁移: 原V2.4~V3.7与VW2状态机物理地址重叠,2026-09-03迁至V306.0~V307.3
+CMD_Manual_ValveA_Open,V306.0,BOOL,手动开阀A
+CMD_Manual_ValveA_Close,V306.1,BOOL,手动关阀A
+CMD_Manual_ValveB_Open,V306.2,BOOL,手动开阀B
+CMD_Manual_ValveB_Close,V306.3,BOOL,手动关阀B
+CMD_Manual_ValveC_Open,V306.4,BOOL,手动开阀C
+CMD_Manual_ValveC_Close,V306.5,BOOL,手动关阀C
+CMD_Manual_Pump1_On,V306.6,BOOL,手动启动潜水泵1
+CMD_Manual_Pump1_Off,V306.7,BOOL,手动停止潜水泵1
+CMD_Manual_Pump2_On,V307.0,BOOL,手动启动潜水泵2
+CMD_Manual_Pump2_Off,V307.1,BOOL,手动停止潜水泵2
+CMD_Manual_SyringePump_Start,V307.2,BOOL,手动注射泵启动
+CMD_Manual_SyringePump_Stop,V307.3,BOOL,手动注射泵停止/回零
+// === 调试模式开关 V309.0 (空缸调试用,生产前必须=0) ===
+M_DebugMode_BypassInterlock,V309.0,BOOL,调试模式-跳过阀B/阀C液位联锁(0=生产/1=调试)
 // === 状态机与计数 (VW2/4/6/8) ===
 VW2_State,VW2,WORD,状态机当前状态(0=S0...8=S7,99=S_ERROR)
 VW4_PumpStatus,VW4,WORD,注射泵状态码(0空闲/1运行/2抽液/3排液/其他错误)

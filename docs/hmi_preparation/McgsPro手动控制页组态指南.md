@@ -1,42 +1,46 @@
-﻿# 昆仑通态 McgsPro 手动控制页组态指南
+# 昆仑通态 McgsPro 手动控制页组态指南
 
 **JIRA Story**: AQEX-12（手动控制命令位响应）/ 关联 AQEX-60（HMI 变量同步）  
 **适用范围**: 药液配置与加注控制系统 — 8 套缸单元集中 HMI，画面 3「手动控制」  
 **组态软件**: 昆仑通态 McgsPro 3.3+，西门子 S7-200 SMART 以太网驱动  
 **配套文档**: [HMI画面布局线框图_v1.0.md](file:///d:/work/CTI/docs/hmi_preparation/HMI画面布局线框图_v1.0.md)、[画面变量绑定清单.md](file:///d:/work/CTI/docs/hmi_preparation/画面变量绑定清单.md)、[HMI-PLC变量地址表_v1.0.md](file:///d:/work/CTI/docs/HMI-PLC变量地址表_v1.0.md)  
-**配套脚本/数据**: [gen_mcgs_csv.py](file:///d:/work/CTI/archive/mcgspro/gen_mcgs_csv.py)、`archive/mcgspro/csv_output/McgsPro变量导入_单元{1~8}.csv`
+**配套脚本/数据**: [gen_mcgs_csv.py](file:///d:/work/CTI/archive/mcgspro/gen_mcgs_csv.py)、`archive/mcgspro/csv_output/西门子_S7_Smart200_以太网.csv`
+
+> **v1.2变更（2026-09-03）**：① 手动命令位从V2.4~V3.7**全面迁移至V306.0~V307.3**（避开VW2状态机物理重叠——联机调试时曾发现V3.1=1会改写VW2=2=S2预循环，触发两台循环泵同时启动；详见[HMI-PLC变量地址表v1.8历史背景](file:///d:/work/CTI/docs/HMI-PLC变量地址表_v1.0.md)）。② 新增V309.0调试模式开关章节——空缸联机调试时用于跳过阀B/阀C的液位联锁。③ 同步MCGS通讯配置SOP里画面3的轮询变量表。
 
 ---
 
 ## 1. 变量准备
 
-手动控制页需要两类 PLC 变量：**HMI→PLC 手动命令位**和 **PLC→HMI 状态反馈位**。  
-所有变量已在 [gen_mcgs_csv.py](file:///d:/work/CTI/archive/mcgspro/gen_mcgs_csv.py) 中导出，8 单元 CSV 文件见 `archive/mcgspro/csv_output/`。
+手动控制页需要三类 PLC 变量：**HMI→PLC 手动命令位**、**PLC→HMI 状态反馈位**、**调试模式开关**。  
+所有变量已在 [gen_mcgs_csv.py](file:///d:/work/CTI/archive/mcgspro/gen_mcgs_csv.py) 中导出，CSV文件见 `archive/mcgspro/csv_output/西门子_S7_Smart200_以太网.csv`。
 
-### 1.1 手动命令位（V2.4 ~ V3.7，HMI 写，PLC 上升沿触发 + 清零握手）
+### 1.1 手动命令位（V306.0 ~ V307.3，HMI 写，PLC 上升沿触发 + 清零握手）
+
+**v1.2 重大迁移**：原V2.4~V3.7与VW2状态机当前状态物理地址完全重叠（VB2+VB3同址）。手动控制命令位已全部迁移至V306.0~V307.3（预留扩展区），避免误改写状态机。
 
 | 变量名（1 号单元示例） | PLC 地址 | 说明 |
 |---|---|---|
-| U1_CMD_Manual_ValveA_Open | V2.4 | 手动开阀 A |
-| U1_CMD_Manual_ValveA_Close | V2.5 | 手动关阀 A |
-| U1_CMD_Manual_ValveB_Open | V2.6 | 手动开阀 B |
-| U1_CMD_Manual_ValveB_Close | V2.7 | 手动关阀 B |
-| U1_CMD_Manual_ValveC_Open | V3.0 | 手动开阀 C |
-| U1_CMD_Manual_ValveC_Close | V3.1 | 手动关阀 C |
-| U1_CMD_Manual_Pump1_On | V3.2 | 手动启动潜水泵 1 |
-| U1_CMD_Manual_Pump1_Off | V3.3 | 手动停止潜水泵 1 |
-| U1_CMD_Manual_Pump2_On | V3.4 | 手动启动潜水泵 2 |
-| U1_CMD_Manual_Pump2_Off | V3.5 | 手动停止潜水泵 2 |
-| U1_CMD_Manual_SyringePump_Start | V3.6 | 手动注射泵启动（单次/循环由 VW388 决定） |
-| U1_CMD_Manual_SyringePump_Stop | V3.7 | 手动注射泵停止/回零 |
+| U1_CMD_Manual_ValveA_Open | **V306.0** | 手动开阀 A（迁移自V2.4） |
+| U1_CMD_Manual_ValveA_Close | **V306.1** | 手动关阀 A（迁移自V2.5） |
+| U1_CMD_Manual_ValveB_Open | **V306.2** | 手动开阀 B（迁移自V2.6） |
+| U1_CMD_Manual_ValveB_Close | **V306.3** | 手动关阀 B（迁移自V2.7） |
+| U1_CMD_Manual_ValveC_Open | **V306.4** | 手动开阀 C（迁移自V3.0） |
+| U1_CMD_Manual_ValveC_Close | **V306.5** | 手动关阀 C（迁移自V3.1） |
+| U1_CMD_Manual_Pump1_On | **V306.6** | 手动启动潜水泵 1（迁移自V3.2） |
+| U1_CMD_Manual_Pump1_Off | **V306.7** | 手动停止潜水泵 1（迁移自V3.3） |
+| U1_CMD_Manual_Pump2_On | **V307.0** | 手动启动潜水泵 2（迁移自V3.4） |
+| U1_CMD_Manual_Pump2_Off | **V307.1** | 手动停止潜水泵 2（迁移自V3.5） |
+| U1_CMD_Manual_SyringePump_Start | **V307.2** | 手动注射泵启动，单次/循环由 VW388 决定（迁移自V3.6） |
+| U1_CMD_Manual_SyringePump_Stop | **V307.3** | 手动注射泵停止/回零（迁移自V3.7） |
 
 ### 1.2 状态反馈位（HMI 只读）
 
 | 变量名（1 号单元示例） | PLC 地址 | 说明 |
 |---|---|---|
 | U1_VW2_StateMachine | VW2 | 状态机，仅 0（S0）允许手动 |
-| U1_STA_TankA_State | V1.6 | 上缸状态：0=空，1=满 |
-| U1_STA_TankB_State | V1.7 | 下缸状态：0=空，1=满 |
+| U1_STA_TankA_State | V1.6 | 上缸状态：0=空，1=满（自动流程FC12置1/FC15清0） |
+| U1_STA_TankB_State | V1.7 | 下缸状态：0=空，1=满（自动流程FC15/FC16维护） |
 | U1_VW6_AlarmCode | VW6 | 当前最高优先级报警码，≠0 时建议禁用手动 |
 | U1_DI_EStop | I1.1 | 急停反馈：1=正常，0=急停触发 |
 | U1_DI_SafetyRelay_FB | I1.2 | 安全继电器反馈：1=正常 |
@@ -45,6 +49,18 @@
 | U1_VW390_ManualDose_State | VW390 | 手动注射泵子状态：0空闲/1抽液中/2排液中/3回零中/4完成/99错误 |
 | U1_VW4_PumpStatus | VW4 | 注射泵状态码（0就绪/1运行/2抽液/3排液/≥4错误） |
 | U1_VW222_PumpPosition | VW222 | 注射泵位置反馈 |
+
+### 1.3 调试模式开关（V309.0，HMI 读写，**仅调试阶段使用**）
+
+**v1.2新增**：联机调试时上下缸空，V1.6/V1.7=0，阀B/阀C手动永远卡死。V309.0=1时跳过液位联锁，=0时恢复生产模式液位保护。
+
+| 变量名（1 号单元示例） | PLC 地址 | 类型 | 说明 |
+|---|---|---|---|
+| **U1_V309_0_DebugMode** | **V309.0** | BOOL | 调试模式开关：0=生产（液位联锁生效，默认），1=调试（旁路联锁） |
+
+**默认0**，PLC冷启动/STOP→RUN后V区全部清零，自动恢复生产模式。**生产前必须V309.0=0**。
+
+> 注：V303.5已被FC3占用为"RTC时钟丢失"报警位，故选用V309.0空位。
 
 > **导入提示**：原 `archive/mcgspro/McgsPro变量导入_单元*.csv` 当前被 MCGS 占用，本次更新生成到 `csv_output/` 目录。如果你是从 MCGS 导出的单设备表，可直接使用合并后的 `csv_output/西门子_S7_Smart200_以太网_合并导入_最新.csv` 做覆盖导入，原有变量名和通道都会保留。
 
@@ -101,11 +117,13 @@
 | 手动注射泵总加药量 | 数值输入 | U1_VD_ManualDose_Target (VD384) | RW | 单位 µL，循环模式下有效 |
 | 手动注射泵模式 | 单选/开关 | U1_VW_ManualDose_Mode (VW388) | RW | 0=单次，1=循环 |
 | 手动注射泵状态 | 标签/指示灯 | U1_VW390_ManualDose_State | R | 文本映射 0/1/2/3/4/99 |
-| 手动注射泵启动 | 标准按钮/位按钮 | U1_CMD_Manual_SyringePump_Start (V3.6) | W | 二次确认 + 脉冲 |
-| 手动注射泵停止/回零 | 标准按钮/位按钮 | U1_CMD_Manual_SyringePump_Stop (V3.7) | W | 二次确认 + 脉冲 |
+| 手动注射泵启动 | 标准按钮/位按钮 | U1_CMD_Manual_SyringePump_Start (V307.2) | W | 二次确认 + 脉冲 |
+| 手动注射泵停止/回零 | 标准按钮/位按钮 | U1_CMD_Manual_SyringePump_Stop (V307.3) | W | 二次确认 + 脉冲 |
 | 注射泵状态码 | 数值显示 | U1_VW4_PumpStatus | R | 与 S3 页面共用 |
 | 注射泵位置反馈 | 数值显示 | U1_VW222_PumpPosition | R | 与 S3 页面共用 |
 | 联锁提示文本 | 标签 | HMI 内部 `Manual_InterlockMsg` | — | 动态显示 |
+| **调试模式开关** | **切换按钮** | **U1_V309_0_DebugMode** | **RW** | **右上角/右下角，橙色高亮=调试模式，需二次确认** |
+| **调试模式提示** | **标签** | **U1_V309_0_DebugMode** | **R** | **顶部条幅：绿"生产模式"/橙"调试模式-联锁已旁路"** |
 
 ---
 
@@ -128,14 +146,15 @@
 
 PLC 程序 [FC20_ManualControl.stl](file:///d:/work/CTI/plc/stl/FC20_ManualControl.stl) 采用 **上升沿触发 + M 位锁存 + PLC 清零握手**：
 
-```python
-LD     L60.1
-A      V2.4           // 开阀A命令
+```stl
+LD     SM0.0
+A      V306.0           // 开阀A命令（v1.2迁移后地址）
 EU                    // 上升沿触发
-S      M12.0, 1       // 锁存阀A开状态
-R      V2.4, 1        // PLC 立即清零
+S      M13.0, 1       // 锁存阀A开状态
+R      V306.0, 1        // PLC 立即清零
 
-LD     M12.0
+LD     SM0.0
+A      M13.0
 =      Q0.2           // 每个扫描周期刷新输出
 ```
 
@@ -251,22 +270,39 @@ U1_VW2_StateMachine == 0
 在画面底部放置一个标签，按以下表达式显示提示：
 
 ```
-IF U1_VW2_StateMachine != 0 THEN
+IF U1_V309_0_DebugMode == 1 THEN
+    "⚠ 调试模式：液位联锁已旁路，请确认设备安全状态"
+ELSEIF U1_VW2_StateMachine != 0 THEN
     "当前状态不允许手动操作"
 ELSEIF U1_DI_EStop == 0 THEN
     "急停触发，禁止手动"
 ELSEIF U1_VW6_AlarmCode != 0 THEN
     "存在报警，请先确认/消音"
 ELSEIF 开阀B按钮被按下且 (U1_STA_TankA_State == 0 || U1_STA_TankB_State == 1) THEN
-    "阀B开启需满足：上缸满、下缸空"
+    "阀B开启需满足：上缸满、下缸空（或开启调试模式）"
 ELSEIF 开阀C按钮被按下且 U1_STA_TankB_State == 0 THEN
-    "阀C开启需满足：下缸满"
+    "阀C开启需满足：下缸满（或开启调试模式）"
 ELSE
     ""
 ENDIF
 ```
 
 > 注：最终表达式需按 MCGS 脚本语法改写；若标签不支持复杂表达式，可在循环策略中计算并写入 `Manual_InterlockMsg`。
+
+### 6.5 调试模式下的联锁行为（v1.2新增）
+
+当 V309.0=1 时，PLC侧[FC20_ManualControl.stl](file:///d:/work/CTI/plc/stl/FC20_ManualControl.stl) 自动旁路阀B/阀C的液位联锁条件：
+
+| 联锁条件 | 生产模式（V309.0=0） | 调试模式（V309.0=1） |
+|---|---|---|
+| 阀B开启 | V1.6=1（上缸满） AND V1.7=0（下缸空） | **跳过**，任意时刻可开 |
+| 阀C开启 | V1.7=1（下缸满） | **跳过**，任意时刻可开 |
+| 阀A开启、泵启停、注射泵 | 无联锁 | 无联锁 |
+
+**重要安全约束**：
+- 调试模式只影响手动控制链路，**自动流程任何安全保护完全独立、完整保留**（急停I1.1、上缸漫溢I0.5、下缸漫溢I0.7、阀超时FC30/FC31、报警系统V300~V303）
+- OB1只在S0态调用FC20，自动流程运行时手动控制自动失效
+- V309.0默认0，PLC STOP→RUN自动恢复生产模式，**即使忘记清零，PLC重启就回到安全状态**
 
 ---
 
@@ -290,8 +326,8 @@ ENDIF
 | 6 | 阀B 开按钮：上缸空或下缸满时禁用 | 按钮为灰色 |
 | 7 | 阀C 开按钮：下缸空时禁用 | 按钮为灰色 |
 | 8 | 点击手动开阀A，弹出二次确认窗口 | 弹窗显示正确命令文本 |
-| 9 | 确认后，V2.4 被置 1，PLC 立即清零，阀A 实际打开 | 阀A 开到位反馈变 ON |
-| 10 | 点击手动关阀A，V2.5被置 1，阀A 关闭 | 阀A 关到位反馈变 ON |
+| 9 | 确认后，V306.0 被置 1，PLC 立即清零，阀A 实际打开 | 阀A 开到位反馈变 ON |
+| 10 | 点击手动关阀A，V306.1 被置 1，阀A 关闭 | 阀A 关到位反馈变 ON |
 | 11 | 8 个单元切换时，变量绑定随 `SelectedUnit` 切换 | 每个单元独立操作 |
 
 ---
@@ -304,8 +340,8 @@ ENDIF
 
 | PLC 变量 | 地址 | 说明 |
 |---|---|---|
-| CMD_Manual_SyringePump_Start | V3.6 | 启动按钮（脉冲） |
-| CMD_Manual_SyringePump_Stop | V3.7 | 停止/回零按钮（脉冲） |
+| CMD_Manual_SyringePump_Start | V307.2 | 启动按钮（脉冲） |
+| CMD_Manual_SyringePump_Stop | V307.3 | 停止/回零按钮（脉冲） |
 | VD_ManualDose_Target | VD384 | 手动总加药量，单位 µL |
 | VW_ManualDose_Mode | VW388 | 0=单次模式，1=循环模式 |
 | VW_ManualDose_State | VW390 | 子状态反馈 |
@@ -325,28 +361,28 @@ ENDIF
 ### 9.3 动作流程
 
 ```
-启动(V3.6上升沿)
+启动(V307.2上升沿)
   ↓
-初始化：VD_ManualDose_Dosed=0，VD_ManualDose_Remaining=VD_ManualDose_Target
+  初始化：VD_ManualDose_Dosed=0，VD_ManualDose_Remaining=VD_ManualDose_Target
   ↓
-子状态1：计算本次步数 = min(VD_Remaining/VD_StepResolution, 6000)
-         写 40006 = 本次步数
+  子状态1：计算本次步数 = min(VD_Remaining/VD_StepResolution, 6000)
+           写 40006 = 本次步数
   ↓
-子状态2：等待抽液完成（VW4 从忙变就绪）
+  子状态2：等待抽液完成（VW4 从忙变就绪）
   ↓
-子状态3：写 40007 = 本次步数
+  子状态3：写 40007 = 本次步数
   ↓
-子状态4：等待排液完成，累加本次实际加药量
+  子状态4：等待排液完成，累加本次实际加药量
   ↓
-子状态5：判断
-  ├─ 停止请求(V3.7)=1        → 子状态6回零
+  子状态5：判断
+  ├─ 停止请求(V307.3)=1      → 子状态6回零
   ├─ 单次模式                → 子状态6回零
   ├─ 循环模式且累计≥目标量    → 子状态6回零
   └─ 循环模式且累计<目标量    → 返回子状态1继续
   ↓
-子状态6：写 40003 = 1（复位/回零）
+  子状态6：写 40003 = 1（复位/回零）
   ↓
-子状态7：等待回零完成，VW390=4
+  子状态7：等待回零完成，VW390=4
 ```
 
 ### 9.4 停止按钮行为
@@ -369,7 +405,92 @@ ENDIF
 
 ---
 
-**文档版本**: v1.1  
+## 11. 调试模式按钮组态（v1.2新增）
+
+调试模式按钮用于在空缸联机调试时，**手动旁路阀B/阀C的液位联锁**。本节给出完整组态参考。
+
+### 11.1 调试模式开关按钮
+
+| 属性 | 配置 |
+|---|---|
+| 位置 | 画面3 右上角或右下角空白区 |
+| 控件类型 | 切换按钮（Toggle Switch） |
+| 文字 | "调试模式（跳过液位联锁）" |
+| 颜色动画 | 绿底/白字=V309.0=0（生产）<br>橙底/白字=V309.0=1（调试） |
+| 绑定变量 | `U1_V309_0_DebugMode` |
+| 操作属性 | 按1松0（V309.0是BOOL位） |
+
+**注意**：V309.0**不需要脉冲模式**——它是一个保持型开关，按1=开启调试模式，再按0=关闭回到生产模式。PLC冷启动时V309.0=0（生产模式默认安全）。
+
+### 11.2 调试模式状态指示条幅
+
+画面3顶部加一个全宽标签（高30~40px），绑定U1_V309_0_DebugMode：
+
+| V309.0 | 背景色 | 文字 | 字号 |
+|---|---|---|---|
+| 0（生产） | 绿(#00C853) | "生产模式：液位联锁生效" | 16 |
+| 1（调试） | 橙(#FF6F00) | "⚠ 调试模式：液位联锁已旁路，仅限调试" | 16 加粗 |
+
+颜色动画在McgsPro中通过"可见性/颜色"表达式实现。
+
+### 11.3 调试模式二次确认脚本
+
+调试模式按钮按下时**必须二次确认**（生产模式切换为调试模式是高风险操作）。脚本示例：
+
+```vb
+' 调试模式按钮 - 按下时脚本
+IF U1_V309_0_DebugMode = 0 THEN
+    ' 当前是生产模式 → 用户想开启调试模式
+    Manual_Pending_Cmd = "DebugMode_Open"
+    Manual_Confirm_Text = "即将开启【调试模式】，将旁路阀B/阀C的液位联锁。" + chr(10) + chr(10) + "请确认设备处于调试安全状态！" + chr(10) + chr(10) + "调试结束后必须切回生产模式！"
+    !OpenWindow("手动二次确认")
+ELSE
+    ' 当前是调试模式 → 用户想关闭
+    Manual_Pending_Cmd = "DebugMode_Close"
+    Manual_Confirm_Text = "即将关闭【调试模式】，恢复液位联锁保护。" + chr(10) + chr(10) + "确认？"
+    !OpenWindow("手动二次确认")
+END IF
+```
+
+### 11.4 确认窗口"确认"按钮脚本（在SELECT CASE分支里追加）
+
+```vb
+SELECT CASE Manual_Pending_Cmd
+    ' ... 原有10个CASE保持不变 ...
+    CASE "DebugMode_Open"
+        U1_V309_0_DebugMode = 1
+    CASE "DebugMode_Close"
+        U1_V309_0_DebugMode = 0
+END SELECT
+```
+
+### 11.5 单元切换处理（8单元）
+
+调试模式按钮的"按下"脚本中，单元号切换逻辑：
+
+```vb
+' 选中单元切换时
+IF SelectedUnit = 1 THEN
+    DebugMode_Var = U1_V309_0_DebugMode
+ELSEIF SelectedUnit = 2 THEN
+    DebugMode_Var = U2_V309_0_DebugMode
+' ... 8个单元 ...
+END IF
+```
+
+**注意**：V309.0是按单元独立的（每个PLC单元有自己的V区），不是全局共享。切换单元时按钮状态/条幅状态必须同步刷新。
+
+### 11.6 调试模式安全提示
+
+- 调试模式按钮**仅在S0态可见/可操作**（与手动按钮同条件）
+- 调试模式按钮**进入手动控制页时默认展开"⚠ 警告"提示**：调试模式为高风险操作，仅授权人员使用
+- 退出手动控制页时建议**自动关闭调试模式**（防止遗忘）：在画面3的"关闭窗口前"事件中加 `U1_V309_0_DebugMode = 0`
+
+---
+
+**文档版本**: v1.2  
 **创建日期**: 2026-08-17  
-**更新记录**: 2026-08-17 v1.1 新增手动注射泵控制方案（FC21、V3.6/V3.7、VD384/VW388/VW390）
-**下次更新触发**: MCGS 选型确认、PLC 手动命令扩展、I/Q CSV 导入验证结果反馈
+**更新记录**:
+- 2026-08-17 v1.1 新增手动注射泵控制方案（FC21、V3.6/V3.7、VD384/VW388/VW390）
+- 2026-09-03 v1.2 ① 手动命令位V2.4~V3.7全面迁移至V306.0~V307.3（避开VW2状态机物理重叠）；② 新增V309.0调试模式开关完整章节（第1.3节、6.5节、11节、控件表）；③ 同步CSV导入文件路径
+**下次更新触发**: 调试结束归档V309.0进入正式生产模式、8单元模板化脚本完成、McgsPro 3.3.6脚本语法适配反馈
