@@ -1,0 +1,19 @@
+ORGANIZATION_BLOCK OB1
+// ============================================================
+// 文件: OB1_MAIN.stl
+// 功能: 最小 Modbus 测试主程序
+// 说明: 仅调用 FC99_TestFlow,用于验证 PLC↔积算仪 Modbus RTU 通讯
+// ============================================================
+
+BEGIN
+
+NETWORK 1
+// 调用流量计测试 FC
+LD     SM0.0
+CALL   FC99_TestFlow
+
+
+NETWORK 2
+// 预留空程序段
+
+END_ORGANIZATION_BLOCK
