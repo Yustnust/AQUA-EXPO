@@ -4044,4 +4044,84 @@ McgsPro 用户管理需在组态环境中预先建立 3 个用户组:
 
 ---
 
-**文档结束** — 共 57 个脚本,覆盖 A~K 11 个分区,符合 McgsPro 3.3.6 类 Basic 脚本语言规范。
+
+
+---
+
+## L 分区：RTC 校时脚本（AQEX-51 新增）
+
+### 脚本 55：RTC 校时弹窗循环策略（循环策略 / RTC_Sync_Poll）
+
+- **位置**：`运行策略` -> `循环策略`
+- **执行周期**：1000 ms
+- **依赖变量**：`U1_Need_RTC_Sync`（V303.7）
+- **功能**：PLC 请求校时（V303.7=1）时弹出 `RTC_Sync_Wnd` 窗口，校时完成后自动关闭。
+
+```vb
+' RTC 校时弹窗控制（AQEX-51）
+IF U1_Need_RTC_Sync = 1 THEN
+    !OpenSubWnd("RTC_Sync_Wnd", 200, 150, 400, 200)
+ELSE
+    !CloseSubWnd("RTC_Sync_Wnd")
+END IF
+```
+
+---
+
+### 脚本 56：RTC 校时同步按钮（按钮抬起事件 / btn_RTC_Sync）
+
+- **位置**：`RTC_Sync_Wnd` 窗口 -> `btn_RTC_Sync` 按钮 -> `抬起脚本`
+- **依赖变量**：`U1_VB900_RTC_Year` ~ `U1_VB905_RTC_Second`、`U1_CMD_RTC_Sync`（V0.6）
+- **功能**：取 McgsPro 本机时间，十进制转 BCD 后写入 VB900~VB905，置位 V0.6 触发 PLC TODW。
+
+```vb
+' RTC 校时同步按钮脚本（AQEX-51）
+DIM dateStr, year, month, day
+DIM yearHigh, yearLow, monthHigh, monthLow, dayHigh, dayLow
+
+DIM timeStr, hour, minute, second
+DIM hourHigh, hourLow, minHigh, minLow, secHigh, secLow
+
+dateStr = !Date()
+year  = !Str2I(!Left(dateStr, 4)) - 2000
+month = !Str2I(!Mid(dateStr, 6, 2))
+day   = !Str2I(!Mid(dateStr, 9, 2))
+
+timeStr = !Time()
+hour   = !Str2I(!Left(timeStr, 2))
+minute = !Str2I(!Mid(timeStr, 4, 2))
+second = !Str2I(!Right(timeStr, 2))
+
+yearHigh = year / 10
+yearLow  = year - yearHigh * 10
+U1_VB900_RTC_Year = yearHigh * 16 + yearLow
+
+monthHigh = month / 10
+monthLow  = month - monthHigh * 10
+U1_VB901_RTC_Month = monthHigh * 16 + monthLow
+
+dayHigh = day / 10
+dayLow  = day - dayHigh * 10
+U1_VB902_RTC_Day = dayHigh * 16 + dayLow
+
+hourHigh = hour / 10
+hourLow  = hour - hourHigh * 10
+U1_VB903_RTC_Hour = hourHigh * 16 + hourLow
+
+minHigh = minute / 10
+minLow  = minute - minHigh * 10
+U1_VB904_RTC_Minute = minHigh * 16 + minLow
+
+secHigh = second / 10
+secLow  = second - secHigh * 10
+U1_VB905_RTC_Second = secHigh * 16 + secLow
+
+U1_CMD_RTC_Sync = 1
+```
+
+> 注：多单元工程需将变量前缀 `U1_` 替换为对应单元号（如 `U2_`~`U8_`），`!OpenSubWnd` 的窗口名不变（同窗口绑定不同单元变量）。
+
+---
+
+**文档结束** — 共 56 个脚本（AQEX-51 新增 2 个）,覆盖 A~L 12 个分区,符合 McgsPro 3.3.6 类 Basic 脚本语言规范。
+
