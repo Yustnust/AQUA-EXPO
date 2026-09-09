@@ -37,6 +37,24 @@ NETWORK 1
 LD     SM0.1
 MOVW   1, VW198
 
+// ★ 2026-09-07修复: 每次首次扫描(STOP→RUN/上电)统一清零Modbus库存储区和状态
+//   原因: 断电恢复路径(V304.0=1)不清库存储区,残留库状态机导致MBUS_MSG报Error=6
+//   不区分冷启动/断电恢复,统一清零(库状态机在STOP→RUN后必须复位)
+LD     SM0.1
+FILL   0, VW600, 143     // VB600~VB885清零(Modbus库存储区)
+LD     SM0.1
+MOVB   0, VB378           // 清MBUS_CTRL Error
+LD     SM0.1
+MOVB   0, VB379           // 清MBUS_MSG Error(注射泵状态)
+LD     SM0.1
+MOVB   0, VB380           // 清MBUS_MSG Error(流量计)
+LD     SM0.1
+MOVB   0, VB381           // 清MBUS_MSG Error(注射泵位置)
+LD     SM0.1
+R      M10.0, 6           // 清M10.0~M10.5(Done位/降级标志)
+LD     SM0.1
+R      M11.0, 1           // 清MBUS_CTRL Done位
+
 // 判断冷启动/断电恢复
 LD     V304.0
 JMP    1                  // V304.0=1 → 断电恢复路径
@@ -121,12 +139,21 @@ MOVR   0.0, VD178         // VD_S5_Elapsed=0
 R      M10.7, 1           // 清预规划触发标志
 
 // 初始化Modbus轮询计数器与状态
-// 注意:VW250/VW252与HMI参数VD250重叠,已迁移到VW290/VW292/VW294/VW296
-MOVW   0, VW290           // 轮询计数器=0
-MOVW   0, VW292           // 当前任务重试计数=0
-MOVW   0, VW294           // 注射泵连续失败计数=0
-MOVW   0, VW296           // 流量计连续失败计数=0
+// 注意:VW250/VW252与HMI参数VD250重叠,已迁移到VW290/VW292/VW294/VW296/VW504
+MOVW   0, VW290           // 轮询计数器=0(任务0)
+MOVW   0, VW292           // 任务0(注射泵状态)连续失败计数=0
+MOVW   0, VW294           // 任务1(流量计)连续失败计数=0
+MOVW   0, VW296           // 任务2(注射泵位置)连续失败计数=0
+MOVW   0, VW504           // 任务2(注射泵位置)成功计数=0
 R      M10.0, 6           // 清M10.0~M10.5(Done位/降级标志)
+LD     SM0.1
+R      T103, 1            // 清MBUS_MSG超时定时器
+LD     SM0.1
+S      M15.0, 1           // 首次扫描启动任务0(注射泵状态)
+LD     SM0.1
+R      M15.1, 1           // 清任务1/2使能标志
+LD     SM0.1
+R      M15.2, 1
 R      M11.0, 1           // 清MBUS_CTRL Done位
 R      M11.6, 1           // 清注射泵写请求
 R      M11.7, 1           // 清注射泵写忙
@@ -145,8 +172,9 @@ MOVR   0.0, VD396         // 手动剩余加药量=0(内部)
 MOVR   10000.0, VD384     // VD_ManualDose_Target 手动总加药量(µL,默认10mL)
 MOVW   0, VW388           // VW_ManualDose_Mode 手动模式(0=单次,1=循环)
 MOVB   0, VB378           // 清MBUS_CTRL Error
-MOVB   0, VB379           // 清MBUS_MSG Error(注射泵)
-MOVB   0, VB384           // 清MBUS_MSG Error(流量计)
+MOVB   0, VB379           // 清MBUS_MSG Error(注射泵状态)
+MOVB   0, VB380           // 清MBUS_MSG Error(流量计)
+MOVB   0, VB381           // 清MBUS_MSG Error(注射泵位置)
 MOVR   0.0, VD374         // 流量计降级值清零
 MOVW   0, VW226           // 清S3子状态
 MOVD   0, VD232           // 清写目标地址
