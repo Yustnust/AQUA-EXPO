@@ -205,7 +205,7 @@
 50. **[警告]** 变量 V303.0 被 2 个FC写入: ['FC32_ValveC_Diag', 'FC3_AlarmHandling']
    - 同一变量被多个FC写入可能导致时序冲突,需确认调用顺序与互斥性
 
-51. **[警告]** 变量 V303.6 被 2 个FC写入: ['FC3_AlarmHandling', 'FC4_ModbusPolling']
+51. **[警告]** 变量 ~~V303.6~~ 被 2 个FC写入: [~~FC3_AlarmHandling~~, ~~FC4_ModbusPolling~~] **2026-09-08已删除**
    - 同一变量被多个FC写入可能导致时序冲突,需确认调用顺序与互斥性
 
 #### 参数区写入(10个)
@@ -1013,7 +1013,7 @@
 | V303.3 | 2 | FC12_State_S2_PreMix, FC3_AlarmHandling |
 | V303.4 | 3 | FC13_State_S3_Dosing, FC3_AlarmHandling, FC4_ModbusPolling |
 | V303.5 | 2 | FC0_SysInit, FC3_AlarmHandling |
-| V303.6 | 2 | FC3_AlarmHandling, FC4_ModbusPolling |
+| ~~V303.6~~ | ~~2~~ | **2026-09-08已删除** |
 
 ## 六、V区使用热力图(引用次数Top20)
 

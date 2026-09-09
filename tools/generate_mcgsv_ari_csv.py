@@ -108,7 +108,7 @@ SINGLE_UNIT_VARS = [
     ("V303_3_Alarm_Pump2_Abnormal", "Bool", "V303.3", "R", "是", "潜水泵2超时无流", 5),
     ("V303_4_Alarm_SyringePump", "Bool", "V303.4", "R", "是", "注射泵通讯/动作异常", 5),
     ("V303_5_Alarm_RTC_Lost", "Bool", "V303.5", "R", "是", "RTC时钟丢失", 5),
-    ("V303_6_Alarm_FlowSwitch_Instant", "Bool", "V303.6", "R", "是", "流量开关瞬时异常", 5),
+    # ("V303_6_Alarm_FlowSwitch_Instant", "Bool", "V303.6", "R", "是", "流量开关瞬时异常", 5),  # 2026-09-08已删除
 
     # === 手动控制 V2.4~V3.3 (8个) ===
     ("CMD_Manual_ValveA_Open", "Bool", "V2.4", "RW", "是", "手动开阀A", 3),
