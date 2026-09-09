@@ -116,7 +116,7 @@ VD_PumpSpeed_Cutoff,VD140,REAL,注射泵截止速度(Hz,写40011)
 VB300_AlarmWord1,VB300,BYTE,报警字1(漫溢级+急停+继电器+节奏)
 VB301_AlarmWord2,VB301,BYTE,报警字2(阀A类故障)
 VB302_AlarmWord3,VB302,BYTE,报警字3(阀B/C类故障)
-VB303_AlarmWord4,VB303,BYTE,报警字4(泵/注射泵/RTC/流量瞬时)
+VB303_AlarmWord4,VB303,BYTE,报警字4(泵/注射泵/RTC)
 // === 系统总状态字 VB305 (0=良好/1=故障/2=急停, 非断电保持, AQEX-50新增) ===
 VB_SystemStatus,VB305,BYTE,系统总状态字(0=良好/1=故障/2=急停, OB1 NETWORK10计算)
 // 报警字1 详细位 (V300.0~V300.7)
@@ -150,7 +150,6 @@ M_Alarm_ValveC_CloseTimeout,V303.0,BOOL,阀C关到位反馈超时
 M_Alarm_ValveC_CloseLeak,V303.1,BOOL,阀C关到位但仍有流(内漏)
 M_Alarm_SyringePump,V303.4,BOOL,注射泵通讯/动作异常
 M_Alarm_RTC_Lost,V303.5,BOOL,RTC时钟丢失
-M_Alarm_FlowSwitch_Instant,V303.6,BOOL,流量开关瞬时异常(2秒窗口≥5次翻转)
 // === 报警确认模式 (V200.0) ===
 M_AlarmAckMode,V200.0,BOOL,报警确认模式(0=自动恢复1=人工确认)
 // === Modbus映射区 VW200~VW228 (注射泵+流量计寄存器) ===

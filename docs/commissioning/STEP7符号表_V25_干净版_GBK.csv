@@ -120,7 +120,6 @@ Alarm_ValveC_CloseTimeout,V303.0,��C�ص�λ������ʱ
 Alarm_ValveC_CloseLeak,V303.1,��C�ص�λ��������(��©)
 Alarm_SyringePump,V303.4,ע���ͨѶ/�����쳣
 Alarm_RTC_Lost,V303.5,RTCʱ�Ӷ�ʧ
-Alarm_FlowSwitch_Instant,V303.6,��������˲ʱ�쳣(2�봰�ڴ���5�η�ת)
 AlarmAckMode,V200.0,����ȷ��ģʽ(0=�Զ��ָ�1=�˹�ȷ��)
 MB_Pump_ForceStop,VW200,ǿͣע���(40002 0=����1=ǿͣ)
 MB_Pump_Reset,VW202,��λע���(40003 0=����1=��λ)

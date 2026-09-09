@@ -124,7 +124,6 @@ Alarm_ValveC_CloseTimeout,V303.0,阀C关到位反馈超时
 Alarm_ValveC_CloseLeak,V303.1,阀C关到位但仍有流(内漏)
 Alarm_SyringePump,V303.4,注射泵通讯/动作异常
 Alarm_RTC_Lost,V303.5,RTC时钟丢失
-Alarm_FlowSwitch_Instant,V303.6,流量开关瞬时异常(2秒窗口大于5次翻转)
 AlarmAckMode,V200.0,报警确认模式(0=自动恢复1=人工确认)
 MB_Pump_ForceStop,VW200,强停注射泵(40002 0=空闲1=强停)
 MB_Pump_Reset,VW202,复位注射泵(40003 0=空闲1=复位)

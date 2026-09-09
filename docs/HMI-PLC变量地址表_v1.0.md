@@ -437,7 +437,7 @@ S5上升沿触发预规划、S1完成后二次校正使用的中间变量，REAL
 
 | V303.4 | M_Alarm_SyringePump | 注射泵通讯/动作异常（状态码报错或无响应） |
 | V303.5 | M_Alarm_RTC_Lost【AQEX-51更新】 | RTC时钟丢失（V303.7 持续 5 分钟未同步触发） |
-| V303.6 | M_Alarm_FlowSwitch_Instant | 流量开关瞬时异常 |
+| V303.6 | ~~M_Alarm_FlowSwitch_Instant~~ | **已删除（2026-09-08）**：三个流量开关各自有独立报警位（V301.0~V303.1），不再需要汇总抖动检测 |
 | V303.7 | M_Need_RTC_Sync【AQEX-51】 | PLC 请求 HMI 同步 RTC（FC0 检测到 RTC 异常时置位） |
 
 ### 9.4 Modbus RTU从站在线状态位（VB304，BOOL，非断电保持）
