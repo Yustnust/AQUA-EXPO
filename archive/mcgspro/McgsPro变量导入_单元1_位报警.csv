@@ -94,7 +94,6 @@
 88,U1_Alarm_ValveC_CloseLeak,INTEGER,ֻ��V303.1,ֻ��,V���ݼĴ���,ͨ���ĵ�01λ,303,,1,
 91,U1_Alarm_SyringePump,INTEGER,ֻ��V303.4,ֻ��,V���ݼĴ���,ͨ���ĵ�04λ,303,,1,
 92,U1_Alarm_RTC_Lost,INTEGER,ֻ��V303.5,ֻ��,V���ݼĴ���,ͨ���ĵ�05λ,303,,1,
-93,U1_Alarm_FlowSwitch_Instant,INTEGER,ֻ��V303.6,ֻ��,V���ݼĴ���,ͨ���ĵ�06λ,303,,1,
 94,U1_Alarm_Reserved_303_7,INTEGER,ֻ��V303.7,ֻ��,V���ݼĴ���,ͨ���ĵ�07λ,303,,1,
 95,U1_CMD_Manual_ValveA_Open,INTEGER,��дV002.4,��д,V���ݼĴ���,ͨ���ĵ�04λ,2,,1,
 96,U1_CMD_Manual_ValveA_Close,INTEGER,��дV002.5,��д,V���ݼĴ���,ͨ���ĵ�05λ,2,,1,

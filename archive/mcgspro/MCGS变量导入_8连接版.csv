@@ -88,7 +88,6 @@ U1_V303_1_Alarm_ValveC_CloseLeak,Bool,PLC_01,V303.1,R,是,阀C关到位有流,5
 U1_V303_4_Alarm_SyringePump,Bool,PLC_01,V303.4,R,是,注射泵通讯/动作异常,5
 U1_V303_5_Alarm_RTC_Lost,Bool,PLC_01,V303.5,R,是,RTC时钟丢失,5
 U1_V303_2_Alarm_S4TransferWaitTimeout,Bool,PLC_01,V303.2,R,是,S4转移等待超时,5
-U1_V303_6_Alarm_FlowSwitch_Instant,Bool,PLC_01,V303.6,R,是,流量开关瞬时异常,5
 U1_CMD_Manual_ValveA_Open,Bool,PLC_01,V306.0,RW,是,手动开阀A,3
 U1_CMD_Manual_ValveA_Close,Bool,PLC_01,V306.1,RW,是,手动关阀A,3
 U1_CMD_Manual_ValveB_Open,Bool,PLC_01,V306.2,RW,是,手动开阀B,3
@@ -189,7 +188,6 @@ U2_V303_1_Alarm_ValveC_CloseLeak,Bool,PLC_02,V303.1,R,是,阀C关到位有流,5
 U2_V303_4_Alarm_SyringePump,Bool,PLC_02,V303.4,R,是,注射泵通讯/动作异常,5
 U2_V303_2_Alarm_S4TransferWaitTimeout,Bool,PLC_02,V303.2,R,是,S4转移等待超时,5
 U2_V303_5_Alarm_RTC_Lost,Bool,PLC_02,V303.5,R,是,RTC时钟丢失,5
-U2_V303_6_Alarm_FlowSwitch_Instant,Bool,PLC_02,V303.6,R,是,流量开关瞬时异常,5
 U2_CMD_Manual_ValveA_Open,Bool,PLC_02,V306.0,RW,是,手动开阀A,3
 U2_CMD_Manual_ValveA_Close,Bool,PLC_02,V306.1,RW,是,手动关阀A,3
 U2_CMD_Manual_ValveB_Open,Bool,PLC_02,V306.2,RW,是,手动开阀B,3
@@ -292,7 +290,6 @@ U3_V303_1_Alarm_ValveC_CloseLeak,Bool,PLC_03,V303.1,R,是,阀C关到位有流,5
 U3_V303_2_Alarm_S4TransferWaitTimeout,Bool,PLC_03,V303.2,R,是,S4转移等待超时,5
 U3_V303_4_Alarm_SyringePump,Bool,PLC_03,V303.4,R,是,注射泵通讯/动作异常,5
 U3_V303_5_Alarm_RTC_Lost,Bool,PLC_03,V303.5,R,是,RTC时钟丢失,5
-U3_V303_6_Alarm_FlowSwitch_Instant,Bool,PLC_03,V303.6,R,是,流量开关瞬时异常,5
 U3_CMD_Manual_ValveA_Open,Bool,PLC_03,V306.0,RW,是,手动开阀A,3
 U3_CMD_Manual_ValveA_Close,Bool,PLC_03,V306.1,RW,是,手动关阀A,3
 U3_CMD_Manual_ValveB_Open,Bool,PLC_03,V306.2,RW,是,手动开阀B,3
@@ -395,7 +392,6 @@ U4_V303_2_Alarm_S4TransferWaitTimeout,Bool,PLC_04,V303.2,R,是,S4转移等待超
 U4_V303_1_Alarm_ValveC_CloseLeak,Bool,PLC_04,V303.1,R,是,阀C关到位有流,5
 U4_V303_4_Alarm_SyringePump,Bool,PLC_04,V303.4,R,是,注射泵通讯/动作异常,5
 U4_V303_5_Alarm_RTC_Lost,Bool,PLC_04,V303.5,R,是,RTC时钟丢失,5
-U4_V303_6_Alarm_FlowSwitch_Instant,Bool,PLC_04,V303.6,R,是,流量开关瞬时异常,5
 U4_CMD_Manual_ValveA_Open,Bool,PLC_04,V306.0,RW,是,手动开阀A,3
 U4_CMD_Manual_ValveA_Close,Bool,PLC_04,V306.1,RW,是,手动关阀A,3
 U4_CMD_Manual_ValveB_Open,Bool,PLC_04,V306.2,RW,是,手动开阀B,3
@@ -498,7 +494,6 @@ U5_V303_0_Alarm_ValveC_CloseTimeout,Bool,PLC_05,V303.0,R,是,阀C关超时,5
 U5_V303_1_Alarm_ValveC_CloseLeak,Bool,PLC_05,V303.1,R,是,阀C关到位有流,5
 U5_V303_4_Alarm_SyringePump,Bool,PLC_05,V303.4,R,是,注射泵通讯/动作异常,5
 U5_V303_5_Alarm_RTC_Lost,Bool,PLC_05,V303.5,R,是,RTC时钟丢失,5
-U5_V303_6_Alarm_FlowSwitch_Instant,Bool,PLC_05,V303.6,R,是,流量开关瞬时异常,5
 U5_CMD_Manual_ValveA_Open,Bool,PLC_05,V306.0,RW,是,手动开阀A,3
 U5_CMD_Manual_ValveA_Close,Bool,PLC_05,V306.1,RW,是,手动关阀A,3
 U5_CMD_Manual_ValveB_Open,Bool,PLC_05,V306.2,RW,是,手动开阀B,3
@@ -601,7 +596,6 @@ U6_V303_0_Alarm_ValveC_CloseTimeout,Bool,PLC_06,V303.0,R,是,阀C关超时,5
 U6_V303_1_Alarm_ValveC_CloseLeak,Bool,PLC_06,V303.1,R,是,阀C关到位有流,5
 U6_V303_4_Alarm_SyringePump,Bool,PLC_06,V303.4,R,是,注射泵通讯/动作异常,5
 U6_V303_5_Alarm_RTC_Lost,Bool,PLC_06,V303.5,R,是,RTC时钟丢失,5
-U6_V303_6_Alarm_FlowSwitch_Instant,Bool,PLC_06,V303.6,R,是,流量开关瞬时异常,5
 U6_CMD_Manual_ValveA_Open,Bool,PLC_06,V306.0,RW,是,手动开阀A,3
 U6_CMD_Manual_ValveA_Close,Bool,PLC_06,V306.1,RW,是,手动关阀A,3
 U6_CMD_Manual_ValveB_Open,Bool,PLC_06,V306.2,RW,是,手动开阀B,3
@@ -704,7 +698,6 @@ U7_V303_0_Alarm_ValveC_CloseTimeout,Bool,PLC_07,V303.0,R,是,阀C关超时,5
 U7_V303_1_Alarm_ValveC_CloseLeak,Bool,PLC_07,V303.1,R,是,阀C关到位有流,5
 U7_V303_4_Alarm_SyringePump,Bool,PLC_07,V303.4,R,是,注射泵通讯/动作异常,5
 U7_V303_5_Alarm_RTC_Lost,Bool,PLC_07,V303.5,R,是,RTC时钟丢失,5
-U7_V303_6_Alarm_FlowSwitch_Instant,Bool,PLC_07,V303.6,R,是,流量开关瞬时异常,5
 U7_CMD_Manual_ValveA_Open,Bool,PLC_07,V306.0,RW,是,手动开阀A,3
 U7_CMD_Manual_ValveA_Close,Bool,PLC_07,V306.1,RW,是,手动关阀A,3
 U7_CMD_Manual_ValveB_Open,Bool,PLC_07,V306.2,RW,是,手动开阀B,3
@@ -807,7 +800,6 @@ U8_V303_0_Alarm_ValveC_CloseTimeout,Bool,PLC_08,V303.0,R,是,阀C关超时,5
 U8_V303_1_Alarm_ValveC_CloseLeak,Bool,PLC_08,V303.1,R,是,阀C关到位有流,5
 U8_V303_4_Alarm_SyringePump,Bool,PLC_08,V303.4,R,是,注射泵通讯/动作异常,5
 U8_V303_5_Alarm_RTC_Lost,Bool,PLC_08,V303.5,R,是,RTC时钟丢失,5
-U8_V303_6_Alarm_FlowSwitch_Instant,Bool,PLC_08,V303.6,R,是,流量开关瞬时异常,5
 U8_CMD_Manual_ValveA_Open,Bool,PLC_08,V306.0,RW,是,手动开阀A,3
 U8_CMD_Manual_ValveA_Close,Bool,PLC_08,V306.1,RW,是,手动关阀A,3
 U8_CMD_Manual_ValveB_Open,Bool,PLC_08,V306.2,RW,是,手动开阀B,3
