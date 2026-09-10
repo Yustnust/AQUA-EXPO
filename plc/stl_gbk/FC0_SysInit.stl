@@ -54,6 +54,46 @@ LD     SM0.1
 R      M10.0, 6           // 清M10.0~M10.5(Done位/降级标志)
 LD     SM0.1
 R      M11.0, 1           // 清MBUS_CTRL Done位
+LD     SM0.1
+MOVW   0, VW390           // 清手动注射泵子状态(防止断电恢复时残留旧值导致误触发回零)
+LD     SM0.1
+R      M11.6, 1           // 清注射泵写请求(防止断电恢复时残留)
+LD     SM0.1
+R      T104, 1            // 清回零冷却定时器
+LD     SM0.1
+MOVW   0, VW516           // 清FC21监控计数器
+LD     SM0.1
+MOVW   0, VW518
+LD     SM0.1
+MOVW   0, VW520
+LD     SM0.1
+MOVW   0, VW522
+LD     SM0.1
+MOVW   0, VW524
+LD     SM0.1
+MOVW   0, VW526
+LD     SM0.1
+MOVW   0, VW528
+LD     SM0.1
+MOVW   0, VW530
+LD     SM0.1
+MOVW   0, VW532
+LD     SM0.1
+MOVW   0, VW534
+LD     SM0.1
+MOVW   0, VW536
+LD     SM0.1
+MOVW   0, VW538
+LD     SM0.1
+MOVW   0, VW540
+LD     SM0.1
+MOVW   0, VW542
+LD     SM0.1
+MOVW   0, VW544
+LD     SM0.1
+MOVW   0, VW546
+LD     SM0.1
+MOVW   0, VW548
 
 // 判断冷启动/断电恢复
 LD     V304.0
@@ -129,10 +169,10 @@ MOVW   0, VW8             // VW8=0
 MOVR   0.0, VD364         // VD_ExpTotal_Flow=0(L)
 
 // 本次实验累计加药量清零
-MOVR   0.0, VD378         // VD_Dosed_Volume_Total=0(uL)
+MOVR   0.0, VD378         // VD_Dosed_Volume_Total=0(μL)
 
 // S3剩余待加药量清零
-MOVR   0.0, VD372         // VD_Remaining_Vol=0(uL)
+MOVR   0.0, VD372         // VD_Remaining_Vol=0(μL)
 
 // 清下缸满计时器+预规划标志
 MOVR   0.0, VD178         // VD_S5_Elapsed=0
@@ -154,6 +194,7 @@ LD     SM0.1
 R      M15.1, 1           // 清任务1/2使能标志
 LD     SM0.1
 R      M15.2, 1
+R      V60.0, 5           // 清V60.0~V60.4(FC4/FC21中间继电器)
 R      M11.0, 1           // 清MBUS_CTRL Done位
 R      M11.6, 1           // 清注射泵写请求
 R      M11.7, 1           // 清注射泵写忙
@@ -169,12 +210,14 @@ MOVR   0.0, VD392         // 手动累计加药量=0(内部)
 MOVR   0.0, VD396         // 手动剩余加药量=0(内部)
 
 // 手动注射泵参数(冷启动安全默认值)
-MOVR   10000.0, VD384     // VD_ManualDose_Target 手动总加药量(uL,默认10mL)
+MOVR   10000.0, VD384     // VD_ManualDose_Target 手动总加药量(μL,默认10mL)
 MOVW   0, VW388           // VW_ManualDose_Mode 手动模式(0=单次,1=循环)
 MOVB   0, VB378           // 清MBUS_CTRL Error
 MOVB   0, VB379           // 清MBUS_MSG Error(注射泵状态)
 MOVB   0, VB380           // 清MBUS_MSG Error(流量计)
 MOVB   0, VB381           // 清MBUS_MSG Error(注射泵位置)
+MOVB   0, VB382           // 清MBUS_MSG Error(瞬时流量)
+MOVB   0, VB383           // 清MBUS_MSG Error(写命令)
 MOVR   0.0, VD374         // 流量计降级值清零
 MOVW   0, VW226           // 清S3子状态
 MOVD   0, VD232           // 清写目标地址
