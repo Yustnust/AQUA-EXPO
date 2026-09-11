@@ -66,6 +66,7 @@ JMP    12
 
 // S1入口
 LBL    2
+S      M10.2, 1                     // S1首次进入脉冲
 CALL State_S1_Inlet
 JMP    12
 

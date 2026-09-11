@@ -95,10 +95,11 @@ LD     T62
 EU
 +R     1.0, VD380                   // VD_S4Wait_Time + 1s
 R      T62, 1
-// 超时报警: T61 到 → 置位 V303.2 + VW6=49
+// 超时报警: T61 到 → 置位 V303.2(报警位), VW6 由 FC3 NETWORK1 统一优先级链计算
+// ★ 2026-09-11修复: 删除 MOVW 49, VW6(之前因 FC3 错误映射 V303.2→62 而绕过优先级链,
+//   现已修正 FC3 为 V303.2→49, 恢复 Story1.6 决策1: 各 FC 只管置位报警位, FC3 统一算 VW6)
 LD     T61
 S      V303.2, 1                    // M_Alarm_S4TransferWaitTimeout
-MOVW   49, VW6                      // 报警码 49(归到过程级, 与 V300.6=20 节奏级区分)
 LPP
 // 注: 超时报警不强制 S_ERROR, 系统继续等待, 操作员收到 HMI 提示后
 //     可手动确认/调整 S6 排水, 或修改 VD_S4WaitTimeout
