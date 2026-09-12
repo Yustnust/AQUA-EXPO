@@ -109,9 +109,8 @@ MOVR   4.1667, VD350      // VD_StepResolution
 // ---- HMI设定参数默认值（冷启动安全初始化） ----
 // 出厂/长期断电后,HMI未配置时也有合理默认值,防止全0导致TON立即超时
 
-// 6.1 浓度与容量参数
-MOVR   5.0, VD10          // VD_C_Set 目标浓度(%)
-MOVR   100.0, VD14        // VD_C_Stock 母液浓度(%)
+// 6.1 浓度与容量参数  ✅ v2.0 删除: 浓度参数整体移除, VD10~VD17 让给 DT10 RTC 独占
+//    原 VD10=目标浓度、VD14=母液浓度, 加药量改为用户直接输入 VD370
 
 // 6.2 时间周期参数
 MOVR   30.0, VD354        // VD_CycleSetpoint 换水周期(min)
@@ -136,7 +135,7 @@ MOVR   10.0, VD62         // VD_Timeout_Pump2 (预留未用)
 MOVR   5.0, VD66          // VD_Delay_ValveA_Verify 阀A关后延时验证(s)
 
 // 7.4 其他超时阈值
-MOVR   1800.0, VD382      // VD_S4WaitTimeout S4等待超时阈值(s,默认30min)
+MOVR   1800.0, VD448      // VD_S4WaitTimeout S4等待超时阈值(s,默认30min)
 
 // 状态机初始化为S0
 MOVW   0, VW2             // VW2=0(S0)
@@ -182,7 +181,10 @@ MOVW   0, VW8             // VW8=0
 MOVR   0.0, VD364         // VD_ExpTotal_Flow=0(L)
 
 // 本次实验累计加药量清零
-MOVR   0.0, VD378         // VD_Dosed_Volume_Total=0(µL)
+MOVR   0.0, VD440         // VD_Dosed_Volume_Total=0(µL)
+
+// S4等待时长清零(内部变量,每次S4完成也会清)
+MOVR   0.0, VD444         // ✅ v2.0 新增: VD_S4Wait_Time 冷启动清零
 
 // S3剩余待加药量清零
 MOVR   0.0, VD372         // VD_Remaining_Vol=0(µL)
@@ -223,7 +225,7 @@ MOVR   0.0, VD392         // 手动累计加药量=0(内部)
 MOVR   0.0, VD396         // 手动剩余加药量=0(内部)
 
 // 手动注射泵参数(冷启动安全默认值)
-MOVR   10000.0, VD384     // VD_ManualDose_Target 手动总加药量(µL,默认10mL)
+MOVR   10000.0, VD452     // VD_ManualDose_Target 手动总加药量(µL,默认10mL)
 MOVW   0, VW388           // VW_ManualDose_Mode 手动模式(0=单次,1=循环)
 MOVB   0, VB378           // 清MBUS_CTRL Error
 MOVB   0, VB379           // 清MBUS_MSG Error(注射泵状态)

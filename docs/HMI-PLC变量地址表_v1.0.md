@@ -7,6 +7,8 @@
 
 > **v1.8变更（2026-09-03，重大修复）**：① **【P0级地址重叠修复】** 手动控制命令位从V2.4~V3.7**全部迁移至V306.0~V307.3**。原地址VB2+VB3与VW2（状态机当前状态）物理地址完全重叠，联机调试时写入V3.1会改写VW2=2=S2预循环，导致两台循环泵同时启动；V3.2=1会进入S4并报"阀B开到位超时"；手动控制FC20从未被调用过（VW2≠0时条件不满足）。② 4.4节表格、1.2节地址区规划、附录B快速索引同步更新。③ McgsPro CSV导入文件中"通道地址"列须同步迁移到3（VB306~VB307），**变量名不变，HMI侧脚本无须改动**。
 >
+> **v1.9变更（2026-09-11，现场联机Bug定位，方案待实施）**：① **【P0级地址重叠发现】** VB380~VB383（FC4的4个MBUS_MSG Error输出）与VD380(VB380~VB383)/VD382(VB382~VB385)/VD384(VB384~VB387)/VW380(VB380~VB381)物理地址重叠，导致VD382(S4WaitTimeout)被Error=0反复改写VB382→IEEE-754浮点指数位清零→值变4.23E-37；② **【P0级代码Bug发现】** FC15 L77-79借用VD384(ManualDose_Target)当临时变量计算T61 PT；③ **【P2级CSV Bug发现】** VD316在MCGS CSV中误标"只读"，HMI无法写入；④ 1.2节地址区规划已标注三个Bug和v1.9待迁移区；⑤ 11.5节修正文档与代码不一致（MBUS_MSG Error实际占用VB380~VB383，原文档误写VB384）；⑥ 附录B新增VB378~VB383/VD380~387/VD440~VD452三行。完整重排方案见《VD参数区重排说明 v2.0》第六章，技术债务登记见《技术债务清单 v1.0》TD025/TD026/TD027（Jira AQEX-49）。
+>
 > **v1.7变更（2026-09-03）**：① FC0_SysInit冷启动（V304.0=0）时新增24个HMI设定参数的安全默认值初始化（含VD358/VD362/VD54阀超时保护参数，防止TON PT=0立即触发超时报警）；② VD384手动注射泵总加药量冷启动默认值10mL（10000µL），VW388模式默认单次（0）；③ 停用FC4任务3（注射泵速度读40009/40010/40011到VW208/VW210/VW212），轮询路径简化为0→1→2→(4→)→0，注射泵速度完全由泵自身默认值决定，PLC不再干预；④ VD132/VD136/VD140（注射泵速度设定）和VW208/VW210/VW212（速度读取缓冲）保留地址但功能停用。
 >
 > **v1.6变更（2026-09-02）**：新增VB305系统总状态字（0=良好/1=故障/2=急停），由OB1 NETWORK 10每周期计算，供McgsPro画面顶部"良好"状态指示灯三态动画绑定。
@@ -60,18 +62,21 @@
 | VW4 | 注射泵状态码（映射自41001） | WORD(INT) | 否 |
 | VW6 | 当前报警码（最高优先级） | WORD(INT) | 是 |
 | VW8 | 当前实验轮次计数 | WORD(INT) | 是 |
-| VD10 ~ VD49 | HMI设定参数（浮点；VD18/VD48已迁移至VD350/VD358；VD316目标进水量/VD174 S3估算等见第六节） | REAL | 是 |
+| VD10 ~ VD49 | HMI设定参数（浮点；⚠v2.0 删除VD10(目标浓度)/VD14(母液浓度)；VD18/VD48已迁移至VD350/VD358；VD316目标进水量/VD174 S3估算等见第六节） | REAL | 是(VD10/VD14已删)
 | VD50 ~ VD99 | HMI超时参数（VD50/VD52已迁移至VD358/VD362）+ PLC实测值/计算值 | REAL | 是 |
 | VD100 ~ VD119 | 配液节奏纠偏变量（VD102 Dose_Steps见7.4；VD108 S6_Default为HMI设定；VD112/VD116滚动实测，见第八节） | REAL | 是 |
 | VD120 ~ VD128 | 预规划/校正目标值（VD124 RestTime_Target、VD128 CycleExtend_Target） | REAL | 是 |
 | VD132 ~ VD140 | 注射泵速度设定（已停用：使用泵自身默认速度，PLC不再干预；冷启动时VD132/136/140不再初始化） | REAL | 是 |
 | VD144 | VD_T_Default T默认值（HMI设定；原VD104与VD102重叠VB104~105，v2.3迁移至此） | REAL | 是 |
 | VD150 ~ VD199 | 断电恢复、节奏纠偏运算中间值（VD150 Available、VD154 Needed、VD178 S5_Elapsed、VD186/190 RTC转换等） | REAL | 是 |
-| VD308 ~ VD344 | 阀门诊断与状态机运算中间变量（VD308关阀快照、VD312关阀差值、VD316目标进水量、VD320~VD344转换中间值） | REAL/DWORD | 否 |
-| VD350 ~ VD385 | AQEX-36迁移的6个VD参数(VD350/354/358/362/366/370)+ 内部降级/暂存(VD374流量计上一有效值、VD380共享定时器转换暂存区)+ **v1.2新增** VD380 S4等待时长+VD382 S4等待超时阈值 | REAL | 是 |
-| VD384/VD392/VD396 | 手动注射泵参数：VD384总加药量（HMI设定）、VD392累计加药量、VD396剩余加药量（FC21内部） | REAL | 是 |
+| VD308 ~ VD344 | 阀门诊断与状态机运算中间变量（VD308关阀快照、VD312关阀差值、VD316目标进水量【⚠v1.8 CSV通道属性误标"只读"，见TD027；FC0 L128初始化默认10.0L；设计意图FC30阀门诊断内漏判断用】、VD320~VD344转换中间值） | REAL/DWORD | 否 |
+| VD350 ~ VD379 | AQEX-36迁移的6个VD参数(VD350/354/358/362/366/370)+ 内部降级(VD374流量计上一有效值) | REAL | 是 |
+| **VB378 ~ VB383** | **MBUS_MSG Error 输出区（FC4的4个CALL MBUS_MSG Error引脚）：VB378=MBUS_CTRL Error、VB379=任务0、VB380=任务2、VB381=任务1、VB382=任务3、VB383=任务4【⚠v1.9前文档曾误写VB384，现更正】** | BYTE×6 | 否 |
+| **VD380 ~ VD387** | **【⚠v2.0 已迁出，AQEX-49】VD380→VD444、VD382→VD448、VD384→VD452。原地址让给 MBUS_MSG Error** | REAL | 否 |
+| **VW380** | **【⚠v2.0 已迁出，AQEX-49】共享定时器暂存→VB414** | WORD | 否 |
 | VW388/VW390 | 手动注射泵模式（VW388：0单次/1循环）与子状态（VW390：0空闲/1抽液/2排液/3回零/4完成/99错误） | WORD | 是 |
-| VW380 | 共享定时器转换暂存区（与VD380同一物理地址的字视图，FC11/FC15/FC17/FC3共用） | WORD | 否 |
+| VD392/VD396 | 手动注射泵内部累计量(VD392)与剩余量(VD396)，FC21内部变量 | REAL | 否 |
+| **VD440 ~ VD455** | **【✅v2.0 本次新增区，AQEX-49】完整迁移清单：VD440=迁自VD378(Dosed_Volume_Total)、VD444=迁自VD380(S4Wait_Time)、VW414=迁自VW380(定时器暂存)、VD448=迁自VD382(S4WaitTimeout,HMI)、VD452=迁自VD384(ManualDose_Target,HMI)。完整占用全景见《VD参数区重排说明 v2.0》第六章** | REAL/WORD | VD448/452是
 | VB300 ~ VB303 | 报警字（4 字节 32 位，按位编码；HMI 经 Modbus 读取 VW300/VW302 后拆分为 VB300~VB303） | BYTE×4 | 是 |
 | **VB305** | **系统总状态字（0=良好/1=故障/2=急停，OB1 NETWORK 10每周期计算）** | **BYTE** | **否** |
 | VB500 ~ VB599 | 报警日志缓冲区（FC3，6条×16字节） | BYTE | 是 |
@@ -263,8 +268,8 @@ HMI可读写设定的参数，全部REAL浮点，断电保持。HMI画面4"参�
 
 | 地址 | 符号 | 单位 | 默认值 | 说明 | HMI画面 |
 |---|---|---|---|---|---|
-| VD10 | VD_C_Set | % | 5.0 | 目标浓度设定值 | 画面4-浓度组 |
-| VD14 | VD_C_Stock | % | 100.0 | 母液浓度（人工配置后录入） | 画面4-浓度组 |
+| VD10 | VD_C_Set | % | 5.0 | ~~目标浓度设定值~~ 【⚠v2.0 删除！浓度参数整体移除，简化为用户直接输入加药量】 | ~~画面4-浓度组~~ |
+| VD14 | VD_C_Stock | % | 100.0 | ~~母液浓度~~ 【⚠v2.0 删除！】 | ~~画面4-浓度组~~ |
 | VD350 | VD_StepResolution | µL/步 | 4.1667 | 注射泵单步分辨率（按进样器规格核实，25ml进样器标准6000步模式默认值；原VD18，AQEX-36迁移） | 画面4-浓度组 |
 
 ### 6.2 时间周期参数
@@ -333,8 +338,8 @@ PLC内部记录、HMI只读的实测值和计算结果，REAL浮点，断电保�
 | 地址 | 符号 | 单位 | 说明 |
 |---|---|---|---|
 | VD370 | VD_Vol_Target | µL | 本轮目标抽取母液体积=VD_C_Set×进水量/VD_C_Stock（原VD98，AQEX-36迁移） |
-| VD380 | VD_S4Wait_Time | s | 0.0 | **v1.2新增** S4 转移等待时长(S4入口V1.7=1期间累加,S4完成时清零;供FC16 NETWORK 4 补偿转S6阈值) | 画面4-时间周期组(只读) |
-| VD382 | VD_S4WaitTimeout | s | 1800.0 | **v1.2新增** S4 等待超时阈值(默认1800s=30min,HMI可调;FC15 NETWORK 1 等待计时阈值,超限置位V303.2) | 画面4-时间周期组 |
+| VD380 | VD_S4Wait_Time | s | 0.0 | **【⚠v2.0 迁出】** 原地址与MBUS_MSG Error VB380~383物理重叠。**新地址：VD444**（VB444~VB447），见《VD参数区重排说明 v2.0》6.5.3 | ~~画面4-时间周期组(只读)~~ 迁后不变 |
+| VD382 | VD_S4WaitTimeout | s | 1800.0 | **【⚠v2.0 迁出】** 原地址与MBUS_MSG Error VB382~383物理重叠。**新地址：VD448**（VB448~VB451），新增断电保持。Bug A(FC15借用VD384)独立修复为用VD324，见《VD参数区重排说明 v2.0》6.5.3B | ~~画面4-时间周期组~~ 迁后不变 |
 | VD102 | VD_Dose_Steps | 步 | 本轮加药目标步数=VD_Vol_Target÷VD_StepResolution，写入注射泵40006/40007 |
 
 ---
@@ -619,14 +624,16 @@ S5上升沿触发预规划、S1完成后二次校正使用的中间变量，REAL
   用于计算 VD_Dose_Steps = VD_Vol_Target ÷ VD_StepResolution
 ```
 
+**【⚠v2.0 新增迁出】** VD378 累计加药量 (FC13/FC0/FC18 内部) 原地址与 MBUS_CTRL Error VB378 + 任务0 Error VB379 物理重叠。**新地址：VD440**（VB440~VB443），见《VD参数区重排说明 v2.0》6.5.3C。
+
 ### 11.5 Modbus通讯状态字（FC4 LAD指令引脚输出，2026-07-27新增）
 
 **背景**：MBUS_CTRL和MBUS_MSG指令盒的Done/Error引脚必须连接到具体地址，不能留空（否则编译错误32）。本节登记FC4中LAD指令盒所占用的Done位和Error错误码地址。
 
 **地址分配原则**：
 - Done位用M区（BOOL），Error错误码用VB区（BYTE，错误码0~255）
-- 避开VD380/VW380定时器暂存区（VB380~383，FC11/FC15/FC17/FC3共用；VW380与VD380为同一物理地址的字/双字视图，属临时变量，不同时长存数据）
-- 避开VD374降级值区（VB374~377）
+- **【⚠v1.9更正】** MBUS_MSG Error 实际占用 **VB380~VB383**（FC4的4个CALL MBUS_MSG Error引脚硬编码），不是原文档11.5节写的VB384。v1.9前这四个Error字节与VD380(VB380~383)/VD382(VB382~385)/VW380(VB380~381)物理重叠，是Bug B的根因之一（见TD026/AQEX-49）。
+- v1.9 修复方案：让 VB378~VB383 完全归 MBUS_MSG Error 使用，把冲突的 VD380/382/384/VW380 迁移到 VD440~VD452（详见《VD参数区重排说明 v2.0》第六章）。
 - 避开VB500~599报警日志区和VB600+ Modbus库区
 
 | 地址 | 符号 | 类型 | 用途 | 来源 |
@@ -639,8 +646,18 @@ S5上升沿触发预规划、S1完成后二次校正使用的中间变量，REAL
 | M10.5 | M_FC4_Degraded_Flow | BOOL | 流量计降级模式标志 | FC4内部逻辑 |
 | M11.0 | M_MBUS_CTRL_Done | BOOL | MBUS_CTRL Done位（每周期脉冲） | LAD引脚输出 |
 | VB378 | VB_MBUS_CTRL_Error | BYTE | MBUS_CTRL Error错误码 | LAD引脚输出 |
-| VB379 | VB_MBUS_MSG_Pump_Error | BYTE | MBUS_MSG注射泵轮询错误码 | LAD引脚输出 |
-| VB384 | VB_MBUS_MSG_Flow_Error | BYTE | MBUS_MSG流量计轮询错误码（避开VD380暂存区） | LAD引脚输出 |
+| VB379 | VB_MBUS_MSG_Task0_Error | BYTE | MBUS_MSG任务0 Error（注射泵状态码读，FC4 CALL第1个Error参数） | LAD引脚输出 |
+| **VB380** | **VB_MBUS_MSG_Task2_Error** | **BYTE** | **【⚠v1.9前文档误写VB384】** MBUS_MSG任务2 Error（流量计读数，FC4 CALL第2个Error参数） | LAD引脚输出 |
+| **VB381** | **VB_MBUS_MSG_Task1_Error** | **BYTE** | **MBUS_MSG任务1 Error（注射泵位置，FC4 CALL第3个Error参数）** | **LAD引脚输出** |
+| **VB382** | **VB_MBUS_MSG_Task3_Error** | **BYTE** | **MBUS_MSG任务3 Error（流量计瞬时流量，FC4 CALL第4个Error参数）** | **LAD引脚输出** |
+| **VB383** | **VB_MBUS_MSG_Task4_Error** | **BYTE** | **MBUS_MSG任务4 Error（FC06写命令，FC4 CALL第5个Error参数）** | **LAD引脚输出** |
+
+> **【代码引用证据】** FC4_ModbusPolling.stl 的 5 个 CALL MBUS_MSG：
+> - L28: `CALL MBUS_MSG, ..., M10.0, VB379` （任务0 Error→VB379）
+> - L38: `CALL MBUS_MSG, ..., M14.0, VB380` （任务2 Error→VB380）
+> - L48: `CALL MBUS_MSG, ..., M10.1, VB381` （任务1 Error→VB381）
+> - L58: `CALL MBUS_MSG, ..., M14.1, VB382` （任务3 Error→VB382）
+> - L227: `CALL MBUS_MSG, ..., M12.0, VB383` （任务4 Error→VB383）
 
 **错误码含义**（参考西门子Modbus RTU Master库手册）：
 - 0 = 无错误
@@ -651,7 +668,7 @@ S5上升沿触发预规划、S1完成后二次校正使用的中间变量，REAL
 - 5~6 = 库内部错误
 - 101+ = 参数错误（Addr/Count/DataPtr配置非法）
 
-**HMI读取建议**：HMI可通过VB378/VB379/VB384读取通讯错误码，在"通讯维护页"显示Modbus总线状态。当错误码≠0持续超过10秒，建议HMI提示"通讯异常"。
+**HMI读取建议**：HMI可通过VB378~VB383读取通讯错误码，在"通讯维护页"显示Modbus总线状态。VB380~VB383【⚠v1.9前与VD382/384重叠】与用户参数同区，**HMI读取时需在v1.9迁移后避免误读迁移前的冲突值**。当错误码≠0持续超过10秒，建议HMI提示"通讯异常"。
 
 ### 11.6 FC4 Modbus 轮询内部计数器（2026-07-28 修正）
 
@@ -804,7 +821,7 @@ HMI工程中配置8个PLC连接（站点），每个连接对应1台PLC：
 | 起始 | 结束 | 字节数 | 内容 |
 |---|---|---|---|
 | VB0 | VB9 | 10 | 系统命令位/状态位/状态机/泵状态/报警码/轮次 |
-| VB10 | VB149 | 140 | HMI设定参数+实测值+纠偏变量（VD10~VD144，VD144为v2.3新增T默认值） |
+| VB18 | VB149 | 132 | HMI设定参数+实测值+纠偏变量（⚠v2.0 删除VD10/VD14，起始从VB18开始；VD144为v2.3新增T默认值） |
 | VB150 | VB199 | 50 | 纠偏中间变量（VD150~VD190）+断电恢复中间量（VD194/VW198）【Story1.4/1.7新增】 |
 | VB200 | VB235 | 36 | Modbus寄存器映射缓冲区（VW200~VW230 + VD232 PumpWrite_Addr） |
 | VB230 | VB289 | 60 | 阀门诊断子状态/结果/PT转换值（VW230~VW289）【Story1.3新增，2026-07-18静态分析修复】 |
@@ -815,7 +832,7 @@ HMI工程中配置8个PLC连接（站点），每个连接对应1台PLC：
 | VB308 | VB347 | 40 | 阀门诊断数据/运算中间变量（VD308~VD344）【2026-07-18静态分析修复：原VD250~VD296区间编址冲突，迁移至此】 |
 | VB348 | VB349 | 2 | 预留（原错误描述为“VB305~VB349”，已修正） |
 | VB350 | VB373 | 24 | AQEX-36迁移的6个VD参数（VD350/354/358/362/366/370，原VD18/20/48/50/96/98，避免步长2冲突） |
-| VB384 | VB399 | 16 | 手动注射泵参数（VD384目标量、VD392累计量、VD396剩余量）+ VW388/VW390 |
+| VB384 | VB399 | 16 | 手动注射泵参数（⚠v2.0 VD384已迁出至VD452，本区域仅余 VD392/VD396 + VW388/VW390） |
 | VB500 | VB599 | 100 | 报警日志缓冲区（FC3 NETWORK6，Story1.6新增） |
 | DT10 | DT10 | 8 | DT_TankB_FullTime时间戳 |
 
@@ -843,7 +860,12 @@ HMI工程中配置8个PLC连接（站点），每个连接对应1台PLC：
 | VD70~VD102 | VD_xxx | REAL/DWORD | PLC实测值（时长/流量/加药计算；VD96/VD98已迁移至VD366/370） |
 | VD104~VD144 | VD_xxx | REAL | 纠偏变量(VD108 S6默认值HMI设定)+泵速度(VD132/136/140已停用,PLC不干预,使用泵自身默认速度)+VD144 T默认值(HMI设定,v2.3由VD104迁移,VD104与VD102重叠) |
 | VD350~VD370 | VD_xxx | REAL | AQEX-36迁移的6个VD参数（VD350=StepResolution/VD354=CycleSetpoint/VD358=Timeout_ValveA/VD362=Timeout_ValveB/VD366=ExperimentDuration_Accum/VD370=Vol_Target，原VD18/20/48/50/96/98） |
-| VD384 | VD_ManualDose_Target | REAL | 手动注射泵总加药量（µL，HMI设定；冷启动默认10000.0=10mL） |
+| VD384 | ~~VD_ManualDose_Target~~ | REAL | **【⚠v2.0 迁出】** 原地址让给MBUS Error，迁到VD452 |
+| **VD440** | **VD_Dosed_Volume_Total** | **REAL** | **【✅v2.0 新增】** 累计加药量（FC13写，HMI只读显示，迁自VD378） |
+| **VD444** | **VD_S4Wait_Time** | **REAL** | **【✅v2.0 新增】** S4等待时长内部变量（迁自VD380） |
+| **VW414** | 定时器暂存 | WORD | **【✅v2.0 新增】** FC11/15/17 定时器暂存（迁自VW380） |
+| **VD448** | **VD_S4WaitTimeout** | **REAL** | **【✅v2.0 新增，断电保持】** S4等待超时阈值HMI参数（迁自VD382） |
+| **VD452** | **VD_ManualDose_Target** | **REAL** | **【✅v2.0 新增，断电保持】** 手动注射泵总加药量HMI参数（迁自VD384） |
 | VD392 | VD_ManualDose_Dosed | REAL | 手动注射泵累计加药量（µL，FC21内部） |
 | VD396 | VD_ManualDose_Remaining | REAL | 手动注射泵剩余加药量（µL，FC21内部） |
 | VW388 | VW_ManualDose_Mode | INT | 手动注射泵模式：0=单次，1=循环 |
@@ -863,12 +885,12 @@ HMI工程中配置8个PLC连接（站点），每个连接对应1台PLC：
 | M11.1~M11.5 | M_xxx_Edge | BOOL | FC3边沿检测/消音标志（M11.1消音/M11.2报警/M11.3~5 I0.0~I0.2边沿） |
 | VB378 | VB_MBUS_CTRL_Error | BYTE | MBUS_CTRL Error错误码（LAD引脚输出） |
 | VB379 | VB_MBUS_MSG_Pump_Error | BYTE | MBUS_MSG注射泵轮询错误码（LAD引脚输出） |
-| VB384 | VB_MBUS_MSG_Flow_Error | BYTE | MBUS_MSG流量计轮询错误码（避开VD380暂存区） |
+| VB384 | — | — | **【⚠v1.9前文档Bug】** MBUS_MSG Error 实际占用 VB380~VB383，不是 VB384。v2.0 已更正。VB384~387 在 VD384 迁出后暂时空闲。
 | DT10 | DT_TankB_FullTime | DT | 下缸变满时间戳 |
 
 ---
 
-**文档版本**：v1.8
+**文档版本**：v2.0
 **编制日期**：2026-07-15（v1.0）/ 2026-07-27（v1.1新增11.5节Modbus通讯状态字+附录B索引更新）/ 2026-07-28（v1.2修正FC4轮询计数器地址VW250→VW290~VW296，标注VD250/VW250冲突）/ 2026-08-17（v1.3新增手动注射泵控制变量V3.6/V3.7/VD384/VW388/VW390/VD392/VD396）/ 2026-08-24（v1.4修正VD_T_Default迁移至VD144）/ 2026-09-02（v1.5新增V304.1/V304.2 RTU从站在线标志位）/ 2026-09-02（v1.6新增VB305系统总状态字）/ 2026-09-03（v1.7 FC0冷启动安全默认值+停用注射泵速度PLC干预）/ 2026-09-03（v1.8 【重大修复】手动控制命令位V2.4~V3.7→V306.0~V307.3，避开VW2状态机地址重叠）
 **修订日期**: 2026-09-03
 **修订内容**: **【v1.8 P0级修复】** ① 手动控制命令位V2.4~V3.7（VB2/VB3区）与VW2状态机当前状态物理地址重叠，导致V3.1=1直接改写VW2=2（S2预循环）触发两台循环泵同时启动、V3.2=1进入S4并报"阀B开到位超时"；现全部迁移至V306.0~V307.3（预留扩展区），FC20/FC21/OB1代码同步更新，McgsPro CSV导入文件中"通道地址"列须同步迁移（变量名不变，HMI侧脚本无须改动）；② **新增V309.0调试模式开关（4.5节）**——空缸联机调试时旁路阀B/阀C的液位联锁；③ McgsPro CSV导入文件中"通道地址"列已全部同步：U1/U2/U3/U4/U5/U6/U7/U8 8套单元均补充泵2/注射泵/V309.0共5个变量（原仅阀/泵1共8个变量），合计每个单元13条手动控制记录。

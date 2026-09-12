@@ -20,7 +20,7 @@ A      V307.2
 EU
 AW=    VW390, 0
 MOVR   0.0, VD392
-MOVR   VD384, VD396
+MOVR   VD452, VD396
 R      M13.7, 1
 R      M13.5, 1
 R      M13.6, 1
@@ -237,7 +237,7 @@ LD     SM0.0
 AW=    VW390, 2
 AN     M13.6
 AW=    VW388, 1
-AR>=   VD392, VD384
+AR>=   VD392, VD452
 R      M12.0, 1
 R      M11.6, 1
 R      M11.7, 1
@@ -251,7 +251,7 @@ LD     SM0.0
 AW=    VW390, 2
 AN     M13.6
 AW=    VW388, 1
-AR<    VD392, VD384
+AR<    VD392, VD452
 R      M12.0, 1
 R      M11.6, 1
 R      M11.7, 1
