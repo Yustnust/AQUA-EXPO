@@ -8,9 +8,9 @@ AN     M12.0
 AN     M13.5
 AN     M13.6
 MOVW   0, VW390
-INCW   VW548
+INCW   VW582
 R      M13.7, 1
-INCW   VW516
+INCW   VW550
 
 
 NETWORK 1
@@ -29,7 +29,7 @@ R      M11.6, 1
 R      M11.7, 1
 MOVW   1, VW390
 R      V307.2, 1
-INCW   VW524
+INCW   VW558
 
 
 NETWORK 2
@@ -40,7 +40,7 @@ EU
 AW<>   VW390, 0
 S      M13.7, 1
 R      V307.3, 1
-INCW   VW526
+INCW   VW560
 
 
 NETWORK 3
@@ -80,7 +80,7 @@ JMP    11
 LBL    10
 MOVR   6000.0, VD102
 LBL    11
-INCW   VW528
+INCW   VW562
 
 
 NETWORK 5
@@ -102,7 +102,7 @@ R      M12.0, 1
 R      M11.6, 1
 R      M11.7, 1
 MOVW   3, VW390
-INCW   VW532
+INCW   VW566
 JMP    13
 LBL    12
 MOVW   AC0, VW204
@@ -111,7 +111,7 @@ MOVD   16#9C46, VD232
 S      M11.6, 1
 S      M13.5, 1
 LBL    13
-INCW   VW530
+INCW   VW564
 
 
 NETWORK 6
@@ -146,7 +146,7 @@ AN     M11.7
 AN     M12.0
 R      M13.5, 1
 MOVW   2, VW390
-INCW   VW534
+INCW   VW568
 
 
 NETWORK 9
@@ -164,7 +164,7 @@ MOVW   AC0, VW206
 MOVD   16#9C47, VD232
 S      M11.6, 1
 S      M13.6, 1
-INCW   VW536
+INCW   VW570
 
 
 NETWORK 10
@@ -202,7 +202,7 @@ MOVR   VD102, AC0
 +R     AC0, VD392
 -R     AC0, VD396
 R      M13.6, 1
-INCW   VW538
+INCW   VW572
 
 
 NETWORK 13
@@ -215,7 +215,7 @@ R      M12.0, 1
 R      M11.6, 1
 R      M11.7, 1
 MOVW   3, VW390
-INCW   VW540
+INCW   VW574
 
 
 NETWORK 14
@@ -228,7 +228,7 @@ R      M12.0, 1
 R      M11.6, 1
 R      M11.7, 1
 MOVW   3, VW390
-INCW   VW542
+INCW   VW576
 
 
 NETWORK 15
@@ -242,7 +242,7 @@ R      M12.0, 1
 R      M11.6, 1
 R      M11.7, 1
 MOVW   3, VW390
-INCW   VW544
+INCW   VW578
 
 
 NETWORK 16
@@ -256,7 +256,7 @@ R      M12.0, 1
 R      M11.6, 1
 R      M11.7, 1
 MOVW   1, VW390
-INCW   VW546
+INCW   VW580
 
 
 NETWORK 17
@@ -274,7 +274,7 @@ MOVW   1, VW230
 MOVD   16#9C43, VD232
 S      M11.6, 1
 MOVW   30, VW390
-INCW   VW518
+INCW   VW552
 
 
 NETWORK 17.5
@@ -296,7 +296,7 @@ R      M12.0, 1
 R      M11.6, 1
 R      M11.7, 1
 R      T104, 1
-INCW   VW522
+INCW   VW556
 
 
 NETWORK 19
@@ -312,4 +312,4 @@ R      M11.6, 1
 R      M11.7, 1
 R      T104, 1
 MOVW   4, VW390
-INCW   VW520
+INCW   VW554

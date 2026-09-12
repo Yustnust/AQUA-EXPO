@@ -61,39 +61,39 @@ R      M11.6, 1           // 清注射泵写请求(防止断电恢复时残留)
 LD     SM0.1
 R      T104, 1            // 清回零冷却定时器
 LD     SM0.1
-MOVW   0, VW516           // 清FC21监控计数器
+MOVW   0, VW550           // 清FC21监控计数器
 LD     SM0.1
-MOVW   0, VW518
+MOVW   0, VW552
 LD     SM0.1
-MOVW   0, VW520
+MOVW   0, VW554
 LD     SM0.1
-MOVW   0, VW522
+MOVW   0, VW556
 LD     SM0.1
-MOVW   0, VW524
+MOVW   0, VW558
 LD     SM0.1
-MOVW   0, VW526
+MOVW   0, VW560
 LD     SM0.1
-MOVW   0, VW528
+MOVW   0, VW562
 LD     SM0.1
-MOVW   0, VW530
+MOVW   0, VW564
 LD     SM0.1
-MOVW   0, VW532
+MOVW   0, VW566
 LD     SM0.1
-MOVW   0, VW534
+MOVW   0, VW568
 LD     SM0.1
-MOVW   0, VW536
+MOVW   0, VW570
 LD     SM0.1
-MOVW   0, VW538
+MOVW   0, VW572
 LD     SM0.1
-MOVW   0, VW540
+MOVW   0, VW574
 LD     SM0.1
-MOVW   0, VW542
+MOVW   0, VW576
 LD     SM0.1
-MOVW   0, VW544
+MOVW   0, VW578
 LD     SM0.1
-MOVW   0, VW546
+MOVW   0, VW580
 LD     SM0.1
-MOVW   0, VW548
+MOVW   0, VW582
 
 // 判断冷启动/断电恢复
 LD     V304.0
