@@ -138,6 +138,8 @@ MOVR   5.0, VD66          // VD_Delay_ValveA_Verify 阀A关后延时验证(s)
 
 // 7.4 其他超时阈值
 MOVR   1800.0, VD448      // VD_S4WaitTimeout S4等待超时阈值(s,默认30min)
+MOVR   10000.0, VD452     // VD_ManualDose_Target 手动总加药量(µL,默认10mL) ← 出厂硬编码
+MOVW   0, VW388           // VW_ManualDose_Mode 手动模式(0=单次,1=循环) ← 出厂硬编码
 
 // ============================================================
 // v2.0 新增: 用户默认参数覆盖 (出厂默认先跑一遍,再用用户默认覆盖)
@@ -277,9 +279,8 @@ MOVW   0, VW390           // 手动注射泵子状态=0(空闲)
 MOVR   0.0, VD392         // 手动累计加药量=0(内部)
 MOVR   0.0, VD396         // 手动剩余加药量=0(内部)
 
-// 手动注射泵参数(冷启动安全默认值)
-MOVR   10000.0, VD452     // VD_ManualDose_Target 手动总加药量(µL,默认10mL)
-MOVW   0, VW388           // VW_ManualDose_Mode 手动模式(0=单次,1=循环)
+// 手动注射泵参数已移至出厂硬编码阶段(L142~L143),此处不再重复
+// 否则会覆盖用户默认值 (Bug fix 2026-09-12)
 MOVB   0, VB378           // 清MBUS_CTRL Error
 MOVB   0, VB379           // 清MBUS_MSG Error(注射泵状态)
 MOVB   0, VB380           // 清MBUS_MSG Error(流量计)
