@@ -4006,18 +4006,73 @@ McgsPro 用户管理需在组态环境中预先建立 3 个用户组:
 
 ## L 分区：RTC 校时脚本（AQEX-51 新增）
 
-### 脚本 55：RTC 校时弹窗循环策略（循环策略 / RTC_Sync_Poll）
+### 脚本 55：RTC 自动校时循环策略（循环策略 / RTC_Sync_Poll）
 
 - **位置**：`运行策略` -> `循环策略`
 - **执行周期**：1000 ms
-- **依赖变量**：`U1_Need_RTC_Sync`（V303.7）
-- **功能**：PLC 请求校时（V303.7=1）时弹出 `RTC_Sync_Wnd` 窗口，校时完成后自动关闭。
+- **依赖变量**：`U1_Need_RTC_Sync`（V303.7）、`U1_VB900_RTC_Year`~`U1_VB905_RTC_Second`、`U1_CMD_RTC_Sync`（V0.6）
+- **功能**：PLC 请求校时（V303.7=1）时，**自动**取 MCGS 本机时间→BCD→写 VB900~VB905→置 V0.6 触发 PLC TODW。
+  同时弹窗 `RTC_Sync_Wnd` 作为轻提示（非阻塞，3秒后自动关闭）。
+- **设计决策（方案C：全自动+轻提示）**：
+  - 全自动不等用户，避免 5 分钟超时 → FC22 TODW → S_ERROR
+  - 弹窗仅作通知，显示"时间已同步为 xxx"，让操作员知晓
+  - 脚本56手动校时按钮保留作为兜底（操作员发现 HMI 时间不对可手动触发）
+  - 风险：HMI 时间错会污染 PLC RTC。对策：现场工控机开 Windows NTP 自动同步
 
 ```vb
-' RTC 校时弹窗控制（AQEX-51）
+' ============================================
+' RTC 自动校时循环策略 (方案C: 全自动+轻提示)
+' 1秒周期。PLC 冷启动 RTC 丢失 → V303.7=1 → 本脚本 1秒内自动 TODW 同步
+' ============================================
+
 IF U1_Need_RTC_Sync = 1 THEN
+    ' --- 1. 自动取 MCGS 本机时间 → BCD → VB900~VB905 ---
+    DIM dateStr, year, month, day
+    DIM yearHigh, yearLow, monthHigh, monthLow, dayHigh, dayLow
+    DIM timeStr, hour, minute, second
+    DIM hourHigh, hourLow, minHigh, minLow, secHigh, secLow
+
+    dateStr = !Date()
+    year  = !Str2I(!Left(dateStr, 4)) - 2000
+    month = !Str2I(!Mid(dateStr, 6, 2))
+    day   = !Str2I(!Mid(dateStr, 9, 2))
+
+    timeStr = !Time()
+    hour   = !Str2I(!Left(timeStr, 2))
+    minute = !Str2I(!Mid(timeStr, 4, 2))
+    second = !Str2I(!Right(timeStr, 2))
+
+    yearHigh = year / 10
+    yearLow  = year - yearHigh * 10
+    U1_VB900_RTC_Year = yearHigh * 16 + yearLow
+
+    monthHigh = month / 10
+    monthLow  = month - monthHigh * 10
+    U1_VB901_RTC_Month = monthHigh * 16 + monthLow
+
+    dayHigh = day / 10
+    dayLow  = day - dayHigh * 10
+    U1_VB902_RTC_Day = dayHigh * 16 + dayLow
+
+    hourHigh = hour / 10
+    hourLow  = hour - hourHigh * 10
+    U1_VB903_RTC_Hour = hourHigh * 16 + hourLow
+
+    minHigh = minute / 10
+    minLow  = minute - minHigh * 10
+    U1_VB904_RTC_Minute = minHigh * 16 + minLow
+
+    secHigh = second / 10
+    secLow  = second - secHigh * 10
+    U1_VB905_RTC_Second = secHigh * 16 + secLow
+
+    ' --- 2. 触发 PLC FC22 TODW 写入 RTC ---
+    U1_CMD_RTC_Sync = 1
+
+    ' --- 3. 轻提示弹窗 (非阻塞,3秒后自动关闭由 U1_Need_RTC_Sync 变 0 触发) ---
     !OpenSubWnd("RTC_Sync_Wnd", 200, 150, 400, 200)
 ELSE
+    ' 校时完成,关闭提示弹窗
     !CloseSubWnd("RTC_Sync_Wnd")
 END IF
 ```
@@ -4079,5 +4134,5 @@ U1_CMD_RTC_Sync = 1
 
 ---
 
-**文档结束** — 共 56 个脚本（AQEX-51 新增 2 个）,覆盖 A~L 12 个分区,符合 McgsPro 3.3.6 类 Basic 脚本语言规范。
+**文档结束** — 共 57 段脚本（含脚本30.5存为默认按钮, L分区脚本55升级为全自动校时）,覆盖 A~L 12 个分区。
 
