@@ -87,7 +87,7 @@ McgsPro 脚本程序是**类 Basic 脚本语言**,不是 VBScript,也不是 VBA�
 
 - `操作员组` — L1 (日常监控+基础操作)
 - `维护组` — L2 (手动控制+参数时间组)
-- `管理员组` — L3 (浓度参数+单元使能+系统维护)
+- `管理员组` — L3 (单元使能+系统维护+设为默认)
 
 ### 7. 8单元变量扩展约定
 
@@ -1928,8 +1928,6 @@ EndIf
 ' ============================================
 
 If SelectedUnit = 1 Then
-    Param_C_Set = U1_VD_C_Set
-    Param_C_Stock = U1_VD_C_Stock
     Param_StepRes = U1_VD_StepResolution
     Param_CycleSet = U1_VD_CycleSetpoint
     Param_ExpTarget = U1_VD_ExperimentTarget
@@ -1941,14 +1939,10 @@ If SelectedUnit = 1 Then
     Param_Timeout_ValveA = U1_VD_Timeout_ValveA
     Param_Timeout_ValveB = U1_VD_Timeout_ValveB
     Param_Timeout_ValveC = U1_VD_Timeout_ValveC
-    Param_Timeout_Pump1 = U1_VD_Timeout_Pump1
-    Param_Timeout_Pump2 = U1_VD_Timeout_Pump2
     Param_Delay_ValveA_Verify = U1_VD_Delay_ValveA_Verify
 EndIf
 
 If SelectedUnit = 2 Then
-    Param_C_Set = U2_VD_C_Set
-    Param_C_Stock = U2_VD_C_Stock
     Param_StepRes = U2_VD_StepResolution
     Param_CycleSet = U2_VD_CycleSetpoint
     Param_ExpTarget = U2_VD_ExperimentTarget
@@ -1960,14 +1954,10 @@ If SelectedUnit = 2 Then
     Param_Timeout_ValveA = U2_VD_Timeout_ValveA
     Param_Timeout_ValveB = U2_VD_Timeout_ValveB
     Param_Timeout_ValveC = U2_VD_Timeout_ValveC
-    Param_Timeout_Pump1 = U2_VD_Timeout_Pump1
-    Param_Timeout_Pump2 = U2_VD_Timeout_Pump2
     Param_Delay_ValveA_Verify = U2_VD_Delay_ValveA_Verify
 EndIf
 
 If SelectedUnit = 3 Then
-    Param_C_Set = U3_VD_C_Set
-    Param_C_Stock = U3_VD_C_Stock
     Param_StepRes = U3_VD_StepResolution
     Param_CycleSet = U3_VD_CycleSetpoint
     Param_ExpTarget = U3_VD_ExperimentTarget
@@ -1979,14 +1969,10 @@ If SelectedUnit = 3 Then
     Param_Timeout_ValveA = U3_VD_Timeout_ValveA
     Param_Timeout_ValveB = U3_VD_Timeout_ValveB
     Param_Timeout_ValveC = U3_VD_Timeout_ValveC
-    Param_Timeout_Pump1 = U3_VD_Timeout_Pump1
-    Param_Timeout_Pump2 = U3_VD_Timeout_Pump2
     Param_Delay_ValveA_Verify = U3_VD_Delay_ValveA_Verify
 EndIf
 
 If SelectedUnit = 4 Then
-    Param_C_Set = U4_VD_C_Set
-    Param_C_Stock = U4_VD_C_Stock
     Param_StepRes = U4_VD_StepResolution
     Param_CycleSet = U4_VD_CycleSetpoint
     Param_ExpTarget = U4_VD_ExperimentTarget
@@ -1998,14 +1984,10 @@ If SelectedUnit = 4 Then
     Param_Timeout_ValveA = U4_VD_Timeout_ValveA
     Param_Timeout_ValveB = U4_VD_Timeout_ValveB
     Param_Timeout_ValveC = U4_VD_Timeout_ValveC
-    Param_Timeout_Pump1 = U4_VD_Timeout_Pump1
-    Param_Timeout_Pump2 = U4_VD_Timeout_Pump2
     Param_Delay_ValveA_Verify = U4_VD_Delay_ValveA_Verify
 EndIf
 
 If SelectedUnit = 5 Then
-    Param_C_Set = U5_VD_C_Set
-    Param_C_Stock = U5_VD_C_Stock
     Param_StepRes = U5_VD_StepResolution
     Param_CycleSet = U5_VD_CycleSetpoint
     Param_ExpTarget = U5_VD_ExperimentTarget
@@ -2017,14 +1999,10 @@ If SelectedUnit = 5 Then
     Param_Timeout_ValveA = U5_VD_Timeout_ValveA
     Param_Timeout_ValveB = U5_VD_Timeout_ValveB
     Param_Timeout_ValveC = U5_VD_Timeout_ValveC
-    Param_Timeout_Pump1 = U5_VD_Timeout_Pump1
-    Param_Timeout_Pump2 = U5_VD_Timeout_Pump2
     Param_Delay_ValveA_Verify = U5_VD_Delay_ValveA_Verify
 EndIf
 
 If SelectedUnit = 6 Then
-    Param_C_Set = U6_VD_C_Set
-    Param_C_Stock = U6_VD_C_Stock
     Param_StepRes = U6_VD_StepResolution
     Param_CycleSet = U6_VD_CycleSetpoint
     Param_ExpTarget = U6_VD_ExperimentTarget
@@ -2036,14 +2014,10 @@ If SelectedUnit = 6 Then
     Param_Timeout_ValveA = U6_VD_Timeout_ValveA
     Param_Timeout_ValveB = U6_VD_Timeout_ValveB
     Param_Timeout_ValveC = U6_VD_Timeout_ValveC
-    Param_Timeout_Pump1 = U6_VD_Timeout_Pump1
-    Param_Timeout_Pump2 = U6_VD_Timeout_Pump2
     Param_Delay_ValveA_Verify = U6_VD_Delay_ValveA_Verify
 EndIf
 
 If SelectedUnit = 7 Then
-    Param_C_Set = U7_VD_C_Set
-    Param_C_Stock = U7_VD_C_Stock
     Param_StepRes = U7_VD_StepResolution
     Param_CycleSet = U7_VD_CycleSetpoint
     Param_ExpTarget = U7_VD_ExperimentTarget
@@ -2055,14 +2029,10 @@ If SelectedUnit = 7 Then
     Param_Timeout_ValveA = U7_VD_Timeout_ValveA
     Param_Timeout_ValveB = U7_VD_Timeout_ValveB
     Param_Timeout_ValveC = U7_VD_Timeout_ValveC
-    Param_Timeout_Pump1 = U7_VD_Timeout_Pump1
-    Param_Timeout_Pump2 = U7_VD_Timeout_Pump2
     Param_Delay_ValveA_Verify = U7_VD_Delay_ValveA_Verify
 EndIf
 
 If SelectedUnit = 8 Then
-    Param_C_Set = U8_VD_C_Set
-    Param_C_Stock = U8_VD_C_Stock
     Param_StepRes = U8_VD_StepResolution
     Param_CycleSet = U8_VD_CycleSetpoint
     Param_ExpTarget = U8_VD_ExperimentTarget
@@ -2074,8 +2044,6 @@ If SelectedUnit = 8 Then
     Param_Timeout_ValveA = U8_VD_Timeout_ValveA
     Param_Timeout_ValveB = U8_VD_Timeout_ValveB
     Param_Timeout_ValveC = U8_VD_Timeout_ValveC
-    Param_Timeout_Pump1 = U8_VD_Timeout_Pump1
-    Param_Timeout_Pump2 = U8_VD_Timeout_Pump2
     Param_Delay_ValveA_Verify = U8_VD_Delay_ValveA_Verify
 EndIf
 
@@ -2092,7 +2060,7 @@ ParamTargetUnit = SelectedUnit
 ```
 ' ============================================
 ' 保存参数按钮脚本
-' 功能: 1.校验维护组权限 2.浓度组额外校验管理员 3.范围校验 4.写回 PLC
+' 功能: 1.校验维护组权限 2.范围校验 3.写回 PLC
 ' 依赖脚本31: 参数范围校验(本脚本调用前应先执行校验,这里再次兜底)
 ' ============================================
 
@@ -2105,52 +2073,11 @@ If !CheckUserGroup("维护组") = 1 Then
     EndIf
 EndIf
 
-' --- 2. 浓度组参数(C_Set / C_Stock)仅管理员可写 ---
-If !CheckUserGroup("管理员组") = 0 Then
-    ' 管理员: 允许保存全部
-Else
-    ' 非管理员(维护组): 不允许改浓度,只保留原值
-    If SelectedUnit = 1 Then
-        Param_C_Set = U1_VD_C_Set
-        Param_C_Stock = U1_VD_C_Stock
-    EndIf
-    If SelectedUnit = 2 Then
-        Param_C_Set = U2_VD_C_Set
-        Param_C_Stock = U2_VD_C_Stock
-    EndIf
-    If SelectedUnit = 3 Then
-        Param_C_Set = U3_VD_C_Set
-        Param_C_Stock = U3_VD_C_Stock
-    EndIf
-    If SelectedUnit = 4 Then
-        Param_C_Set = U4_VD_C_Set
-        Param_C_Stock = U4_VD_C_Stock
-    EndIf
-    If SelectedUnit = 5 Then
-        Param_C_Set = U5_VD_C_Set
-        Param_C_Stock = U5_VD_C_Stock
-    EndIf
-    If SelectedUnit = 6 Then
-        Param_C_Set = U6_VD_C_Set
-        Param_C_Stock = U6_VD_C_Stock
-    EndIf
-    If SelectedUnit = 7 Then
-        Param_C_Set = U7_VD_C_Set
-        Param_C_Stock = U7_VD_C_Stock
-    EndIf
-    If SelectedUnit = 8 Then
-        Param_C_Set = U8_VD_C_Set
-        Param_C_Stock = U8_VD_C_Stock
-    EndIf
-EndIf
-
-' --- 3. 范围校验(完整规则见脚本31,此处仅关键项) ---
-' 浓度: 0 < C_Set <= C_Stock <= 200
-If Param_C_Set <= 0 Then
+' --- 2. 范围校验(完整规则见脚本31,此处仅关键项) ---
+' 浓度参数已移除
     !Beep()
     Exit
 EndIf
-If Param_C_Stock < Param_C_Set Then
     !Beep()
     Exit
 EndIf
@@ -2180,8 +2107,6 @@ EndIf
 
 ' --- 4. 写回 PLC (按 SelectedUnit 选择目标) ---
 If SelectedUnit = 1 Then
-    U1_VD_C_Set = Param_C_Set
-    U1_VD_C_Stock = Param_C_Stock
     U1_VD_StepResolution = Param_StepRes
     U1_VD_CycleSetpoint = Param_CycleSet
     U1_VD_ExperimentTarget = Param_ExpTarget
@@ -2193,14 +2118,10 @@ If SelectedUnit = 1 Then
     U1_VD_Timeout_ValveA = Param_Timeout_ValveA
     U1_VD_Timeout_ValveB = Param_Timeout_ValveB
     U1_VD_Timeout_ValveC = Param_Timeout_ValveC
-    U1_VD_Timeout_Pump1 = Param_Timeout_Pump1
-    U1_VD_Timeout_Pump2 = Param_Timeout_Pump2
     U1_VD_Delay_ValveA_Verify = Param_Delay_ValveA_Verify
 EndIf
 
 If SelectedUnit = 2 Then
-    U2_VD_C_Set = Param_C_Set
-    U2_VD_C_Stock = Param_C_Stock
     U2_VD_StepResolution = Param_StepRes
     U2_VD_CycleSetpoint = Param_CycleSet
     U2_VD_ExperimentTarget = Param_ExpTarget
@@ -2212,14 +2133,10 @@ If SelectedUnit = 2 Then
     U2_VD_Timeout_ValveA = Param_Timeout_ValveA
     U2_VD_Timeout_ValveB = Param_Timeout_ValveB
     U2_VD_Timeout_ValveC = Param_Timeout_ValveC
-    U2_VD_Timeout_Pump1 = Param_Timeout_Pump1
-    U2_VD_Timeout_Pump2 = Param_Timeout_Pump2
     U2_VD_Delay_ValveA_Verify = Param_Delay_ValveA_Verify
 EndIf
 
 If SelectedUnit = 3 Then
-    U3_VD_C_Set = Param_C_Set
-    U3_VD_C_Stock = Param_C_Stock
     U3_VD_StepResolution = Param_StepRes
     U3_VD_CycleSetpoint = Param_CycleSet
     U3_VD_ExperimentTarget = Param_ExpTarget
@@ -2231,14 +2148,10 @@ If SelectedUnit = 3 Then
     U3_VD_Timeout_ValveA = Param_Timeout_ValveA
     U3_VD_Timeout_ValveB = Param_Timeout_ValveB
     U3_VD_Timeout_ValveC = Param_Timeout_ValveC
-    U3_VD_Timeout_Pump1 = Param_Timeout_Pump1
-    U3_VD_Timeout_Pump2 = Param_Timeout_Pump2
     U3_VD_Delay_ValveA_Verify = Param_Delay_ValveA_Verify
 EndIf
 
 If SelectedUnit = 4 Then
-    U4_VD_C_Set = Param_C_Set
-    U4_VD_C_Stock = Param_C_Stock
     U4_VD_StepResolution = Param_StepRes
     U4_VD_CycleSetpoint = Param_CycleSet
     U4_VD_ExperimentTarget = Param_ExpTarget
@@ -2250,14 +2163,10 @@ If SelectedUnit = 4 Then
     U4_VD_Timeout_ValveA = Param_Timeout_ValveA
     U4_VD_Timeout_ValveB = Param_Timeout_ValveB
     U4_VD_Timeout_ValveC = Param_Timeout_ValveC
-    U4_VD_Timeout_Pump1 = Param_Timeout_Pump1
-    U4_VD_Timeout_Pump2 = Param_Timeout_Pump2
     U4_VD_Delay_ValveA_Verify = Param_Delay_ValveA_Verify
 EndIf
 
 If SelectedUnit = 5 Then
-    U5_VD_C_Set = Param_C_Set
-    U5_VD_C_Stock = Param_C_Stock
     U5_VD_StepResolution = Param_StepRes
     U5_VD_CycleSetpoint = Param_CycleSet
     U5_VD_ExperimentTarget = Param_ExpTarget
@@ -2269,14 +2178,10 @@ If SelectedUnit = 5 Then
     U5_VD_Timeout_ValveA = Param_Timeout_ValveA
     U5_VD_Timeout_ValveB = Param_Timeout_ValveB
     U5_VD_Timeout_ValveC = Param_Timeout_ValveC
-    U5_VD_Timeout_Pump1 = Param_Timeout_Pump1
-    U5_VD_Timeout_Pump2 = Param_Timeout_Pump2
     U5_VD_Delay_ValveA_Verify = Param_Delay_ValveA_Verify
 EndIf
 
 If SelectedUnit = 6 Then
-    U6_VD_C_Set = Param_C_Set
-    U6_VD_C_Stock = Param_C_Stock
     U6_VD_StepResolution = Param_StepRes
     U6_VD_CycleSetpoint = Param_CycleSet
     U6_VD_ExperimentTarget = Param_ExpTarget
@@ -2288,14 +2193,10 @@ If SelectedUnit = 6 Then
     U6_VD_Timeout_ValveA = Param_Timeout_ValveA
     U6_VD_Timeout_ValveB = Param_Timeout_ValveB
     U6_VD_Timeout_ValveC = Param_Timeout_ValveC
-    U6_VD_Timeout_Pump1 = Param_Timeout_Pump1
-    U6_VD_Timeout_Pump2 = Param_Timeout_Pump2
     U6_VD_Delay_ValveA_Verify = Param_Delay_ValveA_Verify
 EndIf
 
 If SelectedUnit = 7 Then
-    U7_VD_C_Set = Param_C_Set
-    U7_VD_C_Stock = Param_C_Stock
     U7_VD_StepResolution = Param_StepRes
     U7_VD_CycleSetpoint = Param_CycleSet
     U7_VD_ExperimentTarget = Param_ExpTarget
@@ -2307,14 +2208,10 @@ If SelectedUnit = 7 Then
     U7_VD_Timeout_ValveA = Param_Timeout_ValveA
     U7_VD_Timeout_ValveB = Param_Timeout_ValveB
     U7_VD_Timeout_ValveC = Param_Timeout_ValveC
-    U7_VD_Timeout_Pump1 = Param_Timeout_Pump1
-    U7_VD_Timeout_Pump2 = Param_Timeout_Pump2
     U7_VD_Delay_ValveA_Verify = Param_Delay_ValveA_Verify
 EndIf
 
 If SelectedUnit = 8 Then
-    U8_VD_C_Set = Param_C_Set
-    U8_VD_C_Stock = Param_C_Stock
     U8_VD_StepResolution = Param_StepRes
     U8_VD_CycleSetpoint = Param_CycleSet
     U8_VD_ExperimentTarget = Param_ExpTarget
@@ -2326,8 +2223,6 @@ If SelectedUnit = 8 Then
     U8_VD_Timeout_ValveA = Param_Timeout_ValveA
     U8_VD_Timeout_ValveB = Param_Timeout_ValveB
     U8_VD_Timeout_ValveC = Param_Timeout_ValveC
-    U8_VD_Timeout_Pump1 = Param_Timeout_Pump1
-    U8_VD_Timeout_Pump2 = Param_Timeout_Pump2
     U8_VD_Delay_ValveA_Verify = Param_Delay_ValveA_Verify
 EndIf
 
@@ -2374,10 +2269,10 @@ ParamSrcUnit = SelectedUnit
 ' 恢复默认按钮脚本
 ' 功能: 权限校验 → 弹出恢复默认确认子窗口(脚本53负责执行)
 ' 默认值清单(参考 McgsPro变量导入_单元1.csv ~ 单元8.csv 备注):
-'   C_Set=5.0  C_Stock=100.0  StepRes=0.5  CycleSet=3.0
+' StepRes=4.1667  CycleSet=30.0  (出厂默认值参考FC0)
 '   ExpTarget=5.0  PreMixTime=12.0  PreMixTime_MinSafe=3.0
 '   RestTime=6.0  RestTime_Min=1.5  CycleExtend_Max=0.5
-'   Timeout_ValveA/B/C=2.0  Timeout_Pump1/2=2.0
+' Timeout_ValveA/B/C=60.0s  (出厂默认值参考FC0)
 '   Delay_ValveA_Verify=0.5
 ' ============================================
 
@@ -2395,7 +2290,7 @@ EndIf
 ### 脚本 31:参数范围校验脚本
 
 - **编号**: 31
-- **用途**: 完整校验浓度/时间/超时上下限,失败时蜂鸣+退出
+- **用途**: 完整校验时间/超时/工艺参数上下限,失败时蜂鸣+退出
 - **位置**: 用户窗口 → 画面4_参数设置 → 输入框构件 → ContentChanged 事件(或保存前调用)
 - **触发方式**: 参数变化时(可作为保存按钮前置校验段)
 
@@ -2404,7 +2299,7 @@ EndIf
 ' 参数范围校验脚本
 ' 功能: 校验 Param_* 编辑缓冲变量范围,失败置 ParamValid=0
 ' 校验规则(参考 HMI画面架构规划文档 + PLC设计文档):
-'   浓度: 0 < C_Set <= C_Stock <= 200
+' 浓度参数已移除 (VD10/VD14 -> RTC DT10)
 '   步进: 0 < StepRes <= 5
 '   周期: 0.5 <= CycleSet <= 60
 '   实验目标: 1 <= ExpTarget <= 120
@@ -2418,21 +2313,7 @@ EndIf
 ParamValid = 1
 ParamInvalidStr = ""
 
-' --- 1. 浓度组校验 ---
-If Param_C_Set <= 0 Then
-    ParamValid = 0
-    ParamInvalidStr = "目标浓度必须>0"
-EndIf
-If Param_C_Set > Param_C_Stock Then
-    ParamValid = 0
-    ParamInvalidStr = "目标浓度不能大于母液浓度"
-EndIf
-If Param_C_Stock > 200 Then
-    ParamValid = 0
-    ParamInvalidStr = "母液浓度上限200"
-EndIf
-
-' --- 2. 步进/周期/目标 ---
+' --- 1. 步进/周期/目标 ---
 If Param_StepRes <= 0 Then
     ParamValid = 0
     ParamInvalidStr = "步进分辨率必须>0"
@@ -2458,7 +2339,7 @@ If Param_ExpTarget > 120 Then
     ParamInvalidStr = "实验目标上限120min"
 EndIf
 
-' --- 3. 预循环/静止 ---
+' --- 2. 预循环/静止 ---
 If Param_PreMixTime < Param_PreMixTime_MinSafe Then
     ParamValid = 0
     ParamInvalidStr = "预循环时间低于最小安全值"
@@ -2476,7 +2357,7 @@ If Param_RestTime > 30 Then
     ParamInvalidStr = "静止时间上限30min"
 EndIf
 
-' --- 4. 顺延上限 ---
+' --- 3. 顺延上限 ---
 If Param_CycleExtend_Max <= 0 Then
     ParamValid = 0
     ParamInvalidStr = "顺延上限必须>0"
@@ -2486,7 +2367,7 @@ If Param_CycleExtend_Max > 2 Then
     ParamInvalidStr = "顺延上限最大2min"
 EndIf
 
-' --- 5. 超时组校验 ---
+' --- 4. 超时组校验 ---
 If Param_Timeout_ValveA < 0.5 Then
     ParamValid = 0
     ParamInvalidStr = "阀A超时下限0.5s"
@@ -2511,24 +2392,20 @@ If Param_Timeout_ValveC > 30 Then
     ParamValid = 0
     ParamInvalidStr = "阀C超时上限30s"
 EndIf
-If Param_Timeout_Pump1 < 0.5 Then
     ParamValid = 0
     ParamInvalidStr = "泵1超时下限0.5s"
 EndIf
-If Param_Timeout_Pump1 > 30 Then
     ParamValid = 0
     ParamInvalidStr = "泵1超时上限30s"
 EndIf
-If Param_Timeout_Pump2 < 0.5 Then
     ParamValid = 0
     ParamInvalidStr = "泵2超时下限0.5s"
 EndIf
-If Param_Timeout_Pump2 > 30 Then
     ParamValid = 0
     ParamInvalidStr = "泵2超时上限30s"
 EndIf
 
-' --- 6. 阀A关闭延时验证 ---
+' --- 5. 阀A关闭延时验证 ---
 If Param_Delay_ValveA_Verify <= 0 Then
     ParamValid = 0
     ParamInvalidStr = "阀A关闭延时验证必须>0"
@@ -2538,7 +2415,7 @@ If Param_Delay_ValveA_Verify > 5 Then
     ParamInvalidStr = "阀A关闭延时验证上限5s"
 EndIf
 
-' --- 7. 校验失败蜂鸣 ---
+' --- 6. 校验失败蜂鸣 ---
 If ParamValid = 0 Then
     !Beep()
 EndIf
@@ -3548,32 +3425,15 @@ EndIf
 ```
 ' ============================================
 ' 恢复默认确认子窗口 - 确认按钮
-' 功能: 把 Param_* 编辑缓冲变量重置为默认值
-'       (实际写回 PLC 由用户再次点击"保存参数"按钮完成,脚本28)
-' 默认值参考 McgsPro变量导入_单元1.csv ~ 单元8.csv 备注
+' 功能: 清 U1_UD_Flag=0 (用户默认失效)
+'       PLC 下次冷启动会走 FC0 出厂硬编码默认值
+' 注意: 当前运行参数不变,需要重启PLC生效
 ' ============================================
 
-Param_C_Set = 5.0
-Param_C_Stock = 100.0
-Param_StepRes = 0.5
-Param_CycleSet = 3.0
-Param_ExpTarget = 5.0
-Param_PreMixTime = 12.0
-Param_PreMixTime_MinSafe = 3.0
-Param_RestTime = 6.0
-Param_RestTime_Min = 1.5
-Param_CycleExtend_Max = 0.5
-Param_Timeout_ValveA = 2.0
-Param_Timeout_ValveB = 2.0
-Param_Timeout_ValveC = 2.0
-Param_Timeout_Pump1 = 2.0
-Param_Timeout_Pump2 = 2.0
-Param_Delay_ValveA_Verify = 0.5
+U1_UD_Flag = 0
 
 !Beep()
 !CloseAllSubWnd()
-```
-
 **取消按钮**:
 ```
 !CloseAllSubWnd()
@@ -3803,9 +3663,7 @@ EndIf
 ' --- 2. 源1号 → 目标2~8号 ---
 If ParamSrcUnit = 1 Then
     If ParamDstUnit = 2 Then
-        U2_VD_C_Set = U1_VD_C_Set
-        U2_VD_C_Stock = U1_VD_C_Stock
-        U2_VD_StepResolution = U1_VD_StepResolution
+                U2_VD_StepResolution = U1_VD_StepResolution
         U2_VD_CycleSetpoint = U1_VD_CycleSetpoint
         U2_VD_ExperimentTarget = U1_VD_ExperimentTarget
         U2_VD_PreMixTime = U1_VD_PreMixTime
@@ -3816,14 +3674,10 @@ If ParamSrcUnit = 1 Then
         U2_VD_Timeout_ValveA = U1_VD_Timeout_ValveA
         U2_VD_Timeout_ValveB = U1_VD_Timeout_ValveB
         U2_VD_Timeout_ValveC = U1_VD_Timeout_ValveC
-        U2_VD_Timeout_Pump1 = U1_VD_Timeout_Pump1
-        U2_VD_Timeout_Pump2 = U1_VD_Timeout_Pump2
         U2_VD_Delay_ValveA_Verify = U1_VD_Delay_ValveA_Verify
     EndIf
     If ParamDstUnit = 3 Then
-        U3_VD_C_Set = U1_VD_C_Set
-        U3_VD_C_Stock = U1_VD_C_Stock
-        U3_VD_StepResolution = U1_VD_StepResolution
+                U3_VD_StepResolution = U1_VD_StepResolution
         U3_VD_CycleSetpoint = U1_VD_CycleSetpoint
         U3_VD_ExperimentTarget = U1_VD_ExperimentTarget
         U3_VD_PreMixTime = U1_VD_PreMixTime
@@ -3834,14 +3688,10 @@ If ParamSrcUnit = 1 Then
         U3_VD_Timeout_ValveA = U1_VD_Timeout_ValveA
         U3_VD_Timeout_ValveB = U1_VD_Timeout_ValveB
         U3_VD_Timeout_ValveC = U1_VD_Timeout_ValveC
-        U3_VD_Timeout_Pump1 = U1_VD_Timeout_Pump1
-        U3_VD_Timeout_Pump2 = U1_VD_Timeout_Pump2
         U3_VD_Delay_ValveA_Verify = U1_VD_Delay_ValveA_Verify
     EndIf
     If ParamDstUnit = 4 Then
-        U4_VD_C_Set = U1_VD_C_Set
-        U4_VD_C_Stock = U1_VD_C_Stock
-        U4_VD_StepResolution = U1_VD_StepResolution
+                U4_VD_StepResolution = U1_VD_StepResolution
         U4_VD_CycleSetpoint = U1_VD_CycleSetpoint
         U4_VD_ExperimentTarget = U1_VD_ExperimentTarget
         U4_VD_PreMixTime = U1_VD_PreMixTime
@@ -3852,14 +3702,10 @@ If ParamSrcUnit = 1 Then
         U4_VD_Timeout_ValveA = U1_VD_Timeout_ValveA
         U4_VD_Timeout_ValveB = U1_VD_Timeout_ValveB
         U4_VD_Timeout_ValveC = U1_VD_Timeout_ValveC
-        U4_VD_Timeout_Pump1 = U1_VD_Timeout_Pump1
-        U4_VD_Timeout_Pump2 = U1_VD_Timeout_Pump2
         U4_VD_Delay_ValveA_Verify = U1_VD_Delay_ValveA_Verify
     EndIf
     If ParamDstUnit = 5 Then
-        U5_VD_C_Set = U1_VD_C_Set
-        U5_VD_C_Stock = U1_VD_C_Stock
-        U5_VD_StepResolution = U1_VD_StepResolution
+                U5_VD_StepResolution = U1_VD_StepResolution
         U5_VD_CycleSetpoint = U1_VD_CycleSetpoint
         U5_VD_ExperimentTarget = U1_VD_ExperimentTarget
         U5_VD_PreMixTime = U1_VD_PreMixTime
@@ -3870,14 +3716,10 @@ If ParamSrcUnit = 1 Then
         U5_VD_Timeout_ValveA = U1_VD_Timeout_ValveA
         U5_VD_Timeout_ValveB = U1_VD_Timeout_ValveB
         U5_VD_Timeout_ValveC = U1_VD_Timeout_ValveC
-        U5_VD_Timeout_Pump1 = U1_VD_Timeout_Pump1
-        U5_VD_Timeout_Pump2 = U1_VD_Timeout_Pump2
         U5_VD_Delay_ValveA_Verify = U1_VD_Delay_ValveA_Verify
     EndIf
     If ParamDstUnit = 6 Then
-        U6_VD_C_Set = U1_VD_C_Set
-        U6_VD_C_Stock = U1_VD_C_Stock
-        U6_VD_StepResolution = U1_VD_StepResolution
+                U6_VD_StepResolution = U1_VD_StepResolution
         U6_VD_CycleSetpoint = U1_VD_CycleSetpoint
         U6_VD_ExperimentTarget = U1_VD_ExperimentTarget
         U6_VD_PreMixTime = U1_VD_PreMixTime
@@ -3888,14 +3730,10 @@ If ParamSrcUnit = 1 Then
         U6_VD_Timeout_ValveA = U1_VD_Timeout_ValveA
         U6_VD_Timeout_ValveB = U1_VD_Timeout_ValveB
         U6_VD_Timeout_ValveC = U1_VD_Timeout_ValveC
-        U6_VD_Timeout_Pump1 = U1_VD_Timeout_Pump1
-        U6_VD_Timeout_Pump2 = U1_VD_Timeout_Pump2
         U6_VD_Delay_ValveA_Verify = U1_VD_Delay_ValveA_Verify
     EndIf
     If ParamDstUnit = 7 Then
-        U7_VD_C_Set = U1_VD_C_Set
-        U7_VD_C_Stock = U1_VD_C_Stock
-        U7_VD_StepResolution = U1_VD_StepResolution
+                U7_VD_StepResolution = U1_VD_StepResolution
         U7_VD_CycleSetpoint = U1_VD_CycleSetpoint
         U7_VD_ExperimentTarget = U1_VD_ExperimentTarget
         U7_VD_PreMixTime = U1_VD_PreMixTime
@@ -3906,14 +3744,10 @@ If ParamSrcUnit = 1 Then
         U7_VD_Timeout_ValveA = U1_VD_Timeout_ValveA
         U7_VD_Timeout_ValveB = U1_VD_Timeout_ValveB
         U7_VD_Timeout_ValveC = U1_VD_Timeout_ValveC
-        U7_VD_Timeout_Pump1 = U1_VD_Timeout_Pump1
-        U7_VD_Timeout_Pump2 = U1_VD_Timeout_Pump2
         U7_VD_Delay_ValveA_Verify = U1_VD_Delay_ValveA_Verify
     EndIf
     If ParamDstUnit = 8 Then
-        U8_VD_C_Set = U1_VD_C_Set
-        U8_VD_C_Stock = U1_VD_C_Stock
-        U8_VD_StepResolution = U1_VD_StepResolution
+                U8_VD_StepResolution = U1_VD_StepResolution
         U8_VD_CycleSetpoint = U1_VD_CycleSetpoint
         U8_VD_ExperimentTarget = U1_VD_ExperimentTarget
         U8_VD_PreMixTime = U1_VD_PreMixTime
@@ -3924,8 +3758,6 @@ If ParamSrcUnit = 1 Then
         U8_VD_Timeout_ValveA = U1_VD_Timeout_ValveA
         U8_VD_Timeout_ValveB = U1_VD_Timeout_ValveB
         U8_VD_Timeout_ValveC = U1_VD_Timeout_ValveC
-        U8_VD_Timeout_Pump1 = U1_VD_Timeout_Pump1
-        U8_VD_Timeout_Pump2 = U1_VD_Timeout_Pump2
         U8_VD_Delay_ValveA_Verify = U1_VD_Delay_ValveA_Verify
     EndIf
 EndIf
@@ -3936,9 +3768,7 @@ EndIf
 '   - 内层 U1_VD_* (源读取) 全部替换为 U<src>_VD_*
 '   - 内层 U<n>_VD_* (目标写入) 保持目标单元号
 ' 例: 源2号→目标5号的关键行:
-'   U5_VD_C_Set = U2_VD_C_Set
-'   U5_VD_C_Stock = U2_VD_C_Stock
-'   ... (其余14项同理)
+'   ... (其余18项同理,完整展开见组态实施)
 ' 完整脚本应在组态时按 8x7=56 种组合全部展开,本文件以源1号为代表。
 
 !Beep()
@@ -3982,7 +3812,7 @@ EndIf
 | U1_Enable ~ U8_Enable | integer | 8单元使能配置 | **是** |
 | CurrentMenuGroup | integer | 当前菜单组(0=主菜单/1=单元操作/2=监控诊断/3=系统) | **是** |
 | CurrentUnitStr | string | "当前操作:X号单元" | 否 |
-| Param_* (16个) | single | 参数编辑缓冲区 | 否 |
+| Param_* (20个) | single/integer/bit | 参数编辑缓冲区 | 否 |
 | ParamValid / ParamInvalidStr | integer/string | 校验结果 | 否 |
 | ParamSrcUnit / ParamDstUnit | integer | 复制参数源/目标 | 否 |
 | SubWndMode | integer | 子窗口模式 0=复制/1=筛选 | 否 |
