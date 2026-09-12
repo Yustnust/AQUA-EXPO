@@ -2287,6 +2287,132 @@ EndIf
 !OpenSubWnd(子窗口_恢复默认确认, 240, 180, 400, 180, 17)
 ```
 
+
+### 脚本 30.5:存为默认按钮(+确认弹窗)
+
+- **编号**: 30.5
+- **用途**: 范围校验 → 二次确认 → 把当前参数存为用户默认 (U1_UD_*)
+- **位置**: 用户窗口 → 画面4_参数设置 → 存为默认按钮构件 → Click 事件
+- **触发方式**: 按钮单击
+- **前置**: MCGS 需先导入 McgsPro变量导入_单元1_v3.0.csv (新增 21 个 U1_UD_ 变量)
+- **PLC配置**: STEP7 断电保持 VB456~VB539 (84 字节)
+
+**存为默认按钮 Click 脚本**:
+```
+' ============================================
+' 存为默认按钮脚本
+' 功能: 范围校验(和保存参数一致) → 二次确认弹窗 → Param缓冲写U1_UD_*存储区
+' 存储位置: PLC VB456~VB539 (断电保持)
+'   VB456=用户默认有效标志, VD460~VD528=18个REAL, VB532=VW388, VB536=V200.0
+' ============================================
+
+' --- 范围校验 ---
+
+IF  Param_TargetInletVolume < 0  THEN
+    Param_Confirm_Text = "错误：注水量设定值范围>0"
+    Param_Pending_Save = 0
+    !OpenSubWnd(用户窗口.保存默认二次确认, 400, 300, 400, 200, 0)
+    EXIT
+ENDIF
+
+IF  Param_VD_Vol_Target < 0  THEN
+    Param_Confirm_Text = "错误：加药量设定值范围>0"
+    Param_Pending_Save = 0
+    !OpenSubWnd(用户窗口.保存默认二次确认, 400, 300, 400, 200, 0)
+    EXIT
+ENDIF
+
+IF Param_CycleSet < 1 OR Param_CycleSet > 14400 THEN
+    Param_Confirm_Text = "错误：换水周期超范围(1~14400min)"
+    Param_Pending_Save = 0
+    !OpenSubWnd(用户窗口.保存默认二次确认, 400, 300, 400, 200, 0)
+    EXIT
+ENDIF
+
+IF Param_PreMixTime_MinSafe > Param_PreMixTime THEN
+    Param_Confirm_Text = "错误：预循环压缩下限不得大于标称时长"
+    Param_Pending_Save = 0
+    !OpenSubWnd(用户窗口.保存默认二次确认, 400, 300, 400, 200, 0)
+    EXIT
+ENDIF
+
+IF Param_RestTime_Min > Param_RestTime THEN
+    Param_Confirm_Text = "错误：静止等候压缩下限不得大于标称时长"
+    Param_Pending_Save = 0
+    !OpenSubWnd(用户窗口.保存默认二次确认, 400, 300, 400, 200, 0)
+    EXIT
+ENDIF
+
+IF Param_CycleExtend_Max > Param_CycleSet THEN
+    Param_Confirm_Text = "错误：换水周期顺延上限不得大于换水周期"
+    Param_Pending_Save = 0
+    !OpenSubWnd(用户窗口.保存默认二次确认, 400, 300, 400, 200, 0)
+    EXIT
+ENDIF
+
+IF Param_T_Default < 1 OR Param_T_Default > 600 THEN
+    Param_Confirm_Text = "错误：首轮配液总时长T超范围(1~600min)"
+    Param_Pending_Save = 0
+    !OpenSubWnd(用户窗口.保存默认二次确认, 400, 300, 400, 200, 0)
+    EXIT
+ENDIF
+
+IF Param_S6_Default < 1 OR Param_S6_Default > 600 THEN
+    Param_Confirm_Text = "错误：首轮S6排水时长超范围(1~600min)"
+    Param_Pending_Save = 0
+    !OpenSubWnd(用户窗口.保存默认二次确认, 400, 300, 400, 200, 0)
+    EXIT
+ENDIF
+
+' --- 校验通过 ---
+Param_Pending_Save = 1
+Param_Confirm_Text = "将参数" + "保存为1号默认设置，确认保存？"
+!OpenSubWnd(用户窗口.保存默认二次确认, 400, 300, 400, 200, 0)
+```
+
+**保存默认二次确认 - 确认按钮 Click 脚本**:
+```
+' ============================================
+' 保存默认二次确认 - 确认按钮
+' 功能: 把 Param_* 编辑缓冲变量 → U1_UD_* 用户存储区 + 置标志=1
+' FC0 冷启动检测 VB456=1 时自动用这些值覆盖出厂硬编码默认值
+' ============================================
+
+IF Param_Pending_Save = 1 THEN
+    U1_UD_VD24_ExpTarget     = Param_ExpTarget
+    U1_UD_VD28_PreMixTime    = Param_PreMixTime
+    U1_UD_VD32_PreMixMin     = Param_PreMixTime_MinSafe
+    U1_UD_VD36_RestTime      = Param_RestTime
+    U1_UD_VD40_RestMin       = Param_RestTime_Min
+    U1_UD_VD44_CycleExtend   = Param_CycleExtend_Max
+    U1_UD_VD54_TimeoutC      = Param_Timeout_ValveC
+    U1_UD_VD66_DelayA        = Param_Delay_ValveA_Verify
+    U1_UD_VD108_S6Default    = Param_S6_Default
+    U1_UD_VD144_TDefault     = Param_T_Default
+    U1_UD_VD316_InletVol     = Param_TargetInletVolume
+    U1_UD_VD350_StepRes      = Param_StepRes
+    U1_UD_VD354_CycleSet     = Param_CycleSet
+    U1_UD_VD358_TimeoutA     = Param_Timeout_ValveA
+    U1_UD_VD362_TimeoutB     = Param_Timeout_ValveB
+    U1_UD_VD370_VolTarget    = Param_VD_Vol_Target
+    U1_UD_VD448_WaitTimeout  = Param_S4WaitTimeout
+    U1_UD_VD452_ManualDose   = Param_ManualDose_Target
+    U1_UD_VW388_Mode         = Param_ManualDose_Mode
+    U1_UD_V200_0_AckMode     = Param_AlarmAckMode
+
+    U1_UD_Flag = 1
+ENDIF
+
+Param_Pending_Save = 0
+!SetWindow(用户窗口.保存默认二次确认, 3)
+```
+
+**保存默认二次确认 - 取消按钮 Click 脚本**:
+```
+Param_Pending_Save = 0
+!SetWindow(用户窗口.保存默认二次确认, 3)
+```
+
 ### 脚本 31:参数范围校验脚本
 
 - **编号**: 31
