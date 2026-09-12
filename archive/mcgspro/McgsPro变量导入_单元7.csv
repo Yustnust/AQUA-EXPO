@@ -75,7 +75,7 @@
 71,U7_VD_Timeout_ValveB,SINGLE,读写VDF362,读写,V数据寄存器,32位 浮点数,362,,1,
 72,U7_VD_ExpTotal_Flow,SINGLE,只读VDF364,只读,V数据寄存器,32位 浮点数,364,,1,
 73,U7_VD_ExperimentDuration_Accum,SINGLE,只读VDF366,只读,V数据寄存器,32位 浮点数,366,,1,
-74,U7_VD_Vol_Target,SINGLE,只读VDF370,只读,V数据寄存器,32位 浮点数,370,,1,
+74,U7_VD_Vol_Target,SINGLE,读写VDF370,读写,V数据寄存器,32位 浮点数,370,,1,
 75,U7_VD_Remaining_Vol,SINGLE,只读VDF372,只读,V数据寄存器,32位 浮点数,372,,1,
 76,U7_VD_Dosed_Volume_Total,SINGLE,只读VDF440,只读,V数据寄存器,32位 浮点数,440,,1,
 77,U7_VD_ManualDose_Target,SINGLE,读写VDF452,读写,V数据寄存器,32位 浮点数,452,,1,
