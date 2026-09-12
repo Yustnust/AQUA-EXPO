@@ -67,7 +67,7 @@
 63,U6_VW_Corr_Result,SINGLE,读写VWB184,读写,V数据寄存器,16位 有符号二进制,184,,1,
 64,U6_VD_FlowMeter_CloseSnapshot,SINGLE,只读VDF308,只读,V数据寄存器,32位 浮点数,308,,1,
 65,U6_VD_LeakDiff,SINGLE,只读VDF312,只读,V数据寄存器,32位 浮点数,312,,1,
-66,U6_VD_TargetInletVolume,SINGLE,只读VDF316,只读,V数据寄存器,32位 浮点数,316,,1,
+66,U6_VD_TargetInletVolume,SINGLE,读写VDF316,读写,V数据寄存器,32位 浮点数,316,,1,
 67,U6_VD_Timeout_ValveC_x10,SINGLE,只读VDF328,只读,V数据寄存器,32位 浮点数,328,,1,
 68,U6_VD_StepResolution,SINGLE,读写VDF350,读写,V数据寄存器,32位 浮点数,350,,1,
 69,U6_VD_CycleSetpoint,SINGLE,读写VDF354,读写,V数据寄存器,32位 浮点数,354,,1,

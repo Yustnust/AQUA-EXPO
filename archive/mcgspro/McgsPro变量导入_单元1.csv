@@ -133,7 +133,7 @@
 130,U1_VB_SystemStatus,SINGLE,只读VBUB305,只读,V数据寄存器,8位 无符号二进制,305,,1,
 131,U1_VD_FlowMeter_CloseSnapshot,SINGLE,只读VDF308,只读,V数据寄存器,32位 浮点数,308,,1,
 132,U1_VD_LeakDiff,SINGLE,只读VDF312,只读,V数据寄存器,32位 浮点数,312,,1,
-133,U1_VD_TargetInletVolume,SINGLE,只读VDF316,只读,V数据寄存器,32位 浮点数,316,,1,
+133,U1_VD_TargetInletVolume,SINGLE,读写VDF316,读写,V数据寄存器,32位 浮点数,316,,1,
 134,U1_VD_Timeout_ValveC_x10,SINGLE,只读VDF328,只读,V数据寄存器,32位 浮点数,328,,1,
 135,U1_VD_StepResolution,SINGLE,读写VDF350,读写,V数据寄存器,32位 浮点数,350,,1,
 136,U1_VD_CycleSetpoint,SINGLE,读写VDF354,读写,V数据寄存器,32位 浮点数,354,,1,

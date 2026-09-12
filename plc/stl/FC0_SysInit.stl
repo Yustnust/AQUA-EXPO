@@ -139,6 +139,46 @@ MOVR   5.0, VD66          // VD_Delay_ValveA_Verify 阀A关后延时验证(s)
 // 7.4 其他超时阈值
 MOVR   1800.0, VD448      // VD_S4WaitTimeout S4等待超时阈值(s,默认30min)
 
+// ============================================================
+// v2.0 新增: 用户默认参数覆盖 (出厂默认先跑一遍,再用用户默认覆盖)
+// 安全兜底: 出厂硬编码永远保留,用户默认存断电保持区
+// V区分配:
+//   VB456 = 用户默认有效标志 (0=出厂默认 / 1=用户自定义)
+//   VD460~VD528 = 18 个 REAL 用户存储
+//   VB532~VB533 = VW388 用户默认 (ManualDose_Mode)
+//   VB536.0     = V200.0 用户默认 (AlarmAckMode)
+// ============================================================
+LDB    VB456, 1              // 用户默认有效标志 = 1 ?
+JZ     _UseFactoryDefaults   // 否 → 跳过,保持上面出厂默认
+
+// --- 用用户默认覆盖 18 个 REAL ---
+MOVR   VD460, VD24           // VD_ExperimentTarget 实验总时长(min)
+MOVR   VD464, VD28           // VD_PreMixTime S2预循环标称时长(s)
+MOVR   VD468, VD32           // VD_PreMixTime_MinSafe S2压缩下限(s)
+MOVR   VD472, VD36           // VD_RestTime S3.5静止等候标称时长(s)
+MOVR   VD476, VD40           // VD_RestTime_Min S3.5压缩下限(s)
+MOVR   VD480, VD44           // VD_CycleExtend_Max 换水周期顺延最大幅度(min)
+MOVR   VD484, VD54           // VD_Timeout_ValveC 阀C超时(s)
+MOVR   VD488, VD66           // VD_Delay_ValveA_Verify 阀A关后延时(s)
+MOVR   VD492, VD108          // VD_S6_Default 首轮S6排水时长(s)
+MOVR   VD496, VD144          // VD_T_Default 首轮配液总时长(s)
+MOVR   VD500, VD316          // VD_TargetInletVolume 目标进水量(L)
+MOVR   VD504, VD350          // VD_StepResolution 脉冲当量
+MOVR   VD508, VD354          // VD_CycleSetpoint 换水周期(min)
+MOVR   VD512, VD358          // VD_Timeout_ValveA 阀A超时(s)
+MOVR   VD516, VD362          // VD_Timeout_ValveB 阀B超时(s)
+MOVR   VD520, VD370          // VD_Vol_Target 目标加药量(µL)
+MOVR   VD524, VD448          // VD_S4WaitTimeout S4等待超时(s)
+MOVR   VD528, VD452          // VD_ManualDose_Target 手动总加药量(µL)
+
+// --- 用用户默认覆盖 WORD / BIT ---
+MOVW   VB532, VW388           // VW_ManualDose_Mode (0=单次,1=循环)
+R      V200.0, 1              // M_AlarmAckMode 先清
+LDB    VB536, 0
+S      V200.0, 1              // 再置 (LDB=0 则不置)
+
+_UseFactoryDefaults:
+
 // 状态机初始化为S0
 MOVW   0, VW2             // VW2=0(S0)
 // ★ 2026-09-11 新增: 冷启动也清阀门诊断子状态和计时器
