@@ -144,14 +144,18 @@ MOVR   1800.0, VD448      // VD_S4WaitTimeout S4等待超时阈值(s,默认30min
 // 安全兜底: 出厂硬编码永远保留,用户默认存断电保持区
 // V区分配:
 //   VB456 = 用户默认有效标志 (0=出厂默认 / 1=用户自定义)
-//   VD460~VD528 = 18 个 REAL 用户存储
-//   VB532~VB533 = VW388 用户默认 (ManualDose_Mode)
-//   VB536.0     = V200.0 用户默认 (AlarmAckMode)
+//   VD460~VD528 = 18 个 REAL 用户存储 (72字节)
+//   VB532 = VW388 低字节用户默认 (ManualDose_Mode)
+//   VB536 = V200.0 用户默认 (AlarmAckMode bit0)
+// 标签: LBL 8 = 用户默认覆盖入口, LBL 9 = 覆盖后汇合, LBL 10 = S V200.0
 // ============================================================
-LDB    VB456, 1              // 用户默认有效标志 = 1 ?
-JZ     _UseFactoryDefaults   // 否 → 跳过,保持上面出厂默认
+LDB=   VB456, 1              // VB456 == 1 (用户默认有效)?
+JMP    8                     // 是 → 跳 LBL 8 执行用户默认覆盖
+LD     SM0.0                 // 强制 C0=1 (SM0.0 常 ON)
+JMP    9                     // 无条件跳 LBL 9 (跳过覆盖,用出厂默认)
 
-// --- 用用户默认覆盖 18 个 REAL ---
+LBL    8                     // ====== 用户默认覆盖区 ======
+// --- 18 个 REAL ---
 MOVR   VD460, VD24           // VD_ExperimentTarget 实验总时长(min)
 MOVR   VD464, VD28           // VD_PreMixTime S2预循环标称时长(s)
 MOVR   VD468, VD32           // VD_PreMixTime_MinSafe S2压缩下限(s)
@@ -171,13 +175,20 @@ MOVR   VD520, VD370          // VD_Vol_Target 目标加药量(µL)
 MOVR   VD524, VD448          // VD_S4WaitTimeout S4等待超时(s)
 MOVR   VD528, VD452          // VD_ManualDose_Target 手动总加药量(µL)
 
-// --- 用用户默认覆盖 WORD / BIT ---
-MOVW   VB532, VW388           // VW_ManualDose_Mode (0=单次,1=循环)
-R      V200.0, 1              // M_AlarmAckMode 先清
-LDB    VB536, 0
-S      V200.0, 1              // 再置 (LDB=0 则不置)
+// --- WORD: VW388 ManualDose_Mode (MOVW 要求源=16位,拆成两个字节) ---
+MOVB   VB532, VB388           // 复制低字节
+MOVB   0, VB389               // 高字节清零
 
-_UseFactoryDefaults:
+// --- BIT: V200.0 AlarmAckMode (VB536 bit0=1 则置 V200.0) ---
+LDB=   VB536, 1
+JMP    10                     // VB536 == 1 → 跳去 S V200.0
+R      V200.0, 1              // VB536 != 1 → 清 V200.0
+LD     SM0.0                  // 强制 C0=1 (SM0.0 常 ON)
+JMP    9                      // 无条件跳汇合点
+LBL    10
+S      V200.0, 1              // VB536 == 1 → 置 V200.0
+
+LBL    9                     // ====== 覆盖后汇合点,继续初始化 ======
 
 // 状态机初始化为S0
 MOVW   0, VW2             // VW2=0(S0)
