@@ -6,7 +6,7 @@
 
 - **任务名称**：PLC 长时间停机后 HMI 校时
 
-- **关联 PLC 修改**：FC0\_SysInit.stl、FC22\_RTC\_Sync.stl（新增）、OB1\_MAIN.stl
+- **关联 PLC 修改**：FC0\_SysInit.stl（调度骨架）、SBR25\_ColdStart.stl（冷启动 TODR + 年份归零检测）、SBR26\_WarmRecovery.stl（断电恢复 TODR + DT10 比较）、FC22\_RTC\_Sync.stl（TODW 写入 + 超时保护）、OB1\_MAIN.stl
 
 - **适用单元**：单元 1\~8（每单元独立，以下以单元 1 为例）
 
@@ -14,12 +14,20 @@
 
 ## 2. 原理概述
 
-1. PLC 上电或 STOP→RUN 时，FC0 读取 PLC 实时时钟（RTC）到 VB900\~VB905。
-2. 若 RTC 自身非法（如分>59、月>12）或 RTC 早于 DT10（下缸变满时间戳），FC0 置位 **V303.7 = 1**（请求校时）。
-3. McgsPro 检测到 **V303.7 = 1** 后弹出校时提示窗口。
-4. 操作员点击"同步"按钮，McgsPro 将本机时间写入 VB900\~VB905（BCD 格式），并置位 **V0.6 = 1**。
+1. PLC 上电或 STOP→RUN 时，FC0 根据 V304.0（初始化完成标志）分流：冷启动（V304.0=0）→ SBR25，断电恢复（V304.0=1）→ SBR26。两个路径都会执行 `TODR VB900` 读取 PLC 内部 RTC 到 VB900\~VB905（BCD 格式）。
+2. **SBR25 冷启动** RTC 合法性检查（任一触发 → V303.7=1）：
+
+   - 年份归零检测：VB900 < 20（即 2020 年前，超级电容放电后 RTC 回到出厂默认 2000 年）
+
+   - 字段越界检测：月>12 或月<1、日>31 或日<1、时>23、分>59、秒>59
+3. **SBR26 断电恢复** RTC 合法性检查（任一触发 → V303.7=1）：
+
+   - 同上字段越界检测
+
+   - 额外：比较 RTC 与 DT10（下缸变满时间戳 VB10\~VB17），若 RTC 早于 DT10 则判定 RTC 丢失
+4. McgsPro 循环策略检测到 **V303.7 = 1** 后，**全自动**取本机时间 → BCD 转换 → 写 VB900\~VB905 → 置 V0.6=1，同时弹出提示窗口。
 5. FC22 检测到 V0.6 上升沿，调用 `TODW` 将 VB900\~VB905 写入 PLC RTC，随后清除 V303.7 和 V0.6。
-6. 若 V303.7 = 1 持续 **5 分钟** 未同步，FC22 置 **V303.5 = 1** 并将 VW2 置 99（S\_ERROR），报警码 VW6 = 65。
+6. 若 V303.7 = 1 持续 **5 分钟** 未同步（MCGS 离线等极端情况），FC22 置 **V303.5 = 1** 并将 VW2 置 99（S\_ERROR），报警码 VW6 = 65。
 
 ## 3. 新增 PLC 变量
 
@@ -46,7 +54,7 @@
 
    - 内容：添加第 3 节中的 8 个变量。
 
-   - 注意：VB900\~VB905 为 8 位无符号二进制；V0.6、V303.7 为位变量。
+   - 注意：VB900\~VB905 在 CSV 中**数据类型必须是 INTEGER（整数）**，禁止使用 SINGLE（32 位浮点数）。若设为 SINGLE，MCGS 通道会带 FB 前缀（浮点数处理标记），实际操作 VB900\~VB903 四个字节作为一个 IEEE754 浮点数，导致写入 BCD 值完全错误。V0.6、V303.7 为位变量。
 
 2. **HMI 组态导入说明.md**
 
@@ -106,119 +114,147 @@
 
    - （可选）**标签**：显示当前将要写入的时间，绑定脚本变量。
 
-### 5.3 设置循环策略
+### 5.3 设置循环策略（全自动校时，方案 C）
 
 1. 打开`运行策略`→`循环策略`。
-2. 新增或编辑一个循环策略（建议命名为`RTC_Sync_Poll`）。
-3. 在策略中添加脚本：
+2. 新增或编辑一个循环策略（命名为`RTC_Sync_Poll`）。
+3. 设置策略执行周期：**1000 ms**（1 秒）。
+4. 在策略中添加脚本（**已在实际项目中验证通过**）：
+
+> **关键说明**：脚本使用 McgsPro 系统变量 `$Year`/`$Month`/`$Day`/`$Hour`/`$Minute`/`$Second`（返回浮点数），配合 `\` 整数除法和整型本地变量做 BCD 转换。禁止用 `/` 浮点除法（会产生 2.6 而非 2）。禁止用 `!Date()`/`!Str2I()`/`!Mid()` 字符串方案（部分 McgsPro 版本不支持）。
 
 ```vb
-' RTC 校时弹窗控制
-IF U1_V303_7_Need_RTC_Sync = 1 THEN
+' ============================================
+' RTC 自动校时循环策略 (方案C: 全自动+轻提示)
+' 1秒周期。PLC 冷启动 RTC 丢失 → V303.7=1 → 本脚本 1秒内自动 TODW 同步
+'
+' 依赖变量(必须已导入):
+'   U1_Need_RTC_Sync    ← V303.7 (PLC→MCGS, 请求校时)
+'   U1_CMD_RTC_Sync     ← V0.6   (MCGS→PLC, 触发TODW)
+'   U1_VB900_RTC_Year   ← VB900  (MCGS→PLC, BCD字节)
+'   U1_VB901_RTC_Month  ← VB901
+'   U1_VB902_RTC_Day    ← VB902
+'   U1_VB903_RTC_Hour   ← VB903
+'   U1_VB904_RTC_Minute ← VB904
+'   U1_VB905_RTC_Second ← VB905
+'
+' ★ VB900~VB905 的 MCGS 变量类型必须是 INTEGER (整数),
+'   禁止 SINGLE (浮点数)! 否则通道带 FB 前缀, 操作4字节而非1字节
+'
+' 本地变量(整型): y, m, d, h, mi, s
+' ============================================
+
+IF U1_Need_RTC_Sync = 1 THEN
+    ' --- 1. 自动取 MCGS 本机时间 → BCD → VB900~VB905 ---
+    ' $Year 返回浮点数 2026.0, 赋值给整型 y 自动截断
+    y = $Year - 2000
+    U1_VB900_RTC_Year = (y \ 10) * 16 + (y - (y \ 10) * 10)
+
+    m = $Month
+    U1_VB901_RTC_Month = (m \ 10) * 16 + (m - (m \ 10) * 10)
+
+    d = $Day
+    U1_VB902_RTC_Day = (d \ 10) * 16 + (d - (d \ 10) * 10)
+
+    h = $Hour
+    U1_VB903_RTC_Hour = (h \ 10) * 16 + (h - (h \ 10) * 10)
+
+    mi = $Minute
+    U1_VB904_RTC_Minute = (mi \ 10) * 16 + (mi - (mi \ 10) * 10)
+
+    s = $Second
+    U1_VB905_RTC_Second = (s \ 10) * 16 + (s - (s \ 10) * 10)
+
+    ' --- 2. 触发 PLC FC22 TODW 写入 RTC ---
+    U1_CMD_RTC_Sync = 1
+
+    ' --- 3. 轻提示弹窗 (非阻塞, 下一周期 V303.7 变 0 后自动关闭) ---
     !OpenSubWnd("RTC_Sync_Wnd", 200, 150, 400, 200)
 ELSE
     !CloseSubWnd("RTC_Sync_Wnd")
 END IF
 ```
 
-1. 设置策略执行周期：1000 ms（1 秒）。
+## 6. 同步按钮脚本（手动兜底）
 
-## 6. 同步按钮脚本
+循环策略已全自动校时，此按钮保留作为**兜底**（操作员发现 HMI 时间不对可手动触发）。
 
 双击`btn_RTC_Sync`按钮，在`按钮动作`→`抬起脚本`中添加以下脚本：
 
 ```vb
-' 取本机日期
-DIM dateStr, year, month, day
-DIM yearHigh, yearLow, monthHigh, monthLow, dayHigh, dayLow
+' ============================================
+' RTC 手动校时同步按钮 (兜底用)
+' 与循环策略脚本相同的 BCD 转换逻辑
+' 依赖变量: 同 5.3 节
+' 本地变量(整型): y, m, d, h, mi, s
+' ============================================
 
-DIM timeStr, hour, minute, second
-DIM hourHigh, hourLow, minHigh, minLow, secHigh, secLow
+y = $Year - 2000
+U1_VB900_RTC_Year = (y \ 10) * 16 + (y - (y \ 10) * 10)
 
-dateStr = !Date()
-year  = !Str2I(!Left(dateStr, 4)) - 2000
-month = !Str2I(!Mid(dateStr, 6, 2))
-day   = !Str2I(!Mid(dateStr, 9, 2))
+m = $Month
+U1_VB901_RTC_Month = (m \ 10) * 16 + (m - (m \ 10) * 10)
 
-timeStr = !Time()
-hour   = !Str2I(!Left(timeStr, 2))
-minute = !Str2I(!Mid(timeStr, 4, 2))
-second = !Str2I(!Right(timeStr, 2))
+d = $Day
+U1_VB902_RTC_Day = (d \ 10) * 16 + (d - (d \ 10) * 10)
 
-' 十进制转 BCD
-yearHigh = year / 10
-yearLow  = year - yearHigh * 10
-U1_VB900_RTC_Year = yearHigh * 16 + yearLow
+h = $Hour
+U1_VB903_RTC_Hour = (h \ 10) * 16 + (h - (h \ 10) * 10)
 
-monthHigh = month / 10
-monthLow  = month - monthHigh * 10
-U1_VB901_RTC_Month = monthHigh * 16 + monthLow
+mi = $Minute
+U1_VB904_RTC_Minute = (mi \ 10) * 16 + (mi - (mi \ 10) * 10)
 
-dayHigh = day / 10
-dayLow  = day - dayHigh * 10
-U1_VB902_RTC_Day = dayHigh * 16 + dayLow
+s = $Second
+U1_VB905_RTC_Second = (s \ 10) * 16 + (s - (s \ 10) * 10)
 
-hourHigh = hour / 10
-hourLow  = hour - hourHigh * 10
-U1_VB903_RTC_Hour = hourHigh * 16 + hourLow
-
-minHigh = minute / 10
-minLow  = minute - minHigh * 10
-U1_VB904_RTC_Minute = minHigh * 16 + minLow
-
-secHigh = second / 10
-secLow  = second - secHigh * 10
-U1_VB905_RTC_Second = secHigh * 16 + secLow
-
-' 触发 PLC 写入 RTC
-U1_V0_6_RTC_Sync_Cmd = 1
+' 触发 PLC FC22 TODW
+U1_CMD_RTC_Sync = 1
 ```
 
 ## 7. 变量 CSV 格式示例
 
-以单元 1 为例，CSV 中新增行如下：
+以单元 1 为例，CSV 中 RTC 相关行如下（**第 3 列数据类型必须是 INTEGER，禁止 SINGLE**）：
 
 ```csv
-U1_V303_7_Need_RTC_Sync,V,303.7,位,0,0,0,0,0,0,0,0,0
-U1_V0_6_RTC_Sync_Cmd,V,0.6,位,0,0,0,0,0,0,0,0,0
-U1_VB900_RTC_Year,V,VB900,8位无符号二进制,0,0,0,0,0,0,0,0,0
-U1_VB901_RTC_Month,V,VB901,8位无符号二进制,0,0,0,0,0,0,0,0,0
-U1_VB902_RTC_Day,V,VB902,8位无符号二进制,0,0,0,0,0,0,0,0,0
-U1_VB903_RTC_Hour,V,VB903,8位无符号二进制,0,0,0,0,0,0,0,0,0
-U1_VB904_RTC_Minute,V,VB904,8位无符号二进制,0,0,0,0,0,0,0,0,0
-U1_VB905_RTC_Second,V,VB905,8位无符号二进制,0,0,0,0,0,0,0,0,0
+U1_Need_RTC_Sync,V,303.7,INTEGER,只读,位,0,,1,
+U1_CMD_RTC_Sync,V,0.6,INTEGER,读写,位,0,,1,
+U1_VB900_RTC_Year,V,VB900,INTEGER,读写,8位无符号二进制,900,,1,
+U1_VB901_RTC_Month,V,VB901,INTEGER,读写,8位无符号二进制,901,,1,
+U1_VB902_RTC_Day,V,VB902,INTEGER,读写,8位无符号二进制,902,,1,
+U1_VB903_RTC_Hour,V,VB903,INTEGER,读写,8位无符号二进制,903,,1,
+U1_VB904_RTC_Minute,V,VB904,INTEGER,读写,8位无符号二进制,904,,1,
+U1_VB905_RTC_Second,V,VB905,INTEGER,读写,8位无符号二进制,905,,1,
 ```
 
-> 具体列顺序以现有 CSV 模板为准。
+> ⚠️ **数据类型坑**：如果 CSV 第 3 列写成 `SINGLE`（浮点数），MCGS 通道会带 `FB` 前缀（如 `FB YEB900`），表示 4 字节浮点数处理。此时脚本写 VB900=38 实际会写入 IEEE754 编码的 4 字节到 VB900\~VB903，完全不是预期的 BCD 值。**导入后务必在设备窗口→通道处理列表确认 VB900 显示为** **`EB900`（不带 FB 前缀）。**
 
 ## 8. 测试验证
 
-### 8.1 正常流程测试
+### 8.1 全自动正常流程（已验证通过 ✅ 2026-09-13）
 
-1. 将 PLC 时钟设置为非法值（如分=70）。
-2. STOP→RUN，观察：
+1. PLC 完全断电 30 秒以上（超级电容放电）→ 重新上电 RUN（冷启动）。
+2. **STEP7 监控**：
 
-   - V303.7 = 1
+   - VB900\~VB905 = 2000 年出厂默认值（超级电容归零后的 RTC）
 
-   - VW2 = 0（S0，不进 S\_ERROR）
+   - **V303.7 = 1** ✅（SBR25 年份归零检查 VB900=0<20 触发）
+3. **McgsPro 运行**：
 
-   - McgsPro 弹出`RTC_Sync_Wnd`窗口。
-3. 点击"同步"按钮，观察：
+   - 1 秒内弹出 `RTC_Sync_Wnd` 提示窗口 ✅
 
-   - VB900\~VB905 被写入当前时间（BCD 格式）。
+   - STEP7 监控 VB900\~VB905 变成当前时间 BCD（如 38, 9, 19, 25, 56, 34 → 2026-09-13 19:38:22）✅
 
-   - V0.6 由 1 变 0。
+   - **V303.7 = 0** ✅（FC22 TODW 完成后清除）
 
-   - V303.7 = 0。
+   - **V0.6 = 0** ✅（FC22 检测上升沿后自动清除）
 
-   - 弹窗关闭。
-4. 读取 PLC RTC，确认时间已更新。
+   - `RTC_Sync_Wnd` 窗口自动关闭 ✅
 
 ### 8.2 超时保护测试
 
-1. 将 PLC 时钟设置为非法值。
-2. STOP→RUN，V303.7 = 1。
-3. **5 分钟内不点击同步**。
+1. 断开 MCGS 与 PLC 的通道连接（模拟 MCGS 离线）。
+2. PLC 冷启动，V303.7 = 1。
+3. **5 分钟内不重新连接**。
 4. 观察：
 
    - T59 计时到后，V303.5 = 1。
@@ -226,20 +262,29 @@ U1_VB905_RTC_Second,V,VB905,8位无符号二进制,0,0,0,0,0,0,0,0,0
    - VW2 = 99（S\_ERROR）。
 
    - VW6 = 65（RTC 丢失报警码）。
-5. HMI 报警确认 + 系统复位后，应能回 S0。
+5. 重新连接 MCGS 后手动校时 + HMI 报警确认 + 系统复位，应能回 S0。
 
-### 8.3 断电恢复测试
+### 8.3 断电恢复（保持 RTC）
 
-1. PLC 正常供电，时钟已校准。
-2. 进入 S0 状态后 STOP PLC。
-3. 断电一段时间（让超级电容放电，或手动清除 V304.0 模拟冷启动）。
-4. 重新上电 RUN，观察不应再因 RTC 问题进 S\_ERROR。
+1. PLC 正常供电，时钟已校准到当前时间。
+2. STOP PLC，**不要完全断电**（让超级电容保持 RTC）。
+3. 重新上电 RUN（断电恢复路径，V304.0=1）。
+4. 观察 VB900\~VB905 = 当前真实时间（不是 2000 年），V303.7 = 0。
 
-## 9. 注意事项
+### 8.4 断电恢复（RTC 丢失）
 
-1. **V0.6 是脉冲命令**：FC22 在检测到 V0.6 上升沿后会自动复位 V0.6，McgsPro 只需置 1 即可，无需手动清 0。
-2. **BCD 格式**：McgsPro 脚本中已将十进制转换为 BCD，禁止在通道处理中再次缩放或转换。
-3. **弹窗位置**：`!OpenSubWnd` 的 x、y 坐标根据实际分辨率调整，避免遮挡关键操作区域。
-4. **多单元工程**：每单元使用独立的 V 区地址，本方案中所有地址为全局固定地址（V0.6、V303.7、VB900\~VB905），不随单元变化。如多单元共用同一 PLC，需考虑地址冲突。
-5. **后续维护**：若调整超时时间，同步修改 FC22 中 T59 的 PT 值（当前 3000，即 5 分钟）。
+1. PLC 正常供电但 V304.0=1（会走断电恢复路径）。
+2. 完全断电 30 秒以上让超级电容放电，再上电。
+3. 此时 V304.0 仍可能保持 1（如果超级电容没完全放干净），走 SBR26。
+4. SBR26 执行 TODR 读 RTC（已归零到 2000 年）→ VB900=0\<DT10.VB10（非零）→ V303.7=1。
+
+## 9. 注意事项与踩坑记录
+
+1. **CSV 数据类型必须是 INTEGER**：VB900\~VB905 在 MCGS CSV 第 3 列必须写 `INTEGER`，禁止 `SINGLE`。SINGLE 会导致通道带 FB 前缀，实际操作 4 字节而非 1 字节，写入 BCD 值完全错误。**这是调试中遇到的第一个坑。**
+2. **脚本不能用** **`/`** **浮点除法**：McgsPro 的 `/` 是浮点除法（26/10=2.6），BCD 转换必须用 `\` 整数除法（26\10=2）。本地变量必须定义为整型。**这是调试中遇到的第二个坑。**
+3. **SBR25 冷启动年份检查**：PLC 超级电容放电后 RTC 归零为 2000 年（BCD 00）。字段越界检查（月>12、日>31）无法识别这种"字段合法但值不可信"的情况，必须增加 `LDB< VB900, 20` 年份合理性检查。**这是调试中遇到的第三个坑。**
+4. **V0.6 是脉冲命令**：FC22 在检测到 V0.6 上升沿后会自动复位 V0.6，MCGS 只需置 1 即可，无需手动清 0。
+5. **MCGS 系统变量是浮点数**：`$Year`（浮点数 2026.0）/`$Month`（9.0）等系统变量返回浮点数，赋值给整型本地变量时 McgsPro 自动做截断转换。
+6. **后续维护**：若调整超时时间，同步修改 FC22 中 T59 的 PT 值（当前 3000，即 5 分钟）。
+7. **HMI 时间准确性**：全自动方案依赖 MCGS 运行的工控机时间准确。建议开启 Windows 自动时间同步（NTP），否则工控机时间错会污染 PLC RTC。
 
