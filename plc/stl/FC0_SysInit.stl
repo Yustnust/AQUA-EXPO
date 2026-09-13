@@ -110,7 +110,7 @@ MOVR   4.1667, VD350      // VD_StepResolution
 // 出厂/长期断电后,HMI未配置时也有合理默认值,防止全0导致TON立即超时
 
 // 6.1 浓度与容量参数  ✅ v2.0 删除: 浓度参数整体移除, VD10~VD17 让给 DT10 RTC 独占
-//    原 VD10=目标浓度、VD14=母液浓度, 加药量改为用户直接输入 VD370
+//    原 VD10=目标浓度、VD14=母液浓度, 加药量改为用户直接输入 VD584
 
 // 6.2 时间周期参数
 MOVR   30.0, VD354        // VD_CycleSetpoint 换水周期(min)
@@ -125,8 +125,8 @@ MOVR   180.0, VD108       // VD_S6_Default 首轮S6排水时长默认值(s)
 
 // 6.2.1 工艺目标参数
 MOVR   10.0, VD316        // 目标进水量(L,默认10L)
-MOVR   5000.0, VD370      // ✅ v2.0 新增: VD_Vol_Target 默认加药量(µL,默认5mL)
-                          // 浓度参数删除后 VD370 改为 HMI 直接输入,需安全默认值防止全0导致 FC13 加药量=0
+MOVR   5000.0, VD584      // ✅ v2.0 新增: VD_Vol_Target 默认加药量(µL,默认5mL)
+                          // 浓度参数删除后 VD584 改为 HMI 直接输入,需安全默认值防止全0导致 FC13 加药量=0
 
 // 6.3 超时保护参数(关键!防止TON PT=0立即超时)
 MOVR   60.0, VD358        // VD_Timeout_ValveA 阀A开/关到位超时(s)
@@ -173,7 +173,7 @@ MOVR   VD504, VD350          // VD_StepResolution 脉冲当量
 MOVR   VD508, VD354          // VD_CycleSetpoint 换水周期(min)
 MOVR   VD512, VD358          // VD_Timeout_ValveA 阀A超时(s)
 MOVR   VD516, VD362          // VD_Timeout_ValveB 阀B超时(s)
-MOVR   VD520, VD370          // VD_Vol_Target 目标加药量(µL)
+MOVR   VD520, VD584          // VD_Vol_Target 目标加药量(µL)
 MOVR   VD524, VD448          // VD_S4WaitTimeout S4等待超时(s)
 MOVR   VD528, VD452          // VD_ManualDose_Target 手动总加药量(µL)
 

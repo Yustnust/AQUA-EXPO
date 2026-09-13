@@ -23,7 +23,7 @@
 //          7=写强停恢复  8=等强停完成+计算/循环
 //          9=完成转S3.5
 // VD90  : VD_Current_InletVolume 本次进水量(S1差值法结果)
-// VD370 : VD_Vol_Target    目标抽取母液体积(µL)
+// VD584 : VD_Vol_Target    目标抽取母液体积(µL)
 // VD372 : VD_Remaining_Vol 本轮剩余待加药量(µL),S3进入时=VD_Vol_Target
 // VD102 : VD_Dose_Steps    本次循环目标步数(REAL)
 // VW204 : MB_Pump_Aspirate 抽液步数缓冲(映射40006)
@@ -49,7 +49,7 @@ AW=    VW226, 0
 LPS
 // ✅ v2.0 浓度参数删除: 目标加药量由用户直接输入VD370(HMI设定),不再通过浓度×水量/母液浓度 公式计算
 //    原公式: VD346 = VD10(浓度) × VD90(本次进水量) / VD14(母液浓度)
-MOVR   VD370, VD372                  // VD_Remaining_Vol = 用户设定的目标加药量
+MOVR   VD584, VD372                  // VD_Remaining_Vol = 用户设定的目标加药量
 // S3期间保持潜水泵运行(搅拌+加药同时进行)
 S      Q0.0, 1
 S      Q0.1, 1
@@ -358,13 +358,13 @@ MOVR   VD102, AC0                    // AC0 = 本次循环步数(REAL)
 -R     AC0, VD372                    // VD_Remaining_Vol -= 本次循环体积
 LPP
 // 判断是否完成全部加药量(与恢复就绪条件AND)
-AR>=   VD440, VD370                  // 累计加药量 >= 目标量 ?
+AR>=   VD440, VD584                  // 累计加药量 >= 目标量 ?
 JMP    30                            // 是 -> 完成
 // 未完成: 清本轮握手位,返回子状态1继续下一轮
 LD     SM0.0
 AW=    VW226, 8
 AW=    VW4, 0
-AR<    VD440, VD370                  // 确认未完成
+AR<    VD440, VD584                  // 确认未完成
 R      M12.0, 1
 R      M12.1, 1
 R      M12.2, 1

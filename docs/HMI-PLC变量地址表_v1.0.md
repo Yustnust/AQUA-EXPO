@@ -337,7 +337,7 @@ PLC内部记录、HMI只读的实测值和计算结果，REAL浮点，断电保�
 
 | 地址 | 符号 | 单位 | 说明 |
 |---|---|---|---|
-| VD370 | VD_Vol_Target | µL | 本轮目标抽取母液体积=VD_C_Set×进水量/VD_C_Stock（原VD98，AQEX-36迁移） |
+| VD584 | VD_Vol_Target | µL | 本轮目标抽取母液体积=VD_C_Set×进水量/VD_C_Stock（原VD98，AQEX-36迁移） |
 | VD380 | VD_S4Wait_Time | s | 0.0 | **【⚠v2.0 迁出】** 原地址与MBUS_MSG Error VB380~383物理重叠。**新地址：VD444**（VB444~VB447），见《VD参数区重排说明 v2.0》6.5.3 | ~~画面4-时间周期组(只读)~~ 迁后不变 |
 | VD382 | VD_S4WaitTimeout | s | 1800.0 | **【⚠v2.0 迁出】** 原地址与MBUS_MSG Error VB382~383物理重叠。**新地址：VD448**（VB448~VB451），新增断电保持。Bug A(FC15借用VD384)独立修复为用VD324，见《VD参数区重排说明 v2.0》6.5.3B | ~~画面4-时间周期组~~ 迁后不变 |
 | VD102 | VD_Dose_Steps | 步 | 本轮加药目标步数=VD_Vol_Target÷VD_StepResolution，写入注射泵40006/40007 |
@@ -859,7 +859,7 @@ HMI工程中配置8个PLC连接（站点），每个连接对应1台PLC：
 | VD10~VD66 | VD_xxx | REAL | HMI设定参数（浓度/时间/超时；VD18/VD48/VD50已迁移至VD350/358/362） |
 | VD70~VD102 | VD_xxx | REAL/DWORD | PLC实测值（时长/流量/加药计算；VD96/VD98已迁移至VD366/370） |
 | VD104~VD144 | VD_xxx | REAL | 纠偏变量(VD108 S6默认值HMI设定)+泵速度(VD132/136/140已停用,PLC不干预,使用泵自身默认速度)+VD144 T默认值(HMI设定,v2.3由VD104迁移,VD104与VD102重叠) |
-| VD350~VD370 | VD_xxx | REAL | AQEX-36迁移的6个VD参数（VD350=StepResolution/VD354=CycleSetpoint/VD358=Timeout_ValveA/VD362=Timeout_ValveB/VD366=ExperimentDuration_Accum/VD370=Vol_Target，原VD18/20/48/50/96/98） |
+| VD350~VD584 | VD_xxx | REAL | AQEX-36迁移的6个VD参数（VD350=StepResolution/VD354=CycleSetpoint/VD358=Timeout_ValveA/VD362=Timeout_ValveB/VD366=ExperimentDuration_Accum/VD584=Vol_Target，原VD18/20/48/50/96/98） |
 | VD384 | ~~VD_ManualDose_Target~~ | REAL | **【⚠v2.0 迁出】** 原地址让给MBUS Error，迁到VD452 |
 | **VD440** | **VD_Dosed_Volume_Total** | **REAL** | **【✅v2.0 新增】** 累计加药量（FC13写，HMI只读显示，迁自VD378） |
 | **VD444** | **VD_S4Wait_Time** | **REAL** | **【✅v2.0 新增】** S4等待时长内部变量（迁自VD380） |

@@ -65,7 +65,7 @@
 59,U1_VD_Timeout_ValveA,SINGLE,��дVDF358,��д,V���ݼĴ���,32λ ������,358,,1,
 60,U1_VD_Timeout_ValveB,SINGLE,��дVDF362,��д,V���ݼĴ���,32λ ������,362,,1,
 61,U1_VD_ExperimentDuration_Accum,SINGLE,ֻ��VDF366,ֻ��,V���ݼĴ���,32λ ������,366,,1,
-62,U1_VD_Vol_Target,SINGLE,ֻ��VDF370,ֻ��,V���ݼĴ���,32λ ������,370,,1,
+62,U1_VD_Vol_Target,SINGLE,ֻ��VDF584,ֻ��,V���ݼĴ���,32λ ������,370,,1,
 63,U1_Alarm_Overflow_AHigh,INTEGER,ֻ��V300.0,ֻ��,V���ݼĴ���,ͨ���ĵ�00λ,300,,1,
 64,U1_Alarm_Overflow_BHigh,INTEGER,ֻ��V300.1,ֻ��,V���ݼĴ���,ͨ���ĵ�01λ,300,,1,
 65,U1_Alarm_NCValve_Top,INTEGER,ֻ��V300.2,ֻ��,V���ݼĴ���,ͨ���ĵ�02λ,300,,1,

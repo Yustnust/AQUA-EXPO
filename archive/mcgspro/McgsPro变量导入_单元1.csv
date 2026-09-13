@@ -143,7 +143,7 @@
 137,U1_VD_Timeout_ValveB,SINGLE,读写VDF362,读写,V数据寄存器,32位 浮点数,362,,1,
 138,U1_VD_ExpTotal_Flow,SINGLE,只读VDF364,只读,V数据寄存器,32位 浮点数,364,,1,
 139,U1_VD_ExperimentDuration_Accum,SINGLE,只读VDF366,只读,V数据寄存器,32位 浮点数,366,,1,
-140,U1_VD_Vol_Target,SINGLE,读写VDF370,读写,V数据寄存器,32位 浮点数,370,,1,
+140,U1_VD_Vol_Target,SINGLE,读写VDF584,读写,V数据寄存器,32位 浮点数,370,,1,
 141,U1_VD_Remaining_Vol,SINGLE,只读VDF372,只读,V数据寄存器,32位 浮点数,372,,1,
 142,U1_VD_ManualDose_Mode,SINGLE,读写VWB388,读写,V数据寄存器,16位 有符号二进制,388,,1,
 143,U1_VW_ManualDose_State,SINGLE,只读VWB390,只读,V数据寄存器,16位 有符号二进制,390,,1,

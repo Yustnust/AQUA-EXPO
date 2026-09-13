@@ -1018,7 +1018,7 @@ LoginLevel >= X AND U{N}_VW2_StateMachine == 0
 | 地址 | 符号 | 单位 | 计算方式 | 说明 |
 |---|---|---|---|---|
 | VD350 | VD_StepResolution | µL/步 | 硬编码 `4.1667` | 25mL注射器6000步模式，冷启动时写入，HMI仅显示不可编辑 |
-| VD370 | VD_Vol_Target | µL | `C_Set × 进水量 / C_Stock` | 目标加药量，S1完成后自动计算，HMI可只读显示 |
+| VD584 | VD_Vol_Target | µL | `C_Set × 进水量 / C_Stock` | 目标加药量，S1完成后自动计算，HMI可只读显示 |
 | VD366 | VD_ExperimentDuration_Accum | min | S5运行中自动累加 | 实验时长累计值，HMI只读显示 |
 | VD112 | VD_T_Rolling | s | S1实测+S2标称+S3估算+S3.5标称 | 滚动实测T，首轮由VD144播种，之后自动学习，HMI只读显示 |
 | VD116 | VD_S6_Rolling | s | S6实测 | 滚动实测S6排水时长，首轮由VD108播种，之后自动学习，HMI只读显示 |

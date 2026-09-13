@@ -59,10 +59,10 @@ VD双字（DWORD/REAL，4字节）编址步长若为2，会导致相邻变量的
 | VD48 | VB48~VB51 | VD_Timeout_ValveA | VD358 | VB358~VB361 | REAL | 阀A动作超时保护时长（s） | 6.3 超时保护 |
 | VD50 | VB50~VB53 | VD_Timeout_ValveB | VD362 | VB362~VB365 | REAL | 阀B动作超时保护时长（s） | 6.3 超时保护 |
 | VD96 | VB96~VB99 | VD_ExperimentDuration_Accum | VD366 | VB366~VB369 | REAL | 实验时长累加值（min） | 7.3 实验进度 |
-| VD98 | VB98~VB101 | VD_Vol_Target | VD370 | VB370~VB373 | REAL | 本轮目标抽取母液体积（µL） | 7.4 加药计算 |
+| VD98 | VB98~VB101 | VD_Vol_Target | VD584 | VB370~VB373 | REAL | 本轮目标抽取母液体积（µL） | 7.4 加药计算 |
 
 **迁移后新区域汇总**：
-- 区段：VD350 ~ VD370（VB350 ~ VB373）
+- 区段：VD350 ~ VD584（VB350 ~ VB373）
 - 字节数：24字节（6个VD × 4字节）
 - 步长：4字节对齐（无冲突）
 - 断电保持：是（需在系统块→断电保持中配置VB350~VB373）
@@ -75,7 +75,7 @@ VD双字（DWORD/REAL，4字节）编址步长若为2，会导致相邻变量的
 
 | 文件路径 | 替换内容 | 替换方式 |
 |---|---|---|
-| /workspace/AQUA-EXPO/plc/stl/FC13_State_S3_Dosing.stl | VD18→VD350、VD98→VD370 | replace_all |
+| /workspace/AQUA-EXPO/plc/stl/FC13_State_S3_Dosing.stl | VD18→VD350、VD98→VD584 | replace_all |
 | /workspace/AQUA-EXPO/plc/stl/FC11_State_S1_Inlet.stl | VD20→VD354、VD48→VD358 | replace_all |
 | /workspace/AQUA-EXPO/plc/stl/FC15_State_S4_Transfer.stl | VD50→VD362 | replace_all |
 | /workspace/AQUA-EXPO/plc/stl/FC16_State_S5_Run.stl | VD20→VD354、VD96→VD366 | replace_all |
@@ -167,7 +167,7 @@ grep -nE "\b(VD18|VD20|VD48|VD50|VD96|VD98)\b" docs/hmi_preparation/画面变量
 执行以下Grep命令确认新地址VD350/354/358/362/366/370在STL代码中无其他冲突引用：
 
 ```bash
-cd /workspace/AQUA-EXPO && grep -rnE "\b(VD350|VD354|VD358|VD362|VD366|VD370)\b" plc/stl/
+cd /workspace/AQUA-EXPO && grep -rnE "\b(VD350|VD354|VD358|VD362|VD366|VD584)\b" plc/stl/
 ```
 
 **预期结果**：仅在6个已修改的STL文件中出现，且每个新地址仅对应其预期的符号变量。
