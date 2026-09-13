@@ -63,8 +63,6 @@ A      M15.0
 AB=    VB379, 0
 MOVW   VW410, VW4
 AENO
-INCW   VW500
-AENO
 MOVW   0, VW292
 AENO
 R      V303.4, 1
@@ -106,8 +104,6 @@ A      M15.1
 AB=    VB380, 0
 MOVD   VD410, VD86
 AENO
-INCW   VW502
-AENO
 MOVW   0, VW294
 AENO
 R      V303.6, 1
@@ -134,8 +130,6 @@ A      M15.2
 AB=    VB381, 0
 MOVW   VW410, VW222
 AENO
-INCW   VW504
-AENO
 MOVW   0, VW296
 Network 18 
 //   任务2失败计数
@@ -160,8 +154,6 @@ LD     M14.1
 A      M15.3
 AB=    VB382, 0
 MOVD   VD410, VD94
-AENO
-INCW   VW506
 AENO
 MOVW   0, VW298
 Network 21 
@@ -194,19 +186,11 @@ LD     V60.0
 AN     M15.4
 S      M15.0, 1
 MOVW   0, VW290
-Network 26 
-LD     V60.0
-EU
-INCW   VW514
 Network 27 
 //   任务4写数据准备: 有写请求时把VW230复制到统一缓冲区VW410
 //   DataPtr用&VB410, 避免直接使用&VW230导致MBUS_MSG写失败(Error=104)
 LD     M11.6
 MOVW   VW230, VW410
-Network 28 
-LD     M12.0
-EU
-INCW   VW512
 Network 29 
 //   任务4: 注射泵写命令(仅在M11.6=1时执行)
 //   EN=VW290==4 AND M15.4 AND M11.6, First=M15.4上升沿(EU)
@@ -233,7 +217,6 @@ A      M15.4
 AB=    VB383, 0
 R      M11.6, 1
 R      M11.7, 1
-INCW   VW508
 MOVW   0, VW510
 R      V303.4, 1
 Network 32 

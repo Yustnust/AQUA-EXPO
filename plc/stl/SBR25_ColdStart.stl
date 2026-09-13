@@ -1,0 +1,217 @@
+// ============================================================
+// 文件: SBR25_ColdStart.stl
+// 功能: 冷启动路径 — 出厂硬编码 + 用户默认覆盖 + TODR + 安全初始化
+// 调用: 由 FC0_SysInit 在 V304.0=0 (冷启动) 时 CALL
+// 返回: SBR 自然结束回到 FC0,FC0 继续执行 LBL 2 (S V304.0,1)
+// LBL 分配: 8/9/10(用户默认覆盖)、88/89(RTC异常处理)
+// 说明: 拆分自原单一 FC0,内部无跨 SBR JMP/LBL 依赖
+// ★ 重要: S7-200 SMART STL 的 JMP/LBL 必须在同一 NETWORK 内,
+//   因此本 SBR 只保留一个 NETWORK,所有 JMP/LBL 全部在此 NETWORK 中
+// ============================================================
+
+NETWORK 1
+// 冷启动完整路径(单一NETWORK):
+//   1) 出厂硬编码
+//   2) 用户默认覆盖(LBL 8/9/10)
+//   3) TODR读RTC + 合法性检查(LBL 88/89)
+//   4) 安全初始化,SBR 自然结束返回 FC0
+
+// 注射泵单步分辨率(25ml注射器标准6000步模式)
+MOVR   4.1667, VD350      // VD_StepResolution
+
+// 6.2 时间周期参数
+MOVR   30.0, VD354        // VD_CycleSetpoint 换水周期(min)
+MOVR   480.0, VD24        // VD_ExperimentTarget 实验总时长(min)
+MOVR   120.0, VD28        // VD_PreMixTime S2预循环标称时长(s)
+MOVR   30.0, VD32         // VD_PreMixTime_MinSafe S2压缩下限(s)
+MOVR   60.0, VD36         // VD_RestTime S3.5静止等候标称时长(s)
+MOVR   15.0, VD40         // VD_RestTime_Min S3.5压缩下限(s)
+MOVR   5.0, VD44          // VD_CycleExtend_Max 换水周期顺延最大幅度(min)
+MOVR   300.0, VD144       // VD_T_Default 首轮配液总时长默认值(s)
+MOVR   180.0, VD108       // VD_S6_Default 首轮S6排水时长默认值(s)
+
+// 6.2.1 工艺目标参数
+MOVR   10.0, VD316        // 目标进水量(L,默认10L)
+MOVR   5000.0, VD584      // VD_Vol_Target 默认加药量(µL,默认5mL)
+
+// 6.3 超时保护参数
+MOVR   60.0, VD358        // VD_Timeout_ValveA 阀A开/关到位超时(s)
+MOVR   60.0, VD362        // VD_Timeout_ValveB 阀B开/关到位超时(s)
+MOVR   60.0, VD54         // VD_Timeout_ValveC 阀C开/关到位超时(s)
+MOVR   10.0, VD58         // VD_Timeout_Pump1 (预留未用)
+MOVR   10.0, VD62         // VD_Timeout_Pump2 (预留未用)
+MOVR   5.0, VD66          // VD_Delay_ValveA_Verify 阀A关后延时验证(s)
+
+// 7.4 其他超时阈值
+MOVR   1800.0, VD448      // VD_S4WaitTimeout S4等待超时阈值(s)
+MOVR   10000.0, VD452     // VD_ManualDose_Target 手动总加药量(µL,默认10mL)
+MOVW   0, VW388           // VW_ManualDose_Mode 手动模式(0=单次,1=循环)
+
+// ===== 用户默认参数覆盖 =====
+LDB=   VB456, 1              // VB456 == 1 (用户默认有效)?
+JMP    8                     // 是 → 跳 LBL 8 执行用户默认覆盖
+LD     SM0.0                 // 强制 C0=1
+JMP    9                     // 无条件跳 LBL 9 (跳过覆盖)
+
+LBL    8                     // ====== 用户默认覆盖区 ======
+MOVR   VD460, VD24           // VD_ExperimentTarget
+MOVR   VD464, VD28           // VD_PreMixTime
+MOVR   VD468, VD32           // VD_PreMixTime_MinSafe
+MOVR   VD472, VD36           // VD_RestTime
+MOVR   VD476, VD40           // VD_RestTime_Min
+MOVR   VD480, VD44           // VD_CycleExtend_Max
+MOVR   VD484, VD54           // VD_Timeout_ValveC
+MOVR   VD488, VD66           // VD_Delay_ValveA_Verify
+MOVR   VD492, VD108          // VD_S6_Default
+MOVR   VD496, VD144          // VD_T_Default
+MOVR   VD500, VD316          // VD_TargetInletVolume
+MOVR   VD504, VD350          // VD_StepResolution
+MOVR   VD508, VD354          // VD_CycleSetpoint
+MOVR   VD512, VD358          // VD_Timeout_ValveA
+MOVR   VD516, VD362          // VD_Timeout_ValveB
+MOVR   VD520, VD584          // VD_Vol_Target
+MOVR   VD524, VD448          // VD_S4WaitTimeout
+MOVR   VD528, VD452          // VD_ManualDose_Target
+
+// WORD: VW388 ManualDose_Mode
+MOVB   VB532, VB388           // 复制低字节
+MOVB   0, VB389               // 高字节清零
+
+// BIT: V200.0 AlarmAckMode
+LDB=   VB536, 1
+JMP    10                     // VB536 == 1 → 跳去 S V200.0
+R      V200.0, 1              // VB536 != 1 → 清 V200.0
+LD     SM0.0
+JMP    9                      // 无条件跳汇合点
+LBL    10
+S      V200.0, 1              // VB536 == 1 → 置 V200.0
+
+// LBL 9 汇合 → TODR读RTC + 合法性检查 (LBL 88/89)
+LBL    9                     // ====== 覆盖后汇合点 ======
+
+// ★ 2026-09-13: 冷启动也要读PLC内部RTC到VB900~VB907
+LD     SM0.1
+TODR   VB900
+
+// RTC自身合法性检查(RTC字段越界+年份归零→请求校时)
+// ★ 2026-09-13新增: 年份合理性检查(超级电容归零→VB900=00→2000年)
+LDB<   VB900, 20          // 年<20(2020年前) → RTC不可信
+JMP    88
+LDB>   VB901, 12          // 月>12
+JMP    88
+LDB<   VB901, 1           // 月<1
+JMP    88
+LDB>   VB902, 31          // 日>31
+JMP    88
+LDB<   VB902, 1           // 日<1
+JMP    88
+LDB>   VB903, 23          // 时>23
+JMP    88
+LDB>   VB904, 59          // 分>59
+JMP    88
+LDB>   VB905, 59          // 秒>59
+JMP    88
+LD     SM0.0              // RTC正常 → 跳过异常处理
+JMP    89
+
+LBL    88                 // 冷启动RTC异常
+LD     SM0.1
+S      V303.7, 1          // 请求HMI校时
+
+LBL    89                 // 汇合点
+
+// 状态机初始化为S0
+MOVW   0, VW2             // VW2=0(S0)
+// 冷启动也清阀门诊断子状态和计时器
+FILL   0, VW260, 8        // 清 VB260~VB275
+R      T50, 6             // 清 T50~T55
+R      V1.6, 1            // 上缸=空
+R      V1.7, 1            // 下缸=空
+
+// 复位所有DO输出(安全状态)
+MOVB   0, QB0             // Q0.0~Q0.7=0
+MOVB   0, QB8             // Q8.0~Q8.7=0
+
+// 清除急停锁存
+R      V300.4, 1          // M_EStop_Latch=0
+
+// 清除报警字和报警码
+FILL   0, VW300, 4        // VB300~VB303清零
+MOVW   0, VW6             // VW6=0(无报警)
+
+// 清除FC3内部继电器
+R      M11.1, 1           // M_Sound_Latched=0
+R      M11.2, 1           // M_PrevAlarm=0
+
+// 冷启动必须清 VB0,防止 V0.x 命令位断电保持后卡1
+MOVB   0, VB0             // V0.0~V0.7 全部清0
+R      V1.0, 6            // V1.0~V1.5=0
+
+// 实验轮次清零
+MOVW   0, VW8             // VW8=0
+
+// 本次实验累计流量清零
+MOVR   0.0, VD364         // VD_ExpTotal_Flow=0(L)
+
+// 本次实验累计加药量清零
+MOVR   0.0, VD440         // VD_Dosed_Volume_Total=0(µL)
+
+// S4等待时长清零
+MOVR   0.0, VD444
+
+// S3剩余待加药量清零
+MOVR   0.0, VD372         // VD_Remaining_Vol=0(µL)
+
+// 清下缸满计时器+预规划标志
+MOVR   0.0, VD178         // VD_S5_Elapsed=0
+R      M10.7, 1
+
+// 初始化Modbus轮询计数器与状态
+FILL   0, VW290, 4        // VW290~VW296 清零
+R      M10.0, 6
+LD     SM0.1
+R      T103, 1
+S      M15.0, 1           // 首次扫描启动任务0
+R      M15.1, 1
+R      M15.2, 1
+R      V60.0, 6
+R      M11.0, 1
+R      M11.6, 1
+R      M11.7, 1
+R      M12.0, 1
+R      V304.1, 1          // 清注射泵在线标志
+R      V304.2, 1          // 清流量计在线标志
+R      M12.1, 1
+R      M12.2, 1
+R      M13.0, 5           // 清手动控制锁存
+R      M13.5, 3           // 清手动注射泵标志
+MOVW   0, VW390           // 手动注射泵子状态=0
+MOVR   0.0, VD392
+MOVR   0.0, VD396
+
+// 清错误码/写目标地址
+MOVB   0, VB378           // 清MBUS_CTRL Error
+MOVB   0, VB379
+MOVB   0, VB380
+MOVB   0, VB381
+MOVB   0, VB382
+MOVB   0, VB383
+MOVR   0.0, VD374
+MOVW   0, VW226
+MOVD   0, VD232
+MOVW   0, VW230
+
+// 冷启动不再自动下发注射泵复位(泵上电默认就绪96态)
+LD     SM0.1
+AN     V304.0
+MOVD   0, VD232
+MOVW   0, VW230
+R      M11.6, 1
+
+MOVW   2, VW198           // 步骤=2(冷启动完成)
+// SBR 自然结束,返回到 FC0 的 LBL 2 (S V304.0,1)
+
+
+// ============================================================
+// 文件结束
+// ============================================================

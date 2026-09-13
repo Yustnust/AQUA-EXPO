@@ -1,45 +1,32 @@
 // ============================================================
-// 文件: FC0_SysInit.stl
-// 功能: 系统初始化（首次扫描SM0.1调用）
-// Story: AQEX-6 状态机骨架 + AQEX-11 断电保持与恢复逻辑
-// 说明: 双路径初始化:
-//   冷启动(V304.0=0): 全部清零安全状态,转S0
-//   断电恢复(V304.0=1): RTC检测+VD_S5_Elapsed重算+状态机恢复策略
-//   阀门动作态(S1~S6)断电 → 转S_ERROR(安全)
-//   S5(实验运行)断电 → 重算Elapsed,保持S5继续
+// 文件: FC0_SysInit.stl (调度骨架)
+// 功能: 系统初始化入口 — 首次扫描 + Modbus清零 + 冷启/断电路径调度
+// Story: AQEX-6 + AQEX-11 + AQEX-51
+// 说明: 拆分自原单一 FC0,冷启/断电恢复逻辑分别独立到 SBR25/SBR26
+//   跨 SBR 无 JMP/LBL 依赖,每个 SBR 内部 LBL 空间独立
+// LBL 分配: FC0 用 1(断电恢复入口)、2(完成汇合)
+//          SBR25 用 8/9/10/88/89(冷启动)
+//          SBR26 用 1/3/4/5/6/7(断电恢复)
+//   跨 SBR 编号相同不冲突,POU 内 LBL 空间独立
 // 修复记录:
-//   2026-09-04: 合并所有 JMP/LBL 到单一 NETWORK，修复跨 NETWORK 跳转导致
-//               STOP/RUN 时 S0 被误判为动作态转 S_ERROR 的问题。
-//               S_ERROR 状态无实际故障时转 S0，避免历史遗留错误锁定。
-//   2026-09-04: 增加 DT10 合法性检查，避免历史垃圾时间戳误触发 RTC 丢失。
-//   2026-09-04: RTC 异常时改为置位 V303.7 请求 HMI 校时，不再直接转 S_ERROR；
-//               5 分钟未同步由 FC22 超时后进 S_ERROR 并置 V303.5。
-//   2026-09-05: 注射泵复位目标地址 40003 改用 16#9C43，避免 MOVD 十进制大数
-//               被解析为 INT 导致 MBUS_MSG Error=6。
+//   2026-09-13: 拆分前 FC0 12KB 导致 STEP7 下载"块过大"误判,
+//               拆分后 FC0(~3KB) + SBR25(~4KB) + SBR26(~4KB) 三个小块
 // ============================================================
 
 // 符号说明:
-// V304.0: M_InitDone        初始化完成标志(断电保持,首次成功后置1)
+// V304.0: M_InitDone        初始化完成标志(断电保持)
 // VW198 : VW_Init_Step      初始化步骤号(调试用,0=完成)
-// VD186 : VD_RTC_Now_Sec    当前RTC转换总秒数(BCD转秒)
-// VD190 : VD_DT10_Sec       DT10转换总秒数(BCD转秒)
-// VD194 : VD_RTC_DT_Diff    RTC与DT10秒数差
-// V1.7  : M_TankB_State     下缸状态(1=满,断电恢复时判断是否重算Elapsed)
-// V303.5: M_Alarm_RTC_Lost  RTC时钟丢失报警(超时未同步后置位)
-// V303.7: M_Need_RTC_Sync  请求HMI同步PLC时间
-// V0.6  : CMD_RTC_Sync     HMI校时命令(上升沿触发)
-// DT10  : VB10~VB17         下缸变满时间戳(BCD)
-// RTC   : VB900~VB907       READ_RTC读取结果(BCD)
+// ColdStart  : SBR25 冷启动路径
+// WarmRecovery: SBR26 断电恢复路径
 
 
 NETWORK 1
-// 步骤=1
+// SM0.1首次扫描 + Modbus库清零 + FC21计数器清零
+// ★ 2026-09-07修复: 每次首次扫描统一清零,库状态机在STOP→RUN后必须复位
+
 LD     SM0.1
 MOVW   1, VW198
 
-// ★ 2026-09-07修复: 每次首次扫描(STOP→RUN/上电)统一清零Modbus库存储区和状态
-//   原因: 断电恢复路径(V304.0=1)不清库存储区,残留库状态机导致MBUS_MSG报Error=6
-//   不区分冷启动/断电恢复,统一清零(库状态机在STOP→RUN后必须复位)
 LD     SM0.1
 FILL   0, VW600, 143     // VB600~VB885清零(Modbus库存储区)
 LD     SM0.1
@@ -55,446 +42,42 @@ R      M10.0, 6           // 清M10.0~M10.5(Done位/降级标志)
 LD     SM0.1
 R      M11.0, 1           // 清MBUS_CTRL Done位
 LD     SM0.1
-MOVW   0, VW390           // 清手动注射泵子状态(防止断电恢复时残留旧值导致误触发回零)
+MOVW   0, VW390           // 清手动注射泵子状态
 LD     SM0.1
-R      M11.6, 1           // 清注射泵写请求(防止断电恢复时残留)
+R      M11.6, 1           // 清注射泵写请求
 LD     SM0.1
 R      T104, 1            // 清回零冷却定时器
-LD     SM0.1
-MOVW   0, VW550           // 清FC21监控计数器
-LD     SM0.1
-MOVW   0, VW552
-LD     SM0.1
-MOVW   0, VW554
-LD     SM0.1
-MOVW   0, VW556
-LD     SM0.1
-MOVW   0, VW558
-LD     SM0.1
-MOVW   0, VW560
-LD     SM0.1
-MOVW   0, VW562
-LD     SM0.1
-MOVW   0, VW564
-LD     SM0.1
-MOVW   0, VW566
-LD     SM0.1
-MOVW   0, VW568
-LD     SM0.1
-MOVW   0, VW570
-LD     SM0.1
-MOVW   0, VW572
-LD     SM0.1
-MOVW   0, VW574
-LD     SM0.1
-MOVW   0, VW576
-LD     SM0.1
-MOVW   0, VW578
-LD     SM0.1
-MOVW   0, VW580
-LD     SM0.1
-MOVW   0, VW582
 
+
+NETWORK 2
+// 冷启/断电路径调度 + 完成汇合
 // 判断冷启动/断电恢复
+// V304.0=1 → JMP 1 (LBL 1: CALL WarmRecovery → JMP 2)
+// V304.0=0 → 冷启动 → CALL ColdStart → RET回 FC0 继续到 LBL 2
+
 LD     V304.0
-JMP    1                  // V304.0=1 → 断电恢复路径
+JMP    1                  // V304.0=1 → 跳断电恢复路径
 
 // ========== 冷启动路径 ==========
 LD     SM0.1
 AN     V304.0             // 冷启动(V304.0=0)
-
-// 注射泵单步分辨率(25ml注射器标准6000步模式)
-MOVR   4.1667, VD350      // VD_StepResolution
-
-// ---- HMI设定参数默认值（冷启动安全初始化） ----
-// 出厂/长期断电后,HMI未配置时也有合理默认值,防止全0导致TON立即超时
-
-// 6.1 浓度与容量参数  ✅ v2.0 删除: 浓度参数整体移除, VD10~VD17 让给 DT10 RTC 独占
-//    原 VD10=目标浓度、VD14=母液浓度, 加药量改为用户直接输入 VD584
-
-// 6.2 时间周期参数
-MOVR   30.0, VD354        // VD_CycleSetpoint 换水周期(min)
-MOVR   480.0, VD24        // VD_ExperimentTarget 实验总时长(min)
-MOVR   120.0, VD28        // VD_PreMixTime S2预循环标称时长(s)
-MOVR   30.0, VD32         // VD_PreMixTime_MinSafe S2压缩下限(s)
-MOVR   60.0, VD36         // VD_RestTime S3.5静止等候标称时长(s)
-MOVR   15.0, VD40         // VD_RestTime_Min S3.5压缩下限(s)
-MOVR   5.0, VD44          // VD_CycleExtend_Max 换水周期顺延最大幅度(min)
-MOVR   300.0, VD144       // VD_T_Default 首轮配液总时长默认值(s)
-MOVR   180.0, VD108       // VD_S6_Default 首轮S6排水时长默认值(s)
-
-// 6.2.1 工艺目标参数
-MOVR   10.0, VD316        // 目标进水量(L,默认10L)
-MOVR   5000.0, VD584      // ✅ v2.0 新增: VD_Vol_Target 默认加药量(µL,默认5mL)
-                          // 浓度参数删除后 VD584 改为 HMI 直接输入,需安全默认值防止全0导致 FC13 加药量=0
-
-// 6.3 超时保护参数(关键!防止TON PT=0立即超时)
-MOVR   60.0, VD358        // VD_Timeout_ValveA 阀A开/关到位超时(s)
-MOVR   60.0, VD362        // VD_Timeout_ValveB 阀B开/关到位超时(s)
-MOVR   60.0, VD54         // VD_Timeout_ValveC 阀C开/关到位超时(s)
-MOVR   10.0, VD58         // VD_Timeout_Pump1 (预留未用)
-MOVR   10.0, VD62         // VD_Timeout_Pump2 (预留未用)
-MOVR   5.0, VD66          // VD_Delay_ValveA_Verify 阀A关后延时验证(s)
-
-// 7.4 其他超时阈值
-MOVR   1800.0, VD448      // VD_S4WaitTimeout S4等待超时阈值(s,默认30min)
-MOVR   10000.0, VD452     // VD_ManualDose_Target 手动总加药量(µL,默认10mL) ← 出厂硬编码
-MOVW   0, VW388           // VW_ManualDose_Mode 手动模式(0=单次,1=循环) ← 出厂硬编码
-
-// ============================================================
-// v2.0 新增: 用户默认参数覆盖 (出厂默认先跑一遍,再用用户默认覆盖)
-// 安全兜底: 出厂硬编码永远保留,用户默认存断电保持区
-// V区分配:
-//   VB456 = 用户默认有效标志 (0=出厂默认 / 1=用户自定义)
-//   VD460~VD528 = 18 个 REAL 用户存储 (72字节)
-//   VB532 = VW388 低字节用户默认 (ManualDose_Mode)
-//   VB536 = V200.0 用户默认 (AlarmAckMode bit0)
-// 标签: LBL 8 = 用户默认覆盖入口, LBL 9 = 覆盖后汇合, LBL 10 = S V200.0
-// ============================================================
-LDB=   VB456, 1              // VB456 == 1 (用户默认有效)?
-JMP    8                     // 是 → 跳 LBL 8 执行用户默认覆盖
-LD     SM0.0                 // 强制 C0=1 (SM0.0 常 ON)
-JMP    9                     // 无条件跳 LBL 9 (跳过覆盖,用出厂默认)
-
-LBL    8                     // ====== 用户默认覆盖区 ======
-// --- 18 个 REAL ---
-MOVR   VD460, VD24           // VD_ExperimentTarget 实验总时长(min)
-MOVR   VD464, VD28           // VD_PreMixTime S2预循环标称时长(s)
-MOVR   VD468, VD32           // VD_PreMixTime_MinSafe S2压缩下限(s)
-MOVR   VD472, VD36           // VD_RestTime S3.5静止等候标称时长(s)
-MOVR   VD476, VD40           // VD_RestTime_Min S3.5压缩下限(s)
-MOVR   VD480, VD44           // VD_CycleExtend_Max 换水周期顺延最大幅度(min)
-MOVR   VD484, VD54           // VD_Timeout_ValveC 阀C超时(s)
-MOVR   VD488, VD66           // VD_Delay_ValveA_Verify 阀A关后延时(s)
-MOVR   VD492, VD108          // VD_S6_Default 首轮S6排水时长(s)
-MOVR   VD496, VD144          // VD_T_Default 首轮配液总时长(s)
-MOVR   VD500, VD316          // VD_TargetInletVolume 目标进水量(L)
-MOVR   VD504, VD350          // VD_StepResolution 脉冲当量
-MOVR   VD508, VD354          // VD_CycleSetpoint 换水周期(min)
-MOVR   VD512, VD358          // VD_Timeout_ValveA 阀A超时(s)
-MOVR   VD516, VD362          // VD_Timeout_ValveB 阀B超时(s)
-MOVR   VD520, VD584          // VD_Vol_Target 目标加药量(µL)
-MOVR   VD524, VD448          // VD_S4WaitTimeout S4等待超时(s)
-MOVR   VD528, VD452          // VD_ManualDose_Target 手动总加药量(µL)
-
-// --- WORD: VW388 ManualDose_Mode (MOVW 要求源=16位,拆成两个字节) ---
-MOVB   VB532, VB388           // 复制低字节
-MOVB   0, VB389               // 高字节清零
-
-// --- BIT: V200.0 AlarmAckMode (VB536 bit0=1 则置 V200.0) ---
-LDB=   VB536, 1
-JMP    10                     // VB536 == 1 → 跳去 S V200.0
-R      V200.0, 1              // VB536 != 1 → 清 V200.0
-LD     SM0.0                  // 强制 C0=1 (SM0.0 常 ON)
-JMP    9                      // 无条件跳汇合点
-LBL    10
-S      V200.0, 1              // VB536 == 1 → 置 V200.0
-
-LBL    9                     // ====== 覆盖后汇合点,继续初始化 ======
-
-// 状态机初始化为S0
-MOVW   0, VW2             // VW2=0(S0)
-// ★ 2026-09-11 新增: 冷启动也清阀门诊断子状态和计时器
-// 保险: 即使冷启动,VB260~VB275可能残留断电前状态,
-// 导致下次启动FC11/FC15/FC17的AW=VW2xx,0前置条件不成立
-FILL   0, VW260, 8        // 清 VB260~VB275 (阀A/B/C 诊断)
-R      T50, 6             // 清 T50~T55 (阀A/B 诊断计时器)
-R      V1.6, 1            // 上缸=空
-R      V1.7, 1            // 下缸=空
-
-// 复位所有DO输出(安全状态)
-MOVB   0, QB0             // Q0.0~Q0.7=0(泵停/阀关/NC电磁阀失电)
-MOVB   0, QB8             // Q8.0~Q8.7=0(DR32输出全清零,含报警灯)
-
-// 清除急停锁存
-R      V300.4, 1          // M_EStop_Latch=0
-
-// 清除报警字和报警码
-FILL   0, VW300, 4        // VB300~VB303清零(报警字)
-MOVW   0, VW6             // VW6=0(无报警)
-
-// 清除FC3内部继电器(消音/新报警检测)
-R      M11.1, 1           // M_Sound_Latched=0(消音标志)
-R      M11.2, 1           // M_PrevAlarm=0(上周期有报警标志)
-
-// ★ 2026-09-06新增(FC99调试经验): 清空Modbus库存储区VB600~VB885
-//   V区断电不丢,残留的库状态机会导致MBUS_MSG报Error=6(忙)
-//   库分配: Modbus RTU Master (v2.0) → VB600~VB885(286字节=143字)
-FILL   0, VW600, 143     // VB600~VB885清零(Modbus库存储区)
-
-// ★ 2026-09-11修复: 冷启动必须清 VB0, 防止 V0.x 命令位断电保持后卡1
-//   现场现象: V0.3(CMD_AckAlarm)卡在1 → FC3 Network 4 EU无上升沿 → R V0.3,1 永远不执行
-//   V0.x 是 HMI→PLC 的脉冲命令, FC3/OB1/FC10 会在收到后自清除, 冷启动清0无副作用
-MOVB   0, VB0             // V0.0~V0.7 全部清0
-// 清除命令握手位
-R      V1.0, 6            // V1.0~V1.5=0
-
-// 实验轮次清零
-MOVW   0, VW8             // VW8=0
-
-// 本次实验累计流量清零
-MOVR   0.0, VD364         // VD_ExpTotal_Flow=0(L)
-
-// 本次实验累计加药量清零
-MOVR   0.0, VD440         // VD_Dosed_Volume_Total=0(µL)
-
-// S4等待时长清零(内部变量,每次S4完成也会清)
-MOVR   0.0, VD444         // ✅ v2.0 新增: VD_S4Wait_Time 冷启动清零
-
-// S3剩余待加药量清零
-MOVR   0.0, VD372         // VD_Remaining_Vol=0(µL)
-
-// 清下缸满计时器+预规划标志
-MOVR   0.0, VD178         // VD_S5_Elapsed=0
-R      M10.7, 1           // 清预规划触发标志
-
-// 初始化Modbus轮询计数器与状态
-// 注意:VW250/VW252与HMI参数VD250重叠,已迁移到VW290/VW292/VW294/VW296/VW504
-MOVW   0, VW290           // 轮询计数器=0(任务0)
-MOVW   0, VW292           // 任务0(注射泵状态)连续失败计数=0
-MOVW   0, VW294           // 任务1(流量计)连续失败计数=0
-MOVW   0, VW296           // 任务2(注射泵位置)连续失败计数=0
-MOVW   0, VW504           // 任务2(注射泵位置)成功计数=0
-R      M10.0, 6           // 清M10.0~M10.5(Done位/降级标志)
-LD     SM0.1
-R      T103, 1            // 清MBUS_MSG超时定时器
-LD     SM0.1
-S      M15.0, 1           // 首次扫描启动任务0(注射泵状态)
-LD     SM0.1
-R      M15.1, 1           // 清任务1/2使能标志
-LD     SM0.1
-R      M15.2, 1
-R      V60.0, 6           // 清V60.0~V60.5(FC4/FC21/FC3中间继电器)
-R      M11.0, 1           // 清MBUS_CTRL Done位
-R      M11.6, 1           // 清注射泵写请求
-R      M11.7, 1           // 清注射泵写忙
-R      M12.0, 1           // 清注射泵写完成
-R      V304.1, 1          // 清注射泵在线标志(冷启动后由FC4实时刷新)
-R      V304.2, 1          // 清流量计在线标志(冷启动后由FC4实时刷新)
-R      M12.1, 1           // 清S3抽液开始标志
-R      M12.2, 1           // 清S3排液开始标志
-R      M13.0, 5           // 清手动控制锁存(M13.0~M13.4),防止STOP→RUN后误输出
-R      M13.5, 3           // 清手动注射泵标志(M13.5~M13.7)
-MOVW   0, VW390           // 手动注射泵子状态=0(空闲)
-MOVR   0.0, VD392         // 手动累计加药量=0(内部)
-MOVR   0.0, VD396         // 手动剩余加药量=0(内部)
-
-// 手动注射泵参数已移至出厂硬编码阶段(L142~L143),此处不再重复
-// 否则会覆盖用户默认值 (Bug fix 2026-09-12)
-MOVB   0, VB378           // 清MBUS_CTRL Error
-MOVB   0, VB379           // 清MBUS_MSG Error(注射泵状态)
-MOVB   0, VB380           // 清MBUS_MSG Error(流量计)
-MOVB   0, VB381           // 清MBUS_MSG Error(注射泵位置)
-MOVB   0, VB382           // 清MBUS_MSG Error(瞬时流量)
-MOVB   0, VB383           // 清MBUS_MSG Error(写命令)
-MOVR   0.0, VD374         // 流量计降级值清零
-MOVW   0, VW226           // 清S3子状态
-MOVD   0, VD232           // 清写目标地址
-MOVW   0, VW230           // 清写数据
-
-// ★ 2026-09-06修正: 冷启动不再自动下发注射泵复位
-// 原因: FC99现场调试确认, 泵上电后默认进入96(就绪态), 可直接接受命令
-//       无需复位; 且自动复位会在泵未就绪时发送命令, 可能导致103错误
-//       如需复位, 由HMI手动触发或S3加药流程按需触发
-LD     SM0.1
-AN     V304.0
-MOVD   0, VD232           // 清写目标地址(不自动复位)
-MOVW   0, VW230           // 清写数据
-R      M11.6, 1           // 确保写请求位清零
-
-MOVW   2, VW198           // 步骤=2(冷启动完成)
-JMP    2                  // → 完成
+CALL   ColdStart          // SBR25: 出厂硬编码 + 用户默认覆盖 + TODR + 安全初始化
+                          // ColdStart 自然结束返回
+LD     SM0.0
+JMP    2                  // ★ 关键: 无条件跳过 LBL 1,否则会形成死循环
 
 // ========== 断电恢复路径 ==========
-// ★ Story1.7 决策9: 报警位断电恢复处理 — 断电保持区报警位保持,FC0不主动清除
-//   (由FC3/FC19按确认流程处理)。断电前已触发的报警仍需人工确认;仅冷启动才清报警字。
 LBL    1
 LD     SM0.1
-TODR VB900                // 读RTC到VB900~VB907(BCD)
-// 注: 断电恢复路径不清 VW300~303/VW6/V300.x 等报警位, 让FC3 NETWORK1每周期重算
-//   操作员重新上电后能看到断电前未处理的报警,按正常流程确认清除
+CALL   WarmRecovery       // SBR26: TODR + RTC检测 + BCD转秒 + 状态机恢复
+                          // WarmRecovery 自然结束后,顺序执行到 LBL 2 汇合
 
-// RTC自身合法性检查(RTC字段越界→请求校时)
-LDB>   VB901, 12          // 月>12
-JMP    4
-LDB<   VB901, 1           // 月<1
-JMP    4
-LDB>   VB902, 31          // 日>31
-JMP    4
-LDB<   VB902, 1           // 日<1
-JMP    4
-LDB>   VB903, 23          // 时>23
-JMP    4
-LDB>   VB904, 59          // 分>59
-JMP    4
-LDB>   VB905, 59          // 秒>59
-JMP    4
-
-// RTC丢失检测: 比较RTC与DT10(VB10~VB17)
-// DT10未写入(VB10=0)→跳过检测
-LDB=   VB10, 0
-JMP    3
-
-// DT10数据合法性检查（防止历史垃圾数据误触发RTC丢失）
-LDB<   VB11, 1            // 月<1
-JMP    4
-LDB>   VB11, 12           // 月>12
-JMP    4
-LDB<   VB12, 1            // 日<1
-JMP    4
-LDB>   VB12, 31           // 日>31
-JMP    4
-LDB>   VB13, 23           // 时>23
-JMP    4
-LDB>   VB14, 59           // 分>59
-JMP    4
-LDB>   VB15, 59           // 秒>59
-JMP    4
-
-// 逐字段BCD比较(年→月→日→时→分→秒)
-LDB<   VB900, VB10        // RTC年 < DT10年 → RTC丢失
-JMP    4
-LDB>   VB900, VB10        // RTC年 > DT10年 → 正常
-JMP    3
-LDB<   VB901, VB11        // 比月
-JMP    4
-LDB>   VB901, VB11
-JMP    3
-LDB<   VB902, VB12        // 比日
-JMP    4
-LDB>   VB902, VB12
-JMP    3
-LDB<   VB903, VB13        // 比时
-JMP    4
-LDB>   VB903, VB13
-JMP    3
-LDB<   VB904, VB14        // 比分
-JMP    4
-LDB>   VB904, VB14
-JMP    3
-LDB<   VB905, VB15        // 比秒
-JMP    4
-LD     SM0.0              // 全部>= → RTC正常
-JMP    3
-
-// RTC异常/丢失 → 请求HMI校时
-LBL    4
-LD     SM0.1
-S      V303.7, 1          // M_Need_RTC_Sync
-MOVR   0.0, VD178         // VD_S5_Elapsed=0(无法重算)
-MOVW   3, VW198           // 步骤=3(RTC需校时)
-JMP    5                  // → 状态恢复
-
-// RTC正常，继续
-LBL    3
-MOVW   3, VW198           // 步骤=3(RTC正常)
-
-// BCD转秒 - RTC(VD_RTC_Now_Sec)
-LD     SM0.1
-MOVR   0.0, VD186         // 清VD_RTC_Now_Sec
-BTI    VB903, AC0         // BCD→INT(时)
-ITD    AC0, AC0           // INT→DINT
-DTR    AC0, AC0           // DINT→REAL
-*R     3600.0, AC0        // ×3600
-+R     AC0, VD186         // 累加到VD_RTC_Now_Sec
-BTI    VB904, AC0         // 分
-ITD    AC0, AC0
-DTR    AC0, AC0
-*R     60.0, AC0
-+R     AC0, VD186
-BTI    VB905, AC0         // 秒
-ITD    AC0, AC0
-DTR    AC0, AC0
-+R     AC0, VD186
-
-// BCD转秒 - DT10(VD_DT10_Sec)
-LD     SM0.1
-MOVR   0.0, VD190         // 清VD_DT10_Sec
-BTI    VB13, AC0          // DT10时
-ITD    AC0, AC0
-DTR    AC0, AC0
-*R     3600.0, AC0
-+R     AC0, VD190
-BTI    VB14, AC0          // 分
-ITD    AC0, AC0
-DTR    AC0, AC0
-*R     60.0, AC0
-+R     AC0, VD190
-BTI    VB15, AC0          // 秒
-ITD    AC0, AC0
-DTR    AC0, AC0
-+R     AC0, VD190
-MOVW   4, VW198           // 步骤=4(BCD转秒完成)
-
-// VD_S5_Elapsed重算(仅保持S5且下缸=满时)
-LD     V1.7               // 下缸=满
-AW=    VW2, 6             // 且状态机=S5(字比较,与栈顶AND)
-MOVR   VD186, VD178       // 满足:VD_S5_Elapsed = RTC秒
--R     VD190, VD178       // - DT10秒 = 断电期间经过秒数
-MOVW   5, VW198           // 步骤=5(Elapsed重算完成)
-JMP    5                  // → 状态恢复
-
-// 下缸=空 或 非S5 时VD_S5_Elapsed=0
-LD     SM0.0
-MOVR   0.0, VD178         // Elapsed=0
-MOVW   5, VW198
-
-// 状态机恢复策略
-LBL    5
-LDW=   VW2, 0
-JMP    6                  // S0保持
-LDW=   VW2, 6
-JMP    6                  // S5保持(断电续跑)
-LDW=   VW2, 8
-JMP    6                  // S7保持(锁定态)
-
-// S_ERROR: 无实际故障则转S0，否则保持
-LDW=   VW2, 99
-JMP    7
-
-// S1~S6: 阀门/泵动作中断 → 转S_ERROR
-LD     SM0.0
-MOVB   0, QB0             // 阀门关/泵停/NC电磁阀失电(安全)
-MOVW   99, VW2            // 转S_ERROR
-S      V300.4, 1          // 置急停锁存(类比急停,需人工复位)
-MOVW   7, VW198           // 步骤=7(状态机转S_ERROR)
-JMP    2
-
-// S_ERROR特殊处理
-LBL    7
-LD     V300.4             // 急停锁存
-O      V300.5             // 或继电器故障
-O      I1.1               // 或急停触发
-LDW<>  VW6, 0             // 或有活动报警
-OLD
-JMP    6                  // 任一满足 → 保持S_ERROR
-
-// 无实际故障 → 转S0
-LD     SM0.1
-MOVB   0, QB0             // 输出安全状态
-R      Q0.7, 1            // 清报警声音
-MOVW   0, VW2             // 转S0
-MOVW   6, VW198           // 步骤=6(状态恢复完成)
-JMP    2
-
-// 保持原状态
-LBL    6
-MOVW   6, VW198           // 步骤=6(状态恢复完成)
-
-// ========== 初始化完成 ==========
+// ========== 初始化完成汇合 ==========
 LBL    2
 LD     SM0.1
 S      V304.0, 1          // M_InitDone=1(初始化完成,断电保持)
 MOVW   0, VW198           // 步骤=0(完成)
-
-
-// 注: 冷启动(V304.0=0)时全部清零+HMI设定参数初始化为安全默认值
-// 注: 断电恢复(V304.0=1)时保留断电保持数据(含用户HMI设定值)
-// 注: 阀门动作态(S1~S6)断电转S_ERROR,因阀门状态未知(可能半开),强制安全
-// 注: S5(实验运行)断电可恢复,无阀门动作,VD_S5_Elapsed由RTC重算连续不跳变
-// 注: RTC丢失(RTC<DT10)触发V303.5,转S_ERROR,需HMI校时后人工复位
-// 注: BCD转秒用当天秒数(时×3600+分×60+秒),跨天场景需补天数×86400
-// 注: S_ERROR无实际故障(V300.4/5=0,I1.1=0,VW6=0)时转S0,避免历史遗留锁定
+// 汇合后自然结束 FC0,返回 OB1
 
 
 // ============================================================

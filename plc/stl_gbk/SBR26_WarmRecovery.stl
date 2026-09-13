@@ -1,0 +1,191 @@
+// ============================================================
+// 文件: SBR26_WarmRecovery.stl
+// 功能: 断电恢复路径 — RTC检测 + BCD转秒 + 状态机恢复
+// 调用: 由 FC0_SysInit 在 V304.0=1 (断电恢复) 时 CALL
+// 返回: SBR 自然结束回到 FC0,FC0 继续执行 LBL 2 (S V304.0,1)
+// LBL 分配: 1(入口)、3(RTC正常)、4(RTC异常)、5(状态恢复)、6(保持)、7(S_ERROR)
+// 说明: 拆分自原单一 FC0,原来的 JMP 2(跳FC0完成点) 全部改为 SBR 自然结束
+//   注意: 断电恢复路径不清报警字,VW300~303/VW6/V300.x 由 FC3/FC19 按确认流程处理
+// ★ 重要: S7-200 SMART STL 的 JMP/LBL 必须在同一 NETWORK 内,
+//   因此本 SBR 只保留一个 NETWORK,所有 JMP/LBL 全部在此 NETWORK 中
+// ============================================================
+
+NETWORK 1
+// 断电恢复完整路径(单一NETWORK):
+//   1) TODR读RTC + 合法性检查 + DT10比较(LBL 1/3/4)
+//   2) BCD转秒 + VD_S5_Elapsed重算(LBL 3/5)
+//   3) 状态机恢复策略(LBL 5/6/7),SBR 自然结束返回 FC0
+
+// LBL 1: 入口 (FC0 通过 CALL WarmRecovery 进入,从 LBL 1 开始执行)
+LBL    1
+LD     SM0.1
+TODR VB900                // 读RTC到VB900~VB907(BCD)
+
+// RTC自身合法性检查(RTC字段越界→请求校时)
+LDB>   VB901, 12          // 月>12
+JMP    4
+LDB<   VB901, 1           // 月<1
+JMP    4
+LDB>   VB902, 31          // 日>31
+JMP    4
+LDB<   VB902, 1           // 日<1
+JMP    4
+LDB>   VB903, 23          // 时>23
+JMP    4
+LDB>   VB904, 59          // 分>59
+JMP    4
+LDB>   VB905, 59          // 秒>59
+JMP    4
+
+// RTC丢失检测: 比较RTC与DT10(VB10~VB17)
+LDB=   VB10, 0            // DT10未写入 → 跳过检测
+JMP    3
+
+// DT10数据合法性检查（防止历史垃圾数据误触发RTC丢失）
+LDB<   VB11, 1            // 月<1
+JMP    4
+LDB>   VB11, 12           // 月>12
+JMP    4
+LDB<   VB12, 1            // 日<1
+JMP    4
+LDB>   VB12, 31           // 日>31
+JMP    4
+LDB>   VB13, 23           // 时>23
+JMP    4
+LDB>   VB14, 59           // 分>59
+JMP    4
+LDB>   VB15, 59           // 秒>59
+JMP    4
+
+// 逐字段BCD比较(年→月→日→时→分→秒)
+LDB<   VB900, VB10        // RTC年 < DT10年 → RTC丢失
+JMP    4
+LDB>   VB900, VB10        // RTC年 > DT10年 → 正常
+JMP    3
+LDB<   VB901, VB11        // 比月
+JMP    4
+LDB>   VB901, VB11
+JMP    3
+LDB<   VB902, VB12        // 比日
+JMP    4
+LDB>   VB902, VB12
+JMP    3
+LDB<   VB903, VB13        // 比时
+JMP    4
+LDB>   VB903, VB13
+JMP    3
+LDB<   VB904, VB14        // 比分
+JMP    4
+LDB>   VB904, VB14
+JMP    3
+LDB<   VB905, VB15        // 比秒
+JMP    4
+LD     SM0.0              // 全部>= → RTC正常
+JMP    3
+
+// RTC异常/丢失 → 请求HMI校时
+LBL    4
+LD     SM0.1
+S      V303.7, 1          // M_Need_RTC_Sync
+MOVR   0.0, VD178         // VD_S5_Elapsed=0(无法重算)
+MOVW   3, VW198           // 步骤=3(RTC需校时)
+JMP    5                  // → 状态恢复
+
+// RTC正常，继续
+LBL    3
+LD     SM0.1
+MOVW   3, VW198           // 步骤=3(RTC正常)
+
+// BCD转秒 - RTC(VD_RTC_Now_Sec)
+MOVR   0.0, VD186         // 清VD_RTC_Now_Sec
+BTI    VB903, AC0         // BCD→INT(时)
+ITD    AC0, AC0           // INT→DINT
+DTR    AC0, AC0           // DINT→REAL
+*R     3600.0, AC0        // ×3600
++R     AC0, VD186         // 累加到VD_RTC_Now_Sec
+BTI    VB904, AC0         // 分
+ITD    AC0, AC0
+DTR    AC0, AC0
+*R     60.0, AC0
++R     AC0, VD186
+BTI    VB905, AC0         // 秒
+ITD    AC0, AC0
+DTR    AC0, AC0
++R     AC0, VD186
+
+// BCD转秒 - DT10(VD_DT10_Sec)
+MOVR   0.0, VD190         // 清VD_DT10_Sec
+BTI    VB13, AC0          // DT10时
+ITD    AC0, AC0
+DTR    AC0, AC0
+*R     3600.0, AC0
++R     AC0, VD190
+BTI    VB14, AC0          // 分
+ITD    AC0, AC0
+DTR    AC0, AC0
+*R     60.0, AC0
++R     AC0, VD190
+BTI    VB15, AC0          // 秒
+ITD    AC0, AC0
+DTR    AC0, AC0
++R     AC0, VD190
+MOVW   4, VW198           // 步骤=4(BCD转秒完成)
+
+// VD_S5_Elapsed重算(仅保持S5且下缸=满时)
+LD     V1.7               // 下缸=满
+AW=    VW2, 6             // 且状态机=S5
+MOVR   VD186, VD178       // 满足:VD_S5_Elapsed = RTC秒
+-R     VD190, VD178       // - DT10秒 = 断电期间经过秒数
+MOVW   5, VW198           // 步骤=5(Elapsed重算完成)
+JMP    5                  // → 状态恢复
+
+// 下缸=空 或 非S5 时VD_S5_Elapsed=0
+LD     SM0.0
+MOVR   0.0, VD178         // Elapsed=0
+MOVW   5, VW198
+
+// ===== 状态机恢复策略 =====
+LBL    5
+LDW=   VW2, 0
+JMP    6                  // S0保持
+LDW=   VW2, 6
+JMP    6                  // S5保持(断电续跑)
+LDW=   VW2, 8
+JMP    6                  // S7保持(锁定态)
+
+// S_ERROR: 无实际故障则转S0，否则保持
+LDW=   VW2, 99
+JMP    7
+
+// S1~S6: 阀门/泵动作中断 → 转S_ERROR
+LD     SM0.0
+MOVB   0, QB0             // 阀门关/泵停/NC电磁阀失电(安全)
+MOVW   99, VW2            // 转S_ERROR
+S      V300.4, 1          // 置急停锁存(需人工复位)
+MOVW   7, VW198           // 步骤=7(状态机转S_ERROR)
+
+// S_ERROR特殊处理
+LBL    7
+LD     V300.4             // 急停锁存
+O      V300.5             // 或继电器故障
+O      I1.1               // 或急停触发
+LDW<>  VW6, 0             // 或有活动报警
+OLD
+JMP    6                  // 任一满足 → 保持S_ERROR
+
+// 无实际故障 → 转S0
+LD     SM0.1
+MOVB   0, QB0             // 输出安全状态
+R      Q0.7, 1            // 清报警声音
+MOVW   0, VW2             // 转S0
+MOVW   6, VW198           // 步骤=6(状态恢复完成)
+
+// 保持原状态
+LBL    6
+MOVW   6, VW198           // 步骤=6(状态恢复完成)
+// SBR 自然结束,返回到 FC0 的 LBL 2 (S V304.0,1)
+
+
+// ============================================================
+// 文件结束
+// ============================================================
