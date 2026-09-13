@@ -17,7 +17,9 @@
 | POU | 类型 | 名称 | 调用方式 | 功能 |
 |---|---|---|---|---|
 | OB1 | 主循环 | MAIN | 系统自动 | 主循环，调用各FC |
-| FC0 | 功能块 | SysInit | 首次扫描(SM0.1) | 系统初始化 |
+| **FC0** | **功能块** | **SysInit** | **首次扫描(SM0.1)** | **★ v1.1 拆分: 调度骨架 — Modbus清零 + 冷启/断电路径调度(JMP 1→CALL SBR26; CALL SBR25→LBL 2)** |
+| **SBR25** | **子例程** | **ColdStart** | **FC0内 CALL** | **★ v1.1 新增: 冷启动路径 — 出厂硬编码 + 用户默认覆盖 + TODR读RTC + RTC合法性检查 + 安全初始化 + RET** |
+| **SBR26** | **子例程** | **WarmRecovery** | **FC0内 CALL** | **★ v1.1 新增: 断电恢复路径 — TODR读RTC + 合法性检查 + BCD转秒 + VD_S5_Elapsed重算 + 状态机恢复 + RET** |
 | FC1 | 功能块 | StateDispatcher | 每周期 | 状态机调度，根据VW2调用对应状态FC |
 | FC10 | 功能块 | State_S0_Init | VW2=0时 | S0初始化状态 |
 | FC11 | 功能块 | State_S1_Inlet | VW2=1时 | S1上缸进水 |

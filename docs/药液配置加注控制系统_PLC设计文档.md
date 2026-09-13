@@ -108,9 +108,14 @@
 
 ## 三、内部标志位（断电保持区）
 
-> **【v10.2 关于 FC0_SysInit 的 JMP/LBL 结构修复】**
-> FC0 原始版本存在 **JMP/LBL 跨 NETWORK** 问题：跳转标签（如 LBL 1、LBL 5）定义位置与 JMP 调用分属不同 NETWORK，导致 STEP 7 编译后 STOP/RUN 时程序流混乱（典型症状：S0 态重启后被误判为动作态转 S_ERROR）。
-> 修复方式：**将 FC0 内所有 JMP/LBL 合并到单一 NETWORK 内**，与 FC1_StateDispatcher 的修复方法一致。修复后 FC0 仅有一个 NETWORK 段，JMP/LBL 全部在段内。
+> **【v11.0 2026-09-13 关于 FC0_SysInit 的拆分 + 冷启动 RTC 修复】**
+> FC0 原单一 POU 12KB 导致 STEP7 下载误报"块过大"。**拆分为 3 个 POU**:
+> - **FC0 SysInit**: 调度骨架，负责 Modbus 清零 + 冷启/断电路径调度（LBL 1→CALL SBR26；CALL SBR25→LBL 2）
+> - **SBR25 ColdStart**: 冷启动完整逻辑（出厂硬编码 + 用户默认覆盖 + ★ TODR VB900 冷启动读 RTC + RTC 合法性检查 + 安全初始化 + RET）
+> - **SBR26 WarmRecovery**: 断电恢复完整逻辑（TODR VB900 + RTC 合法性检查 + DT10 比较 + BCD 转秒 + VD_S5_Elapsed 重算 + 状态机恢复 + RET）
+> 跨 POU 无 JMP/LBL 依赖，各 POU 内部 LBL 编号独立（FC0 用 1/2；SBR25 用 8/9/10/88/89；SBR26 用 1/3/4/5/6/7）。
+> **冷启动路径新增 TODR + RTC 合法性检查**，解决原冷启动路径无 TODR 导致 VB900~VB905 全 0 的问题（FC22 自动校时无法触发）。
+> VD_Vol_Target（原 VD370，与 VD372 字节冲突）迁移至 VD584（VB584~VB587），断电保持区扩展为 VB1~VB600 连续覆盖。
 
 | 符号 | 说明 |
 |---|---|
