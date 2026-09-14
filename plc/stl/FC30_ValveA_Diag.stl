@@ -6,18 +6,20 @@
 // 说明: 阀A不使用四态诊断，采用差值法+延时验证
 //       诊断子状态VW260: 0空闲/1等开到位/2开启完成/3运行中/5关闭后验证
 //
-// 修复记录:
+//   修复记录:
 //   P1 - MOVR/-R 替换 MOVD/-D: 流量计数据为REAL浮点,之前用双整数指令导致VD90=NAN
 //   P2 - 单NETWORK合并: 所有JMP/LBL在同一NETWORK内,解决STEP7导入跨NETWORK跳转失效
 //   P3 - I8.0 去掉EU: 子状态1→2改用常开触点,PLC冷启动时阀已开到位也能正常进入子状态2
 //   P4 - 关阀快照MOVD改MOVR: 语义一致,REAL数据用MOVR搬运
+//   P5 - 子状态5 RLO修复: 比较指令(AR>/AR<=)会切断RLO,改用LD T51 + LPS/ALD维持AND链
+//   P6 - 进水量达标后补关Q0.5(NC球阀),避免S1→S2后NC阀常开
 // ============================================================
 
 // 符号说明:
 // VW260 : Diag_State_A     阀A诊断子状态
 // VW266 : Diag_Result_A    阀A诊断结果(0进行中/1正常/2故障)
-// VD308 : VD_FlowMeter_CloseSnapshot  阀A关阀瞬间流量计快照
-// VD312 : VD_FlowMeter_CloseDelta     阀A关阀后流量计差值
+// VD308 : VD_FlowMeter_CloseSnapshot  阀A关阀瞬间流量计快照(保留供HMI查看)
+// VD312 : 已删除(原阀A内漏差值,2026-09-14废弃)
 // VD316 : 目标进水量(HMI设定)
 // T50   : 阀A开到位超时(100ms时基)
 // T51   : 阀A关阀后延时验证(100ms时基)
@@ -126,7 +128,7 @@ LD     SM0.0
 LPS
 AR>=   VD90, VD316                 // 当前进水量 ≥ 目标进水量
 R      Q0.2, 1                     // 关阀A
-// ★P4修复: 关阀快照也用MOVR(原MOVD虽能跑但语义不一致)
+R      Q0.5, 1                     // 关上缸NC球阀(★修复:之前只关阀A不关NC阀,导致S1→S2后Q0.5常开)
 MOVR   VD86, VD308                 // VD_FlowMeter_CloseSnapshot
 MOVB   5, VB260                    // VW260=5(关闭后验证)
 MOVB   0, VB261
@@ -141,46 +143,38 @@ LBL    6
 LD     SM0.0
 TON    T51, VW280
 
-// ★P1修复: 关阀后内漏检测也用MOVR/-R实数指令
-// 持续计算关阀后流量计差值 = VD86(当前) - VD308(关阀快照)
-LD     SM0.0
-MOVR   VD86, AC0
--R     VD308, AC0
-MOVR   AC0, VD312                  // VD_FlowMeter_CloseDelta
-
-
-// --- 延时到达后4项并行校验 ---
-LD     T51                         // 仅T51到达时执行
-LPS
+// --- 延时到达后3项并行校验 ---
+// ★ 2026-09-14: 删除原校验2(流量计差值法内漏,V301.1),仅保留流量开关/关到位相关校验
+//   关键修复: 每项必须在 T51 到达后才置位, 且用 ALD 维持 RLO 串联,
+//   防止比较指令(AR>/AR<=)切断 RLO 导致误触发
 
 // 校验1: 关阀后仍有流(流量开关A=ON)
-A      I0.0
+LD     T51                         // RLO=T51
+A      I0.0                        // RLO=T51 AND I0.0
 S      V301.0, 1                   // M_Alarm_ValveA_CloseFlow
 
-// 校验2: 内漏(流量计差值>0.1L, 说明仍在缓慢注水)
-LPS
-AR>    VD312, 0.1                  // 阈值0.1L=100ml, 现场整定
-S      V301.1, 1                   // M_Alarm_ValveA_Leak
-LPP
-
-// 校验3: 关到位反馈超时(I8.1=OFF)
-AN     I8.1
+// 校验2: 关到位反馈超时(I8.1=OFF)
+LD     T51
+AN     I8.1                        // RLO=T51 AND (NOT I8.1)
 S      V301.2, 1                   // M_Alarm_ValveA_CloseTimeout
 
-// 校验4: 关到位但仍有流(交叉验证)
-A      I8.1                        // 阀确实关到位
-A      I0.0                        // 但流量开关仍有流
+// 校验3: 关到位但仍有流(交叉验证)
+LD     T51
+A      I8.1                        // RLO=T51 AND I8.1
+A      I0.0                        // RLO=T51 AND I8.1 AND I0.0
 S      V301.3, 1                   // M_Alarm_ValveA_CloseLeak
-LPP
 
 
 // --- 校验结果判定 ---
-LD     T51                         // T51已到
+// 3项全通过: T51到 AND 流量开关OFF AND 关到位ON
+// 用 LPS/ALD 维持 AND 链
+LD     T51
 LPS
-// 4项全通过: 流量开关OFF AND 差值不增 AND 关到位ON
-AN     I0.0                        // 流量开关A=OFF
-AR<=   VD312, 0.1                  // 差值≤0.1L(不增长=无内漏)
-A      I8.1                        // 关到位=ON
+AN     I0.0                        // RLO=T51 AND (NOT I0.0)
+LPS
+A      I8.1                        // RLO=I8.1
+ALD                                // (NOT I0.0) AND I8.1
+ALD                                // AND T51
 // → 诊断正常完成
 MOVB   0, VB260                    // VW260=0空闲(等待下轮)
 MOVB   0, VB261
@@ -188,13 +182,14 @@ MOVB   1, VB266                    // Diag_Result_A=1正常完成
 R      T51, 1                      // 复位延时计时
 JMP    1
 LPP
+LPP
 
 // 任一项报警 → 转S_ERROR
-LD     T51
-A      V301.0                      // 4个报警标志任一为1
-O      V301.1
+// 先OR 3个报警标志, 最后再 AND T51, 防止旧的报警位在T51复位后误触发
+LD     V301.0                      // RLO=V301.0
 O      V301.2
 O      V301.3
+A      T51                         // RLO=(任意报警) AND T51
 MOVW   99, VW2                     // 转S_ERROR
 MOVB   2, VB266                    // 故障
 JMP    1
@@ -209,8 +204,8 @@ LBL    1
 // 说明:
 //   1. FC11调用本FC前需置VW260=1启动诊断
 //   2. FC11检查VW266: 0=进行中等待, 1=正常完成转S2, 2=故障(已转S_ERROR)
-//   3. VD316(目标进水量)由HMI设定或FC11计算写入
+//   3. VD316(目标进水量)由HMI设定或SBR25用户默认覆盖写入
 //   4. VW278=T50×10(开到位超时), VW280=T51×10(延时验证), 由FC11计算写入
-//   5. 内漏阈值0.1L为初值, 需现场整定
+//   5. 2026-09-14: 已删除流量计差值法内漏判定(V301.1),保留VD308快照供查看
 //   6. 所有JMP/LBL在单NETWORK内, 避免STEP7导入后跳转失效(P2修复)
 // ============================================================

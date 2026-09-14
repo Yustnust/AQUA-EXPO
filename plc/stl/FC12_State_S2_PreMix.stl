@@ -23,7 +23,8 @@ MOVR   VD120, VD336                // 复制到中间变量(避免修改VD_S2_Ta
 *R     10.0, VD336
 ROUND  VD336, AC0
 MOVW   AC0, VW252                  // VW252 = VD120×10
-R      T38, 1
+// 2026-09-14: R T38 已移到FC11转S2时执行,FC12每周期重复R会导致TON无法累计
+LD     SM0.0
 TON    T38, VW252                  // PT=VD_S2_Target×10(100ms时基)
 // 置上缸状态=满
 S      V1.6, 1

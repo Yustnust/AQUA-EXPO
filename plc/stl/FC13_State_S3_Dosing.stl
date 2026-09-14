@@ -395,6 +395,8 @@ R      M11.7, 1
 R      T102, 1
 MOVW   0, VW226
 MOVW   4, VW2                        // VW2=4(S3.5)
+LD     SM0.0
+R      T39, 1                        // 进入S3.5前复位T39,避免FC14每周期R导致TON不累计
 LPP
 
 
