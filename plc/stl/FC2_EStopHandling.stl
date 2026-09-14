@@ -69,6 +69,7 @@ MOVW   10, VW6                    // VW6=10
 LBL    1
 
 
+// 注: HMI停止命令由OB1 MAIN NETWORK 3统一处理(VW2>0即可停止),本FC不再处理
 // 注: 急停解除与系统复位逻辑在FC19(State_Error)中处理
 // 注: Q8.0报警灯光由FC3 AlarmHandling按VW6优先级统一管理(Story 1.6)
 // 注: I1.2接线逻辑:ON=动力回路接通,OFF=动力回路断开(与代码注释一致)

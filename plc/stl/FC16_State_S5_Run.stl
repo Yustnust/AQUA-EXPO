@@ -110,18 +110,7 @@ MOVW   8, VW2                      // →S7(VW2=8)
 LPP
 
 
-NETWORK 6
-// HMI手动停止命令
-LD     V0.2                         // CMD_Stop
-EU
-R      T41, 1
-R      T60, 1
-R      M10.7, 1                     // 清预规划触发标志
-MOVW   8, VW2                      // →S7(VW2=8)
-S      V1.2, 1                     // STA_StopAck握手
-R      V0.2, 1                     // 清停止命令
-
-
+// 注: HMI手动停止命令已迁移到FC2统一处理(S1~S6均响应),FC16不再单独处理
 // 注: 纠偏预规划由FC40完成,二次校正由FC11(S1完成)调用FC40
 // 注: S5与S1-S3.5并行:预规划触发转S1开始上缸配液,下缸继续实验至换水周期到转S6
 // 注: 断电恢复VD_S5_Elapsed重算由FC0_SysInit负责(Story 1.7)
