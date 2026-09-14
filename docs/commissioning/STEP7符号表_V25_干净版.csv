@@ -106,7 +106,7 @@ Alarm_SafetyRelay,V300.5,安全继电器/接触器故障(最高优先级)
 Alarm_ScheduleLag,V300.6,配液节奏严重滞后(三层纠偏用尽)
 Alarm_ScheduleLag_Warn,V300.7,配液节奏滞后提示(第2层顺延触发)
 Alarm_ValveA_CloseFlow,V301.0,阀A关后延时验证仍有流
-Alarm_ValveA_Leak,V301.1,阀A已关但流量计计量值仍增长(内漏)
+Alarm_ValveA_Leak,V301.1,已删除(原流量计差值法内漏判定,2026-09-14废弃)
 Alarm_ValveA_CloseTimeout,V301.2,阀A关到位反馈超时
 Alarm_ValveA_CloseLeak,V301.3,阀A关到位但仍有流(内漏)
 Alarm_ValveA_OpenTimeout,V301.4,阀A开到位反馈超时
@@ -150,7 +150,7 @@ VW250_ValveC_SubState,VW250,阀C诊断子状态
 VW252_ValveC_Result,VW252,阀C诊断结果
 VW254_ValveC_PT,VW254,阀C当前PT定时值
 VD308_Diag_Spare1,VD308,诊断数据迁移区1
-VD312_Diag_Spare2,VD312,诊断数据迁移区2
+VD312_Diag_Spare2,VD312,已删除(原阀A内漏差值,2026-09-14废弃)
 VD316_TargetInletVolume,VD316,目标进水量(FC30用)
 VD320_Diag_Spare3,VD320,诊断数据迁移区3
 VD324_Diag_Spare4,VD324,诊断数据迁移区4

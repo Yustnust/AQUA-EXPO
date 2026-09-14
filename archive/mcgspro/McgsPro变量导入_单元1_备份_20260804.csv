@@ -57,7 +57,7 @@
 51,U1_VW_Corr_Mode,SINGLE,读写VWB182,读写,V数据寄存器,16位 有符号二进制,182,,1,
 52,U1_VW_Corr_Result,SINGLE,读写VWB184,读写,V数据寄存器,16位 有符号二进制,184,,1,
 53,U1_VD_FlowMeter_CloseSnapshot,SINGLE,只读VDF308,只读,V数据寄存器,32位 浮点数,308,,1,
-54,U1_VD_LeakDiff,SINGLE,只读VDF312,只读,V数据寄存器,32位 浮点数,312,,1,
+54,U1_VD_LeakDiff,SINGLE,只读VDF312,只读,已删除(原阀A内漏差值VD312,2026-09-14废弃),32位 浮点数,312,,1,
 55,U1_VD_TargetInletVolume,SINGLE,只读VDF316,只读,V数据寄存器,32位 浮点数,316,,1,
 56,U1_VD_Timeout_ValveC_x10,SINGLE,只读VDF328,只读,V数据寄存器,32位 浮点数,328,,1,
 57,U1_VD_StepResolution,SINGLE,读写VDF350,读写,V数据寄存器,32位 浮点数,350,,1,

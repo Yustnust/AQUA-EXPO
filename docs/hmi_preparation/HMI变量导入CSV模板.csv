@@ -1,4 +1,4 @@
-﻿变量名,数据类型,PLC地址,读写属性,断电保持,注释,画面编号
+变量名,数据类型,PLC地址,读写属性,断电保持,注释,画面编号
 CMD_Start,BOOL,V0.0,RW,是,"启动实验(从S0进入S1)",3
 CMD_Pause,BOOL,V0.1,RW,是,"暂停实验(预留,状态机无暂停态)",3
 CMD_Stop,BOOL,V0.2,RW,是,"停止实验(进入S7实验结束)",3
@@ -64,7 +64,7 @@ M_Alarm_SafetyRelay,BOOL,V300.5,R,是,"安全继电器/接触器故障(最高级
 M_Alarm_ScheduleLag,BOOL,V300.6,R,是,"配液节奏严重滞后(三层纠偏用尽,节奏级)",5
 M_Alarm_ScheduleLag_Warn,BOOL,V300.7,R,是,"配液节奏滞后提示(第2层顺延触发,一般级)",5
 M_Alarm_ValveA_CloseFlow,BOOL,V301.0,R,是,"阀A关后延时验证仍有流(流量开关A=ON)",5
-M_Alarm_ValveA_Leak,BOOL,V301.1,R,是,"阀A已关但流量计计量值仍增长(内漏)",5
+M_Alarm_ValveA_Leak,BOOL,V301.1,R,是,"已删除(原流量计差值法内漏判定,2026-09-14废弃)",5
 M_Alarm_ValveA_CloseTimeout,BOOL,V301.2,R,是,"阀A关到位反馈(I8.1)超时",5
 M_Alarm_ValveA_CloseLeak,BOOL,V301.3,R,是,"阀A关到位但仍有流(内漏)",5
 M_Alarm_ValveA_OpenTimeout,BOOL,V301.4,R,是,"阀A开到位反馈(I8.0)超时",5
