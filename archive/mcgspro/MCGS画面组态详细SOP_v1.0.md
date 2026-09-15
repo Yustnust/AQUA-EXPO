@@ -8,6 +8,12 @@
 
 ---
 
+> **【v2.2 修订说明】** 本文档已按 v2.2 流程重构方案同步更新：
+> - 时间周期组面板删除 5 个 v2.1 三层纠偏输入框 (CycleSetpoint/PreMixTime_MinSafe/RestTime/RestTime_Min/CycleExtend_Max)
+> - 新增 3 个 v2.2 输入框 (24h_Target/Transfer_Margin/Safety_Margin)
+> - 趋势曲线表删除 T滚动 (VD112 v2.1 废弃变量)
+> - 详见 docs/v2.2_HMI档案文档影响评估报告_v1.0.md
+
 ## 第一章 总则
 
 ### 1.1 组态环境准备
@@ -594,14 +600,14 @@ End If
 | 4 | 文本显示 | lblS1Actual | (60,420,200,32) | 实测S1:xx.x s | U{X}_VD_S1_Actual |
 | 5 | 文本显示 | lblS4Actual | (280,420,200,32) | 实测S4:xx.x s | U{X}_VD_S4_Actual |
 | 6 | 文本显示 | lblS6Actual | (500,420,200,32) | 实测S6:xx.x s | U{X}_VD_S6_Actual |
-| 7 | 文本显示 | lblTRolling | (60,460,300,32) | 滚动T:xx.x s | U{X}_VD_T_Rolling |
-| 8 | 文本显示 | lblS6Rolling | (380,460,200,32) | S6滚动:xx.x s | U{X}_VD_S6_Rolling |
-| 9 | 文本显示 | lblCycleSetpoint | (600,460,300,32) | 换水周期:xx.x min | U{X}_VD_CycleSetpoint |
+| 7 | 文本显示 | lblTimerA_Display | (60,460,300,32) | 倒计时A:xx.x s | U{X}_VD_TimerA_Display (VD442) |
+| 8 | 文本显示 | lblTimerB_Display | (380,460,200,32) | 倒计时B:xx.x s | U{X}_VD_TimerB_Display (VD446) |
+| 9 | 文本显示 | lbl24h_CycleCount | (600,460,300,32) | 24h已换水:X 次 | U{X}_VW306_CycleCount (VW306) |
 | 10 | 文本显示 | lblVolTarget | (60,500,300,32) | 母液目标:xxx.x µL | U{X}_VD_Vol_Target |
 | 11 | 文本显示 | lblDoseSteps | (380,500,300,32) | 加药步数:XXXX 步 | U{X}_VD_Dose_Steps |
-| 12 | 文本显示 | lblS2Target | (60,530,300,32) | 本轮S2目标:xx.x s | U{X}_VD_S2_Target |
-| 13 | 文本显示 | lblRestTarget | (380,530,300,32) | 本轮S3.5目标:xx.x s | U{X}_VD_RestTime_Target |
-| 14 | 文本显示 | lblCycleExtend | (700,530,300,32) | 本轮允许空等:x.x min | U{X}_VD_CycleExtend_Target |
+| 12 | 文本显示 | lblState_UpTank | (60,530,300,32) | 上缸子状态:0/1/2/3/4 | U{X}_VW304_State_UpTank (VW304) |
+| 13 | 文本显示 | lblState_DownTank | (380,530,300,32) | 下缸主状态:0/5/6/7/8/99 | U{X}_VW2_StateMachine (VW2) |
+| 14 | 文本显示 | lblCycleTimeout | (700,530,300,32) | 周期超时报警 | U{X}_V303_6_CycleTimeout (V303.6) |
 
 #### 4.2.3 操作按钮面板（y=560~740，180px高）
 
@@ -910,13 +916,12 @@ Next
 
 | 序号 | 控件类型 | 名称 | 位置 | 标签 | 变量绑定 | 范围 |
 |---|---|---|---|---|---|---|
-| 1 | 输入框 | inp_CycleSetpoint | (380,180,100,32) | 换水周期 | U{X}_VD_CycleSetpoint (VD354) | 5~120 min |
+| 1 | 输入框 | inp_24h_Target | (380,180,100,32) | 24h目标换水次数 | U{X}_VD_24h_Target (VD414) | 1~48 次/24h |
 | 2 | 输入框 | inp_ExperimentTarget | (380,220,100,32) | 实验目标 | U{X}_VD_ExperimentTarget (VD24) | 60~1440 min |
-| 3 | 输入框 | inp_PreMixTime | (380,260,100,32) | 预循环时长 | U{X}_VD_PreMixTime (VD28) | 30~600 s |
-| 4 | 输入框 | inp_PreMixTime_MinSafe | (380,300,100,32) | 预循环下限 | U{X}_VD_PreMixTime_MinSafe (VD32) | 10~300 s |
-| 5 | 输入框 | inp_RestTime | (380,340,100,32) | 静止等候 | U{X}_VD_RestTime (VD36) | 15~300 s |
-| 6 | 输入框 | inp_RestTime_Min | (380,380,100,32) | 静止下限 | U{X}_VD_RestTime_Min (VD40) | 5~120 s |
-| 7 | 输入框 | inp_CycleExtend_Max | (380,420,100,32) | 顺延上限 | U{X}_VD_CycleExtend_Max (VD44) | 0~30 min |
+| 3 | 输入框 | inp_PreMixTime | (380,260,100,32) | S2搅拌时长 | U{X}_VD_PreMixTime (VD28) | 30~600 s |
+| 4 | 输入框 | inp_Transfer_Margin | (380,300,100,32) | S4转移宽限 | U{X}_VD_Transfer_Margin (VD426) | 10~120 s |
+| 5 | 输入框 | inp_Safety_Margin | (380,340,100,32) | 安全宽限 | U{X}_VD_Safety_Margin (VD430) | 5~60 s |
+| 6 | 输入框 | inp_S4WaitTimeout | (380,380,100,32) | S4等待超时 | U{X}_VD_S4WaitTimeout (VD382) | 60~600 s |
 
 #### 6.2.4 超时组面板
 
@@ -973,7 +978,7 @@ unit = SelectedUnit
 
 Dim cSet, cycleSet, timeoutA
 cSet = GetValue("U" & unit & "_VD_C_Set")
-cycleSet = GetValue("U" & unit & "_VD_CycleSetpoint")
+cycleSet = GetValue("U" & unit & "_VD_24h_Target")
 timeoutA = GetValue("U" & unit & "_VD_Timeout_ValveA")
 
 If cSet <= 0 Or cSet > 50 Then
@@ -1349,7 +1354,7 @@ V301.7、V303.7为预留扩展位，组态时指示灯置灰、文本标注"预�
 | 曲线 | 1号单元Y轴变量 |
 |---|---|
 | 实验时长 | U1_VD_ExperimentDuration_Accum (VD366) |
-| T滚动 | U1_VD_T_Rolling (VD112) |
+| 24h已换水次数 | U1_VW306_CycleCount (VW306) |
 | S6滚动 | U1_VD_S6_Rolling (VD116) |
 | S1实测 | U1_VD_S1_Actual (VD70) |
 | S4实测 | U1_VD_S4_Actual (VD74) |
@@ -1375,7 +1380,7 @@ unit = SelectedUnit
 !SetObjectProperty("TrendChart", "Curve1Name", "实验时长(min)")
 !SetObjectProperty("TrendChart", "Curve1Color", &HDBE349)  ' 蓝
 
-!SetObjectProperty("TrendChart", "Curve2Var", "U" & unit & "_VD_T_Rolling")
+!SetObjectProperty("TrendChart", "Curve2Var", "U" & unit & "_VW306_CycleCount")
 !SetObjectProperty("TrendChart", "Curve2Name", "T滚动(s)")
 !SetObjectProperty("TrendChart", "Curve2Color", &H60AE27)  ' 绿
 
