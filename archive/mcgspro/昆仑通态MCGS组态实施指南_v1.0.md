@@ -8,6 +8,10 @@
 
 ---
 
+> **【v2.2 修订说明】** 本文档已按 v2.2 流程重构方案同步更新：
+> - 趋势曲线 VD112 (T滚动, v2.1 废弃) → VW306 (24h已换水轮次)
+> - 详见 docs/v2.2_HMI档案文档影响评估报告_v1.0.md
+
 ## 一、McgsPro工程创建
 
 ### 1.1 软件准备
@@ -250,7 +254,7 @@ Sub OnLoad()
     prefix = "U" & unit & "_"
     
     Trend.SetCurve 1, prefix & "VD96", "实验时长", RGB(52,152,219)
-    Trend.SetCurve 2, prefix & "VD112", "T滚动", RGB(39,174,96)
+    Trend.SetCurve 2, prefix & "VW306", "24h已换水", RGB(39,174,96)
     Trend.SetCurve 3, prefix & "VD116", "S6滚动", RGB(243,156,18)
     Trend.SetCurve 4, prefix & "VD70", "S1实测", RGB(230,126,34)
     Trend.SetCurve 5, prefix & "VD74", "S4实测", RGB(155,89,182)

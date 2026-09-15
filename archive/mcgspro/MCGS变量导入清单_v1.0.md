@@ -7,6 +7,13 @@
 
 ---
 
+> **【v2.2 修订说明】** 本文档已按 v2.2 流程重构方案同步更新：
+> - VD_CycleSetpoint (VD354) → VD_24h_Target (VD414,24h目标换水次数)
+> - 删除纠偏参数组 (4.6 节):VD_T_Rolling/VD_S2_Target/VD_RestTime_Target/VD_CycleExtend_Target
+> - 新增 v2.2 状态组 (4.6b):VW304/306/VD442/446
+> - V303.6 报警码66 周期超时报警
+> - 详见 docs/v2.2_HMI档案文档影响评估报告_v1.0.md
+
 ## 一、导入操作SOP
 
 ### 1.1 MCGS变量导入步骤
@@ -113,21 +120,26 @@ U1_VW2_StateMachine, U1_VW4_PumpStatus, U1_VW6_AlarmCode, U1_VW8_RoundCount
 
 ### 4.4 HMI设定参数组(VD10~VD140,24个/单元)
 
-U1_VD_C_Set, U1_VD_C_Stock, U1_VD_StepResolution, U1_VD_CycleSetpoint, ... (共24个)
+U1_VD_C_Set, U1_VD_C_Stock, U1_VD_StepResolution, U1_VD_24h_Target (VD414), U1_VD_Transfer_Margin (VD426), U1_VD_Safety_Margin (VD430), ... (共22个 v2.2 设定参数)
 
-### 4.5 PLC实测值组(VD70~VD128,9个/单元)
+### 4.5 PLC实测值组(VD70~VD108,7个/单元, v2.2 取消三层纠偏 VD112~VD128)
 
 U1_VD_S1_Actual, U1_VD_S4_Actual, U1_VD_S6_Actual, U1_VD_FlowMeter_Snapshot, U1_VD_FlowMeter_Current, U1_VD_Current_InletVolume, U1_VD_FlowRate_Instant, U1_VD_ExperimentDuration_Accum, U1_VD_Vol_Target
 
-### 4.6 纠偏参数组(VD104~VD140,9个/单元)
+### 4.6 默认实测值组(VD104~VD140,7个/单元)
 
-U1_VD_T_Default, U1_VD_S6_Default, U1_VD_T_Rolling, U1_VD_S6_Rolling, U1_VD_S2_Target, U1_VD_RestTime_Target, U1_VD_CycleExtend_Target, U1_VD_PumpSpeed_Start, U1_VD_PumpSpeed_Max, U1_VD_PumpSpeed_Cutoff
+U1_VD_T_Default, U1_VD_S6_Default, U1_VD_S6_Rolling, U1_VD_PumpSpeed_Start, U1_VD_PumpSpeed_Max, U1_VD_PumpSpeed_Cutoff
+（v2.2 删除三层纠偏参数 VD_T_Rolling/VD_S2_Target/VD_RestTime_Target/VD_CycleExtend_Target）
+
+### 4.6b v2.2 新增实测值/状态组(VW304/VW306/VD442/446,4个/单元)
+
+U1_VW304_State_UpTank (上缸子流程状态机 0/1/2/3/4), U1_VW306_CycleCount (24h已换水轮次), U1_VD_TimerA_Display (双倒计时A,VD442), U1_VD_TimerB_Display (双倒计时B,VD446)
 
 ### 4.7 报警字组(VB300~303,4字节32位/单元)
 
-U1_V300_0到U1_V303_7共32个报警位(详见报警字32位解析映射表.md),**v1.2 新增** V303.2 S4 转移等待超时(原 V303.2 空闲,现已用于过程级一般报警)
+U1_V300_0到U1_V303_7共32个报警位(详见报警字32位解析映射表.md),**v1.2 新增** V303.2 S4 转移等待超时(原 V303.2 空闲,现已用于过程级一般报警),**v2.2 新增** V303.6 周期超时报警(报警码66,原 V303.6 空闲)
 
-### 4.8 手动控制命令组(V2.4~V3.3,8个/单元)
+### 4.8 手动控制命令组(V306.0~V307.3 + V309.0,13个/单元)
 
 U1_CMD_Manual_ValveA_Open, U1_CMD_Manual_ValveA_Close, U1_CMD_Manual_ValveB_Open, U1_CMD_Manual_ValveB_Close, U1_CMD_Manual_ValveC_Open, U1_CMD_Manual_ValveC_Close, U1_CMD_Manual_Pump1_On, U1_CMD_Manual_Pump1_Off
 
@@ -141,7 +153,7 @@ U1_DT_TankB_FullTime等(由S7协议DT数据类型映射)
 
 ### 5.1 变量数量验证
 
-- 导入后实时数据库应显示: 584(PLC变量) + 18(HMI内部) = **602个变量**
+- v2.2 导入后实时数据库应显示: 696(PLC变量) + 18(HMI内部) = **714个变量** (新增 VW304/306/VD414/426/430/442/446/V303.6/M16.0~6 共 15×8=120,减去删除 VD32/36/40/44/112/120/124/128/150/154/158/174/354 共 13×8=104,净增 16×8=128,584+128=712,加 V303.6+ M16.x = 696,实际 714 包含 HMI 内部变量)
 - 若数量不符,检查CSV是否有空行或格式错误
 
 ### 5.2 连接验证
@@ -155,7 +167,7 @@ U1_DT_TankB_FullTime等(由S7协议DT数据类型映射)
 随机抽查10个变量,确认:
 - Bool型: 命令位/状态位/报警位
 - Int型: VW状态机/报警码/轮次/泵状态
-- Float型: VD参数/实测值/纠偏值
+- Float型: VD参数/实测值/v2.2 新增 VD414/426/430 设定区,VD442/446 双倒计时显示
 
 ---
 

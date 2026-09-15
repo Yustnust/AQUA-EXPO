@@ -21,6 +21,11 @@
 
 ---
 
+> **【v2.2 修订说明】** 本文档已按 v2.2 流程重构方案同步更新：
+> - VD_CycleSet (VD354) → VD_24h_Target (VD414)
+> - 手动控制命令位 V2.4/V3.3 → V306.0~V307.3 + V309.0 (v1.2 迁移,v2.2 沿用)
+> - 详见 docs/v2.2_HMI档案文档影响评估报告_v1.0.md
+
 ## 一、搭建前准备
 
 ### 1.1 软件与环境
@@ -56,10 +61,10 @@
 | CMD_Ack | CMD_AckAlarm | V0.3 |
 | CMD_RelayAck | CMD_SafetyRelayAck | V0.7 |
 | VD_StepRes | VD_StepResolution | VD350 |
-| VD_CycleSet | VD_CycleSetpoint | VD354 |
+| VD_CycleSet | VD_24h_Target | VD414 |
 | VD_ExpTarget | VD_ExperimentTarget | VD24 |
-| Manual_ValveA | CMD_Manual_ValveA_Open / Close | V2.4 / V2.5 |
-| Manual_Pump1 | CMD_Manual_Pump1_On / Off | V3.2 / V3.3 |
+| Manual_ValveA | CMD_Manual_ValveA_Open / Close | V306.0 / V306.1 |
+| Manual_Pump1 | CMD_Manual_Pump1_On / Off | V306.6 / V306.7 |
 | Manual_Aspirate | MB_Pump_Aspirate | 保留 |
 | Manual_Reset | MB_Pump_Reset | 保留 |
 
