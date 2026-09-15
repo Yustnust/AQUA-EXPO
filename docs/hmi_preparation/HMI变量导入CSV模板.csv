@@ -84,6 +84,20 @@ M_Alarm_ValveC_CloseLeak,BOOL,V303.1,R,是,"阀C关到位但仍有流(内漏)",5
 M_Alarm_SyringePump,BOOL,V303.4,R,是,"注射泵通讯/动作异常(状态码报错或无响应)",5
 M_Alarm_RTC_Lost,BOOL,V303.5,R,是,"RTC时钟丢失(开机时间早于DT_TankB_FullTime)",5
 M_Alarm_Reserved_V303_7,BOOL,V303.7,R,是,"(预留扩展位)",5
+M_Alarm_Reserved_V303_7,BOOL,V303.7,R,是,"(预留扩展位,v2.2未占用)",5
 M_InitDone,BOOL,V304.0,R,是,"初始化完成标志(Story1.7新增,开机初始化完成置位)",7
 M_AlarmAckMode,BOOL,V200.0,RW,是,"报警确认模式(0=自动恢复,1=人工确认;漫溢/节奏滞后/继电器故障不受此模式影响)",4
 DT_TankB_FullTime,DT,DT10,R,是,"下缸变满时刻时间戳(阀B正常关闭完成后写入,用于换水周期计算与断电恢复重算)",2
+M_Alarm_CycleTimeout,BOOL,V303.6,R,是,"单轮换水周期超时(v2.2复用原流量开关瞬时异常位,FC40 NET 5触发,强制人工确认)",5
+State_UpTank,INT,VW304,R,是,"上缸配液子流程状态(0=空闲,1=S1进水,2=S2搅拌+加药,3=S3配完等待转移,4=已转移;v2.2新增)",2
+VW_CycleCount,INT,VW306,R,是,"已完成下缸换水次数(断电保持,v2.2新增)",4
+VD_24h_Target,REAL,VD414,RW,是,"HMI设定:24小时内下缸换水目标次数(默认24.0,v2.2新增)",4
+VD_Transfer_Margin,REAL,VD426,RW,是,"HMI设定:周期尾端转移余量s(默认30.0,v2.2新增)",4
+VD_Prep_Safety_Margin,REAL,VD430,RW,是,"HMI设定:上缸配液安全余量s(默认10.0,v2.2新增)",4
+VD_TimerA,REAL,VD442,R,否,"周期倒计时器A当前显示值s(由FC40每周期T46_PV/10写入,v2.2新增)",6
+VD_TimerB,REAL,VD446,R,否,"周期倒计时器B当前显示值s(由FC40每周期T48_PV/10写入,v2.2新增)",6
+M_TimerA_Active,BOOL,M16.0,R,否,"=1表示当前下缸轮次使用TimerA(T46),每轮S4后切换(v2.2新增)",7
+M_NextCycleTrigger,BOOL,M16.1,RW,否,"触发下一轮S1的脉冲标志(FC40置位,OB1/FC10响应,v2.2新增)",7
+M_S1_Started,BOOL,M16.2,R,否,"当前轮S1已开始标志(S1开始置1,S1完成清0,v2.2新增)",7
+M_S2_FirstEntry,BOOL,M16.3,R,否,"S2首次进入标志(用于启动T38搅拌,v2.2新增)",7
+

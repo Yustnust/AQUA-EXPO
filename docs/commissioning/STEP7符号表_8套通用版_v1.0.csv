@@ -148,6 +148,7 @@ M_Alarm_ValveC_CloseTimeout,V303.0,BOOL,阀C关到位反馈超时
 M_Alarm_ValveC_CloseLeak,V303.1,BOOL,阀C关到位但仍有流(内漏)
 M_Alarm_SyringePump,V303.4,BOOL,注射泵通讯/动作异常
 M_Alarm_RTC_Lost,V303.5,BOOL,RTC时钟丢失
+M_Alarm_CycleTimeout,V303.6,BOOL,单轮换水周期超时报警(v2.2复用原流量开关瞬时异常位,FC40 NET 5触发,强制人工确认)
 // === 报警确认模式 (V200.0) ===
 M_AlarmAckMode,V200.0,BOOL,报警确认模式(0=自动恢复1=人工确认)
 // === Modbus映射区 VW200~VW228 (注射泵+流量计寄存器) ===
@@ -211,6 +212,10 @@ M_TimerA_Active,M16.0,BOOL,=1表示当前下缸轮次使用TimerA
 M_NextCycleTrigger,M16.1,BOOL,触发下一轮S1的脉冲
 M_S1_Started,M16.2,BOOL,当前轮S1已开始标志
 M_S2_FirstEntry,M16.3,BOOL,S2首次进入标志
+T_MixTotal,T38,TIMER,S2搅拌总时长定时器(100ms时基,v2.2从FC12移至FC1A)
+T_CycleA,T46,TIMER,周期倒计时器A(100ms时基,v2.2新增)
+T_CycleB,T48,TIMER,周期倒计时器B(100ms时基,v2.2新增)
+T_S4_Transfer,T49,TIMER,S4转移实测计时器(100ms时基,v2.2新增)
 M11.2_PrevAlarm,M11.2,BOOL,FC3上一周期有报警标志(新报警检测用)
 M11.3_Edge_I0_0,M11.3,BOOL,FC3 I0.0边沿上一周期状态
 M11.4_Edge_I0_1,M11.4,BOOL,FC3 I0.1边沿上一周期状态
@@ -230,3 +235,11 @@ VW290_FC4_PollIndex,VW290,WORD,FC4轮询计数器(0=注射泵状态1=流量计2=
 VW292_FC4_RetryCount,VW292,WORD,FC4当前任务重试计数(0~3,超3次标记失败)
 VW294_FC4_PumpFailCount,VW294,WORD,FC4注射泵连续失败计数(≥5次进入降级模式)
 VW296_FC4_FlowFailCount,VW296,WORD,FC4流量计连续失败计数(≥5次进入降级模式)
+
+// === POU 清单 (v2.2 新增 FC1A,删除 FC12/FC13/FC14) ===
+// FC1A_State_S2_MixDose: 上缸S2搅拌+加药合并子状态(由原FC12+FC13合并,v2.2新建)
+// FC40_RhythmCorrection: 双倒计时器周期管理(v2.2重写)
+// 已删除(整体删除,源文件保留在archive/目录):
+//   FC12_State_S2_PreMix: 上缸S2预循环(并入FC1A)
+//   FC13_State_S3_Dosing: 上缸S3加药(并入FC1A)
+//   FC14_State_S35_Rest: 上缸S3.5静止等候(v2.2取消)

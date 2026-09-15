@@ -121,6 +121,7 @@ Alarm_ValveC_CloseTimeout,V303.0,阀C关到位反馈超时
 Alarm_ValveC_CloseLeak,V303.1,阀C关到位但仍有流(内漏)
 Alarm_SyringePump,V303.4,注射泵通讯/动作异常
 Alarm_RTC_Lost,V303.5,RTC时钟丢失
+Alarm_CycleTimeout,V303.6,单轮换水周期超时报警(v2.2复用原流量开关瞬时异常位,FC40 NET 5触发,强制人工确认)
 AlarmAckMode,V200.0,报警确认模式(0=自动恢复1=人工确认)
 MB_Pump_ForceStop,VW200,强停注射泵(40002 0=空闲1=强停)
 MB_Pump_Reset,VW202,复位注射泵(40003 0=空闲1=复位)
@@ -191,3 +192,11 @@ T_MixTotal,T38,S2搅拌总时长定时器(100ms时基)
 T_CycleA,T46,周期倒计时器A(100ms时基)
 T_CycleB,T48,周期倒计时器B(100ms时基)
 T_S4_Transfer,T49,S4转移实测计时器(100ms时基)
+
+// === POU 清单 (v2.2 新增 FC1A,删除 FC12/FC13/FC14) ===
+// FC1A_State_S2_MixDose: 上缸S2搅拌+加药合并子状态(由原FC12+FC13合并,v2.2新建)
+// FC40_RhythmCorrection: 双倒计时器周期管理(v2.2重写)
+// 已删除(整体删除,源文件保留在archive/目录):
+//   FC12_State_S2_PreMix: 上缸S2预循环(并入FC1A)
+//   FC13_State_S3_Dosing: 上缸S3加药(并入FC1A)
+//   FC14_State_S35_Rest: 上缸S3.5静止等候(v2.2取消)
