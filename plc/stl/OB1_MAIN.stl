@@ -112,10 +112,24 @@ CALL RhythmCorrection
 
 
 NETWORK 7
-// 状态机调度（急停时FC2会强制VW2=99）
+// 状态机调度(急停时FC2会强制VW2=99)
 // 每周期根据VW2调用对应状态FC
 LD     SM0.0
 CALL StateDispatcher
+
+
+NETWORK 7.5
+// 【v2.2 新增】上缸子流程调度(VW304)
+// 在 FC1 下缸调度之后调用,处理上缸 S1/S2 并行流程
+// VW304=1 → CALL FC11_State_S1_Inlet (上缸进水)
+// VW304=2 → CALL FC1A_State_S2_MixDose (上缸搅拌+加药合并,v2.2 新建)
+// VW304=0/3/4 → 无动作(空闲/配完等待/已转移由其他 FC 处理)
+LD     SM0.0
+AW=    VW304, 1
+CALL   State_S1_Inlet
+LD     SM0.0
+AW=    VW304, 2
+CALL   State_S2_MixDose
 
 
 NETWORK 8
