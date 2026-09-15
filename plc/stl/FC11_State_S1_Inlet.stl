@@ -26,6 +26,27 @@ R      T37, 1                      // 复位S1计时器
 R      V1.6, 1                     // 置上缸状态=空
 
 
+NETWORK 1.5
+// v2.2 双倒计时器启动: S1 开始时根据 M16.0 启动 T46 或 T48
+// PT = T_cycle × 10 (100ms 时基,T_cycle 由 FC40 NETWORK 1 计算在 VD186)
+//)
+LDW=   VW304, 1                    // 上缸进入 S1
+AN     M16.2                       // S1 尚未开始(防止重复启动)
+S      M16.2, 1                    // 置 S1 已开始标志
+LD     SM0.0
+MOVR   VD186, VD190                // T_cycle (秒)
+*R     10.0, VD190                 // → 100ms 时基
+ROUND  VD190, AC0
+LD     M16.0                       // 当前活动计时器为 TimerA?
+MOVW   AC0, VW286                  // PT 值
+TON    T46, VW286                  // 启动 TimerA
+LDN    M16.0                       // 当前活动计时器为 TimerB?
+MOVW   AC0, VW288
+TON    T48, VW288                  // 启动 TimerB
+// 注: VD186 由 FC40 NETWORK 1 每周期计算 (T_cycle = 86400/VD414 - VD426 - VD430)
+// 注: VW286/VW288 是 PT 转换中间,与 VW236 不同,不可冲突
+
+
 NETWORK 2
 // S1首次进入 - 流量计快照
 LD     M10.2
@@ -82,35 +103,26 @@ JMP    2                 // 否 → 结束本NETWORK
 LBL    1
 LD     SM0.0
 R      T37, 1                      // 停S1计时
-MOVW   T37, VW414                   // 暂存定时器值(16位整数)
-ITD    VW414, VD444                 // 整数→双整数
+MOVW   T37, VW236                   // 暂存定时器值(16位整数,v2.2从VW414迁至VW236)
+ITD    VW236, VD444                 // 整数→双整数
 DTR    VD444, VD70                  // 双整数→实数(VD_S1_Actual)
-// 【Story1.4】二次校正(7.3): 用S1实测值重核S2/S3.5目标
-// Available' = CycleSetpoint×60 + S6_Rolling - S5_Elapsed(已含S1耗时)
+// 【v2.2 修订 2026-09-15】删除原 Story1.4 二次校正 FC40 调用
+// v2.2 取消三层纠偏,FC40 改为双倒计时器周期管理(由 OB1 顶层调用)
+// 原 VD354/VW182/VW184/VD150/154/158 全部废弃
+// 保留位置仅为保留 S1 完成 → 转 S2/VW304=2 的状态机逻辑
+
+// 【v2.2 新增】S1 完成时清 M16.2 (S1 已开始标志) + 切 M16.0 (计时器切换, 由 FC17 S6 完成时切)
 LD     SM0.0
-MOVR   VD354, VD150                 // VD_CycleSetpoint(min)
-*R     60.0, VD150                 // →秒
-+R     VD116, VD150                // + VD_S6_Rolling
--R     VD178, VD150                // - VD_S5_Elapsed = Available'
-// Needed' = S2_Target(预规划已定) + S3_Estimate + RestTime_Target(预规划已定)
-MOVR   VD120, VD154                // VD_S2_Target
-+R     VD174, VD154                // + VD_S3_Estimate
-+R     VD124, VD154                // + VD_RestTime_Target = Needed'
-MOVW   1, VW182                    // 模式=1(二次校正)
-CALL RhythmCorrection
-// 更新VD_T_Rolling(取标称值,7.5): S1实测+S2标称+S3估算+S3.5标称
-LD     SM0.0
-MOVR   VD70, VD112                 // VD_S1_Actual
-+R     VD28, VD112                 // + VD_PreMixTime(S2标称)
-+R     VD174, VD112                // + VD_S3_Estimate
-+R     VD36, VD112                 // + VD_RestTime(S3.5标称) = 新VD_T_Rolling
+R      M16.2, 1                    // 清 S1 已开始标志
+R      M16.3, 1                    // 清 S2 首次进入标志(防御性)
+
 // 二次校正非人工介入(4) → 转S2
 LD     SM0.0
 AW<>   VW184, 4
 // 累加本次进水量到本次实验累计流量
 MOVR   VD90, AC0                   // AC0 = VD_Current_InletVolume
 +R     AC0, VD364                  // VD_ExpTotal_Flow += 本次进水量
-MOVW   2, VW2                      // 状态转移 S1→S2
+MOVW   2, VW304                    // 状态转移 S1→S2 (v2.2: VW304 上缸子流程而非 VW2)
 R      M10.2, 1                    // 清S1首次进入标志
 LD     SM0.0
 R      T38, 1                      // 进入S2前复位T38,避免FC12每周期R导致TON不累计

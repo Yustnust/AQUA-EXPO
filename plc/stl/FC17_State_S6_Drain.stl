@@ -50,8 +50,8 @@ LPS
 AW=    VW270, 1
 R      T42, 1                     // 停S6计时
 // 记录S6实测时长
-MOVW   T42, VW414                  // 暂存定时器值(16位整数)
-ITD    VW414, VD444                // 整数→双整数
+MOVW   T42, VW236                  // 暂存定时器值(16位整数,v2.2从VW414迁至VW236)
+ITD    VW236, VD444                // 整数→双整数
 DTR    VD444, VD78                 // 双整数→实数(VD_S6_Actual)
 // 更新VD_S6_Rolling(滚动实测)
 MOVR   VD78, VD116                // VD_S6_Rolling

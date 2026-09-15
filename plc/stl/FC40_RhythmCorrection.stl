@@ -1,155 +1,166 @@
 // ============================================================
 // 文件: FC40_RhythmCorrection.stl
-// 功能: 配液节奏三层纠偏核心算法
-// Story: AQEX-8 节奏纠偏 (AQEX-6 状态机骨架预留接口填充)
-// 说明: 纯数学算法,输入Available/Needed,输出S2/RestTime/CycleExtend目标+报警
-//       模式VW182: 0=预规划(S5上升沿触发), 1=二次校正(S1完成触发)
-//       三层额度: 第0层压缩静止等候→第1层压缩S2→第2层顺延周期
+// 功能: 双倒计时器周期管理(v2.2 重写,替代原三层纠偏)
+// Story: v2.2 流程重构 (替代 AQEX-8 节奏纠偏)
+// 说明: v2.2 取消原"三层自动纠偏"机制,改为通过 FC40 管理两个交替工作
+//       的周期倒计时器(T46/T48),严格保证 24h 换水次数硬约束
+// 调用: OB1 每周期调用(在 FC1 状态调度之前)
+// 输出: 触发 S6 排水 / 触发下一轮 S1 / 倒计时到 0 报警 / 双计时器显示值
 // ============================================================
 
 // 符号说明:
-// VW182 : VW_Corr_Mode       纠偏模式(0预规划/1二次校正)
-// VD150 : VD_Available       剩余可用时间(s) [调用方填入]
-// VD154 : VD_Needed          所需时间(s) [调用方填入]
-// VD158 : VD_Delta           缺口 = Needed - Available(s)
-// VD162 : VD_Layer0_Quota    第0层额度(静止等候可压缩量)
-// VD166 : VD_Layer1_Quota    第1层额度(S2可压缩量)
-// VD170 : VD_Layer2_Quota    第2层额度(周期可顺延量,s)
-// VD120 : VD_S2_Target       输出:本轮S2目标时长(s)
-// VD124 : VD_RestTime_Target 输出:本轮S3.5目标时长(s)
-// VD128 : VD_CycleExtend_Target 输出:允许下缸空等时长(min)
-// VW184 : VW_Corr_Result     输出:0进行中/1正常/2已纠偏/3滞后提示/4人工介入
-// V300.6: M_Alarm_ScheduleLag     严重滞后(人工介入)报警
-// V300.7: M_Alarm_ScheduleLag_Warn 滞后提示报警
-
+// VD414 : VD_24h_Target           24h 换水目标次数 (HMI 设定)
+// VD426 : VD_Transfer_Margin      周期尾端转移余量 (秒, 默认 30, HMI 设定)
+// VD430 : VD_Prep_Safety_Margin   上缸配液安全余量 (秒, 默认 10, HMI 设定)
+// VD186 : VD_T_cycle              本轮倒计时总时长(秒,内部中间变量)
+// VD190 : VD_T_cycle_x10          100ms 时基转换中间值(秒→100ms,内部中间变量)
+// VW190 : VW_Timer_Current_PV     当前活动计时器 PV (100ms 时基, 内部中间)
+// VW192 : VW_Timer_Current_PV     减法计算中间 (内部中间)
+// VW194 : VW_S6_actual_x10        S6_actual × 10 (100ms 时基, 内部中间)
+// VW196 : VW_S6_Default_x10       VD108 × 10 (100ms 时基, 内部中间)
+// VW200 : VW_Prep_Needed_x10      Prep_Needed × 10 (100ms 时基, 内部中间)
+// VD256 : VD_TimerA_Display       TimerA 显示值(秒, 从 T46_PV/10, 真空闲区)
+// VD244 : VD_TimerB_Display       TimerB 显示值(秒, 从 T48_PV/10, 真空闲区)
+// T46   : T_CycleA                周期倒计时器 A (100ms 时基)
+// T48   : T_CycleB                周期倒计时器 B (100ms 时基)
+// VW286 : VW_T46_PT               TimerA PT 转换值(由 FC11 计算写入)
+// VW288 : VW_T48_PT               TimerB PT 转换值(由 FC11 计算写入)
+// VW2   : 下缸主状态机
+// VW304 : 上缸配液子流程状态
+// VW6   : 当前报警码 (=0 才允许触发)
+// VW306 : 已完成换水次数
+// VD70  : S1 实测时长 (秒)
+// VD28  : S2 搅拌固定时长 (秒)
+// VD108 : S4/S6 默认时长 (秒)
+// VD116 : S6 滚动实测时长 (秒)
+// M16.0 : M_TimerA_Active         当前下缸轮次使用 TimerA 标志
+// M16.1 : M_NextCycleTrigger      触发下一轮 S1 脉冲
+// V303.6: M_Alarm_CycleTimeout    单轮换水周期超时报警 (v2.2 复用原流量开关瞬时异常位)
 
 NETWORK 1
-// 计算三层额度 + 清结果
+// 计算 T_single 和 T_cycle
+// T_single = 86400.0 / VD414          // 单次目标周期(秒)
+// T_cycle = T_single - VD426 - VD430  // 实际倒计时总时长(秒)
 LD     SM0.0
-MOVW   0, VW184                    // 清纠偏结果
-// 第0层额度 = VD_RestTime - VD_RestTime_Min
-MOVR   VD36, VD162                 // VD_RestTime
--R     VD40, VD162                 // - VD_RestTime_Min
-// 第1层额度 = VD_PreMixTime - VD_PreMixTime_MinSafe
-MOVR   VD28, VD166                 // VD_PreMixTime
--R     VD32, VD166                 // - VD_PreMixTime_MinSafe
-// 第2层额度 = VD_CycleExtend_Max × 60 (min→s)
-MOVR   VD44, VD170                 // VD_CycleExtend_Max(min)
-*R     60.0, VD170                 // →秒
+MOVR   86400.0, VD186
+/R     VD414, VD186                 // T_single
+-R     VD426, VD186                 // - Transfer_Margin
+-R     VD430, VD186                 // - Safety_Margin = T_cycle
 
 
 NETWORK 2
-// 判断是否需要纠偏(Available >= Needed → 无需纠偏)
+// T_cycle <= 0 检查:周期参数过激进,报警并禁止启动
 LD     SM0.0
-AR>=   VD150, VD154                // Available >= Needed ?
-JMP    1               // 是 → 无需纠偏
-// 否 → 继续计算缺口
+AR>    VD186, 0.0                   // T_cycle > 0 ?
+JMP    10                          // 是 → 正常路径
+// 否 → 参数过激进
+LD     SM0.0
+S      V303.6, 1                   // M_Alarm_CycleTimeout=1(强制人工确认)
+JMP    9                           // → 跳到本FC末尾
+
+LBL    10
+// 正常路径继续
+LD     SM0.0
+MOVR   VD186, VD190                // T_cycle 备份
+*R     10.0, VD190                 // → 100ms 时基
 
 
 NETWORK 3
-// 计算缺口Delta + 第0层扣减(压缩静止等候)
-LD     SM0.0
-// Delta = Needed - Available
-MOVR   VD154, VD158                // Delta = Needed
--R     VD150, VD158                // - Available
-// 第0层判断: Delta <= Layer0_Quota ?
-LD     SM0.0
-AR<=   VD158, VD162                // Delta <= 第0层额度 ?
-JMP    2                   // 是 → 第0层够
-// 否 → 第0层用满,Delta减去第0层额度,继续第1层
-LD     SM0.0
-MOVR   VD40, VD124                 // VD_RestTime_Target = VD_RestTime_Min(用满)
-MOVR   VD158, AC0                  // 暂存Delta
--R     VD162, AC0                  // Delta - Layer0_Quota
-MOVR   AC0, VD158                  // 更新Delta
-JMP    3                     // → 第1层
-
-LBL    2
-LD     SM0.0
-MOVR   VD36, VD124                 // VD_RestTime_Target = VD_RestTime - Delta
--R     VD158, VD124
-MOVR   VD28, VD120                 // VD_S2_Target = VD_PreMixTime(不动)
-MOVR   0.0, VD128                  // VD_CycleExtend_Target = 0
-MOVB   2, VB184                   // Result=2(已纠偏)
-JMP    4
+// 选择当前活动计时器当前值(取 T46 或 T48 的 PV,100ms 时基)
+// VW190 = 当前活动计时器 PV
+LD     M16.0                       // 当前使用 TimerA?
+MOVW   T46_PV, VW190               // → 取 TimerA 当前 PV
+LDN    M16.0                       // 当前使用 TimerB?
+MOVW   T48_PV, VW190               // → 取 TimerB 当前 PV
 
 
 NETWORK 4
-// 第1层扣减(压缩S2预循环)
-LBL    3
+// S6 触发条件
+// 当前 PV <= S6_actual × 10 时,触发 S6 排水
+// S6_actual: 首轮用 VD108(默认),后续用 VD116(滚动实测)
 LD     SM0.0
-AR<=   VD158, VD166                // Delta <= 第1层额度 ?
-JMP    5                   // 是 → 第1层够
-// 否 → 第1层用满,Delta减去第1层额度,继续第2层
-LD     SM0.0
-MOVR   VD32, VD120                 // VD_S2_Target = VD_PreMixTime_MinSafe(用满)
-MOVR   VD158, AC0                  // 暂存Delta
--R     VD166, AC0                  // Delta - Layer1_Quota
-MOVR   AC0, VD158                  // 更新Delta
-JMP    6                     // → 第2层
+MOVR   VD116, VD190                // S6_actual = VD116(滚动实测)
+AW=    VW306, 0                    // 首次换水?
+MOVR   VD108, VD190                // → S6_actual = VD108(默认)
 
-LBL    5
 LD     SM0.0
-MOVR   VD28, VD120                 // VD_S2_Target = VD_PreMixTime - Delta
--R     VD158, VD120
-MOVR   0.0, VD128                  // VD_CycleExtend_Target = 0
-MOVB   2, VB184                   // Result=2(已纠偏)
-JMP    4
+*R     10.0, VD190                 // S6_actual × 10 (100ms 时基)
+ROUND  VD190, AC0
+MOVW   AC0, VW194                  // VW194 = S6_actual × 10
+
+LD     SM0.0
+MOVW   VW190, VW192                // VW192 = 当前 PV
+-I     VW194, VW192                // PV - S6_actual×10
+AR<=   VW192, 0                    // PV <= S6_actual×10 ?
+
+LDW=   VW2, 6                      // 当前在 S5
+AW=    VW6, 0                      // 无报警
+OLD
+ALD
+MOVW   7, VW2                      // 转 S6 排水
 
 
 NETWORK 5
-// 第2层扣减(顺延换水周期)
-LBL    6
+// 下一轮 S1 触发条件
+// 当前 PV <= Prep_Needed × 10 时,触发下一轮 S1 (M16.1 脉冲)
+// Prep_Needed = VD70 + VD28 + VD430 (S1 实测 + S2 固定 + 上缸安全余量)
 LD     SM0.0
-AR<=   VD158, VD170                // Delta <= 第2层额度(总顺延上限) ?
-JMP    7                   // 是 → 顺延可覆盖
-// 否 → 三层额度全部用尽,人工介入
-LD     SM0.0
-MOVB   4, VB184                   // Result=4(人工介入)
-S      V300.6, 1                  // M_Alarm_ScheduleLag(严重滞后,强制人工确认)
-MOVW   99, VW2                    // 转S_ERROR(VW2=99)
-JMP    4
+MOVR   VD70, VD190                 // VD_S1_Actual
++R     VD28, VD190                 // + VD_PreMixTime(固定)
++R     VD430, VD190                // + Prep_Safety_Margin
+*R     10.0, VD190                 // → 100ms 时基
+ROUND  VD190, AC0
+MOVW   AC0, VW200                  // VW200 = Prep_Needed × 10
 
-LBL    7
-// 顺延周期可覆盖,触发滞后提示报警
 LD     SM0.0
-MOVR   VD158, VD128                // VD_CycleExtend_Target = Delta(s)
-/R     60.0, VD128                 // →min写回
-MOVB   3, VB184                   // Result=3(滞后提示)
-// 滞后提示报警:预规划已置位则不重复(二次校正微调场景)
-LD     SM0.0
-AN     V300.7                      // 预规划未触发过滞后提示?
-S      V300.7, 1                   // 才置位(避免二次校正重复报警)
-JMP    4
+MOVW   VW190, VW192                // VW192 = 当前 PV
+-I     VW200, VW192                // PV - Prep_Needed×10
+AR<=   VW192, 0                    // PV <= Prep_Needed×10 ?
+
+LDW=   VW304, 0                    // 上缸空闲(可启动下一轮)
+AW=    VW6, 0                      // 无报警
+ALD
+S      M16.1, 1                    // 触发下一轮 S1 脉冲
 
 
 NETWORK 6
-// 无需纠偏分支(Available >= Needed)
-LBL    1
-LD     SM0.0
-MOVR   VD28, VD120                 // VD_S2_Target = VD_PreMixTime(标称)
-MOVR   VD36, VD124                 // VD_RestTime_Target = VD_RestTime(标称)
-MOVR   0.0, VD128                  // VD_CycleExtend_Target = 0(无需顺延)
-MOVB   1, VB184                   // Result=1(正常无需纠偏)
+// 倒计时到 0 报警 (V303.6)
+// TimerA/B 计时完成 + 不在 S7 → 报警
+LD     M16.0                       // 当前使用 TimerA?
+A      T46                         // TimerA 计时完成?
+LDN    M16.0                       // 当前使用 TimerB?
+A      T48                         // TimerB 计时完成?
+OLD
+AN     VW2.7                       // VW2 != 8 (不在 S7)
+S      V303.6, 1                   // 单轮换水周期超时报警
 
 
 NETWORK 7
-// 纠偏计算结束
-LBL    4
-// 返回调用方(FC16预规划 或 FC11二次校正)
-// 调用方检查VW184:
-//   1=正常 → 按标称执行
-//   2=已纠偏 → 按Target执行
-//   3=滞后提示 → 按Target执行,HMI显示顺延量
-//   4=人工介入 → FC40已转S_ERROR,调用方本周期结束
+// 双倒计时器显示值写入 (HMI 读取)
+// 真空闲区 VD256/VD244 (从 VD442/446 迁移,v2.2)
+LD     M16.0                       // 当前使用 TimerA?
+MOVW   T46_PV, AC0
+/I     +10, AC0
+ITD    AC0, VD256                  // VD_TimerA_Display = T46_PV/10 (秒)
+LDN    M16.0                       // 当前使用 TimerB?
+MOVW   T48_PV, AC0
+/I     +10, AC0
+ITD    AC0, VD244                  // VD_TimerB_Display = T48_PV/10 (秒)
+
+
+LBL    9
+// 本FC结束
+// 返回 OB1 (OB1 在调度 FC1 之前调用本FC,保证 M16.1 下一轮 S1 触发脉冲及时响应)
 
 
 // ============================================================
 // 文件结束
+// ============================================================
 // 说明:
-//   1. 本FC为纯数学算法,不读取RTC/不操作阀门,时间由调用方(FC16)准备
-//   2. AR>=/AR<=为A型浮点比较,前需LD压栈,JMP为条件跳转(栈顶=1跳转)
-//   3. V300.6(严重滞后)由本FC置位,转S_ERROR;复位由FC3人工确认后执行
-//   4. V300.7(滞后提示)二次校正不重复置位,体现7.3"不重复触发滞后报警"
-//   5. 单位:内部统一秒,VD_CycleExtend_Target输出min(÷60写回)
+//   1. 调用时机: OB1 在 FC22(RTC Sync) 之后、FC1(状态调度) 之前调用
+//   2. 计时器启动: S1 开始时由 FC11 根据 M16.0 启动 T46 或 T48 (PT = T_cycle×10)
+//   3. 计时器切换: S4 完成后由 FC17 切 M16.0 = NOT M16.0
+//   4. 报警 V303.6: 不受 V200.0 模式影响,必须 V0.3 人工确认
+//   5. T_cycle ≤ 0: 直接报警并跳过本周期其他计算(跳到 LBL 9)
+//   6. 显示值 VD256/VD244: 真空闲区(原 VD442/VD446 与 VD440/444 字节重叠已迁移)
 // ============================================================

@@ -14,7 +14,7 @@
 // ============================================================
 
 // 符号说明:
-// V304.0: M_InitDone        初始化完成标志(断电保持)
+// M16.4: M_InitDone        初始化完成标志(断电保持;v2.2迁移自V304.0,2026-09-15)
 // VW198 : VW_Init_Step      初始化步骤号(调试用,0=完成)
 // ColdStart  : SBR25 冷启动路径
 // WarmRecovery: SBR26 断电恢复路径
@@ -52,15 +52,16 @@ R      T104, 1            // 清回零冷却定时器
 NETWORK 2
 // 冷启/断电路径调度 + 完成汇合
 // 判断冷启动/断电恢复
-// V304.0=1 → JMP 1 (LBL 1: CALL WarmRecovery → JMP 2)
-// V304.0=0 → 冷启动 → CALL ColdStart → RET回 FC0 继续到 LBL 2
+// M16.4=1 → JMP 1 (LBL 1: CALL WarmRecovery → JMP 2)
+// M16.4=0 → 冷启动 → CALL ColdStart → RET回 FC0 继续到 LBL 2
+// 【v2.2迁移 2026-09-15】M_InitDone 从 V304.0 迁至 M16.4（位对象，无字节级冲突）
 
-LD     V304.0
-JMP    1                  // V304.0=1 → 跳断电恢复路径
+LD     M16.4
+JMP    1                  // M16.4=1 → 跳断电恢复路径
 
 // ========== 冷启动路径 ==========
 LD     SM0.1
-AN     V304.0             // 冷启动(V304.0=0)
+AN     M16.4              // 冷启动(M16.4=0)
 CALL   ColdStart          // SBR25: 出厂硬编码 + 用户默认覆盖 + TODR + 安全初始化
                           // ColdStart 自然结束返回
 LD     SM0.0
@@ -75,7 +76,7 @@ CALL   WarmRecovery       // SBR26: TODR + RTC检测 + BCD转秒 + 状态机恢�
 // ========== 初始化完成汇合 ==========
 LBL    2
 LD     SM0.1
-S      V304.0, 1          // M_InitDone=1(初始化完成,断电保持)
+S      M16.4, 1           // M_InitDone=1(初始化完成,断电保持;从V304.0迁移)
 MOVW   0, VW198           // 步骤=0(完成)
 // 汇合后自然结束 FC0,返回 OB1
 
