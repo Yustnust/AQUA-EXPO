@@ -151,6 +151,8 @@
 145,U1_UD_VD358_TimeoutA,SINGLE,读写VDF512,读写,V数据寄存器,32位 浮点数,512,,1,
 146,U1_UD_VD362_TimeoutB,SINGLE,读写VDF516,读写,V数据寄存器,32位 浮点数,516,,1,
 147,U1_UD_VD452_ManualDose,SINGLE,读写VDF528,读写,V数据寄存器,32位 浮点数,528,,1,
-148,U1_STA_InitDone,INTEGER,只读V001.1,只读,V数据寄存器,通道的第01位,1,,1,PLC初始化完成标志(原M16.4)
-149,U1_STA_RTU1_Online,INTEGER,只读V001.2,只读,V数据寄存器,通道的第02位,1,,1,注射泵RTU在线标志(原M16.5)
-150,U1_STA_RTU2_Online,INTEGER,只读V000.1,只读,V数据寄存器,通道的第01位,0,,1,流量计RTU在线标志(原M16.6)
+148,U1_VD_S4WaitTimeout,SINGLE,读写VDF448,读写,V数据寄存器,32位 浮点数,448,,1,
+149,U1_UD_VD448_S4WaitTimeout,SINGLE,读写VDF524,读写,V数据寄存器,32位 浮点数,524,,1,
+150,U1_STA_InitDone,INTEGER,只读V001.1,只读,V数据寄存器,通道的第01位,1,,1,PLC初始化完成标志(原M16.4)
+151,U1_STA_RTU1_Online,INTEGER,只读V001.2,只读,V数据寄存器,通道的第02位,1,,1,注射泵RTU在线标志(原M16.5)
+152,U1_STA_RTU2_Online,INTEGER,只读V000.1,只读,V数据寄存器,通道的第01位,0,,1,流量计RTU在线标志(原M16.6)
