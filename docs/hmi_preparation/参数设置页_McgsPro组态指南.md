@@ -1,8 +1,8 @@
 # 参数设置页（画面4）McgsPro 组态指南
 
-**版本**: v2.7（整合版）
+**版本**: v2.8（整合版）
 **创建日期**: 2026-08-23
-**更新日期**: 2026-08-25 (v2.7: 合并远程 v1.2 新增 S4 等待时长 VD380 只读显示 + S4 等待超时阈值 VD382 可调；v2.6: 修正v2.5——该版本McgsPro中!MsgBox/!OpenWindow/!SetWindow均不兼容（字符串参数被识别为非法或类型不匹配），二次确认改为"页面内隐藏确认面板"方案，通过控件Visible属性控制显示/隐藏。v2.5: 修正v2.4——McgsPro该版本安全属性页无"操作确认"，改回"输入框绑定Param_*缓冲变量+保存按钮汇总写入PLC"；v2.4: 参数写入架构改为"输入框直接绑定PLC变量+操作确认"；v2.3: T/S6改回HMI设定参数（时间周期组）；VD_T_Default由VD104迁移至VD144——VD104与VD102字节重叠VB104~105，FC13/FC21写加药步数会破坏T值；实验启动时FC10播种VD112←VD144、VD116←VD108)
+**更新日期**: 2026-09-16 (v2.8: 修正 v2.7 地址错位 — 原文中 `VD380 / VD382` 是文档编写时虚构、未与 PLC v2.2 真实代码核对的地址。本版本按 PLC 实际代码 `FC15_State_S4_Transfer.stl` L53 `MOVR VD448, VD324` 与 `SBR25_ColdStart.stl` L44/L66 把 `VD_S4Wait_Time` 只读改正为 `VD444`（S4 入口 PLC 内部累加器）、`VD_S4WaitTimeout` 可设改正为 `VD448`（FC15 仍以 VD448 作 T61 PT，超时置 V303.2）。v2.7 之前的地址同义保留名词性叙述但代码侧已对齐 PLC 真值表；v2.7: 合并远程 v1.2 新增 S4 等待时长 VD444 只读显示 + S4 等待超时阈值 VD448 可调；v2.6: 修正v2.5——该版本McgsPro中!MsgBox/!OpenWindow/!SetWindow均不兼容（字符串参数被识别为非法或类型不匹配），二次确认改为"页面内隐藏确认面板"方案，通过控件Visible属性控制显示/隐藏。v2.5: 修正v2.4——McgsPro该版本安全属性页无"操作确认"，改回"输入框绑定Param_*缓冲变量+保存按钮汇总写入PLC"；v2.4: 参数写入架构改为"输入框直接绑定PLC变量+操作确认"；v2.3: T/S6改回HMI设定参数（时间周期组）；VD_T_Default由VD104迁移至VD144——VD104与VD102字节重叠VB104~105，FC13/FC21写加药步数会破坏T值；实验启动时FC10播种VD112←VD144、VD116←VD108)
 **说明**: 本文件整合了项目中所有关于参数设置页的组态工作，包括画面布局、控件属性、脚本代码、安全机制等，作为McgsPro组态工程师的唯一参考。
 
 **配套文档**:
@@ -176,8 +176,8 @@
 | 编号 | 控件类型 | 名称 | 标签 | 绑定变量 | 范围 | 单位 |
 |---|---|---|---|---|---|---|
 | 4-040 | 标签+输入框 | lbl_CycleSet / num_CycleSet | 换水周期 | U{N}_VD_CycleSetpoint | 1~1440 | min |
-| 4-040a | 标签 | lbl_S4WaitTime | S4等待时长(只读) | U{N}_VD_S4Wait_Time(VD380) | 0~86400 | s |
-| 4-040b | 标签+输入框 | lbl_S4WaitTimeout / num_S4WaitTimeout | S4等待超时阈值 | U{N}_VD_S4WaitTimeout(VD382) | 60~7200 | s |
+| 4-040a | 标签 | lbl_S4WaitTime | S4等待时长(只读) | U{N}_VD_S4Wait_Time(VD444) | 0~86400 | s |
+| 4-040b | 标签+输入框 | lbl_S4WaitTimeout / num_S4WaitTimeout | S4等待超时阈值 | U{N}_VD_S4WaitTimeout(VD448) | 60~7200 | s |
 | 4-041 | 标签+输入框 | lbl_ExpTarget / num_ExpTarget | 实验时长目标 | U{N}_VD_ExperimentTarget | 1~10000 | min |
 | 4-042 | 标签+输入框 | lbl_PreMix / num_PreMix | 预循环标称S2 | U{N}_VD_PreMixTime | 1~600 | s |
 | 4-043 | 标签+输入框 | lbl_PreMixMin / num_PreMixMin | 预循环压缩下限 | U{N}_VD_PreMixTime_MinSafe | 1~300 | s |
@@ -968,8 +968,8 @@ LoginLevel >= X AND U{N}_VW2_StateMachine == 0
 | VD_CycleExtend_Max | 5.0 | min | VD44 |
 | VD_T_Default | 300.0 | s | VD144 |
 | VD_S6_Default | 180.0 | s | VD108 |
-| VD_S4Wait_Time | 0.0 | s | VD380 |
-| VD_S4WaitTimeout | 1800.0 | s | VD382 |
+| VD_S4Wait_Time | 0.0 | s | VD444 |
+| VD_S4WaitTimeout | 1800.0 | s | VD448 |
 | VD_Timeout_ValveA | 60.0 | s | VD358 |
 | VD_Timeout_ValveB | 60.0 | s | VD362 |
 | VD_Timeout_ValveC | 60.0 | s | VD54 |
@@ -1022,7 +1022,7 @@ LoginLevel >= X AND U{N}_VW2_StateMachine == 0
 | VD366 | VD_ExperimentDuration_Accum | min | S5运行中自动累加 | 实验时长累计值，HMI只读显示 |
 | VD112 | VD_T_Rolling | s | S1实测+S2标称+S3估算+S3.5标称 | 滚动实测T，首轮由VD144播种，之后自动学习，HMI只读显示 |
 | VD116 | VD_S6_Rolling | s | S6实测 | 滚动实测S6排水时长，首轮由VD108播种，之后自动学习，HMI只读显示 |
-| VD380 | VD_S4Wait_Time | s | S4 等待期间 PLC 自动累加(每秒+1),S4 完成时清零 | S4 入口 V1.7=1 持续时间,HMI 只读显示,操作员可监控 S4 等待 |
+| VD444 | VD_S4Wait_Time | s | S4 等待期间 PLC 自动累加(每秒+1),S4 完成时清零 | S4 入口 V1.7=1 持续时间,HMI 只读显示,操作员可监控 S4 等待 |
 
 **设计说明**：
 - T(VD144)/S6(VD108)为HMI设定参数（时间周期组4-047/4-048），**仅首轮生效**：实验启动时FC10播种VD112←VD144、VD116←VD108，首轮完成后由实测值自动学习覆盖
