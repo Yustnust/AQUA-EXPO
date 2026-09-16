@@ -5,6 +5,7 @@ jira_token.ps1
 *.tmp
 commit_msg.txt
 __commit_msg.txt
+__tmp.txt
 
 # Python cache
 __pycache__/
