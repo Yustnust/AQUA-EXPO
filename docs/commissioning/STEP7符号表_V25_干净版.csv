@@ -1,4 +1,4 @@
-﻿符号,地址,注释
+符号,地址,注释
 DI_FlowSwitch_A,I0.0,流量开关A-阀A进水
 DI_FlowSwitch_B,I0.1,流量开关B-上下转移
 DI_FlowSwitch_C,I0.2,流量开关C-下缸排水
@@ -138,15 +138,27 @@ MB_Pump_Position,VW222,注射泵位置反馈(41007 半步)
 MB_Flow_Avg,VD224,平均流速(0x000F 近1分钟)
 MB_Flow_Unit,VW228,流量单位编码(0x0012 默认0x03=升L)
 DT_TankB_FullTime,DT10,下缸变满时刻时间戳(断电恢复用)
-VW230_ValveA_SubState,VW230,阀A诊断子状态
-VW232_ValveA_Result,VW232,阀A诊断结果
-VW234_ValveA_PT,VW234,阀A当前PT定时值
-VW240_ValveB_SubState,VW240,阀B诊断子状态
-VW242_ValveB_Result,VW242,阀B诊断结果
-VW244_ValveB_PT,VW244,阀B当前PT定时值
-VW250_ValveC_SubState,VW250,阀C诊断子状态
-VW252_ValveC_Result,VW252,阀C诊断结果
-VW254_ValveC_PT,VW254,阀C当前PT定时值
+VW230_ValveA_SubState_Old,VW230,阀A诊断子状态(旧版v2.1保留,请勿与新地址混用)
+VW232_ValveA_Result_Old,VW232,阀A诊断结果(旧版v2.1保留)
+VW234_ValveA_PT_Old,VW234,阀A当前PT定时值(旧版v2.1保留)
+VW240_ValveB_SubState_Old,VW240,阀B诊断子状态(旧版v2.1保留)
+VW242_ValveB_Result_Old,VW242,阀B诊断结果(旧版v2.1保留)
+VW244_ValveB_PT_Old,VW244,阀B当前PT定时值(旧版v2.1保留)
+VW250_ValveC_SubState_Old,VW250,阀C诊断子状态(旧版v2.1保留)
+VW252_ValveC_Result_Old,VW252,阀C诊断结果(旧版v2.1保留)
+VW254_ValveC_PT_Old,VW254,阀C当前PT定时值(旧版v2.1保留)
+VW260_ValveA_SubState,VW260,阀A诊断子状态(v2.2)
+VW266_ValveA_Result,VW266,阀A诊断结果(v2.2)
+VW278_ValveA_OpenTimeout_PT,VW278,阀A开到位超时PT(VD358×10)
+VW280_ValveA_Verify_PT,VW280,阀A关阀延时验证PT(VD66×10)
+VW262_ValveB_SubState,VW262,阀B诊断子状态(v2.2)
+VW268_ValveB_Result,VW268,阀B诊断结果(v2.2)
+VW274_ValveB_PT,VW274,阀B当前PT定时值(VD362×10)
+VW264_ValveC_SubState,VW264,阀C诊断子状态(v2.2)
+VW270_ValveC_Result,VW270,阀C诊断结果(v2.2)
+VW276_ValveC_PT,VW276,阀C当前PT定时值(VD54×10)
+VW290_S4_Transfer_PT,VW290,S4转移计时器T49 PT值
+VW292_S6_Drain_PT,VW292,S6排水计时器T42 PT值
 VD308_Diag_Spare1,VD308,诊断数据迁移区1
 VD312_Diag_Spare2,VD312,已删除(原阀A内漏差值,2026-09-14废弃)
 VD316_TargetInletVolume,VD316,目标进水量(FC30用)
