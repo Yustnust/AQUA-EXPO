@@ -1,4 +1,4 @@
-// ============================================================
+﻿// ============================================================
 // 文件: FC40_RhythmCorrection.stl
 // 功能: 双倒计时器周期管理(v2.2 重写,替代原三层纠偏)
 // Story: v2.2 流程重构 (替代 AQEX-8 节奏纠偏)
@@ -17,10 +17,10 @@
 // VW190 : VW_Timer_Current_PV     当前活动计时器 PV (100ms 时基, 内部中间)
 // VW192 : VW_Timer_Current_PV     减法计算中间 (内部中间)
 // VW194 : VW_S6_actual_x10        S6_actual × 10 (100ms 时基, 内部中间)
-// VW196 : VW_S6_Default_x10       VD108 × 10 (100ms 时基, 内部中间)
+// VW196 : (已废弃,VD108删除后不再使用)
 // VW200 : VW_Prep_Needed_x10      Prep_Needed × 10 (100ms 时基, 内部中间)
-// VD256 : VD_TimerA_Display       TimerA 显示值(秒, 从 T46_PV/10, 真空闲区)
-// VD244 : VD_TimerB_Display       TimerB 显示值(秒, 从 T48_PV/10, 真空闲区)
+// VD256 : VD_TimerA_Display       TimerA 显示值(秒, 从 T46/10, 真空闲区)
+// VD244 : VD_TimerB_Display       TimerB 显示值(秒, 从 T48/10, 真空闲区)
 // T46   : T_CycleA                周期倒计时器 A (100ms 时基)
 // T48   : T_CycleB                周期倒计时器 B (100ms 时基)
 // VW286 : VW_T46_PT               TimerA PT 转换值(由 FC11 计算写入)
@@ -31,8 +31,7 @@
 // VW306 : 已完成换水次数
 // VD70  : S1 实测时长 (秒)
 // VD28  : S2 搅拌固定时长 (秒)
-// VD108 : S4/S6 默认时长 (秒)
-// VD116 : S6 滚动实测时长 (秒)
+// VD116 : S6 滚动实测时长 (秒,首轮为S4实测值)
 // M16.0 : M_TimerA_Active         当前下缸轮次使用 TimerA 标志
 // M16.1 : M_NextCycleTrigger      触发下一轮 S1 脉冲
 // V303.6: M_Alarm_CycleTimeout    单轮换水周期超时报警 (v2.2 复用原流量开关瞬时异常位)
@@ -48,7 +47,6 @@ MOVR   86400.0, VD186
 -R     VD430, VD186                 // - Safety_Margin = T_cycle
 
 
-NETWORK 2
 // T_cycle <= 0 检查:周期参数过激进,报警并禁止启动
 LD     SM0.0
 AR>    VD186, 0.0                   // T_cycle > 0 ?
@@ -65,25 +63,19 @@ MOVR   VD186, VD190                // T_cycle 备份
 *R     10.0, VD190                 // → 100ms 时基
 
 
-NETWORK 3
 // 选择当前活动计时器当前值(取 T46 或 T48 的 PV,100ms 时基)
 // VW190 = 当前活动计时器 PV
 LD     M16.0                       // 当前使用 TimerA?
-MOVW   T46_PV, VW190               // → 取 TimerA 当前 PV
+MOVW   T46, VW190                  // → 取 TimerA 当前 PV
 LDN    M16.0                       // 当前使用 TimerB?
-MOVW   T48_PV, VW190               // → 取 TimerB 当前 PV
+MOVW   T48, VW190                  // → 取 TimerB 当前 PV
 
 
-NETWORK 4
 // S6 触发条件
 // 当前 PV <= S6_actual × 10 时,触发 S6 排水
-// S6_actual: 首轮用 VD108(默认),后续用 VD116(滚动实测)
+// S6_actual 统一使用 VD116:首轮为S4实测值(由FC15写入),后续为S6滚动实测值(由FC17写入)
 LD     SM0.0
-MOVR   VD116, VD190                // S6_actual = VD116(滚动实测)
-AW=    VW306, 0                    // 首次换水?
-MOVR   VD108, VD190                // → S6_actual = VD108(默认)
-
-LD     SM0.0
+MOVR   VD116, VD190                // S6_actual = VD116
 *R     10.0, VD190                 // S6_actual × 10 (100ms 时基)
 ROUND  VD190, AC0
 MOVW   AC0, VW194                  // VW194 = S6_actual × 10
@@ -91,16 +83,16 @@ MOVW   AC0, VW194                  // VW194 = S6_actual × 10
 LD     SM0.0
 MOVW   VW190, VW192                // VW192 = 当前 PV
 -I     VW194, VW192                // PV - S6_actual×10
-AR<=   VW192, 0                    // PV <= S6_actual×10 ?
+AW<=   VW192, 0                    // PV <= S6_actual×10 ?(整数比较)
+LPS                                // 保存触发条件结果
 
 LDW=   VW2, 6                      // 当前在 S5
 AW=    VW6, 0                      // 无报警
-OLD
-ALD
+LPP                                // 恢复触发条件结果
+ALD                                // 与 S5/无报警 条件合并
 MOVW   7, VW2                      // 转 S6 排水
 
 
-NETWORK 5
 // 下一轮 S1 触发条件
 // 当前 PV <= Prep_Needed × 10 时,触发下一轮 S1 (M16.1 脉冲)
 // Prep_Needed = VD70 + VD28 + VD430 (S1 实测 + S2 固定 + 上缸安全余量)
@@ -115,37 +107,45 @@ MOVW   AC0, VW200                  // VW200 = Prep_Needed × 10
 LD     SM0.0
 MOVW   VW190, VW192                // VW192 = 当前 PV
 -I     VW200, VW192                // PV - Prep_Needed×10
-AR<=   VW192, 0                    // PV <= Prep_Needed×10 ?
+AW<=   VW192, 0                    // PV <= Prep_Needed×10 ?(整数比较)
+LPS                                // 保存触发条件结果
 
 LDW=   VW304, 0                    // 上缸空闲(可启动下一轮)
 AW=    VW6, 0                      // 无报警
-ALD
+LPP                                // 恢复触发条件结果
+ALD                                // 与上缸空闲/无报警合并
 S      M16.1, 1                    // 触发下一轮 S1 脉冲
 
 
-NETWORK 6
 // 倒计时到 0 报警 (V303.6)
 // TimerA/B 计时完成 + 不在 S7 → 报警
 LD     M16.0                       // 当前使用 TimerA?
 A      T46                         // TimerA 计时完成?
+LPS                                // 保存 TimerA 完成结果
+
 LDN    M16.0                       // 当前使用 TimerB?
 A      T48                         // TimerB 计时完成?
-OLD
-AN     VW2.7                       // VW2 != 8 (不在 S7)
+LPP                                // 恢复 TimerA 完成结果
+OLD                                // TimerA 完成 OR TimerB 完成
+LPS                                // 保存
+
+LDW=   VW2, 8                      // 当前在 S7?
+NOT                                // 不在 S7
+LPP                                // 恢复
+ALD                                // 计时完成 AND 不在 S7
 S      V303.6, 1                   // 单轮换水周期超时报警
 
 
-NETWORK 7
 // 双倒计时器显示值写入 (HMI 读取)
 // 真空闲区 VD256/VD244 (从 VD442/446 迁移,v2.2)
 LD     M16.0                       // 当前使用 TimerA?
-MOVW   T46_PV, AC0
+MOVW   T46, AC0
 /I     +10, AC0
-ITD    AC0, VD256                  // VD_TimerA_Display = T46_PV/10 (秒)
+ITD    AC0, VD256                  // VD_TimerA_Display = T46/10 (秒)
 LDN    M16.0                       // 当前使用 TimerB?
-MOVW   T48_PV, AC0
+MOVW   T48, AC0
 /I     +10, AC0
-ITD    AC0, VD244                  // VD_TimerB_Display = T48_PV/10 (秒)
+ITD    AC0, VD244                  // VD_TimerB_Display = T48/10 (秒)
 
 
 LBL    9

@@ -1,4 +1,4 @@
-// ============================================================
+﻿// ============================================================
 // 文件: FC0_SysInit.stl (调度骨架)
 // 功能: 系统初始化入口 — 首次扫描 + Modbus清零 + 冷启/断电路径调度
 // Story: AQEX-6 + AQEX-11 + AQEX-51
@@ -29,27 +29,14 @@ MOVW   1, VW198
 
 LD     SM0.1
 FILL   0, VW600, 143     // VB600~VB885清零(Modbus库存储区)
-LD     SM0.1
-MOVB   0, VB378           // 清MBUS_CTRL Error
-LD     SM0.1
-MOVB   0, VB379           // 清MBUS_MSG Error(注射泵状态)
-LD     SM0.1
-MOVB   0, VB380           // 清MBUS_MSG Error(流量计)
-LD     SM0.1
-MOVB   0, VB381           // 清MBUS_MSG Error(注射泵位置)
-LD     SM0.1
+FILL   0, VW378, 2       // 清 VB378~VB381 (MBUS Error 4字节合并)
 R      M10.0, 6           // 清M10.0~M10.5(Done位/降级标志)
-LD     SM0.1
 R      M11.0, 1           // 清MBUS_CTRL Done位
-LD     SM0.1
 MOVW   0, VW390           // 清手动注射泵子状态
-LD     SM0.1
 R      M11.6, 1           // 清注射泵写请求
-LD     SM0.1
 R      T104, 1            // 清回零冷却定时器
 
 
-NETWORK 2
 // 冷启/断电路径调度 + 完成汇合
 // 判断冷启动/断电恢复
 // M16.4=1 → JMP 1 (LBL 1: CALL WarmRecovery → JMP 2)

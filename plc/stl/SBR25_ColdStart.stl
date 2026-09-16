@@ -29,7 +29,6 @@ MOVR   10.0, VD28        // VD_PreMixTime S2搅拌固定时长(s,v2.2 严格不�
 MOVR   24.0, VD414       // 【v2.2新增】VD_24h_Target 24h换水目标次数(默认24)
 MOVR   30.0, VD426       // 【v2.2新增】VD_Transfer_Margin 周期尾端转移余量(s,默认30)
 MOVR   10.0, VD430       // 【v2.2新增】VD_Prep_Safety_Margin 上缸配液安全余量(s,默认10)
-MOVR   180.0, VD108       // VD_S6_Default 首轮S6排水时长默认值(s)
 
 // 6.2.1 工艺目标参数
 MOVR   10.0, VD316        // 目标进水量(L,默认10L)
@@ -39,8 +38,6 @@ MOVR   5000.0, VD584      // VD_Vol_Target 默认加药量(µL,默认5mL)
 MOVR   60.0, VD358        // VD_Timeout_ValveA 阀A开/关到位超时(s)
 MOVR   60.0, VD362        // VD_Timeout_ValveB 阀B开/关到位超时(s)
 MOVR   60.0, VD54         // VD_Timeout_ValveC 阀C开/关到位超时(s)
-MOVR   10.0, VD58         // VD_Timeout_Pump1 (预留未用)
-MOVR   10.0, VD62         // VD_Timeout_Pump2 (预留未用)
 MOVR   5.0, VD66          // VD_Delay_ValveA_Verify 阀A关后延时验证(s)
 
 // 7.4 其他超时阈值
@@ -61,7 +58,6 @@ MOVR   VD460, VD24           // VD_ExperimentTarget
 MOVR   VD464, VD28           // VD_PreMixTime (S2搅拌固定时长)
 MOVR   VD484, VD54           // VD_Timeout_ValveC
 MOVR   VD488, VD66           // VD_Delay_ValveA_Verify
-MOVR   VD492, VD108          // VD_S6_Default
 MOVR   VD500, VD316          // VD_TargetInletVolume
 MOVR   VD504, VD350          // VD_StepResolution
 MOVR   VD512, VD358          // VD_Timeout_ValveA
@@ -173,48 +169,29 @@ R      M15.1, 1
 R      M15.2, 1
 R      V60.0, 6
 R      M11.0, 1
-R      M11.6, 1
-R      M11.7, 1
-R      M12.0, 1
-R      M16.5, 1           // 清注射泵在线标志(v2.2迁移自V304.1)
-R      M16.6, 1           // 清流量计在线标志(v2.2迁移自V304.2)
-R      M12.1, 1
-R      M12.2, 1
-R      M13.0, 5           // 清手动控制锁存
+R      M11.6, 3                    // M11.6, M11.7, M12.0 (连续3位)
+R      M16.5, 1                    // 清注射泵在线标志(v2.2迁移自V304.1)
+R      M16.6, 1                    // 清流量计在线标志(v2.2迁移自V304.2)
+R      M12.1, 2                    // M12.1, M12.2 (连续2位)
+R      M13.0, 5                    // 清手动控制锁存
 R      M13.5, 3           // 清手动注射泵标志
 MOVW   0, VW390           // 手动注射泵子状态=0
 MOVR   0.0, VD392
 MOVR   0.0, VD396
 
 // 清错误码/写目标地址
-MOVB   0, VB378           // 清MBUS_CTRL Error
-MOVB   0, VB379
-MOVB   0, VB380
-MOVB   0, VB381
-MOVB   0, VB382
-MOVB   0, VB383
+FILL   0, VW378, 3        // 清 VB378~VB383 (6字节合并)
 MOVR   0.0, VD374
 MOVW   0, VW226
 MOVD   0, VD232
 MOVW   0, VW230
+// ★ 冗余段已删除: 不再重复清 VD232/VW230/M11.6 (上面已清)
+// ★ 冗余段已删除: VD414/VD426/VD430 已在出厂硬编码段设置
 
-// 冷启动不再自动下发注射泵复位(泵上电默认就绪96态)
-LD     SM0.1
-AN     M16.4              // 冷启动(M16.4=0;v2.2迁移自V304.0)
-MOVD   0, VD232
-MOVW   0, VW230
-R      M11.6, 1
-
-// 【v2.2 新增】冷启动时初始化上缸子流程 + 双倒计时器默认值
+// 【v2.2 新增】冷启动时初始化上缸子流程 + 双倒计时器显示值清零
 MOVW   0, VW304                     // 上缸配液子流程状态清零(防御性)
 MOVW   0, VW306                     // 换水计数清零
-R      M16.0, 1                     // 计时器标记清零(首轮由 FC10 置 1)
-R      M16.1, 1                     // 下一轮 S1 触发脉冲清零
-R      M16.2, 1                     // S1 已开始标志清零
-R      M16.3, 1                     // S2 首次进入标志清零
-MOVR   24.0, VD414                  // 24h 换水目标次数默认值
-MOVR   30.0, VD426                  // 周期尾端转移余量默认值(秒)
-MOVR   10.0, VD430                  // 上缸配液安全余量默认值(秒)
+R      M16.0, 4                     // M16.0~M16.3 连续清零
 MOVR   0.0, VD256                   // TimerA 显示值清零
 MOVR   0.0, VD244                   // TimerB 显示值清零
 
