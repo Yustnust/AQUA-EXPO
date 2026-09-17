@@ -2079,18 +2079,17 @@ EndIf
 ParamTargetUnit = SelectedUnit
 ```
 
-### 脚本 28:保存参数按钮
+### 脚本 28:应用设置按钮
 
 - **编号**: 28
-- **用途**: 校验参数范围 → 写入选中单元的 VD 参数(需维护组权限;浓度组需管理员)
-- **位置**: 用户窗口 → 画面4_参数设置 → 保存参数按钮构件 → Click 事件
+- **用途**: 范围校验 → 弹出参数设置二次确认子窗口(需维护组权限)
+- **位置**: 用户窗口 → 画面4_参数设置 → 应用设置按钮构件 → Click 事件
 - **触发方式**: 按钮单击
 
 ```
 ' ============================================
-' 保存参数按钮脚本
-' 功能: 1.校验维护组权限 2.范围校验 3.写回 PLC
-' 依赖脚本31: 参数范围校验(本脚本调用前应先执行校验,这里再次兜底)
+' 应用设置按钮脚本
+' 功能: 范围校验 → 弹出参数设置二次确认子窗口
 ' ============================================
 
 ' --- 1. 校验维护组权限 ---
@@ -2102,160 +2101,102 @@ If !CheckUserGroup("维护组") = 1 Then
     EndIf
 EndIf
 
-' --- 2. 范围校验(完整规则见脚本31,此处仅关键项) ---
-' 浓度参数已移除
-    !Beep()
-    Exit
-EndIf
-    !Beep()
-    Exit
-EndIf
-' 预循环最小安全值约束
-If Param_PreMixTime < Param_PreMixTime_MinSafe Then
-    !Beep()
-    Exit
-EndIf
-' 静止时间约束
-If Param_RestTime < Param_RestTime_Min Then
-    !Beep()
-    Exit
-EndIf
-' 超时必须>0
-If Param_Timeout_ValveA <= 0 Then
-    !Beep()
-    Exit
-EndIf
-If Param_Timeout_ValveB <= 0 Then
-    !Beep()
-    Exit
-EndIf
-If Param_Timeout_ValveC <= 0 Then
-    !Beep()
-    Exit
-EndIf
+' --- 2. 范围校验 ---
+IF Param_TargetInletVolume < 0 THEN
+    Param_Confirm_Text = "错误：注水量设定值必须≥0"
+    Param_Pending_Save = 0
+    !OpenSubWnd(用户窗口.参数设置二次确认, 400, 300, 400, 200, 0)
+    EXIT
+ENDIF
 
-' --- 4. 写回 PLC (按 SelectedUnit 选择目标) ---
-If SelectedUnit = 1 Then
-    U1_VD_StepResolution = Param_StepRes
-    U1_VD_CycleSetpoint = Param_CycleSet
-    U1_VD_ExperimentTarget = Param_ExpTarget
-    U1_VD_PreMixTime = Param_PreMixTime
-    U1_VD_PreMixTime_MinSafe = Param_PreMixTime_MinSafe
-    U1_VD_RestTime = Param_RestTime
-    U1_VD_RestTime_Min = Param_RestTime_Min
-    U1_VD_CycleExtend_Max = Param_CycleExtend_Max
-    U1_VD_Timeout_ValveA = Param_Timeout_ValveA
-    U1_VD_Timeout_ValveB = Param_Timeout_ValveB
-    U1_VD_Timeout_ValveC = Param_Timeout_ValveC
-    U1_VD_Delay_ValveA_Verify = Param_Delay_ValveA_Verify
-EndIf
+IF Param_VD_Vol_Target < 0 THEN
+    Param_Confirm_Text = "错误：加药量设定值必须≥0"
+    Param_Pending_Save = 0
+    !OpenSubWnd(用户窗口.参数设置二次确认, 400, 300, 400, 200, 0)
+    EXIT
+ENDIF
 
-If SelectedUnit = 2 Then
-    U2_VD_StepResolution = Param_StepRes
-    U2_VD_CycleSetpoint = Param_CycleSet
-    U2_VD_ExperimentTarget = Param_ExpTarget
-    U2_VD_PreMixTime = Param_PreMixTime
-    U2_VD_PreMixTime_MinSafe = Param_PreMixTime_MinSafe
-    U2_VD_RestTime = Param_RestTime
-    U2_VD_RestTime_Min = Param_RestTime_Min
-    U2_VD_CycleExtend_Max = Param_CycleExtend_Max
-    U2_VD_Timeout_ValveA = Param_Timeout_ValveA
-    U2_VD_Timeout_ValveB = Param_Timeout_ValveB
-    U2_VD_Timeout_ValveC = Param_Timeout_ValveC
-    U2_VD_Delay_ValveA_Verify = Param_Delay_ValveA_Verify
-EndIf
+IF Param_StepRes <= 0 OR Param_StepRes > 5 THEN
+    Param_Confirm_Text = "错误：步进分辨率范围(0~5]"
+    Param_Pending_Save = 0
+    !OpenSubWnd(用户窗口.参数设置二次确认, 400, 300, 400, 200, 0)
+    EXIT
+ENDIF
 
-If SelectedUnit = 3 Then
-    U3_VD_StepResolution = Param_StepRes
-    U3_VD_CycleSetpoint = Param_CycleSet
-    U3_VD_ExperimentTarget = Param_ExpTarget
-    U3_VD_PreMixTime = Param_PreMixTime
-    U3_VD_PreMixTime_MinSafe = Param_PreMixTime_MinSafe
-    U3_VD_RestTime = Param_RestTime
-    U3_VD_RestTime_Min = Param_RestTime_Min
-    U3_VD_CycleExtend_Max = Param_CycleExtend_Max
-    U3_VD_Timeout_ValveA = Param_Timeout_ValveA
-    U3_VD_Timeout_ValveB = Param_Timeout_ValveB
-    U3_VD_Timeout_ValveC = Param_Timeout_ValveC
-    U3_VD_Delay_ValveA_Verify = Param_Delay_ValveA_Verify
-EndIf
+IF Param_ExpTarget < 1 OR Param_ExpTarget > 120 THEN
+    Param_Confirm_Text = "错误：实验目标范围[1~120]"
+    Param_Pending_Save = 0
+    !OpenSubWnd(用户窗口.参数设置二次确认, 400, 300, 400, 200, 0)
+    EXIT
+ENDIF
 
-If SelectedUnit = 4 Then
-    U4_VD_StepResolution = Param_StepRes
-    U4_VD_CycleSetpoint = Param_CycleSet
-    U4_VD_ExperimentTarget = Param_ExpTarget
-    U4_VD_PreMixTime = Param_PreMixTime
-    U4_VD_PreMixTime_MinSafe = Param_PreMixTime_MinSafe
-    U4_VD_RestTime = Param_RestTime
-    U4_VD_RestTime_Min = Param_RestTime_Min
-    U4_VD_CycleExtend_Max = Param_CycleExtend_Max
-    U4_VD_Timeout_ValveA = Param_Timeout_ValveA
-    U4_VD_Timeout_ValveB = Param_Timeout_ValveB
-    U4_VD_Timeout_ValveC = Param_Timeout_ValveC
-    U4_VD_Delay_ValveA_Verify = Param_Delay_ValveA_Verify
-EndIf
+IF Param_PreMixTime <= 0 OR Param_PreMixTime > 60 THEN
+    Param_Confirm_Text = "错误：预循环时间范围(0~60]"
+    Param_Pending_Save = 0
+    !OpenSubWnd(用户窗口.参数设置二次确认, 400, 300, 400, 200, 0)
+    EXIT
+ENDIF
 
-If SelectedUnit = 5 Then
-    U5_VD_StepResolution = Param_StepRes
-    U5_VD_CycleSetpoint = Param_CycleSet
-    U5_VD_ExperimentTarget = Param_ExpTarget
-    U5_VD_PreMixTime = Param_PreMixTime
-    U5_VD_PreMixTime_MinSafe = Param_PreMixTime_MinSafe
-    U5_VD_RestTime = Param_RestTime
-    U5_VD_RestTime_Min = Param_RestTime_Min
-    U5_VD_CycleExtend_Max = Param_CycleExtend_Max
-    U5_VD_Timeout_ValveA = Param_Timeout_ValveA
-    U5_VD_Timeout_ValveB = Param_Timeout_ValveB
-    U5_VD_Timeout_ValveC = Param_Timeout_ValveC
-    U5_VD_Delay_ValveA_Verify = Param_Delay_ValveA_Verify
-EndIf
+IF Param_Timeout_ValveA <= 0 OR Param_Timeout_ValveA > 30 THEN
+    Param_Confirm_Text = "错误：阀A超时范围(0~30]"
+    Param_Pending_Save = 0
+    !OpenSubWnd(用户窗口.参数设置二次确认, 400, 300, 400, 200, 0)
+    EXIT
+ENDIF
 
-If SelectedUnit = 6 Then
-    U6_VD_StepResolution = Param_StepRes
-    U6_VD_CycleSetpoint = Param_CycleSet
-    U6_VD_ExperimentTarget = Param_ExpTarget
-    U6_VD_PreMixTime = Param_PreMixTime
-    U6_VD_PreMixTime_MinSafe = Param_PreMixTime_MinSafe
-    U6_VD_RestTime = Param_RestTime
-    U6_VD_RestTime_Min = Param_RestTime_Min
-    U6_VD_CycleExtend_Max = Param_CycleExtend_Max
-    U6_VD_Timeout_ValveA = Param_Timeout_ValveA
-    U6_VD_Timeout_ValveB = Param_Timeout_ValveB
-    U6_VD_Timeout_ValveC = Param_Timeout_ValveC
-    U6_VD_Delay_ValveA_Verify = Param_Delay_ValveA_Verify
-EndIf
+IF Param_Timeout_ValveB <= 0 OR Param_Timeout_ValveB > 30 THEN
+    Param_Confirm_Text = "错误：阀B超时范围(0~30]"
+    Param_Pending_Save = 0
+    !OpenSubWnd(用户窗口.参数设置二次确认, 400, 300, 400, 200, 0)
+    EXIT
+ENDIF
 
-If SelectedUnit = 7 Then
-    U7_VD_StepResolution = Param_StepRes
-    U7_VD_CycleSetpoint = Param_CycleSet
-    U7_VD_ExperimentTarget = Param_ExpTarget
-    U7_VD_PreMixTime = Param_PreMixTime
-    U7_VD_PreMixTime_MinSafe = Param_PreMixTime_MinSafe
-    U7_VD_RestTime = Param_RestTime
-    U7_VD_RestTime_Min = Param_RestTime_Min
-    U7_VD_CycleExtend_Max = Param_CycleExtend_Max
-    U7_VD_Timeout_ValveA = Param_Timeout_ValveA
-    U7_VD_Timeout_ValveB = Param_Timeout_ValveB
-    U7_VD_Timeout_ValveC = Param_Timeout_ValveC
-    U7_VD_Delay_ValveA_Verify = Param_Delay_ValveA_Verify
-EndIf
+IF Param_Timeout_ValveC <= 0 OR Param_Timeout_ValveC > 30 THEN
+    Param_Confirm_Text = "错误：阀C超时范围(0~30]"
+    Param_Pending_Save = 0
+    !OpenSubWnd(用户窗口.参数设置二次确认, 400, 300, 400, 200, 0)
+    EXIT
+ENDIF
 
-If SelectedUnit = 8 Then
-    U8_VD_StepResolution = Param_StepRes
-    U8_VD_CycleSetpoint = Param_CycleSet
-    U8_VD_ExperimentTarget = Param_ExpTarget
-    U8_VD_PreMixTime = Param_PreMixTime
-    U8_VD_PreMixTime_MinSafe = Param_PreMixTime_MinSafe
-    U8_VD_RestTime = Param_RestTime
-    U8_VD_RestTime_Min = Param_RestTime_Min
-    U8_VD_CycleExtend_Max = Param_CycleExtend_Max
-    U8_VD_Timeout_ValveA = Param_Timeout_ValveA
-    U8_VD_Timeout_ValveB = Param_Timeout_ValveB
-    U8_VD_Timeout_ValveC = Param_Timeout_ValveC
-    U8_VD_Delay_ValveA_Verify = Param_Delay_ValveA_Verify
-EndIf
+IF Param_Delay_ValveA_Verify <= 0 OR Param_Delay_ValveA_Verify > 5 THEN
+    Param_Confirm_Text = "错误：阀A关闭延时验证范围(0~5]"
+    Param_Pending_Save = 0
+    !OpenSubWnd(用户窗口.参数设置二次确认, 400, 300, 400, 200, 0)
+    EXIT
+ENDIF
 
-!Beep()
+IF Param_S4WaitTimeout <= 0 THEN
+    Param_Confirm_Text = "错误：S4等待超时必须>0"
+    Param_Pending_Save = 0
+    !OpenSubWnd(用户窗口.参数设置二次确认, 400, 300, 400, 200, 0)
+    EXIT
+ENDIF
+
+IF Param_24h_Target <= 0 THEN
+    Param_Confirm_Text = "错误：24小时目标值必须>0"
+    Param_Pending_Save = 0
+    !OpenSubWnd(用户窗口.参数设置二次确认, 400, 300, 400, 200, 0)
+    EXIT
+ENDIF
+
+IF Param_Transfer_Margin < 0 OR Param_Safety_Margin < 0 THEN
+    Param_Confirm_Text = "错误：Transfer/Safety Margin 不能<0"
+    Param_Pending_Save = 0
+    !OpenSubWnd(用户窗口.参数设置二次确认, 400, 300, 400, 200, 0)
+    EXIT
+ENDIF
+
+IF Param_ManualDose_Target < 0 THEN
+    Param_Confirm_Text = "错误：手动加药目标值不能<0"
+    Param_Pending_Save = 0
+    !OpenSubWnd(用户窗口.参数设置二次确认, 400, 300, 400, 200, 0)
+    EXIT
+ENDIF
+
+' --- 校验通过 ---
+Param_Pending_Save = 1
+Param_Confirm_Text = "将参数设置应用于" + Str(SelectedUnit) + "号单元的运行，确认保存？"
+!OpenSubWnd(用户窗口.参数设置二次确认, 400, 300, 400, 200, 0)
 ```
 
 ### 脚本 29:复制到其他单元按钮
