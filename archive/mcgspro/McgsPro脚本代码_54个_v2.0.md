@@ -93,7 +93,7 @@ McgsPro 脚本程序是**类 Basic 脚本语言**,不是 VBScript,也不是 VBA�
 
 本工程 8 套单元变量命名规则:`U<单元号>_XXX`,如 `U1_CMD_Start` ~ `U8_CMD_Start`。由于 McgsPro **不支持 Execute 动态构造变量名**,凡涉及"对 8 个单元循环操作"的脚本,本文件采用**显式展开 8 条赋值语句**的写法,而非 For 循环。涉及"以 1 号为例"的相似脚本,会给出 1 号完整代码 + 2~8 号扩展说明。
 
-### 8. 脚本编号索引(共 66 个)
+### 8. 脚本编号索引
 
 | 分区 | 编号 | 数量 | 位置 |
 |---|---|---|---|
@@ -103,14 +103,14 @@ McgsPro 脚本程序是**类 Basic 脚本语言**,不是 VBScript,也不是 VBA�
 | C. 画面1_总览 | 4~9 | 6 | 窗口/构件 |
 | D. 画面2_单元详情 | 10~17 | 8 | 窗口/构件 |
 | E. 画面3_手动控制 | 18~26 | 9 | 窗口/构件 |
-| F. 画面4_参数设置 | 27~32 | 6 | 窗口/构件 |
+| F. 画面4_参数设置 | 27~32.5 | 7 | 窗口/构件 |
 | G. 画面5_报警日志 | 33~36 | 4 | 窗口/构件 |
 | H. 画面6_趋势曲线 | 37~39 | 3 | 窗口/构件 |
 | I. 画面7_通讯维护 | 40~43 | 4 | 窗口/构件 |
 | J. 画面8a_单元使能 + 画面8b_权限管理 | 44~49 | 6 | 窗口/构件 |
-| K. 二次确认子窗口 | 50~58 | 9 | 子窗口构件 |
+| K. 二次确认子窗口 | 50~59 | 10 | 子窗口构件 |
 
-> 说明:v2.1 新增 B2 区(菜单窗口脚本 M1~M9,共9个),含主菜单4个按钮脚本、3个子菜单的画面按钮脚本、3个子菜单的返回按钮脚本(返回逻辑相同合并为1个)。原 J 区"画面8_系统设置"拆分为画面8a_单元使能(脚本44~45)和画面8b_权限管理(脚本46~49)。合计 58+9=67 个。
+> 说明:v2.1 新增 B2 区(菜单窗口脚本 M1~M9,共9个)。原 J 区"画面8_系统设置"拆分为画面8a_单元使能(脚本44~45)和画面8b_权限管理(脚本46~49)。本表按画面分区统计，新增脚本 32.5/59 后分区数量相应 +1。
 
 ---
 
@@ -2314,95 +2314,82 @@ Param_S4WaitTimeout       = U1_UD_VD448_S4WaitTimeout
 ' --- 范围校验 ---
 
 IF  Param_StepRes < 0  THEN
-    Param_Confirm_Text = "错误：步进分辨率设定值不能为负数"
+    Param_Confirm_Text = "错误：单步分辨率设定值不能为负数"
     Param_Pending_Save = 0
     !OpenSubWnd(用户窗口.保存默认二次确认, 400, 300, 400, 200, 0)
     EXIT
 ENDIF
 
 IF  Param_24h_Target < 0  THEN
-    Param_Confirm_Text = "错误：24小时目标设定值不能为负数"
+    Param_Confirm_Text = "错误：换水频率设定值不能为负数"
     Param_Pending_Save = 0
     !OpenSubWnd(用户窗口.保存默认二次确认, 400, 300, 400, 200, 0)
     EXIT
 ENDIF
 
 IF  Param_Transfer_Margin < 0  THEN
-    Param_Confirm_Text = "错误：转液余量设定值不能为负数"
+    Param_Confirm_Text = "错误：尾端转移余量设定值不能为负数"
     Param_Pending_Save = 0
     !OpenSubWnd(用户窗口.保存默认二次确认, 400, 300, 400, 200, 0)
     EXIT
 ENDIF
 
 IF  Param_Safety_Margin < 0  THEN
-    Param_Confirm_Text = "错误：配制安全余量设定值不能为负数"
+    Param_Confirm_Text = "错误：配液安全余量设定值不能为负数"
     Param_Pending_Save = 0
     !OpenSubWnd(用户窗口.保存默认二次确认, 400, 300, 400, 200, 0)
     EXIT
 ENDIF
 
 IF  Param_ExpTarget < 0  THEN
-    Param_Confirm_Text = "错误：实验目标设定值不能为负数"
+    Param_Confirm_Text = "错误：实验总时长设定值不能为负数"
     Param_Pending_Save = 0
     !OpenSubWnd(用户窗口.保存默认二次确认, 400, 300, 400, 200, 0)
     EXIT
 ENDIF
 
 IF  Param_PreMixTime < 0  THEN
-    Param_Confirm_Text = "错误：预循环时间设定值不能为负数"
+    Param_Confirm_Text = "错误：搅拌时长设定值不能为负数"
     Param_Pending_Save = 0
     !OpenSubWnd(用户窗口.保存默认二次确认, 400, 300, 400, 200, 0)
     EXIT
 ENDIF
 
 IF  Param_Timeout_ValveA < 0  THEN
-    Param_Confirm_Text = "错误：阀A超时设定值不能为负数"
+    Param_Confirm_Text = "错误：进水阀超时设定值不能为负数"
     Param_Pending_Save = 0
     !OpenSubWnd(用户窗口.保存默认二次确认, 400, 300, 400, 200, 0)
     EXIT
 ENDIF
 
 IF  Param_Timeout_ValveB < 0  THEN
-    Param_Confirm_Text = "错误：阀B超时设定值不能为负数"
+    Param_Confirm_Text = "错误：转移阀超时设定值不能为负数"
     Param_Pending_Save = 0
     !OpenSubWnd(用户窗口.保存默认二次确认, 400, 300, 400, 200, 0)
     EXIT
 ENDIF
 
 IF  Param_Timeout_ValveC < 0  THEN
-    Param_Confirm_Text = "错误：阀C超时设定值不能为负数"
+    Param_Confirm_Text = "错误：排液阀超时设定值不能为负数"
     Param_Pending_Save = 0
     !OpenSubWnd(用户窗口.保存默认二次确认, 400, 300, 400, 200, 0)
     EXIT
 ENDIF
 
 IF  Param_Delay_ValveA_Verify < 0  THEN
-    Param_Confirm_Text = "错误：阀A关闭延时验证设定值不能为负数"
+    Param_Confirm_Text = "错误：进水阀关闭延时验证设定值不能为负数"
     Param_Pending_Save = 0
     !OpenSubWnd(用户窗口.保存默认二次确认, 400, 300, 400, 200, 0)
     EXIT
 ENDIF
 
 IF  Param_ManualDose_Target < 0  THEN
-    Param_Confirm_Text = "错误：手动加药目标设定值不能为负数"
+    Param_Confirm_Text = "错误：手动加药量设定值不能为负数"
     Param_Pending_Save = 0
     !OpenSubWnd(用户窗口.保存默认二次确认, 400, 300, 400, 200, 0)
     EXIT
 ENDIF
 
-IF  Param_ManualDose_Mode < 0  THEN
-    Param_Confirm_Text = "错误：手动加药模式设定值不能为负数"
-    Param_Pending_Save = 0
-    !OpenSubWnd(用户窗口.保存默认二次确认, 400, 300, 400, 200, 0)
-    EXIT
-ENDIF
-
-IF  Param_AlarmAckMode < 0  THEN
-    Param_Confirm_Text = "错误：报警确认模式设定值不能为负数"
-    Param_Pending_Save = 0
-    !OpenSubWnd(用户窗口.保存默认二次确认, 400, 300, 400, 200, 0)
-    EXIT
-ENDIF
 
 IF  Param_TargetInletVolume < 0  THEN
     Param_Confirm_Text = "错误：注水量设定值不能为负数"
@@ -2419,7 +2406,7 @@ IF  Param_VD_Vol_Target < 0  THEN
 ENDIF
 
 IF  Param_S4WaitTimeout < 0  THEN
-    Param_Confirm_Text = "错误：S4等待超时设定值不能为负数"
+    Param_Confirm_Text = "错误：转移等待超时设定值不能为负数"
     Param_Pending_Save = 0
     !OpenSubWnd(用户窗口.保存默认二次确认, 400, 300, 400, 200, 0)
     EXIT
@@ -2578,6 +2565,23 @@ EndIf
 
 !CloseAllSubWnd()
 !CloseAllWindow("菜单_单元操作")
+```
+
+### 脚本 32.5:恢复出厂设置按钮
+
+- **编号**: 32.5
+- **用途**: 弹出恢复出厂二次确认子窗口
+- **位置**: 用户窗口 → 画面4_参数设置 → 恢复出厂设置按钮构件 → Click 事件
+- **触发方式**: 按钮单击
+
+```
+' ============================================
+' 恢复出厂设置按钮脚本
+' 功能: 置位 Pending_Save 并弹出恢复出厂二次确认子窗口
+' ============================================
+
+Param_Pending_Save = 1
+!OpenSubWnd(用户窗口.恢复出厂二次确认, 400, 300, 400, 200, 0)
 ```
 
 ---
@@ -3965,6 +3969,69 @@ Param_Pending_Save = 0
 !SetWindow(用户窗口.参数设置二次确认, 3)
 ```
 
+### 脚本 59:恢复出厂二次确认子窗口
+
+- **编号**: 59
+- **用途**: 恢复出厂设置二次确认。确认→把 U1_* 运行参数恢复为出厂默认值 + 清 U1_UD_Flag + 同步 Param_* 缓冲区;取消→关闭
+- **位置**: 用户窗口 → 子窗口_恢复出厂二次确认 → 确认按钮 / 取消按钮 → Click 事件
+- **触发方式**: 按钮单击
+
+**确认按钮**:
+```
+' ============================================
+' 恢复出厂二次确认 - 确认按钮
+' 功能: 把 U1_* 运行参数恢复到出厂默认值，同时清 U1_UD_Flag
+'       并把同一份默认值写回 Param_* 编辑缓冲区，使 HMI 立即同步
+' ============================================
+
+IF Param_Pending_Save = 1 THEN
+    U1_VD_StepResolution     = 4.1667
+    U1_VD_ExperimentTarget   = 10080.0    ' 7天
+    U1_VD_PreMixTime         = 1800.0     ' 30min
+    U1_VD_24h_Target         = 6.0        ' 6次/天
+    U1_VD_Transfer_Margin    = 180.0      ' 3min
+    U1_VD_Prep_Safety_Margin = 180.0      ' 3min
+    U1_VD_TargetInletVolume  = 10.0
+    U1_VD_Vol_Target         = 5000.0
+    U1_VD_Timeout_ValveA     = 60.0
+    U1_VD_Timeout_ValveB     = 60.0
+    U1_VD_Timeout_ValveC     = 60.0
+    U1_VD_Delay_ValveA_Verify= 5.0
+    U1_VD_S4WaitTimeout      = 1800.0
+    U1_VD_ManualDose_Target  = 10000.0
+    U1_VD_ManualDose_Mode    = 0
+    U1_M_AlarmAckMode        = 0
+
+    U1_UD_Flag = 0
+
+    Param_StepRes             = 4.1667
+    Param_24h_Target          = 6.0
+    Param_Transfer_Margin     = 180.0
+    Param_Safety_Margin       = 180.0
+    Param_ExpTarget           = 10080.0
+    Param_PreMixTime          = 1800.0
+    Param_Timeout_ValveA      = 60.0
+    Param_Timeout_ValveB      = 60.0
+    Param_Timeout_ValveC      = 60.0
+    Param_Delay_ValveA_Verify = 5.0
+    Param_ManualDose_Target   = 10.0      ' 10000µL / 1000
+    Param_ManualDose_Mode     = 0
+    Param_AlarmAckMode        = 0
+    Param_TargetInletVolume   = 10.0
+    Param_VD_Vol_Target       = 5.0       ' 5000µL / 1000
+    Param_S4WaitTimeout       = 1800.0
+ENDIF
+
+Param_Pending_Save = 0
+!SetWindow(用户窗口.恢复出厂二次确认, 3)
+```
+
+**取消按钮**:
+```
+Param_Pending_Save = 0
+!SetWindow(用户窗口.恢复出厂二次确认, 3)
+```
+
 
 ---
 
@@ -4033,7 +4100,7 @@ McgsPro 用户管理需在组态环境中预先建立 3 个用户组:
 9个二次确认子窗口(脚本50~58)需在 McgsPro 用户窗口中分别创建:
 - 子窗口_启动确认 / 子窗口_停止确认 / 子窗口_急停确认
 - 子窗口_恢复默认确认 / 子窗口_清除日志确认 / 子窗口_退出系统确认
-- 子窗口_参数设置确认
+- 子窗口_参数设置确认 / 子窗口_恢复出厂二次确认
 - 子窗口_单元选择 / 子窗口_复制参数确认 / 子窗口_日志浏览
 
 每个子窗口内组态"确认"和"取消"两个标准按钮构件,分别绑定对应 Click 脚本。子窗口尺寸建议 400×180(确认类)或 400×240(选择类)。

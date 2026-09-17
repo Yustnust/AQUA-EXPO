@@ -195,17 +195,17 @@
 
 | 地址    | HMI变量名                        | 单位   | 说明                |
 | ----- | ----------------------------- | ---- | ----------------- |
-| VD24  | U1\_VD\_ExperimentTarget      | min  | 实验时长目标设定值         |
-| VD28  | U1\_VD\_PreMixTime            | s    | S2搅拌+加药固定时长       |
+| VD24  | U1\_VD\_ExperimentTarget      | min  | 实验时长目标设定值（默认10080.0，7天）         |
+| VD28  | U1\_VD\_PreMixTime            | s    | S2搅拌+加药固定时长（默认1800.0，30min）       |
 | VD54  | U1\_VD\_Timeout\_ValveC       | s    | 阀C动作超时保护时长        |
 | VD66  | U1\_VD\_Delay\_ValveA\_Verify | s    | 阀A关闭后延时验证时长       |
 | VD316 | U1\_VD\_TargetInletVolume     | L    | 目标进水量             |
 | VD350 | U1\_VD\_StepResolution        | µL/步 | 注射泵单步分辨率          |
 | VD358 | U1\_VD\_Timeout\_ValveA       | s    | 阀A动作超时保护时长        |
 | VD362 | U1\_VD\_Timeout\_ValveB       | s    | 阀B动作超时保护时长        |
-| VD414 | U1\_VD\_24h\_Target           | 次    | 24h换水目标次数（v2.2新增） |
-| VD426 | U1\_VD\_Transfer\_Margin      | s    | 周期尾端转移余量（v2.2新增）  |
-| VD430 | U1\_VD\_Prep\_Safety\_Margin  | s    | 上缸配液安全余量（v2.2新增）  |
+| VD414 | U1\_VD\_24h\_Target           | 次    | 24h换水目标次数（v2.2新增，默认6次/天） |
+| VD426 | U1\_VD\_Transfer\_Margin      | s    | 周期尾端转移余量（v2.2新增，默认180.0，3min）  |
+| VD430 | U1\_VD\_Prep\_Safety\_Margin  | s    | 上缸配液安全余量（v2.2新增，默认180.0，3min）  |
 | VD452 | U1\_VD\_ManualDose\_Target    | µL   | 手动注射泵总加药量         |
 | VD584 | U1\_VD\_Vol\_Target           | µL   | 自动模式目标抽取母液体积      |
 
@@ -433,8 +433,8 @@ PLC在SBR25冷启动时读取以下镜像值作为HMI参数的断电保持默认
 | VW304  | U1\_VW304\_State\_UpTank             | SINGLE  | 只读    | 上缸配液子流程状态         | v2.2新增         |
 | VW306  | U1\_VW306\_CycleCount                | SINGLE  | 只读    | 已完成下缸换水次数         | v2.2新增         |
 | V200.0 | U1\_M\_AlarmAckMode                  | INTEGER | 读写    | 报警确认模式            | 0=自动/1=人工      |
-| VD24   | U1\_VD\_ExperimentTarget             | SINGLE  | 读写    | 实验时长目标(min)       | —              |
-| VD28   | U1\_VD\_PreMixTime                   | SINGLE  | 读写    | S2搅拌固定时长(s)       | —              |
+| VD24   | U1\_VD\_ExperimentTarget             | SINGLE  | 读写    | 实验时长目标(min)       | 默认10080.0(7天) |
+| VD28   | U1\_VD\_PreMixTime                   | SINGLE  | 读写    | S2搅拌固定时长(s)       | 默认1800.0(30min) |
 | VD54   | U1\_VD\_Timeout\_ValveC              | SINGLE  | 读写    | 阀C超时保护(s)         | —              |
 | VD66   | U1\_VD\_Delay\_ValveA\_Verify        | SINGLE  | 读写    | 阀A关后验证延时(s)       | —              |
 | VD70   | U1\_VD\_S1\_Actual                   | SINGLE  | 只读    | S1实测时长(s)         | —              |
@@ -453,9 +453,9 @@ PLC在SBR25冷启动时读取以下镜像值作为HMI参数的断电保持默认
 | VD358  | U1\_VD\_Timeout\_ValveA              | SINGLE  | 读写    | 阀A超时保护(s)         | —              |
 | VD362  | U1\_VD\_Timeout\_ValveB              | SINGLE  | 读写    | 阀B超时保护(s)         | —              |
 | VD366  | U1\_VD\_ExperimentDuration\_Accum    | SINGLE  | 只读    | 实验时长累加(min)       | —              |
-| VD414  | U1\_VD\_24h\_Target                  | SINGLE  | 读写    | 24h换水目标次数         | v2.2新增         |
-| VD426  | U1\_VD\_Transfer\_Margin             | SINGLE  | 读写    | 周期尾端转移余量(s)       | v2.2新增         |
-| VD430  | U1\_VD\_Prep\_Safety\_Margin         | SINGLE  | 读写    | 上缸配液安全余量(s)       | v2.2新增         |
+| VD414  | U1\_VD\_24h\_Target                  | SINGLE  | 读写    | 24h换水目标次数         | v2.2新增,默认6次/天 |
+| VD426  | U1\_VD\_Transfer\_Margin             | SINGLE  | 读写    | 周期尾端转移余量(s)       | v2.2新增,默认180.0(3min) |
+| VD430  | U1\_VD\_Prep\_Safety\_Margin         | SINGLE  | 读写    | 上缸配液安全余量(s)       | v2.2新增,默认180.0(3min) |
 | VD440  | U1\_VD\_Dosed\_Volume\_Total         | SINGLE  | 只读    | 累计加药量(µL)         | —              |
 | VD452  | U1\_VD\_ManualDose\_Target           | SINGLE  | 读写    | 手动注射泵总加药量(µL)     | —              |
 | VD584  | U1\_VD\_Vol\_Target                  | SINGLE  | 读写    | 目标抽取母液体积(µL)      | —              |

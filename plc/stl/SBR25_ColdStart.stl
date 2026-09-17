@@ -24,11 +24,11 @@ MOVR   4.1667, VD350      // VD_StepResolution
 // 【v2.2 修订 2026-09-15】取消 VD_CycleSetpoint (改用 VD414 24h 目标次数)
 //                       取消 VD_PreMixTime_MinSafe / VD_RestTime / VD_RestTime_Min
 //                       取消 VD_CycleExtend_Max / VD_T_Default (三层纠偏已删除)
-MOVR   480.0, VD24        // VD_ExperimentTarget 实验总时长(min)
-MOVR   10.0, VD28        // VD_PreMixTime S2搅拌固定时长(s,v2.2 严格不可压缩)
-MOVR   24.0, VD414       // 【v2.2新增】VD_24h_Target 24h换水目标次数(默认24)
-MOVR   30.0, VD426       // 【v2.2新增】VD_Transfer_Margin 周期尾端转移余量(s,默认30)
-MOVR   10.0, VD430       // 【v2.2新增】VD_Prep_Safety_Margin 上缸配液安全余量(s,默认10)
+MOVR   10080.0, VD24      // VD_ExperimentTarget 实验总时长(min,默认7天)
+MOVR   1800.0, VD28       // VD_PreMixTime S2搅拌固定时长(s,默认30min,v2.2 严格不可压缩)
+MOVR   6.0, VD414         // 【v2.2新增】VD_24h_Target 24h换水目标次数(默认6)
+MOVR   180.0, VD426       // 【v2.2新增】VD_Transfer_Margin 周期尾端转移余量(s,默认3min)
+MOVR   180.0, VD430       // 【v2.2新增】VD_Prep_Safety_Margin 上缸配液安全余量(s,默认3min)
 
 // 6.2.1 工艺目标参数
 MOVR   10.0, VD316        // 目标进水量(L,默认10L)
@@ -68,9 +68,9 @@ MOVR   VD516, VD362          // VD_Timeout_ValveB
 MOVR   VD520, VD584          // VD_Vol_Target
 MOVR   VD524, VD448          // VD_S4WaitTimeout
 MOVR   VD528, VD452          // VD_ManualDose_Target
-MOVR   VD468, VD414          // UD_VD414_24h_Target         (v2.2 新增, 24h 换水目标次数, 默认24)
-MOVR   VD476, VD426          // UD_VD426_Transfer_Margin    (v2.2 新增, 周期尾端转移余量, 默认30s)
-MOVR   VD480, VD430          // UD_VD430_Safety_Margin      (v2.2 新增, 上缸配液安全余量, 默认10s)
+MOVR   VD468, VD414          // UD_VD414_24h_Target         (v2.2 新增, 24h 换水目标次数, 默认6)
+MOVR   VD476, VD426          // UD_VD426_Transfer_Margin    (v2.2 新增, 周期尾端转移余量, 默认180s)
+MOVR   VD480, VD430          // UD_VD430_Safety_Margin      (v2.2 新增, 上缸配液安全余量, 默认180s)
 
 // WORD: VW388 ManualDose_Mode
 MOVB   VB532, VB388           // 复制低字节

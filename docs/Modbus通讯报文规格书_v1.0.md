@@ -594,8 +594,8 @@ MBUS_SERVER指令将V区映射为Modbus TCP保持寄存器,映射规则:
 | 40008-40009 | 0x0007 | VD14 | VD_C_Stock | REAL | 2 | 母液浓度(默认100.0%) | 变量地址表6.1 |
 | 40010-40011 | 0x0009 | VD18 | VD_StepResolution | REAL | 2 | 注射泵单步分辨率(默认0.2083µL/步) | 变量地址表6.1 |
 | 40012-40013 | 0x000B | VD20 | VD_CycleSetpoint | REAL | 2 | 换水周期设定值(默认30.0min) | 变量地址表6.2 |
-| 40014-40015 | 0x000D | VD24 | VD_ExperimentTarget | REAL | 2 | 实验时长目标(默认480.0min) | 变量地址表6.2 |
-| 40016-40017 | 0x000F | VD28 | VD_PreMixTime | REAL | 2 | S2预循环标称时长(默认120.0s) | 变量地址表6.2 |
+| 40014-40015 | 0x000D | VD24 | VD_ExperimentTarget | REAL | 2 | 实验时长目标(默认10080.0min=7天) | 变量地址表6.2 |
+| 40016-40017 | 0x000F | VD28 | VD_PreMixTime | REAL | 2 | S2搅拌+加药固定时长(默认1800.0s=30min) | 变量地址表6.2 |
 | 40018-40019 | 0x0011 | VD32 | VD_PreMixTime_MinSafe | REAL | 2 | S2压缩下限(默认30.0s) | 变量地址表6.2 |
 | 40020-40021 | 0x0013 | VD36 | VD_RestTime | REAL | 2 | S3.5静止等候标称时长(默认60.0s) | 变量地址表6.2 |
 | 40022-40023 | 0x0015 | VD40 | VD_RestTime_Min | REAL | 2 | 静止等候压缩下限(默认15.0s) | 变量地址表6.2 |
