@@ -2101,93 +2101,115 @@ If !CheckUserGroup("维护组") = 1 Then
     EndIf
 EndIf
 
-' --- 2. 范围校验 ---
-IF Param_TargetInletVolume < 0 THEN
-    Param_Confirm_Text = "错误：注水量设定值必须≥0"
+' --- 范围校验 ---
+
+IF  Param_StepRes < 0  THEN
+    Param_Confirm_Text = "错误：步进分辨率设定值不能为负数"
     Param_Pending_Save = 0
     !OpenSubWnd(用户窗口.参数设置二次确认, 400, 300, 400, 200, 0)
     EXIT
 ENDIF
 
-IF Param_VD_Vol_Target < 0 THEN
-    Param_Confirm_Text = "错误：加药量设定值必须≥0"
+IF  Param_24h_Target < 0  THEN
+    Param_Confirm_Text = "错误：24小时目标设定值不能为负数"
     Param_Pending_Save = 0
     !OpenSubWnd(用户窗口.参数设置二次确认, 400, 300, 400, 200, 0)
     EXIT
 ENDIF
 
-IF Param_StepRes <= 0 OR Param_StepRes > 5 THEN
-    Param_Confirm_Text = "错误：步进分辨率范围(0~5]"
+IF  Param_Transfer_Margin < 0  THEN
+    Param_Confirm_Text = "错误：转液余量设定值不能为负数"
     Param_Pending_Save = 0
     !OpenSubWnd(用户窗口.参数设置二次确认, 400, 300, 400, 200, 0)
     EXIT
 ENDIF
 
-IF Param_ExpTarget < 1 OR Param_ExpTarget > 120 THEN
-    Param_Confirm_Text = "错误：实验目标范围[1~120]"
+IF  Param_Safety_Margin < 0  THEN
+    Param_Confirm_Text = "错误：配制安全余量设定值不能为负数"
     Param_Pending_Save = 0
     !OpenSubWnd(用户窗口.参数设置二次确认, 400, 300, 400, 200, 0)
     EXIT
 ENDIF
 
-IF Param_PreMixTime <= 0 OR Param_PreMixTime > 60 THEN
-    Param_Confirm_Text = "错误：预循环时间范围(0~60]"
+IF  Param_ExpTarget < 0  THEN
+    Param_Confirm_Text = "错误：实验目标设定值不能为负数"
     Param_Pending_Save = 0
     !OpenSubWnd(用户窗口.参数设置二次确认, 400, 300, 400, 200, 0)
     EXIT
 ENDIF
 
-IF Param_Timeout_ValveA <= 0 OR Param_Timeout_ValveA > 30 THEN
-    Param_Confirm_Text = "错误：阀A超时范围(0~30]"
+IF  Param_PreMixTime < 0  THEN
+    Param_Confirm_Text = "错误：预循环时间设定值不能为负数"
     Param_Pending_Save = 0
     !OpenSubWnd(用户窗口.参数设置二次确认, 400, 300, 400, 200, 0)
     EXIT
 ENDIF
 
-IF Param_Timeout_ValveB <= 0 OR Param_Timeout_ValveB > 30 THEN
-    Param_Confirm_Text = "错误：阀B超时范围(0~30]"
+IF  Param_Timeout_ValveA < 0  THEN
+    Param_Confirm_Text = "错误：阀A超时设定值不能为负数"
     Param_Pending_Save = 0
     !OpenSubWnd(用户窗口.参数设置二次确认, 400, 300, 400, 200, 0)
     EXIT
 ENDIF
 
-IF Param_Timeout_ValveC <= 0 OR Param_Timeout_ValveC > 30 THEN
-    Param_Confirm_Text = "错误：阀C超时范围(0~30]"
+IF  Param_Timeout_ValveB < 0  THEN
+    Param_Confirm_Text = "错误：阀B超时设定值不能为负数"
     Param_Pending_Save = 0
     !OpenSubWnd(用户窗口.参数设置二次确认, 400, 300, 400, 200, 0)
     EXIT
 ENDIF
 
-IF Param_Delay_ValveA_Verify <= 0 OR Param_Delay_ValveA_Verify > 5 THEN
-    Param_Confirm_Text = "错误：阀A关闭延时验证范围(0~5]"
+IF  Param_Timeout_ValveC < 0  THEN
+    Param_Confirm_Text = "错误：阀C超时设定值不能为负数"
     Param_Pending_Save = 0
     !OpenSubWnd(用户窗口.参数设置二次确认, 400, 300, 400, 200, 0)
     EXIT
 ENDIF
 
-IF Param_S4WaitTimeout <= 0 THEN
-    Param_Confirm_Text = "错误：S4等待超时必须>0"
+IF  Param_Delay_ValveA_Verify < 0  THEN
+    Param_Confirm_Text = "错误：阀A关闭延时验证设定值不能为负数"
     Param_Pending_Save = 0
     !OpenSubWnd(用户窗口.参数设置二次确认, 400, 300, 400, 200, 0)
     EXIT
 ENDIF
 
-IF Param_24h_Target <= 0 THEN
-    Param_Confirm_Text = "错误：24小时目标值必须>0"
+IF  Param_ManualDose_Target < 0  THEN
+    Param_Confirm_Text = "错误：手动加药目标设定值不能为负数"
     Param_Pending_Save = 0
     !OpenSubWnd(用户窗口.参数设置二次确认, 400, 300, 400, 200, 0)
     EXIT
 ENDIF
 
-IF Param_Transfer_Margin < 0 OR Param_Safety_Margin < 0 THEN
-    Param_Confirm_Text = "错误：Transfer/Safety Margin 不能<0"
+IF  Param_ManualDose_Mode < 0  THEN
+    Param_Confirm_Text = "错误：手动加药模式设定值不能为负数"
     Param_Pending_Save = 0
     !OpenSubWnd(用户窗口.参数设置二次确认, 400, 300, 400, 200, 0)
     EXIT
 ENDIF
 
-IF Param_ManualDose_Target < 0 THEN
-    Param_Confirm_Text = "错误：手动加药目标值不能<0"
+IF  Param_AlarmAckMode < 0  THEN
+    Param_Confirm_Text = "错误：报警确认模式设定值不能为负数"
+    Param_Pending_Save = 0
+    !OpenSubWnd(用户窗口.参数设置二次确认, 400, 300, 400, 200, 0)
+    EXIT
+ENDIF
+
+IF  Param_TargetInletVolume < 0  THEN
+    Param_Confirm_Text = "错误：注水量设定值不能为负数"
+    Param_Pending_Save = 0
+    !OpenSubWnd(用户窗口.参数设置二次确认, 400, 300, 400, 200, 0)
+    EXIT
+ENDIF
+
+IF  Param_VD_Vol_Target < 0  THEN
+    Param_Confirm_Text = "错误：加药量设定值不能为负数"
+    Param_Pending_Save = 0
+    !OpenSubWnd(用户窗口.参数设置二次确认, 400, 300, 400, 200, 0)
+    EXIT
+ENDIF
+
+IF  Param_S4WaitTimeout < 0  THEN
+    Param_Confirm_Text = "错误：S4等待超时设定值不能为负数"
     Param_Pending_Save = 0
     !OpenSubWnd(用户窗口.参数设置二次确认, 400, 300, 400, 200, 0)
     EXIT
@@ -2195,7 +2217,7 @@ ENDIF
 
 ' --- 校验通过 ---
 Param_Pending_Save = 1
-Param_Confirm_Text = "将参数设置应用于" + Str(SelectedUnit) + "号单元的运行，确认保存？"
+Param_Confirm_Text = "将参数设置应用于" + "1号单元的运行，确认保存？"
 !OpenSubWnd(用户窗口.参数设置二次确认, 400, 300, 400, 200, 0)
 ```
 
