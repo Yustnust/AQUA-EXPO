@@ -12,6 +12,11 @@
 > - **新增项**：补充PLC代码实际使用但HMI通道缺失的地址。包括I0.3系统复位按钮、I0.4消音按钮；Q0.2~~Q0.4阀A/B/C输出、Q0.7报警声音、Q8.0报警灯光；VW304上缸子流程状态、VW306已完成下缸换水次数；VD116 S6滚动实测、VD244/VD256双倒计时器显示、VD414 24h换水目标、VD426周期尾端转移余量、VD430上缸配液安全余量；V1.1初始化完成、V1.2注射泵RTU在线、V0.1流量计RTU在线（均为M16.4/5/6的OB1镜像）；VB378~~VB383 Modbus错误码；VB900\~VB907 RTC时间。
 >
 > - **重大修正**：VD74在当前PLC代码中**既不存S4实测也不存S2实测**，原《HMI-PLC变量地址表\_v2.0》及CSV中的`U1_VD_S4_Actual`映射错误。S4转移实测时长实际写入**VD116（U1\_VD\_S6\_Rolling）**，首轮作为S6滚动默认值。
+
+> **v2.1.1 变更摘要（2026-09-17，VD414/426/430 用户默认镜像分配）**：
+>
+> - **新增用户默认镜像**：将v2.1 实施时废弃未用的 VD468/VD476/VD480 重新分配为 v2.2 时间参数（VD414/426/430）的用户默认镜像；SBR25_ColdStart.stl L74 后新增三行 `MOVR VD468→VD414` / `MOVR VD476→VD426` / `MOVR VD480→VD430`。经字节级（VB/VW/VD/V.y）+ 间接寻址（FILL/BMB/&Vxxx/MBUS_MSG）四维核实，VW236（bytes 472-473，FC11 TON 暂存）/VW252（bytes 504-505，FC1A T38 PT）均不与新地址重叠；VD472/VD496/VD508 暂留空闲。
+> - **HMI 端同步**：参数设置页 v2.8 → v2.9 脚本重写后，三个新参数可经 HMI 参数设置页输入框直接读写（用户设值→镜像区→冷启动 SBR25 覆盖→真值生效）。
 >
 > - **命名规则**：保留HMI已有变量名（以`西门子_S7_Smart200_以太网_通道处理.csv`为准）；新增变量按`U1_类型_功能`规则命名，保持与现有风格一致。
 >
@@ -57,7 +62,7 @@
 | VB300 \~ VB303             | 报警字（4字节32位）                 | BYTE×4    | 是    |
 | VB305                      | 系统总状态字                      | BYTE      | 否    |
 | VB378 \~ VB383             | Modbus RTU错误码               | BYTE×6    | 否    |
-| VB456 \~ VB536             | HMI参数镜像区                    | BYTE/REAL | 是    |
+| VB456 \~ VB536             | HMI参数镜像区                    | BYTE/REAL | 是    | v2.1.1 补 VB468/476/480 VD414/426/430 镜像 |
 | VB900 \~ VB907             | RTC实时时钟BCD                  | BYTE×8    | 否    |
 | V0.1/V1.1/V1.2             | M16.4/5/6的V区镜像(初始化完成/RTU在线) | BOOL      | 否    |
 | VB500 \~ VB599             | 报警日志缓冲区（FC3）                | BYTE      | 是    |
@@ -357,17 +362,22 @@
 
 PLC在SBR25冷启动时读取以下镜像值作为HMI参数的断电保持默认值。
 
-| 地址    | HMI变量名                    | 镜像源   | 说明                      |
-| ----- | ------------------------- | ----- | ----------------------- |
-| VB456 | U1\_UD\_Flag              | —     | HMI参数镜像标志字节             |
-| VD460 | U1\_UD\_VD24\_ExpTarget   | VD24  | HMI镜像 VD24\_ExpTarget   |
-| VD464 | U1\_UD\_VD28\_PreMixTime  | VD28  | HMI镜像 VD28\_PreMixTime  |
-| VD488 | U1\_UD\_VD66\_DelayA      | VD66  | HMI镜像 VD66\_DelayA      |
-| VD500 | U1\_UD\_VD316\_InletVol   | VD316 | HMI镜像 VD316\_InletVol   |
-| VD504 | U1\_UD\_VD350\_StepRes    | VD350 | HMI镜像 VD350\_StepRes    |
-| VD512 | U1\_UD\_VD358\_TimeoutA   | VD358 | HMI镜像 VD358\_TimeoutA   |
-| VD516 | U1\_UD\_VD362\_TimeoutB   | VD362 | HMI镜像 VD362\_TimeoutB   |
-| VD528 | U1\_UD\_VD452\_ManualDose | VD452 | HMI镜像 VD452\_ManualDose |
+| 地址    | HMI变量名                            | 镜像源   | 说明                          |
+| ----- | --------------------------------- | ----- | --------------------------- |
+| VB456 | U1\_UD\_Flag                      | —     | HMI参数镜像标志字节                 |
+| VD460 | U1\_UD\_VD24\_ExpTarget           | VD24  | HMI镜像 VD24\_ExpTarget       |
+| VD464 | U1\_UD\_VD28\_PreMixTime          | VD28  | HMI镜像 VD28\_PreMixTime      |
+| **VD468** | **U1\_UD\_VD414\_24h\_Target**     | **VD414** | **HMI镜像 VD414\_24h\_Target (v2.1.1 新增, 24h换水目标次数)** |
+| **VD476** | **U1\_UD\_VD426\_Transfer\_Margin**| **VD426** | **HMI镜像 VD426\_Transfer\_Margin (v2.1.1 新增, 周期尾端转移余量)** |
+| **VD480** | **U1\_UD\_VD430\_Safety\_Margin**  | **VD430** | **HMI镜像 VD430\_Prep\_Safety\_Margin (v2.1.1 新增, 上缸配液安全余量)** |
+| VD488 | U1\_UD\_VD66\_DelayA              | VD66  | HMI镜像 VD66\_DelayA          |
+| VD500 | U1\_UD\_VD316\_InletVol           | VD316 | HMI镜像 VD316\_InletVol       |
+| VD504 | U1\_UD\_VD350\_StepRes            | VD350 | HMI镜像 VD350\_StepRes        |
+| VD512 | U1\_UD\_VD358\_TimeoutA           | VD358 | HMI镜像 VD358\_TimeoutA       |
+| VD516 | U1\_UD\_VD362\_TimeoutB           | VD362 | HMI镜像 VD362\_TimeoutB       |
+| VD520 | U1\_UD\_VD584\_VolTarget          | VD584 | HMI镜像 VD584\_VolTarget      |
+| VD524 | U1\_UD\_VD448\_S4WaitTimeout      | VD448 | HMI镜像 VD448\_S4WaitTimeout  |
+| VD528 | U1\_UD\_VD452\_ManualDose         | VD452 | HMI镜像 VD452\_ManualDose     |
 
 > **说明**：UD镜像区中对应VD32/VD36/VD40/VD44/VD108/VD144/VD354/VD370/VW388/V200.0等已删除参数的条目不再使用，本表仅保留PLC在SBR25中实际读取的镜像项。
 

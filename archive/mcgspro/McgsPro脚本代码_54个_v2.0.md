@@ -2202,10 +2202,10 @@ EndIf
 
 If SelectedUnit = 1 Then
     Param_StepRes = U1_VD_StepResolution
-    Param_24h_Target = U1_VD_24h_Target
+    Param_24h_Target = U1_UD_VD414_24h_Target
 ' [v2.2 added Transfer/Safety]
-Param_Transfer_Margin = U1_VD_Transfer_Margin
-Param_Safety_Margin = U1_VD_Safety_Margin
+Param_Transfer_Margin = U1_UD_VD426_Transfer_Margin
+Param_Safety_Margin = U1_UD_VD430_Safety_Margin
     Param_ExpTarget = U1_VD_ExperimentTarget
     Param_PreMixTime = U1_VD_PreMixTime
 ' [v2.2 removed Param_PreMixTime_MinSafe]
@@ -2220,10 +2220,10 @@ EndIf
 
 If SelectedUnit = 2 Then
     Param_StepRes = U2_VD_StepResolution
-    Param_24h_Target = U2_VD_24h_Target
+    Param_24h_Target = U2_UD_VD414_24h_Target
 ' [v2.2 added Transfer/Safety]
-Param_Transfer_Margin = U2_VD_Transfer_Margin
-Param_Safety_Margin = U2_VD_Safety_Margin
+Param_Transfer_Margin = U2_UD_VD426_Transfer_Margin
+Param_Safety_Margin = U2_UD_VD430_Safety_Margin
     Param_ExpTarget = U2_VD_ExperimentTarget
     Param_PreMixTime = U2_VD_PreMixTime
 ' [v2.2 removed Param_PreMixTime_MinSafe]
@@ -2238,10 +2238,10 @@ EndIf
 
 If SelectedUnit = 3 Then
     Param_StepRes = U3_VD_StepResolution
-    Param_24h_Target = U3_VD_24h_Target
+    Param_24h_Target = U3_UD_VD414_24h_Target
 ' [v2.2 added Transfer/Safety]
-Param_Transfer_Margin = U3_VD_Transfer_Margin
-Param_Safety_Margin = U3_VD_Safety_Margin
+Param_Transfer_Margin = U3_UD_VD426_Transfer_Margin
+Param_Safety_Margin = U3_UD_VD430_Safety_Margin
     Param_ExpTarget = U3_VD_ExperimentTarget
     Param_PreMixTime = U3_VD_PreMixTime
 ' [v2.2 removed Param_PreMixTime_MinSafe]
@@ -2256,10 +2256,10 @@ EndIf
 
 If SelectedUnit = 4 Then
     Param_StepRes = U4_VD_StepResolution
-    Param_24h_Target = U4_VD_24h_Target
+    Param_24h_Target = U4_UD_VD414_24h_Target
 ' [v2.2 added Transfer/Safety]
-Param_Transfer_Margin = U4_VD_Transfer_Margin
-Param_Safety_Margin = U4_VD_Safety_Margin
+Param_Transfer_Margin = U4_UD_VD426_Transfer_Margin
+Param_Safety_Margin = U4_UD_VD430_Safety_Margin
     Param_ExpTarget = U4_VD_ExperimentTarget
     Param_PreMixTime = U4_VD_PreMixTime
 ' [v2.2 removed Param_PreMixTime_MinSafe]
@@ -2274,10 +2274,10 @@ EndIf
 
 If SelectedUnit = 5 Then
     Param_StepRes = U5_VD_StepResolution
-    Param_24h_Target = U5_VD_24h_Target
+    Param_24h_Target = U5_UD_VD414_24h_Target
 ' [v2.2 added Transfer/Safety]
-Param_Transfer_Margin = U5_VD_Transfer_Margin
-Param_Safety_Margin = U5_VD_Safety_Margin
+Param_Transfer_Margin = U5_UD_VD426_Transfer_Margin
+Param_Safety_Margin = U5_UD_VD430_Safety_Margin
     Param_ExpTarget = U5_VD_ExperimentTarget
     Param_PreMixTime = U5_VD_PreMixTime
 ' [v2.2 removed Param_PreMixTime_MinSafe]
@@ -2292,10 +2292,10 @@ EndIf
 
 If SelectedUnit = 6 Then
     Param_StepRes = U6_VD_StepResolution
-    Param_24h_Target = U6_VD_24h_Target
+    Param_24h_Target = U6_UD_VD414_24h_Target
 ' [v2.2 added Transfer/Safety]
-Param_Transfer_Margin = U6_VD_Transfer_Margin
-Param_Safety_Margin = U6_VD_Safety_Margin
+Param_Transfer_Margin = U6_UD_VD426_Transfer_Margin
+Param_Safety_Margin = U6_UD_VD430_Safety_Margin
     Param_ExpTarget = U6_VD_ExperimentTarget
     Param_PreMixTime = U6_VD_PreMixTime
 ' [v2.2 removed Param_PreMixTime_MinSafe]
@@ -2310,10 +2310,10 @@ EndIf
 
 If SelectedUnit = 7 Then
     Param_StepRes = U7_VD_StepResolution
-    Param_24h_Target = U7_VD_24h_Target
+    Param_24h_Target = U7_UD_VD414_24h_Target
 ' [v2.2 added Transfer/Safety]
-Param_Transfer_Margin = U7_VD_Transfer_Margin
-Param_Safety_Margin = U7_VD_Safety_Margin
+Param_Transfer_Margin = U7_UD_VD426_Transfer_Margin
+Param_Safety_Margin = U7_UD_VD430_Safety_Margin
     Param_ExpTarget = U7_VD_ExperimentTarget
     Param_PreMixTime = U7_VD_PreMixTime
 ' [v2.2 removed Param_PreMixTime_MinSafe]
@@ -2328,10 +2328,10 @@ EndIf
 
 If SelectedUnit = 8 Then
     Param_StepRes = U8_VD_StepResolution
-    Param_24h_Target = U8_VD_24h_Target
+    Param_24h_Target = U8_UD_VD414_24h_Target
 ' [v2.2 added Transfer/Safety]
-Param_Transfer_Margin = U8_VD_Transfer_Margin
-Param_Safety_Margin = U8_VD_Safety_Margin
+Param_Transfer_Margin = U8_UD_VD426_Transfer_Margin
+Param_Safety_Margin = U8_UD_VD430_Safety_Margin
     Param_ExpTarget = U8_VD_ExperimentTarget
     Param_PreMixTime = U8_VD_PreMixTime
 ' [v2.2 removed Param_PreMixTime_MinSafe]
@@ -2406,7 +2406,7 @@ EndIf
 ' --- 4. 写回 PLC (�?SelectedUnit 选择目标) ---
 If SelectedUnit = 1 Then
     U1_VD_StepResolution = Param_StepRes
-    U1_VD_24h_Target = Param_24h_Target
+    U1_UD_VD414_24h_Target = Param_24h_Target
     U1_VD_ExperimentTarget = Param_ExpTarget
     U1_VD_PreMixTime = Param_PreMixTime
 ' [v2.2 removed PreMixTime_MinSafe write]
@@ -2421,7 +2421,7 @@ EndIf
 
 If SelectedUnit = 2 Then
     U2_VD_StepResolution = Param_StepRes
-    U2_VD_24h_Target = Param_24h_Target
+    U2_UD_VD414_24h_Target = Param_24h_Target
     U2_VD_ExperimentTarget = Param_ExpTarget
     U2_VD_PreMixTime = Param_PreMixTime
 ' [v2.2 removed PreMixTime_MinSafe write]
@@ -2436,7 +2436,7 @@ EndIf
 
 If SelectedUnit = 3 Then
     U3_VD_StepResolution = Param_StepRes
-    U3_VD_24h_Target = Param_24h_Target
+    U3_UD_VD414_24h_Target = Param_24h_Target
     U3_VD_ExperimentTarget = Param_ExpTarget
     U3_VD_PreMixTime = Param_PreMixTime
 ' [v2.2 removed PreMixTime_MinSafe write]
@@ -2451,7 +2451,7 @@ EndIf
 
 If SelectedUnit = 4 Then
     U4_VD_StepResolution = Param_StepRes
-    U4_VD_24h_Target = Param_24h_Target
+    U4_UD_VD414_24h_Target = Param_24h_Target
     U4_VD_ExperimentTarget = Param_ExpTarget
     U4_VD_PreMixTime = Param_PreMixTime
 ' [v2.2 removed PreMixTime_MinSafe write]
@@ -2466,7 +2466,7 @@ EndIf
 
 If SelectedUnit = 5 Then
     U5_VD_StepResolution = Param_StepRes
-    U5_VD_24h_Target = Param_24h_Target
+    U5_UD_VD414_24h_Target = Param_24h_Target
     U5_VD_ExperimentTarget = Param_ExpTarget
     U5_VD_PreMixTime = Param_PreMixTime
 ' [v2.2 removed PreMixTime_MinSafe write]
@@ -2481,7 +2481,7 @@ EndIf
 
 If SelectedUnit = 6 Then
     U6_VD_StepResolution = Param_StepRes
-    U6_VD_24h_Target = Param_24h_Target
+    U6_UD_VD414_24h_Target = Param_24h_Target
     U6_VD_ExperimentTarget = Param_ExpTarget
     U6_VD_PreMixTime = Param_PreMixTime
 ' [v2.2 removed PreMixTime_MinSafe write]
@@ -2496,7 +2496,7 @@ EndIf
 
 If SelectedUnit = 7 Then
     U7_VD_StepResolution = Param_StepRes
-    U7_VD_24h_Target = Param_24h_Target
+    U7_UD_VD414_24h_Target = Param_24h_Target
     U7_VD_ExperimentTarget = Param_ExpTarget
     U7_VD_PreMixTime = Param_PreMixTime
 ' [v2.2 removed PreMixTime_MinSafe write]
@@ -2511,7 +2511,7 @@ EndIf
 
 If SelectedUnit = 8 Then
     U8_VD_StepResolution = Param_StepRes
-    U8_VD_24h_Target = Param_24h_Target
+    U8_UD_VD414_24h_Target = Param_24h_Target
     U8_VD_ExperimentTarget = Param_ExpTarget
     U8_VD_PreMixTime = Param_PreMixTime
 ' [v2.2 removed PreMixTime_MinSafe write]
@@ -2703,7 +2703,7 @@ U1_UD_VD430_SafetyMargin = Param_Safety_Margin
     U1_UD_VD358_TimeoutA     = Param_Timeout_ValveA
     U1_UD_VD362_TimeoutB     = Param_Timeout_ValveB
     U1_UD_VD370_VolTarget    = Param_VD_Vol_Target
-    U1_UD_VD448_WaitTimeout  = Param_S4WaitTimeout
+    U1_UD_VD448_S4WaitTimeout  = Param_S4WaitTimeout
     U1_UD_VD452_ManualDose   = Param_ManualDose_Target
     U1_UD_VW388_Mode         = Param_ManualDose_Mode
     U1_UD_V200_0_AckMode     = Param_AlarmAckMode
@@ -4290,7 +4290,7 @@ EndIf
 If ParamSrcUnit = 1 Then
     If ParamDstUnit = 2 Then
                 U2_VD_StepResolution = U1_VD_StepResolution
-        U2_VD_24h_Target = U1_VD_24h_Target
+        U2_UD_VD414_24h_Target = U1_UD_VD414_24h_Target
         U2_VD_ExperimentTarget = U1_VD_ExperimentTarget
         U2_VD_PreMixTime = U1_VD_PreMixTime
 ' [v2.2 removed U2 sync]
@@ -4304,7 +4304,7 @@ If ParamSrcUnit = 1 Then
     EndIf
     If ParamDstUnit = 3 Then
                 U3_VD_StepResolution = U1_VD_StepResolution
-        U3_VD_24h_Target = U1_VD_24h_Target
+        U3_UD_VD414_24h_Target = U1_UD_VD414_24h_Target
         U3_VD_ExperimentTarget = U1_VD_ExperimentTarget
         U3_VD_PreMixTime = U1_VD_PreMixTime
 ' [v2.2 removed U3 sync]
@@ -4318,7 +4318,7 @@ If ParamSrcUnit = 1 Then
     EndIf
     If ParamDstUnit = 4 Then
                 U4_VD_StepResolution = U1_VD_StepResolution
-        U4_VD_24h_Target = U1_VD_24h_Target
+        U4_UD_VD414_24h_Target = U1_UD_VD414_24h_Target
         U4_VD_ExperimentTarget = U1_VD_ExperimentTarget
         U4_VD_PreMixTime = U1_VD_PreMixTime
 ' [v2.2 removed U4 sync]
@@ -4332,7 +4332,7 @@ If ParamSrcUnit = 1 Then
     EndIf
     If ParamDstUnit = 5 Then
                 U5_VD_StepResolution = U1_VD_StepResolution
-        U5_VD_24h_Target = U1_VD_24h_Target
+        U5_UD_VD414_24h_Target = U1_UD_VD414_24h_Target
         U5_VD_ExperimentTarget = U1_VD_ExperimentTarget
         U5_VD_PreMixTime = U1_VD_PreMixTime
 ' [v2.2 removed U5 sync]
@@ -4346,7 +4346,7 @@ If ParamSrcUnit = 1 Then
     EndIf
     If ParamDstUnit = 6 Then
                 U6_VD_StepResolution = U1_VD_StepResolution
-        U6_VD_24h_Target = U1_VD_24h_Target
+        U6_UD_VD414_24h_Target = U1_UD_VD414_24h_Target
         U6_VD_ExperimentTarget = U1_VD_ExperimentTarget
         U6_VD_PreMixTime = U1_VD_PreMixTime
 ' [v2.2 removed U6 sync]
@@ -4360,7 +4360,7 @@ If ParamSrcUnit = 1 Then
     EndIf
     If ParamDstUnit = 7 Then
                 U7_VD_StepResolution = U1_VD_StepResolution
-        U7_VD_24h_Target = U1_VD_24h_Target
+        U7_UD_VD414_24h_Target = U1_UD_VD414_24h_Target
         U7_VD_ExperimentTarget = U1_VD_ExperimentTarget
         U7_VD_PreMixTime = U1_VD_PreMixTime
 ' [v2.2 removed U7 sync]
@@ -4374,7 +4374,7 @@ If ParamSrcUnit = 1 Then
     EndIf
     If ParamDstUnit = 8 Then
                 U8_VD_StepResolution = U1_VD_StepResolution
-        U8_VD_24h_Target = U1_VD_24h_Target
+        U8_UD_VD414_24h_Target = U1_UD_VD414_24h_Target
         U8_VD_ExperimentTarget = U1_VD_ExperimentTarget
         U8_VD_PreMixTime = U1_VD_PreMixTime
 ' [v2.2 removed U8 sync]

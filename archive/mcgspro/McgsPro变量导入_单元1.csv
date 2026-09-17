@@ -144,15 +144,21 @@
 138,U1_UD_Flag,SINGLE,读写VBUB456,读写,V数据寄存器,8位 无符号二进制,456,,1,
 139,U1_UD_VD24_ExpTarget,SINGLE,读写VDF460,读写,V数据寄存器,32位 浮点数,460,,1,
 140,U1_UD_VD28_PreMixTime,SINGLE,读写VDF464,读写,V数据寄存器,32位 浮点数,464,,1,
-141,U1_UD_VD66_DelayA,SINGLE,读写VDF488,读写,V数据寄存器,32位 浮点数,488,,1,
-142,U1_UD_VD108_S6Default,SINGLE,读写VDF492,读写,V数据寄存器,32位 浮点数,492,,1,
-143,U1_UD_VD316_InletVol,SINGLE,读写VDF500,读写,V数据寄存器,32位 浮点数,500,,1,
-144,U1_UD_VD350_StepRes,SINGLE,读写VDF504,读写,V数据寄存器,32位 浮点数,504,,1,
-145,U1_UD_VD358_TimeoutA,SINGLE,读写VDF512,读写,V数据寄存器,32位 浮点数,512,,1,
-146,U1_UD_VD362_TimeoutB,SINGLE,读写VDF516,读写,V数据寄存器,32位 浮点数,516,,1,
-147,U1_UD_VD452_ManualDose,SINGLE,读写VDF528,读写,V数据寄存器,32位 浮点数,528,,1,
-148,U1_VD_S4WaitTimeout,SINGLE,读写VDF448,读写,V数据寄存器,32位 浮点数,448,,1,
-149,U1_UD_VD448_S4WaitTimeout,SINGLE,读写VDF524,读写,V数据寄存器,32位 浮点数,524,,1,
-150,U1_STA_InitDone,INTEGER,只读V001.1,只读,V数据寄存器,通道的第01位,1,,1,PLC初始化完成标志(原M16.4)
-151,U1_STA_RTU1_Online,INTEGER,只读V001.2,只读,V数据寄存器,通道的第02位,1,,1,注射泵RTU在线标志(原M16.5)
-152,U1_STA_RTU2_Online,INTEGER,只读V000.1,只读,V数据寄存器,通道的第01位,0,,1,流量计RTU在线标志(原M16.6)
+141,U1_UD_VD414_24h_Target,SINGLE,读写VDF468,读写,V数据寄存器,32位 浮点数,468,,1,
+142,U1_UD_VD426_Transfer_Margin,SINGLE,读写VDF476,读写,V数据寄存器,32位 浮点数,476,,1,
+143,U1_UD_VD430_Safety_Margin,SINGLE,读写VDF480,读写,V数据寄存器,32位 浮点数,480,,1,
+144,U1_UD_VD54_TimeoutC,SINGLE,读写VDF484,读写,V数据寄存器,32位 浮点数,484,,1,
+145,U1_UD_VD66_DelayA,SINGLE,读写VDF488,读写,V数据寄存器,32位 浮点数,488,,1,
+146,U1_UD_VD316_InletVol,SINGLE,读写VDF500,读写,V数据寄存器,32位 浮点数,500,,1,
+147,U1_UD_VD350_StepRes,SINGLE,读写VDF504,读写,V数据寄存器,32位 浮点数,504,,1,
+148,U1_UD_VD358_TimeoutA,SINGLE,读写VDF512,读写,V数据寄存器,32位 浮点数,512,,1,
+149,U1_UD_VD362_TimeoutB,SINGLE,读写VDF516,读写,V数据寄存器,32位 浮点数,516,,1,
+150,U1_UD_VD452_ManualDose,SINGLE,读写VDF528,读写,V数据寄存器,32位 浮点数,528,,1,
+151,U1_UD_VD584_VolTarget,SINGLE,读写VDF520,读写,V数据寄存器,32位 浮点数,520,,1,
+152,U1_UD_VW388_ManualDoseMode,SINGLE,读写VWB532,读写,V数据寄存器,16位 有符号二进制,532,,1,
+153,U1_V200_AlarmAckMode,INTEGER,读写V536.0,读写,V数据寄存器,通道的第00位,536,,1,
+154,U1_VD_S4WaitTimeout,SINGLE,读写VDF448,读写,V数据寄存器,32位 浮点数,448,,1,
+155,U1_UD_VD448_S4WaitTimeout,SINGLE,读写VDF524,读写,V数据寄存器,32位 浮点数,524,,1,
+156,U1_STA_InitDone,INTEGER,只读V001.1,只读,V数据寄存器,通道的第01位,1,,1,PLC初始化完成标志(原M16.4)
+157,U1_STA_RTU1_Online,INTEGER,只读V001.2,只读,V数据寄存器,通道的第02位,1,,1,注射泵RTU在线标志(原M16.5)
+158,U1_STA_RTU2_Online,INTEGER,只读V000.1,只读,V数据寄存器,通道的第01位,0,,1,流量计RTU在线标志(原M16.6)

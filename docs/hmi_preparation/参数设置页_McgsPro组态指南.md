@@ -1,8 +1,22 @@
 # 参数设置页（画面4）McgsPro 组态指南
 
-**版本**: v2.8（整合版）
+**版本**: v2.9（整合版）
 **创建日期**: 2026-08-23
-**更新日期**: 2026-09-16 (v2.8: 修正 v2.7 地址错位 — 原文中 `VD380 / VD382` 是文档编写时虚构、未与 PLC v2.2 真实代码核对的地址。本版本按 PLC 实际代码 `FC15_State_S4_Transfer.stl` L53 `MOVR VD448, VD324` 与 `SBR25_ColdStart.stl` L44/L66 把 `VD_S4Wait_Time` 只读改正为 `VD444`（S4 入口 PLC 内部累加器）、`VD_S4WaitTimeout` 可设改正为 `VD448`（FC15 仍以 VD448 作 T61 PT，超时置 V303.2）。v2.7 之前的地址同义保留名词性叙述但代码侧已对齐 PLC 真值表；v2.7: 合并远程 v1.2 新增 S4 等待时长 VD444 只读显示 + S4 等待超时阈值 VD448 可调；v2.6: 修正v2.5——该版本McgsPro中!MsgBox/!OpenWindow/!SetWindow均不兼容（字符串参数被识别为非法或类型不匹配），二次确认改为"页面内隐藏确认面板"方案，通过控件Visible属性控制显示/隐藏。v2.5: 修正v2.4——McgsPro该版本安全属性页无"操作确认"，改回"输入框绑定Param_*缓冲变量+保存按钮汇总写入PLC"；v2.4: 参数写入架构改为"输入框直接绑定PLC变量+操作确认"；v2.3: T/S6改回HMI设定参数（时间周期组）；VD_T_Default由VD104迁移至VD144——VD104与VD102字节重叠VB104~105，FC13/FC21写加药步数会破坏T值；实验启动时FC10播种VD112←VD144、VD116←VD108)
+**更新日期**: 2026-09-17 (v2.9: 脚本重写与 v2.2 时间参数补全 —
+  (1) 脚本 27 (Load) / 脚本 28a (保存执行) / 脚本 33 (RefreshParamBuffer) 三段中
+      所有 `U1_VD_xxx = Param_xxx` / `Param_xxx = U1_VD_xxx` 改为对用户默认镜像
+      `U1_UD_VDxxx` / `Param_xxx = U1_UD_VDxxx`,符合 v2.2 双阶段保存语义;
+  (2) 删除 v2.1 已废弃的三层纠偏 / 静止等候 / 旧 S6 等待 / 预循环下限 等
+      变量 (VD32/36/40/44/112/120/124/128/144/354 等);
+  (3) 新增 v2.2 时间参数三个: 24h 换水次数 (VD414, 镜像 VD468),
+      周期尾端转移余量 (VD426, 镜像 VD476), 上缸配液安全余量 (VD430, 镜像 VD480);
+      v2.2 后 PLC 端 SBR25_ColdStart.stl 已补对应 MOVR 覆盖行。
+  (4) 校验段 / 恢复默认 / 复制参数列表 / 关联校验 / Param_缓冲表 / 默认值与范围表
+      / PLC 自动计算参数段 / 验收 Checklist / 版本历史 全部同步重写);
+  v2.8 (2026-09-16): 修正 v2.7 地址错位 — `VD380/VD382` 改为 `VD444/VD448`;
+  v2.7: 合并远程 v1.2 新增 S4 等待时长显示与超时阈值; v2.6: 页面内隐藏确认面板;
+  v2.5: 输入框绑定 Param_* 缓冲变量 + 保存按钮; v2.4: 直接绑定 + 操作确认;
+  v2.3: T/S6 改回 HMI 设定参数, VD_T_Default 迁移至 VD144
 **说明**: 本文件整合了项目中所有关于参数设置页的组态工作，包括画面布局、控件属性、脚本代码、安全机制等，作为McgsPro组态工程师的唯一参考。
 
 **配套文档**:
@@ -411,41 +425,44 @@ btnTab_Alarm.BackColor = RGB(189, 195, 199)
 
 ### 脚本 27：画面4 Load 脚本（窗口打开事件）
 
-**用途**: 画面打开时从PLC读取当前单元参数，填充到缓冲变量
+**用途**: 画面打开时从 PLC 读取**用户默认镜像**到 Param_* 缓冲变量
 **位置**: 用户窗口 → 画面4_参数设置 → Load 事件
+**v2.9 变更**: 从读真值 `U1_VD_xxx` 改为读用户默认镜像 `U1_UD_VDxxx`,符合 SBR25 双阶段保存语义;
+            并删除全部 v2.1 已删变量 (C_Set/C_Stock/PreMixMinSafe/RestTime 等)。
 
 ```vb
 ' ============================================
-' 画面4_参数设置 Load 脚本 (v2.5: 读PLC到缓冲)
-' 功能: 把 U1 单元的 PLC 参数读到 Param_* 缓冲变量供输入框显示
+' 画面4_参数设置 Load 脚本 (v2.9: 读用户默认镜像到缓冲)
+' 功能: 把 U1 单元的 PLC 用户默认镜像区读到 Param_* 缓冲变量供输入框显示
 ' 注: McgsPro不支持动态变量名拼接,首期写死U1;8单元时复制画面改前缀
+'     SBR25冷启动时按 VD456=1 检查镜像区是否有效,有效则覆盖到真值
 ' ============================================
 
-Param_C_Set = U1_VD_C_Set
-Param_C_Stock = U1_VD_C_Stock
-Param_StepRes = U1_VD_StepResolution
-Param_CycleSet = U1_VD_CycleSetpoint
-Param_ExpTarget = U1_VD_ExperimentTarget
-Param_PreMixTime = U1_VD_PreMixTime
-Param_PreMixTime_MinSafe = U1_VD_PreMixTime_MinSafe
-Param_RestTime = U1_VD_RestTime
-Param_RestTime_Min = U1_VD_RestTime_Min
-Param_CycleExtend_Max = U1_VD_CycleExtend_Max
-Param_T_Default = U1_VD_T_Default
-Param_S6_Default = U1_VD_S6_Default
-Param_S4WaitTimeout = U1_VD_S4WaitTimeout
-Param_Timeout_ValveA = U1_VD_Timeout_ValveA
-Param_Timeout_ValveB = U1_VD_Timeout_ValveB
-Param_Timeout_ValveC = U1_VD_Timeout_ValveC
-Param_Delay_ValveA_Verify = U1_VD_Delay_ValveA_Verify
-Param_Timeout_Pump1 = U1_VD_Timeout_Pump1
-Param_Timeout_Pump2 = U1_VD_Timeout_Pump2
-Param_ManualDose_Target = U1_VD_ManualDose_Target
-Param_ManualDose_Mode = U1_VW_ManualDose_Mode
-Param_PumpSpeed_Start = U1_VD_PumpSpeed_Start
-Param_PumpSpeed_Max = U1_VD_PumpSpeed_Max
-Param_PumpSpeed_Cutoff = U1_VD_PumpSpeed_Cutoff
-Param_AlarmAckMode = U1_M_AlarmAckMode
+' 实验工艺参数 (工艺 + 进水 + 加药 + 单步分辨率)
+Param_ExpTarget       = U1_UD_VD24_ExpTarget            ' VD24 实验时长目标 (min)
+Param_PreMixTime      = U1_UD_VD28_PreMixTime           ' VD28 S2 搅拌+加药固定时长 (s)
+Param_InletVol        = U1_UD_VD316_InletVol            ' VD316 目标进水量 (L)
+Param_VolTarget       = U1_UD_VD584_VolTarget           ' VD584 本轮目标加药量 (µL)
+Param_StepRes         = U1_UD_VD350_StepRes             ' VD350 注射泵单步分辨率 (µL/步)
+
+' v2.2 时间周期参数 (双倒计时器体系)
+Param_24h_Target      = U1_UD_VD414_24h_Target          ' VD414 24h换水目标次数 (新增)
+Param_TransferMargin  = U1_UD_VD426_Transfer_Margin     ' VD426 周期尾端转移余量 (s) (新增)
+Param_SafetyMargin    = U1_UD_VD430_Safety_Margin       ' VD430 上缸配液安全余量 (s) (新增)
+Param_S4WaitTimeout   = U1_UD_VD448_S4WaitTimeout       ' VD448 S4 等待超时阈值 (s)
+
+' 超时保护参数
+Param_Timeout_ValveA    = U1_UD_VD358_TimeoutA          ' VD358 阀A动作超时 (s)
+Param_Timeout_ValveB    = U1_UD_VD362_TimeoutB          ' VD362 阀B动作超时 (s)
+Param_Timeout_ValveC    = U1_UD_VD54_TimeoutC           ' VD54  阀C动作超时 (s)
+Param_Delay_ValveA      = U1_UD_VD66_DelayA             ' VD66  阀A关闭延时验证 (s)
+
+' 手动模式
+Param_ManualDose_Target = U1_UD_VD452_ManualDose         ' VD452 手动注射泵总加药量 (µL)
+
+' 状态位 / 报警模式 (从 PLC 读真值)
+Param_ManualDose_Mode = U1_VW_ManualDose_Mode           ' VW388 手动模式 0=单次/1=循环 (读真值)
+Param_AlarmAckMode    = U1_M_AlarmAckMode              ' V200.0 报警确认模式 (读真值)
 
 ParamTargetUnit = SelectedUnit
 
@@ -462,96 +479,118 @@ lblPageTitle.Caption = "参数设置 - " + !str(SelectedUnit) + "号单元"
 
 ```vb
 ' ============================================
-' 保存参数按钮脚本 (v2.6: 页面内确认面板版)
-' 功能: 1.范围校验 2.显示确认面板 3.用户点"确定"后将 Param_* 写入 U1_*
+' 保存参数按钮脚本 (v2.9: 页面内确认面板版, 改写为校验镜像参数)
+' 功能: 1.范围校验 2.显示确认面板 3.用户点"确定"后将 Param_* 写入用户默认镜像 U1_UD_VDxxx
+'       HMI 不再写真值 (U1_VD_xxx); 冷启动时 SBR25 按 VD456 标志将镜像覆盖到真值
 ' 约束: 无自定义函数、无动态变量名、块IF必须ENDIF
 '       该版本McgsPro不支持!MsgBox/!OpenWindow/!SetWindow字符串参数
 ' ============================================
 
 ' --- 1. 范围校验（越限时只显示错误提示，不显示"确定"按钮） ---
-IF Param_C_Set < 0 OR Param_C_Set > 50 THEN
-    lblConfirmText.Caption = "错误：浓度设定值超范围(0~50%)"
-    btnConfirmOK.Visible = 0
-    btnConfirmCancel.Visible = 1
-    pnlConfirmBG.Visible = 1
-    lblConfirmText.Visible = 1
+
+' 实验工艺参数
+IF Param_ExpTarget < 1 OR Param_ExpTarget > 10000 THEN
+    lblConfirmText.Caption = "错误：实验时长目标超范围(1~10000min)"
+    btnConfirmOK.Visible = 0 : btnConfirmCancel.Visible = 1
+    pnlConfirmBG.Visible = 1 : lblConfirmText.Visible = 1
+    EXIT
+ENDIF
+IF Param_PreMixTime < 5 OR Param_PreMixTime > 120 THEN
+    lblConfirmText.Caption = "错误：S2搅拌+加药固定时长超范围(5~120s)"
+    btnConfirmOK.Visible = 0 : btnConfirmCancel.Visible = 1
+    pnlConfirmBG.Visible = 1 : lblConfirmText.Visible = 1
+    EXIT
+ENDIF
+IF Param_InletVol < 1 OR Param_InletVol > 50 THEN
+    lblConfirmText.Caption = "错误：目标进水量超范围(1~50L)"
+    btnConfirmOK.Visible = 0 : btnConfirmCancel.Visible = 1
+    pnlConfirmBG.Visible = 1 : lblConfirmText.Visible = 1
+    EXIT
+ENDIF
+IF Param_VolTarget < 100 OR Param_VolTarget > 10000 THEN
+    lblConfirmText.Caption = "错误：本轮目标加药量超范围(100~10000µL)"
+    btnConfirmOK.Visible = 0 : btnConfirmCancel.Visible = 1
+    pnlConfirmBG.Visible = 1 : lblConfirmText.Visible = 1
+    EXIT
+ENDIF
+IF Param_StepRes < 0.0001 OR Param_StepRes > 10 THEN
+    lblConfirmText.Caption = "错误：单步分辨率超范围(0.0001~10µL/步)"
+    btnConfirmOK.Visible = 0 : btnConfirmCancel.Visible = 1
+    pnlConfirmBG.Visible = 1 : lblConfirmText.Visible = 1
     EXIT
 ENDIF
 
-IF Param_C_Stock < 0 OR Param_C_Stock > 100 THEN
-    lblConfirmText.Caption = "错误：母液浓度超范围(0~100%)"
-    btnConfirmOK.Visible = 0
-    btnConfirmCancel.Visible = 1
-    pnlConfirmBG.Visible = 1
-    lblConfirmText.Visible = 1
+' v2.2 时间周期参数 (双倒计时器体系)
+IF Param_24h_Target < 1 OR Param_24h_Target > 48 THEN
+    lblConfirmText.Caption = "错误：24h换水目标次数超范围(1~48次)"
+    btnConfirmOK.Visible = 0 : btnConfirmCancel.Visible = 1
+    pnlConfirmBG.Visible = 1 : lblConfirmText.Visible = 1
     EXIT
 ENDIF
-
-IF Param_CycleSet < 1 OR Param_CycleSet > 1440 THEN
-    lblConfirmText.Caption = "错误：换水周期超范围(1~1440min)"
-    btnConfirmOK.Visible = 0
-    btnConfirmCancel.Visible = 1
-    pnlConfirmBG.Visible = 1
-    lblConfirmText.Visible = 1
+IF Param_TransferMargin < 10 OR Param_TransferMargin > 60 THEN
+    lblConfirmText.Caption = "错误：周期尾端转移余量超范围(10~60s)"
+    btnConfirmOK.Visible = 0 : btnConfirmCancel.Visible = 1
+    pnlConfirmBG.Visible = 1 : lblConfirmText.Visible = 1
     EXIT
 ENDIF
-
-IF Param_PreMixTime_MinSafe > Param_PreMixTime THEN
-    lblConfirmText.Caption = "错误：预循环压缩下限不得大于标称时长"
-    btnConfirmOK.Visible = 0
-    btnConfirmCancel.Visible = 1
-    pnlConfirmBG.Visible = 1
-    lblConfirmText.Visible = 1
+IF Param_SafetyMargin < 5 OR Param_SafetyMargin > 30 THEN
+    lblConfirmText.Caption = "错误：上缸配液安全余量超范围(5~30s)"
+    btnConfirmOK.Visible = 0 : btnConfirmCancel.Visible = 1
+    pnlConfirmBG.Visible = 1 : lblConfirmText.Visible = 1
     EXIT
 ENDIF
-
-IF Param_RestTime_Min > Param_RestTime THEN
-    lblConfirmText.Caption = "错误：静止等候压缩下限不得大于标称时长"
-    btnConfirmOK.Visible = 0
-    btnConfirmCancel.Visible = 1
-    pnlConfirmBG.Visible = 1
-    lblConfirmText.Visible = 1
-    EXIT
-ENDIF
-
-IF Param_CycleExtend_Max > Param_CycleSet THEN
-    lblConfirmText.Caption = "错误：换水周期顺延上限不得大于换水周期"
-    btnConfirmOK.Visible = 0
-    btnConfirmCancel.Visible = 1
-    pnlConfirmBG.Visible = 1
-    lblConfirmText.Visible = 1
-    EXIT
-ENDIF
-
-IF Param_T_Default < 60 OR Param_T_Default > 900 THEN
-    lblConfirmText.Caption = "错误：首轮配液总时长T超范围(60~900s)"
-    btnConfirmOK.Visible = 0
-    btnConfirmCancel.Visible = 1
-    pnlConfirmBG.Visible = 1
-    lblConfirmText.Visible = 1
-    EXIT
-ENDIF
-
-IF Param_S6_Default < 30 OR Param_S6_Default > 600 THEN
-    lblConfirmText.Caption = "错误：首轮S6排水时长超范围(30~600s)"
-    btnConfirmOK.Visible = 0
-    btnConfirmCancel.Visible = 1
-    pnlConfirmBG.Visible = 1
-    lblConfirmText.Visible = 1
-    EXIT
-ENDIF
-
 IF Param_S4WaitTimeout < 60 OR Param_S4WaitTimeout > 7200 THEN
     lblConfirmText.Caption = "错误：S4等待超时阈值超范围(60~7200s)"
-    btnConfirmOK.Visible = 0
-    btnConfirmCancel.Visible = 1
-    pnlConfirmBG.Visible = 1
-    lblConfirmText.Visible = 1
+    btnConfirmOK.Visible = 0 : btnConfirmCancel.Visible = 1
+    pnlConfirmBG.Visible = 1 : lblConfirmText.Visible = 1
+    EXIT
+ENDIF
+
+' v2.2 跨参数关联校验：避免 T_single - Transfer_Margin - Safety_Margin <= 0
+' T_single = 86400 / 24h_Target (秒). 当 T_cycle ≤ 0 时 FC40 NETWORK 1 报警 V303.6.
+IF Param_TransferMargin + Param_SafetyMargin >= 86400.0 / Param_24h_Target THEN
+    lblConfirmText.Caption = "错误：转移余量+配液余量已超过单次周期，禁止保存"
+    btnConfirmOK.Visible = 0 : btnConfirmCancel.Visible = 1
+    pnlConfirmBG.Visible = 1 : lblConfirmText.Visible = 1
+    EXIT
+ENDIF
+
+' 超时保护参数
+IF Param_Timeout_ValveA < 10 OR Param_Timeout_ValveA > 600 THEN
+    lblConfirmText.Caption = "错误：阀A动作超时超范围(10~600s)"
+    btnConfirmOK.Visible = 0 : btnConfirmCancel.Visible = 1
+    pnlConfirmBG.Visible = 1 : lblConfirmText.Visible = 1
+    EXIT
+ENDIF
+IF Param_Timeout_ValveB < 10 OR Param_Timeout_ValveB > 600 THEN
+    lblConfirmText.Caption = "错误：阀B动作超时超范围(10~600s)"
+    btnConfirmOK.Visible = 0 : btnConfirmCancel.Visible = 1
+    pnlConfirmBG.Visible = 1 : lblConfirmText.Visible = 1
+    EXIT
+ENDIF
+IF Param_Timeout_ValveC < 10 OR Param_Timeout_ValveC > 600 THEN
+    lblConfirmText.Caption = "错误：阀C动作超时超范围(10~600s)"
+    btnConfirmOK.Visible = 0 : btnConfirmCancel.Visible = 1
+    pnlConfirmBG.Visible = 1 : lblConfirmText.Visible = 1
+    EXIT
+ENDIF
+IF Param_Delay_ValveA < 1 OR Param_Delay_ValveA > 30 THEN
+    lblConfirmText.Caption = "错误：阀A关闭延时验证超范围(1~30s)"
+    btnConfirmOK.Visible = 0 : btnConfirmCancel.Visible = 1
+    pnlConfirmBG.Visible = 1 : lblConfirmText.Visible = 1
+    EXIT
+ENDIF
+
+' 手动加药
+IF Param_ManualDose_Target < 0 OR Param_ManualDose_Target > 50000 THEN
+    lblConfirmText.Caption = "错误：手动注射泵总加药量超范围(0~50000µL)"
+    btnConfirmOK.Visible = 0 : btnConfirmCancel.Visible = 1
+    pnlConfirmBG.Visible = 1 : lblConfirmText.Visible = 1
     EXIT
 ENDIF
 
 ' --- 2. 校验通过，显示确认面板 ---
-lblConfirmText.Caption = "将修改" + !Str(SelectedUnit) + "号单元25个参数，确认保存？"
+lblConfirmText.Caption = "将修改" + !Str(SelectedUnit) + "号单元16个参数（含3个v2.2时间参数），确认保存？"
 btnConfirmOK.Visible = 1
 btnConfirmCancel.Visible = 1
 pnlConfirmBG.Visible = 1
@@ -563,32 +602,35 @@ lblConfirmText.Visible = 1
 **位置**: 画面4_参数设置 → btnConfirmOK → Click 事件
 
 ```vb
-' --- 写回PLC（直接赋值，无自定义函数） ---
-U1_VD_C_Set = Param_C_Set
-U1_VD_C_Stock = Param_C_Stock
-U1_VD_StepResolution = Param_StepRes
-U1_VD_CycleSetpoint = Param_CycleSet
-U1_VD_ExperimentTarget = Param_ExpTarget
-U1_VD_PreMixTime = Param_PreMixTime
-U1_VD_PreMixTime_MinSafe = Param_PreMixTime_MinSafe
-U1_VD_RestTime = Param_RestTime
-U1_VD_RestTime_Min = Param_RestTime_Min
-U1_VD_CycleExtend_Max = Param_CycleExtend_Max
-U1_VD_T_Default = Param_T_Default
-U1_VD_S6_Default = Param_S6_Default
-U1_VD_S4WaitTimeout = Param_S4WaitTimeout
-U1_VD_Timeout_ValveA = Param_Timeout_ValveA
-U1_VD_Timeout_ValveB = Param_Timeout_ValveB
-U1_VD_Timeout_ValveC = Param_Timeout_ValveC
-U1_VD_Delay_ValveA_Verify = Param_Delay_ValveA_Verify
-U1_VD_Timeout_Pump1 = Param_Timeout_Pump1
-U1_VD_Timeout_Pump2 = Param_Timeout_Pump2
-U1_VD_ManualDose_Target = Param_ManualDose_Target
-U1_VW_ManualDose_Mode = Param_ManualDose_Mode
-U1_VD_PumpSpeed_Start = Param_PumpSpeed_Start
-U1_VD_PumpSpeed_Max = Param_PumpSpeed_Max
-U1_VD_PumpSpeed_Cutoff = Param_PumpSpeed_Cutoff
-U1_M_AlarmAckMode = Param_AlarmAckMode
+' --- 写回用户默认镜像（v2.9: 不写真值 U1_VD_xxx，写镜像 U1_UD_VDxxx） ---
+' 实验工艺参数
+U1_UD_VD24_ExpTarget     = Param_ExpTarget
+U1_UD_VD28_PreMixTime    = Param_PreMixTime
+U1_UD_VD316_InletVol     = Param_InletVol
+U1_UD_VD584_VolTarget    = Param_VolTarget
+U1_UD_VD350_StepRes      = Param_StepRes
+
+' v2.2 时间周期参数
+U1_UD_VD414_24h_Target   = Param_24h_Target
+U1_UD_VD426_Transfer_Margin = Param_TransferMargin
+U1_UD_VD430_Safety_Margin = Param_SafetyMargin
+U1_UD_VD448_S4WaitTimeout = Param_S4WaitTimeout
+
+' 超时保护参数
+U1_UD_VD358_TimeoutA     = Param_Timeout_ValveA
+U1_UD_VD362_TimeoutB     = Param_Timeout_ValveB
+U1_UD_VD54_TimeoutC      = Param_Timeout_ValveC
+U1_UD_VD66_DelayA        = Param_Delay_ValveA
+
+' 手动加药
+U1_UD_VD452_ManualDose   = Param_ManualDose_Target
+
+' 镜像有效标志 (v2.9: 用户实际点保存即视为镜像有效, 等 SBR25 VD456 检查)
+' 此前单元 1 CSV 没有 U1_UD_Flag 行, 这里补上 (可选)
+U1_UD_Flag = 1
+
+' 注: ManualDose_Mode / AlarmAckMode 从真值读,不参与保存;
+'     这两个参数由现场调试工程师通过其他途径(按钮/工具)调节。
 
 ' --- 隐藏确认面板 ---
 pnlConfirmBG.Visible = 0
@@ -617,14 +659,15 @@ btnConfirmCancel.Visible = 0
 
 ### 脚本 29：恢复默认按钮
 
-**用途**: 恢复当前单元参数到默认值
+**用途**: 恢复当前单元参数到默认值（写入用户默认镜像）
 **位置**: btnRestoreDefault → Click 事件
 
 > **v2.5实施提示**：以下脚本已改为McgsPro支持的直接赋值语法（参考脚本28），首期U1写死，8单元时复制画面改`U1_`前缀。
+> **v2.9变更**：恢复默认写入用户默认镜像 `U1_UD_VDxxx` (非真值)，与 SBR25 双阶段保存语义一致；默认值表与 §8.1 同步。
 
 ```vb
 ' ============================================
-' 恢复默认按钮脚本
+' 恢复默认按钮脚本 (v2.9)
 ' ============================================
 
 If LoginLevel < 3 Then
@@ -636,34 +679,32 @@ Dim ret
 ret = !MsgBox("将恢复" + Str(SelectedUnit) + "号单元参数到默认值，确认？", 3)
 If ret <> 1 Then Exit Sub
 
-' 通过脚本写入默认值
-Call SetValueByUnit(SelectedUnit, "VD_C_Set", 5.0)
-Call SetValueByUnit(SelectedUnit, "VD_C_Stock", 100.0)
-Call SetValueByUnit(SelectedUnit, "VD_StepResolution", 4.1667)
-Call SetValueByUnit(SelectedUnit, "VD_CycleSetpoint", 30.0)
-Call SetValueByUnit(SelectedUnit, "VD_ExperimentTarget", 480.0)
-Call SetValueByUnit(SelectedUnit, "VD_PreMixTime", 120.0)
-Call SetValueByUnit(SelectedUnit, "VD_PreMixTime_MinSafe", 30.0)
-Call SetValueByUnit(SelectedUnit, "VD_RestTime", 60.0)
-Call SetValueByUnit(SelectedUnit, "VD_RestTime_Min", 15.0)
-Call SetValueByUnit(SelectedUnit, "VD_CycleExtend_Max", 5.0)
-Call SetValueByUnit(SelectedUnit, "VD_T_Default", 300.0)
-Call SetValueByUnit(SelectedUnit, "VD_S6_Default", 180.0)
-Call SetValueByUnit(SelectedUnit, "VD_S4WaitTimeout", 1800.0)
-Call SetValueByUnit(SelectedUnit, "VD_Timeout_ValveA", 60.0)
-Call SetValueByUnit(SelectedUnit, "VD_Timeout_ValveB", 60.0)
-Call SetValueByUnit(SelectedUnit, "VD_Timeout_ValveC", 60.0)
-Call SetValueByUnit(SelectedUnit, "VD_Delay_ValveA_Verify", 5.0)
-Call SetValueByUnit(SelectedUnit, "VD_Timeout_Pump1", 10.0)
-Call SetValueByUnit(SelectedUnit, "VD_Timeout_Pump2", 10.0)
-Call SetValueByUnit(SelectedUnit, "VD_ManualDose_Target", 0.0)
-Call SetValueByUnit(SelectedUnit, "VW_ManualDose_Mode", 0)
-Call SetValueByUnit(SelectedUnit, "VD_PumpSpeed_Start", 450.0)
-Call SetValueByUnit(SelectedUnit, "VD_PumpSpeed_Max", 700.0)
-Call SetValueByUnit(SelectedUnit, "VD_PumpSpeed_Cutoff", 450.0)
-Call SetValueByUnit(SelectedUnit, "M_AlarmAckMode", 0)
+' 实验工艺参数 (5 项)
+U1_UD_VD24_ExpTarget  = 480.0    ' min   实验时长目标
+U1_UD_VD28_PreMixTime = 10.0     ' s     S2 搅拌+加药固定时长
+U1_UD_VD316_InletVol  = 10.0     ' L     目标进水量
+U1_UD_VD584_VolTarget = 5000.0   ' µL    本轮目标加药量
+U1_UD_VD350_StepRes   = 4.1667   ' µL/步 单步分辨率
 
-' 刷新编辑缓冲变量
+' v2.2 时间周期参数 (4 项)
+U1_UD_VD414_24h_Target   = 24.0  ' 次    24h换水目标
+U1_UD_VD426_Transfer_Margin = 30.0 ' s    周期尾端转移余量
+U1_UD_VD430_Safety_Margin = 10.0  ' s    上缸配液安全余量
+U1_UD_VD448_S4WaitTimeout = 1800.0 ' s   S4 等待超时阈值
+
+' 超时保护参数 (4 项)
+U1_UD_VD358_TimeoutA = 60.0   ' s   阀A动作超时
+U1_UD_VD362_TimeoutB = 60.0   ' s   阀B动作超时
+U1_UD_VD54_TimeoutC  = 60.0   ' s   阀C动作超时
+U1_UD_VD66_DelayA    = 5.0    ' s   阀A关闭延时验证
+
+' 手动加药 (1 项)
+U1_UD_VD452_ManualDose = 10000.0 ' µL  手动注射泵总加药量
+
+' 镜像有效标志
+U1_UD_Flag = 1
+
+' 刷新编辑缓冲变量 (从新值读回)
 Call RefreshParamBuffer(SelectedUnit)
 
 !MsgBox("参数已恢复默认", 0, "恢复成功")
@@ -675,10 +716,11 @@ Call RefreshParamBuffer(SelectedUnit)
 **位置**: btnCopyToOthers → Click 事件
 
 > **v2.5实施提示**：McgsPro不支持数组和自定义函数，复制功能建议利用McgsPro"配方"组件，或展开为逐参数直接赋值（如`U2_VD_C_Set = U1_VD_C_Set`）。首期仅U1时本按钮可禁用或暂不实施。
+> **v2.9变更**：参数列表改为 16 项镜像名（v2.1 的 25 项已废弃项全部删除，新增 v2.2 时间参数 3 项）。
 
 ```vb
 ' ============================================
-' 复制到其他单元按钮脚本
+' 复制到其他单元按钮脚本 (v2.9)
 ' ============================================
 
 If LoginLevel < 3 Then
@@ -690,33 +732,23 @@ Dim ret, i
 ret = !MsgBox("将" + Str(SelectedUnit) + "号单元参数复制到其他使能单元，确认？", 3)
 If ret <> 1 Then Exit Sub
 
-' 定义参数列表
-Dim paramList(24) As String
-paramList(0) = "VD_C_Set"
-paramList(1) = "VD_C_Stock"
-paramList(2) = "VD_StepResolution"
-paramList(3) = "VD_CycleSetpoint"
-paramList(4) = "VD_ExperimentTarget"
-paramList(5) = "VD_PreMixTime"
-paramList(6) = "VD_PreMixTime_MinSafe"
-paramList(7) = "VD_RestTime"
-paramList(8) = "VD_RestTime_Min"
-paramList(9) = "VD_CycleExtend_Max"
-paramList(10) = "VD_T_Default"
-paramList(11) = "VD_S6_Default"
-paramList(12) = "VD_S4WaitTimeout"
-paramList(13) = "VD_Timeout_ValveA"
-paramList(14) = "VD_Timeout_ValveB"
-paramList(15) = "VD_Timeout_ValveC"
-paramList(16) = "VD_Delay_ValveA_Verify"
-paramList(17) = "VD_Timeout_Pump1"
-paramList(18) = "VD_Timeout_Pump2"
-paramList(19) = "VD_ManualDose_Target"
-paramList(20) = "VW_ManualDose_Mode"
-paramList(21) = "VD_PumpSpeed_Start"
-paramList(22) = "VD_PumpSpeed_Max"
-paramList(23) = "VD_PumpSpeed_Cutoff"
-paramList(24) = "M_AlarmAckMode"
+' 15 项镜像名参数列表 (v2.9: 仅含 v2.2 实际有效项, 共 14 个真实镜像 + 1 个标志位)
+Dim paramList(14) As String
+paramList(0)  = "UD_VD24_ExpTarget"
+paramList(1)  = "UD_VD28_PreMixTime"
+paramList(2)  = "UD_VD316_InletVol"
+paramList(3)  = "UD_VD350_StepRes"
+paramList(4)  = "UD_VD584_VolTarget"
+paramList(5)  = "UD_VD414_24h_Target"
+paramList(6)  = "UD_VD426_Transfer_Margin"
+paramList(7)  = "UD_VD430_Safety_Margin"
+paramList(8)  = "UD_VD448_S4WaitTimeout"
+paramList(9)  = "UD_VD358_TimeoutA"
+paramList(10) = "UD_VD362_TimeoutB"
+paramList(11) = "UD_VD54_TimeoutC"
+paramList(12) = "UD_VD66_DelayA"
+paramList(13) = "UD_VD452_ManualDose"
+paramList(14) = "UD_Flag"
 
 ' 复制到其他所有使能单元
 For i = 1 To 8
@@ -766,38 +798,42 @@ End Sub
 ### 脚本 33：`RefreshParamBuffer` 函数（v2.5不采用）
 
 > v2.5采用画面复制法，单元切换即切换画面，Load脚本（脚本27）会自动重新加载，本函数不再需要。
+> **v2.9变更**：本节保留 RefreshParamBuffer 作为"恢复默认"按钮的辅助刷新逻辑（脚本29 末尾调用），如未启用可保持空。下列赋值方向同步改为读用户默认镜像，参数集与 §6.1 缓冲变量表一致。
 
 ```vb
 ' ============================================
-' RefreshParamBuffer 子过程
-' 功能: 从PLC重新加载参数到编辑缓冲
+' RefreshParamBuffer 子过程 (v2.9: 读用户默认镜像)
+' 功能: 从PLC用户默认镜像重新加载参数到编辑缓冲
 ' ============================================
 Sub RefreshParamBuffer(unitNum)
-    Param_C_Set = GetValue("U" + Str(unitNum) + "_VD_C_Set")
-    Param_C_Stock = GetValue("U" + Str(unitNum) + "_VD_C_Stock")
-    Param_StepRes = GetValue("U" + Str(unitNum) + "_VD_StepResolution")
-    Param_CycleSet = GetValue("U" + Str(unitNum) + "_VD_CycleSetpoint")
-    Param_ExpTarget = GetValue("U" + Str(unitNum) + "_VD_ExperimentTarget")
-    Param_PreMixTime = GetValue("U" + Str(unitNum) + "_VD_PreMixTime")
-    Param_PreMixTime_MinSafe = GetValue("U" + Str(unitNum) + "_VD_PreMixTime_MinSafe")
-    Param_RestTime = GetValue("U" + Str(unitNum) + "_VD_RestTime")
-    Param_RestTime_Min = GetValue("U" + Str(unitNum) + "_VD_RestTime_Min")
-    Param_CycleExtend_Max = GetValue("U" + Str(unitNum) + "_VD_CycleExtend_Max")
-    Param_T_Default = GetValue("U" + Str(unitNum) + "_VD_T_Default")
-    Param_S6_Default = GetValue("U" + Str(unitNum) + "_VD_S6_Default")
-    Param_S4WaitTimeout = GetValue("U" + Str(unitNum) + "_VD_S4WaitTimeout")
-    Param_Timeout_ValveA = GetValue("U" + Str(unitNum) + "_VD_Timeout_ValveA")
-    Param_Timeout_ValveB = GetValue("U" + Str(unitNum) + "_VD_Timeout_ValveB")
-    Param_Timeout_ValveC = GetValue("U" + Str(unitNum) + "_VD_Timeout_ValveC")
-    Param_Timeout_Pump1 = GetValue("U" + Str(unitNum) + "_VD_Timeout_Pump1")
-    Param_Timeout_Pump2 = GetValue("U" + Str(unitNum) + "_VD_Timeout_Pump2")
-    Param_Delay_ValveA_Verify = GetValue("U" + Str(unitNum) + "_VD_Delay_ValveA_Verify")
-    Param_ManualDose_Target = GetValue("U" + Str(unitNum) + "_VD_ManualDose_Target")
-    Param_ManualDose_Mode = GetValue("U" + Str(unitNum) + "_VW_ManualDose_Mode")
-    Param_PumpSpeed_Start = GetValue("U" + Str(unitNum) + "_VD_PumpSpeed_Start")
-    Param_PumpSpeed_Max = GetValue("U" + Str(unitNum) + "_VD_PumpSpeed_Max")
-    Param_PumpSpeed_Cutoff = GetValue("U" + Str(unitNum) + "_VD_PumpSpeed_Cutoff")
-    Param_AlarmAckMode = GetValue("U" + Str(unitNum) + "_M_AlarmAckMode")
+    Dim pfx
+    pfx = "U" + Str(unitNum) + "_"
+
+    ' 实验工艺参数
+    Param_ExpTarget       = GetValue(pfx + "UD_VD24_ExpTarget")
+    Param_PreMixTime      = GetValue(pfx + "UD_VD28_PreMixTime")
+    Param_InletVol        = GetValue(pfx + "UD_VD316_InletVol")
+    Param_VolTarget       = GetValue(pfx + "UD_VD584_VolTarget")
+    Param_StepRes         = GetValue(pfx + "UD_VD350_StepRes")
+
+    ' v2.2 时间周期参数
+    Param_24h_Target      = GetValue(pfx + "UD_VD414_24h_Target")
+    Param_TransferMargin  = GetValue(pfx + "UD_VD426_Transfer_Margin")
+    Param_SafetyMargin    = GetValue(pfx + "UD_VD430_Safety_Margin")
+    Param_S4WaitTimeout   = GetValue(pfx + "UD_VD448_S4WaitTimeout")
+
+    ' 超时保护参数
+    Param_Timeout_ValveA  = GetValue(pfx + "UD_VD358_TimeoutA")
+    Param_Timeout_ValveB  = GetValue(pfx + "UD_VD362_TimeoutB")
+    Param_Timeout_ValveC  = GetValue(pfx + "UD_VD54_TimeoutC")
+    Param_Delay_ValveA    = GetValue(pfx + "UD_VD66_DelayA")
+
+    ' 手动加药
+    Param_ManualDose_Target = GetValue(pfx + "UD_VD452_ManualDose")
+
+    ' ManualDose_Mode / AlarmAckMode 从真值读
+    Param_ManualDose_Mode = GetValue(pfx + "VW_ManualDose_Mode")
+    Param_AlarmAckMode    = GetValue(pfx + "M_AlarmAckMode")
 End Sub
 ```
 
@@ -815,75 +851,92 @@ SelectedUnit = 1
 '     单画面阶段(仅U1)此脚本仅需 SelectedUnit = N + 按钮高亮
 ```
 
-### 脚本 35：越限校验（周期执行，v2.5读缓冲变量）
+### 脚本 35：越限校验（周期执行，v2.9读缓冲变量）
 
 **用途**: 实时检查跨参数关联合理性，显示警告（单参数范围校验由输入框min/max属性在保存时承担，此处仅做界面提示）
 **触发**: 画面周期脚本（每500ms执行）
+**v2.9变更**: 删除 v2.1 三层纠偏相关警告（预循环下限/静止等候下限/顺延上限），替换为 v2.2 双倒计时器关联警告。
 
 ```vb
 ' ============================================
-' 参数越限校验脚本 (v2.5: 读缓冲变量)
+' 参数越限校验脚本 (v2.9: 读缓冲变量 + v2.2 关联校验)
 ' ============================================
 
-' 预循环下限 ≤ 预循环时长
-IF Param_PreMixTime_MinSafe > Param_PreMixTime THEN
+' 警告 1: 转移余量 + 配液余量 ≥ 单次周期 → FC40 V303.6 报警触发
+IF Param_TransferMargin + Param_SafetyMargin >= 86400.0 / Param_24h_Target THEN
     lbl_Warning1.Visible = 1
 ELSE
     lbl_Warning1.Visible = 0
 ENDIF
 
-' 静止等候下限 ≤ 静止等候标称
-IF Param_RestTime_Min > Param_RestTime THEN
+' 警告 2: 单次倒计时余额已耗尽 (当 Prep_Needed ≥ T_single)
+' 即 S1 实测 + S2 固定 + SafetyMargin ≥ T_single - TransferMargin, 极易触发下一轮 S1 但同时 S5 时长不够
+IF (Param_PreMixTime + Param_SafetyMargin) >= 86400.0 / Param_24h_Target - Param_TransferMargin THEN
     lbl_Warning2.Visible = 1
 ELSE
     lbl_Warning2.Visible = 0
 ENDIF
 
-' 顺延上限 ≤ 换水周期
-IF Param_CycleExtend_Max > Param_CycleSet THEN
+' 警告 3: S4 等待阈值过宽（>3600s）通常意味着下缸排空异常,需关注
+IF Param_S4WaitTimeout > 3600 THEN
     lbl_Warning3.Visible = 1
 ELSE
     lbl_Warning3.Visible = 0
 ENDIF
 ```
 
-> 注：警告标签文字为静态内容（设计期填好"预循环下限不得大于标称值"等），脚本只控制可见性，红色样式在标签属性中配置。块IF必须ENDIF，单行IF不需要。
+> 注：警告标签文字为静态内容（设计期填好"周期参数过激"等），脚本只控制可见性，红色样式在标签属性中配置。块IF必须ENDIF，单行IF不需要。
 
 ---
 
 ## 六、HMI 内部变量
 
-### 6.1 编辑缓冲变量（v2.5启用）
+### 6.1 编辑缓冲变量（v2.9: 16 项）
 
 输入框绑定到以下HMI内部缓冲变量（类型REAL，除标注INT外），实时数据库中必须创建：
 
+**实验工艺 (5 项)**
+
 | 变量名 | 类型 | 说明 |
 |---|---|---|
-| Param_C_Set | REAL | 目标浓度编辑缓冲 |
-| Param_C_Stock | REAL | 母液浓度编辑缓冲 |
-| Param_StepRes | REAL | 单步分辨率编辑缓冲 |
-| Param_CycleSet | REAL | 换水周期编辑缓冲 |
-| Param_ExpTarget | REAL | 实验时长目标编辑缓冲 |
-| Param_PreMixTime | REAL | 预循环标称编辑缓冲 |
-| Param_PreMixTime_MinSafe | REAL | 预循环下限编辑缓冲 |
-| Param_RestTime | REAL | 静止等候标称编辑缓冲 |
-| Param_RestTime_Min | REAL | 静止等候下限编辑缓冲 |
-| Param_CycleExtend_Max | REAL | 顺延上限编辑缓冲 |
-| Param_T_Default | REAL | 首轮T时长编辑缓冲 |
-| Param_S6_Default | REAL | 首轮S6时长编辑缓冲 |
-| Param_S4WaitTimeout | REAL | S4等待超时阈值编辑缓冲 |
-| Param_Timeout_ValveA | REAL | 阀A超时编辑缓冲 |
-| Param_Timeout_ValveB | REAL | 阀B超时编辑缓冲 |
-| Param_Timeout_ValveC | REAL | 阀C超时编辑缓冲 |
-| Param_Delay_ValveA_Verify | REAL | 阀A延时编辑缓冲 |
-| Param_Timeout_Pump1 | REAL | 泵1超时编辑缓冲 |
-| Param_Timeout_Pump2 | REAL | 泵2超时编辑缓冲 |
-| Param_ManualDose_Target | REAL | 手动总量编辑缓冲 |
-| Param_ManualDose_Mode | INT | 注射泵模式编辑缓冲 |
-| Param_PumpSpeed_Start | REAL | 启动速度编辑缓冲 |
-| Param_PumpSpeed_Max | REAL | 最高速度编辑缓冲 |
-| Param_PumpSpeed_Cutoff | REAL | 截止速度编辑缓冲 |
-| Param_AlarmAckMode | INT | 报警模式编辑缓冲 |
+| Param_ExpTarget | REAL | 实验时长目标编辑缓冲 (min) |
+| Param_PreMixTime | REAL | S2 搅拌+加药固定时长编辑缓冲 (s) |
+| Param_InletVol | REAL | 目标进水量编辑缓冲 (L) |
+| Param_VolTarget | REAL | 本轮目标加药量编辑缓冲 (µL) |
+| Param_StepRes | REAL | 单步分辨率编辑缓冲 (µL/步) |
+
+**v2.2 时间周期 (4 项，新参数加粗)**
+
+| 变量名 | 类型 | 说明 |
+|---|---|---|
+| **Param_24h_Target** | REAL | **24h 换水目标次数编辑缓冲 (1~48次)** |
+| **Param_TransferMargin** | REAL | **周期尾端转移余量编辑缓冲 (s)** |
+| **Param_SafetyMargin** | REAL | **上缸配液安全余量编辑缓冲 (s)** |
+| Param_S4WaitTimeout | REAL | S4 等待超时阈值编辑缓冲 (s) |
+
+**超时保护 (4 项)**
+
+| 变量名 | 类型 | 说明 |
+|---|---|---|
+| Param_Timeout_ValveA | REAL | 阀A动作超时编辑缓冲 (s) |
+| Param_Timeout_ValveB | REAL | 阀B动作超时编辑缓冲 (s) |
+| Param_Timeout_ValveC | REAL | 阀C动作超时编辑缓冲 (s) |
+| Param_Delay_ValveA | REAL | 阀A关闭延时验证编辑缓冲 (s) |
+
+**手动与报警模式 (2 项)**
+
+| 变量名 | 类型 | 说明 |
+|---|---|---|
+| Param_ManualDose_Target | REAL | 手动注射泵总加药量编辑缓冲 (µL) |
+| Param_AlarmAckMode | INT | 报警确认模式编辑缓冲 (0=自动/1=人工) |
+
+**仅作显示、不经参数设置页写入 (1 项)**
+
+| 变量名 | 类型 | 说明 |
+|---|---|---|
+| Param_ManualDose_Mode | INT | 手动注射泵模式，只读显示来自 VW388 真值 |
+
+> **v2.9 重大修正**：v2.1 的 25 项变量表中 12 项（VD_C_Set/VD_C_Stock/VD_CycleSetpoint/VD_PreMixTime_MinSafe/VD_RestTime/VD_RestTime_Min/VD_CycleExtend_Max/VD_T_Default/VD_S6_Default/VD_PumpSpeed_Start/Max/Cutoff）对应 PLC 地址已废弃，对应的 Param_* 缓冲变量在本版本中不再定义。
 
 ### 6.2 控制变量
 
@@ -952,64 +1005,59 @@ LoginLevel >= X AND U{N}_VW2_StateMachine == 0
 
 ## 八、默认值与范围表
 
-### 8.1 参数默认值
+### 8.1 参数默认值（v2.9: 仅含 v2.2 实际有效 16 项）
 
-| 参数名 | 默认值 | 单位 | PLC地址 |
-|---|---|---|---|
-| VD_C_Set | 5.0 | % | VD10 |
-| VD_C_Stock | 100.0 | % | VD14 |
-| VD_StepResolution | 4.1667 | µL/步 | VD350 |
-| VD_CycleSetpoint | 30.0 | min | VD354 |
-| VD_ExperimentTarget | 480.0 | min | VD24 |
-| VD_PreMixTime | 120.0 | s | VD28 |
-| VD_PreMixTime_MinSafe | 30.0 | s | VD32 |
-| VD_RestTime | 60.0 | s | VD36 |
-| VD_RestTime_Min | 15.0 | s | VD40 |
-| VD_CycleExtend_Max | 5.0 | min | VD44 |
-| VD_T_Default | 300.0 | s | VD144 |
-| VD_S6_Default | 180.0 | s | VD108 |
-| VD_S4Wait_Time | 0.0 | s | VD444 |
-| VD_S4WaitTimeout | 1800.0 | s | VD448 |
-| VD_Timeout_ValveA | 60.0 | s | VD358 |
-| VD_Timeout_ValveB | 60.0 | s | VD362 |
-| VD_Timeout_ValveC | 60.0 | s | VD54 |
-| VD_Delay_ValveA_Verify | 5.0 | s | VD66 |
-| VD_Timeout_Pump1 | 10.0 | s | VD58 |
-| VD_Timeout_Pump2 | 10.0 | s | VD62 |
-| VD_ManualDose_Target | 0.0 | mL | VD384 |
-| VW_ManualDose_Mode | 0 | — | VW388 |
-| VD_PumpSpeed_Start | 450.0 | Hz | VD132 |
-| VD_PumpSpeed_Max | 700.0 | Hz | VD136 |
-| VD_PumpSpeed_Cutoff | 450.0 | Hz | VD140 |
-| M_AlarmAckMode | 0 | — | V200.0 |
+| 参数名 | 默认值 | 单位 | 真值地址 | 镜像地址 |
+|---|---|---|---|---|
+| **实验工艺** |  |  |  |  |
+| VD_ExperimentTarget | 480.0 | min | VD24 | VD460 |
+| VD_PreMixTime | 10.0 | s | VD28 | VD464 |
+| VD_InletVol | 10.0 | L | VD316 | VD500 |
+| VD_VolTarget | 5000.0 | µL | VD584 | VD520 |
+| VD_StepResolution | 4.1667 | µL/步 | VD350 | VD504 |
+| **v2.2 时间周期（新参数加粗）** |  |  |  |  |
+| **VD_24h_Target** | **24.0** | **次** | **VD414** | **VD468** |
+| **VD_TransferMargin** | **30.0** | **s** | **VD426** | **VD476** |
+| **VD_SafetyMargin** | **10.0** | **s** | **VD430** | **VD480** |
+| VD_S4WaitTimeout | 1800.0 | s | VD448 | VD524 |
+| **超时保护** |  |  |  |  |
+| VD_Timeout_ValveA | 60.0 | s | VD358 | VD512 |
+| VD_Timeout_ValveB | 60.0 | s | VD362 | VD516 |
+| VD_Timeout_ValveC | 60.0 | s | VD54 | VD484 |
+| VD_Delay_ValveA | 5.0 | s | VD66 | VD488 |
+| **手动与报警模式** |  |  |  |  |
+| VD_ManualDose_Target | 10000.0 | µL | VD452 | VD528 |
+| VW_ManualDose_Mode | 0 | — | VW388 | VB532 |
+| V_AlarmAckMode | 1 | — | V200.0 | VB536 |
+
+> 注：VD_ManualDose_Mode 默认在 v2.9 由 0 改为 1 — 与 PLC 冷启动真实场景一致 (L3 启用时 ALARM_ACK_MODE = 人工确认)。
 
 ### 8.2 参数允许范围
 
 | 参数名 | 最小值 | 最大值 | 单位 |
 |---|---|---|---|
-| VD_C_Set | 0 | 50 | % |
-| VD_C_Stock | 0 | 100 | % |
-| VD_StepResolution | 0.0001 | 10 | µL/步 |
-| VD_CycleSetpoint | 1 | 1440 | min |
+| **实验工艺** |  |  |  |
 | VD_ExperimentTarget | 1 | 10000 | min |
-| VD_PreMixTime | 1 | 600 | s |
-| VD_PreMixTime_MinSafe | 1 | 300 | s |
-| VD_RestTime | 1 | 300 | s |
-| VD_RestTime_Min | 1 | 120 | s |
-| VD_CycleExtend_Max | 0 | 30 | min |
-| VD_T_Default | 60 | 900 | s |
-| VD_S6_Default | 30 | 600 | s |
-| VD_Timeout_ValveA/B/C | 1 | 300 | s |
-| VD_Delay_ValveA_Verify | 1 | 30 | s |
-| VD_Timeout_Pump1/Pump2 | 1 | 120 | s |
-| VD_S4Wait_Time | 0 | 86400 | s |
+| VD_PreMixTime | 5 | 120 | s |
+| VD_InletVol | 1 | 50 | L |
+| VD_VolTarget | 100 | 10000 | µL |
+| VD_StepResolution | 0.0001 | 10 | µL/步 |
+| **v2.2 时间周期** |  |  |  |
+| VD_24h_Target | 1 | 48 | 次 |
+| VD_TransferMargin | 10 | 60 | s |
+| VD_SafetyMargin | 5 | 30 | s |
 | VD_S4WaitTimeout | 60 | 7200 | s |
-| VD_ManualDose_Target | 0 | 50 | mL |
-| VD_PumpSpeed_Start | 100 | 6000 | Hz |
-| VD_PumpSpeed_Max | 100 | 6000 | Hz |
-| VD_PumpSpeed_Cutoff | 50 | 5400 | Hz |
+| **超时保护** |  |  |  |
+| VD_Timeout_ValveA/B/C | 10 | 600 | s |
+| VD_Delay_ValveA | 1 | 30 | s |
+| **手动与报警模式** |  |  |  |
+| VD_ManualDose_Target | 0 | 50000 | µL |
 | VW_ManualDose_Mode | 0 | 1 | — |
-| M_AlarmAckMode | 0 | 1 | — |
+| V_AlarmAckMode | 0 | 1 | — |
+
+> **跨参数关联（保存脚本校验 + 周期脚本警告）**：
+> - `VD_TransferMargin + VD_SafetyMargin < 86400 / VD_24h_Target` 即 `T_cycle > 0`
+> - 否则 FC40 NETWORK 1 报警 V303.6 = 单轮换水周期超时（强制人工确认）
 
 ### 8.3 PLC自动计算参数（无需HMI设置）
 
@@ -1017,46 +1065,46 @@ LoginLevel >= X AND U{N}_VW2_StateMachine == 0
 
 | 地址 | 符号 | 单位 | 计算方式 | 说明 |
 |---|---|---|---|---|
-| VD350 | VD_StepResolution | µL/步 | 硬编码 `4.1667` | 25mL注射器6000步模式，冷启动时写入，HMI仅显示不可编辑 |
-| VD584 | VD_Vol_Target | µL | `C_Set × 进水量 / C_Stock` | 目标加药量，S1完成后自动计算，HMI可只读显示 |
 | VD366 | VD_ExperimentDuration_Accum | min | S5运行中自动累加 | 实验时长累计值，HMI只读显示 |
-| VD112 | VD_T_Rolling | s | S1实测+S2标称+S3估算+S3.5标称 | 滚动实测T，首轮由VD144播种，之后自动学习，HMI只读显示 |
-| VD116 | VD_S6_Rolling | s | S6实测 | 滚动实测S6排水时长，首轮由VD108播种，之后自动学习，HMI只读显示 |
-| VD444 | VD_S4Wait_Time | s | S4 等待期间 PLC 自动累加(每秒+1),S4 完成时清零 | S4 入口 V1.7=1 持续时间,HMI 只读显示,操作员可监控 S4 等待 |
+| VD256 | VD_TimerA_Display | s | T46_PV/10（每周期更新） | TimerA 当前显示值，HMI 只读 |
+| VD244 | VD_TimerB_Display | s | T48_PV/10（每周期更新） | TimerB 当前显示值，HMI 只读 |
+| VD116 | VD_S6_Rolling | s | FC15/FC17 实测后赋值 | S6 滚动实测（首轮 = S4 实测），HMI 只读显示 |
+| VD444 | VD_S4Wait_Time | s | S4 等待期间 PLC 自动累加（每秒+1），S4 完成时清零 | S4 入口 V1.7=1 持续时间，HMI 只读显示 |
+| VW304 | State_UpTank | — | FC1A/FC10/FC15/FC17 维护 | 上缸配液子流程状态（0~4 五态），HMI 只读显示 |
+| VW306 | CycleCount | — | FC17 转 S4 时累加 | 已完成下缸换水次数，HMI 只读显示 |
 
-**设计说明**：
-- T(VD144)/S6(VD108)为HMI设定参数（时间周期组4-047/4-048），**仅首轮生效**：实验启动时FC10播种VD112←VD144、VD116←VD108，首轮完成后由实测值自动学习覆盖
-- v2.3地址迁移：VD_T_Default由VD104迁移至VD144。原因：VD104与VD_Dose_Steps(VD102)字节重叠VB104~105，FC13/FC21每次写加药步数都会破坏T值（300.0会被写成0.0），属原设计地址分配缺陷
-- 手动加药量(VD384)在HMI以mL输入，PLC内部以µL存储（数据缩放系数1000）
+**v2.9 说明**：
+- v2.1 时 VD112/VD144 (T 默认值与滚动实测)、VD108 (首轮 S6 默认) 等 v2.1 三层纠偏字段已彻底删除。
+- v2.9 引入双倒计时器显示 VD256/VD244（来自 PLC 真空闲区迁移，参 v2.2_实施前置迁移方案_v1.0）。
 
 ---
 
-## 九、组态验收 Checklist
+## 九、组态验收 Checklist（v2.9）
 
 | # | 验收项 | 确认 |
 |---|---|---|
 | 1 | 画面4创建完成，尺寸1280×800 | □ |
-| 2 | 25个参数输入框全部创建并**绑定Param_*缓冲变量**（v2.5 + v2.7新增 S4WaitTimeout），1 个只读显示(VD_S4Wait_Time) | □ |
-| 3 | 25个Param_*缓冲变量在实时数据库中已创建 | □ |
-| 4 | 输入框最小值/最大值已设置（保存脚本二次校验） | □ |
-| 5 | 输入框权限配置正确（浓度L3/其他L2） | □ |
-| 6 | 运行中所有输入框灰色不可编辑（VW2==0条件） | □ |
-| 7 | Load脚本（脚本27）配置完成，画面打开时缓冲变量正确加载PLC值 | □ |
-| 8 | 保存按钮脚本（脚本28）配置完成，校验/确认/写入PLC正常 | □ |
-| 9 | 保存按钮权限L2+，运行中锁定 | □ |
-| 9a | 二次确认面板控件4-090~4-093已创建，初始Visible=0 | □ |
-| 9b | 保存按钮脚本28能正确显示确认面板（校验通过/越限两种状态） | □ |
-| 9c | 确认按钮脚本28a能正确写入PLC并隐藏面板 | □ |
-| 9d | 取消按钮脚本28b能正确隐藏面板且不写入PLC | □ |
-| 10 | 参数修改后点"取消"不写入PLC | □ |
-| 11 | 单元选择器8按钮创建，点击切换正常 | □ |
-| 12 | 标签页切换5按钮创建，点击显隐对应面板 | □ |
-| 13 | 恢复默认按钮脚本（脚本29）配置完成 | □ |
-| 14 | 复制按钮脚本（脚本30，首期可禁用）配置完成 | □ |
-| 15 | 越限校验脚本（脚本35读缓冲变量版）配置完成 | □ |
+| 2 | **16** 个参数输入框全部创建并**绑定 Param_* 缓冲变量**（v2.9 缩减自 v2.7 的 25 项；删除 v2.1 废弃项 + 新增 3 个 v2.2 时间参数 + 1 个 VD_InletVol 与 1 个 VD_VolTarget 重命名）| □ |
+| 3 | 16 个 Param_* 缓冲变量在实时数据库中已创建 | □ |
+| 4 | 输入框最小值/最大值按 §8.2 设置（保存脚本二次校验） | □ |
+| 5 | 输入框权限配置正确（浓度/单步分辨率 L3 / 其他 L2） | □ |
+| 6 | 运行中所有输入框灰色不可编辑（VW2==0 条件） | □ |
+| 7 | Load 脚本（脚本 27 v2.9）配置完成，画面打开时**从用户默认镜像**加载 Param_* 缓冲 | □ |
+| 8 | 保存按钮脚本（脚本 28 v2.9）配置完成，校验包含 v2.2 跨参数关联（TransferMargin+SafetyMargin ≥ 单次周期 报错） | □ |
+| 9 | 保存按钮权限 L2+，运行中锁定 | □ |
+| 9a | 二次确认面板控件 4-090~4-093 已创建，初始 Visible=0 | □ |
+| 9b | 保存按钮脚本 28 能正确显示确认面板（校验通过 / 越限两种状态） | □ |
+| 9c | 确认按钮脚本 28a 能正确**写入用户默认镜像 U1_UD_VDxxx** 并隐藏面板（非写真值） | □ |
+| 9d | 取消按钮脚本 28b 能正确隐藏面板且不写入镜像 | □ |
+| 10 | 参数修改后点"取消"不写入镜像 | □ |
+| 11 | 单元选择器 8 按钮创建，点击切换正常 | □ |
+| 12 | 标签页切换 5 按钮创建，点击显隐对应面板 | □ |
+| 13 | 恢复默认按钮脚本（脚本 29 v2.9）配置完成，写入 14 个镜像 + 设置 UD_Flag=1 | □ |
+| 14 | 复制按钮脚本（脚本 30 v2.9）配置完成，15 项镜像名列表 | □ |
+| 15 | 越限校验脚本（脚本 35 v2.9）配置完成，3 个 v2.2 关联警告 | □ |
 | 16 | 参数越限时红色警告标签显示 | □ |
 | 17 | 画面标题动态显示"参数设置 - X号单元" | □ |
-| 18 | 1号单元参数加载/保存/恢复默认正常 | □ |
+| 18 | 1号单元参数加载 / 保存 / 恢复默认正常（含**冷启动 SBR25 覆盖**） | □ |
 | 19 | 退出画面无错误 | □ |
 
 ---
@@ -1068,9 +1116,13 @@ LoginLevel >= X AND U{N}_VW2_StateMachine == 0
 | v1.0 | 2026-07-15 | 初始版本（McgsPro画面组态SOP_8画面_v2.0 第七章） |
 | v2.0 | 2026-08-15 | 整合McgsPro脚本代码_54个_v2.0 第六章F节 |
 | v2.1 | 2026-08-23 | 整合所有版本，补充注射泵参数组、报警模式、完整脚本库 |
-| v2.4 | 2026-08-24 | 参数写入架构变更为"输入框直接绑定+操作确认"：取消保存按钮及Param_*缓冲变量；脚本28废弃、脚本31/32/33标注不采用；脚本27/34/35按直接绑定重构；范围校验改由输入框min/max属性承担 |
-| v2.5 | 2026-08-24 | 修正v2.4：McgsPro该版本安全属性页无"操作确认"，改回"输入框绑定Param_*缓冲变量+保存按钮汇总写入PLC"；恢复保存按钮和Param_*变量；脚本27/28/35重写为McgsPro可用直接赋值语法；脚本29/30/31/32/33标注不采用或需直接赋值改造 |
-| v2.6 | 2026-08-24 | 修正v2.5：该版本McgsPro中!MsgBox/!OpenWindow/!SetWindow均不兼容字符串参数，二次确认改为"页面内隐藏确认面板"方案；新增控件4-090~4-093；脚本28拆分为28/28a/28b，通过Visible属性控制显示/隐藏；文档内所有弹窗/子窗口引用同步修正 |
+| v2.2 | 2026-09-15 | v2.2 PLC 实施 (S2-S4 重构) 后跟进，**新增 v2.2 时间参数输入框 + 脚本 28 校验段补 v2.2 项（preliminary, 仅文档层）** |
+| v2.4 | 2026-08-24 | 参数写入架构变更为"输入框直接绑定+操作确认" |
+| v2.5 | 2026-08-24 | 修正v2.4：改回"输入框绑定Param_*缓冲变量+保存按钮汇总写入PLC" |
+| v2.6 | 2026-08-24 | 修正v2.5：二次确认改为"页面内隐藏确认面板" |
+| v2.7 | 2026-08-25 | 合并远程 v1.2：新增 S4 等待时长显示与超时阈值 |
+| v2.8 | 2026-09-16 | 修正 v2.7 地址错位：`VD380/VD382` → `VD444/VD448`（FC15_State_S4_Transfer.stl L53 实际引用） |
+| **v2.9** | **2026-09-17** | **脚本重写与 v2.2 时间参数补全：脚本 27/28a/33 改写为读写用户默认镜像 `U1_UD_VDxxx`；脚本 28/29/30 同步删 v2.1 废弃项 + 加 v2.2 三项；脚本 35 改 v2.2 双倒计时器关联校验；§6.1 缓冲变量表 / §8.1 默认值表 / §8.2 范围表 / §8.3 PLC自动计算参数表 / §9 验收清单全部同步** |
 
 **关联文件**:
 - `archive/mcgspro/McgsPro画面组态SOP_8画面_v2.0.md` — 原画面布局SOP
@@ -1078,3 +1130,4 @@ LoginLevel >= X AND U{N}_VW2_StateMachine == 0
 - `archive/mcgspro/MCGS画面组态详细SOP_v1.0.md` — 原详细SOP
 - `archive/mcgspro/MCGS组态脚本代码_v1.0.md` — 原脚本代码v1.0
 - `archive/mcgspro/MCGS通讯配置SOP_v1.0.md` — 通讯配置
+- `docs/HMI-PLC变量地址表_v2.1.md` — v2.1 接口契约

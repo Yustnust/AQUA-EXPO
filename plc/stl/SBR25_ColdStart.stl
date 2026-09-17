@@ -53,7 +53,10 @@ JMP    9                     // 无条件跳 LBL 9 (跳过覆盖)
 
 LBL    8                     // ====== 用户默认覆盖区 ======
 // 【v2.2 修订 2026-09-15】删除 VD468/VD472/VD476/VD480/VD496/VD508 等已废弃变量覆盖
-//                       新增 VD414/VD426/VD430 覆盖
+// 【v2.2.1 修订 2026-09-17】VD468/VD476/VD480 重新分配为 v2.2 时间参数 (VD414/426/430)
+//                         的用户默认镜像 (经字节级 + 字级 + 双字级 + 间接访问四维核实,
+//                         VW236 (bytes 472-473) / VW252 (bytes 504-505) 不与新地址重叠);
+//                         VD472/VD496/VD508 仍保留为空 (待未来扩展)
 MOVR   VD460, VD24           // VD_ExperimentTarget
 MOVR   VD464, VD28           // VD_PreMixTime (S2搅拌固定时长)
 MOVR   VD484, VD54           // VD_Timeout_ValveC
@@ -65,6 +68,9 @@ MOVR   VD516, VD362          // VD_Timeout_ValveB
 MOVR   VD520, VD584          // VD_Vol_Target
 MOVR   VD524, VD448          // VD_S4WaitTimeout
 MOVR   VD528, VD452          // VD_ManualDose_Target
+MOVR   VD468, VD414          // UD_VD414_24h_Target         (v2.2 新增, 24h 换水目标次数, 默认24)
+MOVR   VD476, VD426          // UD_VD426_Transfer_Margin    (v2.2 新增, 周期尾端转移余量, 默认30s)
+MOVR   VD480, VD430          // UD_VD430_Safety_Margin      (v2.2 新增, 上缸配液安全余量, 默认10s)
 
 // WORD: VW388 ManualDose_Mode
 MOVB   VB532, VB388           // 复制低字节
