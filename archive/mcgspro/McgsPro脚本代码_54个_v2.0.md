@@ -108,9 +108,9 @@ McgsPro 脚本程序是**类 Basic 脚本语言**,不是 VBScript,也不是 VBA�
 | H. 画面6_趋势曲线 | 37~39 | 3 | 窗口/构件 |
 | I. 画面7_通讯维护 | 40~43 | 4 | 窗口/构件 |
 | J. 画面8a_单元使能 + 画面8b_权限管理 | 44~49 | 6 | 窗口/构件 |
-| K. 二次确认子窗口 | 50~57 | 8 | 子窗口构件 |
+| K. 二次确认子窗口 | 50~58 | 9 | 子窗口构件 |
 
-> 说明:v2.1 新增 B2 区(菜单窗口脚本 M1~M9,共9个),含主菜单4个按钮脚本、3个子菜单的画面按钮脚本、3个子菜单的返回按钮脚本(返回逻辑相同合并为1个)。原 J 区"画面8_系统设置"拆分为画面8a_单元使能(脚本44~45)和画面8b_权限管理(脚本46~49)。合计 57+9=66 个。
+> 说明:v2.1 新增 B2 区(菜单窗口脚本 M1~M9,共9个),含主菜单4个按钮脚本、3个子菜单的画面按钮脚本、3个子菜单的返回按钮脚本(返回逻辑相同合并为1个)。原 J 区"画面8_系统设置"拆分为画面8a_单元使能(脚本44~45)和画面8b_权限管理(脚本46~49)。合计 58+9=67 个。
 
 ---
 
@@ -1922,129 +1922,158 @@ EndIf
 ' ============================================
 ' 画面4_参数设置 Load 脚本
 ' 功能: 把 SelectedUnit 对应单元的 VD 参数读到编辑缓冲变量
-'       (供输入框编辑,保存时由脚本28写回 PLC)
-' 注意: 浓度组参数(VD10/VD14)仅管理员可见可改,这里统一加载,
-'       组态时通过权限位隐藏浓度输入框
 ' ============================================
 
 If SelectedUnit = 1 Then
     Param_StepRes = U1_VD_StepResolution
-    Param_CycleSet = U1_VD_CycleSetpoint
+    Param_24h_Target = U1_VD_24h_Target
+    Param_Transfer_Margin = U1_VD_Transfer_Margin
+    Param_Safety_Margin = U1_VD_Prep_Safety_Margin
     Param_ExpTarget = U1_VD_ExperimentTarget
     Param_PreMixTime = U1_VD_PreMixTime
-    Param_PreMixTime_MinSafe = U1_VD_PreMixTime_MinSafe
-    Param_RestTime = U1_VD_RestTime
-    Param_RestTime_Min = U1_VD_RestTime_Min
-    Param_CycleExtend_Max = U1_VD_CycleExtend_Max
     Param_Timeout_ValveA = U1_VD_Timeout_ValveA
     Param_Timeout_ValveB = U1_VD_Timeout_ValveB
     Param_Timeout_ValveC = U1_VD_Timeout_ValveC
     Param_Delay_ValveA_Verify = U1_VD_Delay_ValveA_Verify
+    Param_ManualDose_Target = U1_VD_ManualDose_Target/1000
+    Param_ManualDose_Mode = U1_VD_ManualDose_Mode
+    Param_AlarmAckMode = U1_M_AlarmAckMode
+    Param_TargetInletVolume = U1_VD_TargetInletVolume
+    Param_VD_Vol_Target = U1_VD_Vol_Target/1000
+    Param_S4WaitTimeout = U1_VD_S4WaitTimeout
 EndIf
 
 If SelectedUnit = 2 Then
     Param_StepRes = U2_VD_StepResolution
-    Param_CycleSet = U2_VD_CycleSetpoint
+    Param_24h_Target = U2_VD_24h_Target
+    Param_Transfer_Margin = U2_VD_Transfer_Margin
+    Param_Safety_Margin = U2_VD_Prep_Safety_Margin
     Param_ExpTarget = U2_VD_ExperimentTarget
     Param_PreMixTime = U2_VD_PreMixTime
-    Param_PreMixTime_MinSafe = U2_VD_PreMixTime_MinSafe
-    Param_RestTime = U2_VD_RestTime
-    Param_RestTime_Min = U2_VD_RestTime_Min
-    Param_CycleExtend_Max = U2_VD_CycleExtend_Max
     Param_Timeout_ValveA = U2_VD_Timeout_ValveA
     Param_Timeout_ValveB = U2_VD_Timeout_ValveB
     Param_Timeout_ValveC = U2_VD_Timeout_ValveC
     Param_Delay_ValveA_Verify = U2_VD_Delay_ValveA_Verify
+    Param_ManualDose_Target = U2_VD_ManualDose_Target/1000
+    Param_ManualDose_Mode = U2_VD_ManualDose_Mode
+    Param_AlarmAckMode = U2_M_AlarmAckMode
+    Param_TargetInletVolume = U2_VD_TargetInletVolume
+    Param_VD_Vol_Target = U2_VD_Vol_Target/1000
+    Param_S4WaitTimeout = U2_VD_S4WaitTimeout
 EndIf
 
 If SelectedUnit = 3 Then
     Param_StepRes = U3_VD_StepResolution
-    Param_CycleSet = U3_VD_CycleSetpoint
+    Param_24h_Target = U3_VD_24h_Target
+    Param_Transfer_Margin = U3_VD_Transfer_Margin
+    Param_Safety_Margin = U3_VD_Prep_Safety_Margin
     Param_ExpTarget = U3_VD_ExperimentTarget
     Param_PreMixTime = U3_VD_PreMixTime
-    Param_PreMixTime_MinSafe = U3_VD_PreMixTime_MinSafe
-    Param_RestTime = U3_VD_RestTime
-    Param_RestTime_Min = U3_VD_RestTime_Min
-    Param_CycleExtend_Max = U3_VD_CycleExtend_Max
     Param_Timeout_ValveA = U3_VD_Timeout_ValveA
     Param_Timeout_ValveB = U3_VD_Timeout_ValveB
     Param_Timeout_ValveC = U3_VD_Timeout_ValveC
     Param_Delay_ValveA_Verify = U3_VD_Delay_ValveA_Verify
+    Param_ManualDose_Target = U3_VD_ManualDose_Target/1000
+    Param_ManualDose_Mode = U3_VD_ManualDose_Mode
+    Param_AlarmAckMode = U3_M_AlarmAckMode
+    Param_TargetInletVolume = U3_VD_TargetInletVolume
+    Param_VD_Vol_Target = U3_VD_Vol_Target/1000
+    Param_S4WaitTimeout = U3_VD_S4WaitTimeout
 EndIf
 
 If SelectedUnit = 4 Then
     Param_StepRes = U4_VD_StepResolution
-    Param_CycleSet = U4_VD_CycleSetpoint
+    Param_24h_Target = U4_VD_24h_Target
+    Param_Transfer_Margin = U4_VD_Transfer_Margin
+    Param_Safety_Margin = U4_VD_Prep_Safety_Margin
     Param_ExpTarget = U4_VD_ExperimentTarget
     Param_PreMixTime = U4_VD_PreMixTime
-    Param_PreMixTime_MinSafe = U4_VD_PreMixTime_MinSafe
-    Param_RestTime = U4_VD_RestTime
-    Param_RestTime_Min = U4_VD_RestTime_Min
-    Param_CycleExtend_Max = U4_VD_CycleExtend_Max
     Param_Timeout_ValveA = U4_VD_Timeout_ValveA
     Param_Timeout_ValveB = U4_VD_Timeout_ValveB
     Param_Timeout_ValveC = U4_VD_Timeout_ValveC
     Param_Delay_ValveA_Verify = U4_VD_Delay_ValveA_Verify
+    Param_ManualDose_Target = U4_VD_ManualDose_Target/1000
+    Param_ManualDose_Mode = U4_VD_ManualDose_Mode
+    Param_AlarmAckMode = U4_M_AlarmAckMode
+    Param_TargetInletVolume = U4_VD_TargetInletVolume
+    Param_VD_Vol_Target = U4_VD_Vol_Target/1000
+    Param_S4WaitTimeout = U4_VD_S4WaitTimeout
 EndIf
 
 If SelectedUnit = 5 Then
     Param_StepRes = U5_VD_StepResolution
-    Param_CycleSet = U5_VD_CycleSetpoint
+    Param_24h_Target = U5_VD_24h_Target
+    Param_Transfer_Margin = U5_VD_Transfer_Margin
+    Param_Safety_Margin = U5_VD_Prep_Safety_Margin
     Param_ExpTarget = U5_VD_ExperimentTarget
     Param_PreMixTime = U5_VD_PreMixTime
-    Param_PreMixTime_MinSafe = U5_VD_PreMixTime_MinSafe
-    Param_RestTime = U5_VD_RestTime
-    Param_RestTime_Min = U5_VD_RestTime_Min
-    Param_CycleExtend_Max = U5_VD_CycleExtend_Max
     Param_Timeout_ValveA = U5_VD_Timeout_ValveA
     Param_Timeout_ValveB = U5_VD_Timeout_ValveB
     Param_Timeout_ValveC = U5_VD_Timeout_ValveC
     Param_Delay_ValveA_Verify = U5_VD_Delay_ValveA_Verify
+    Param_ManualDose_Target = U5_VD_ManualDose_Target/1000
+    Param_ManualDose_Mode = U5_VD_ManualDose_Mode
+    Param_AlarmAckMode = U5_M_AlarmAckMode
+    Param_TargetInletVolume = U5_VD_TargetInletVolume
+    Param_VD_Vol_Target = U5_VD_Vol_Target/1000
+    Param_S4WaitTimeout = U5_VD_S4WaitTimeout
 EndIf
 
 If SelectedUnit = 6 Then
     Param_StepRes = U6_VD_StepResolution
-    Param_CycleSet = U6_VD_CycleSetpoint
+    Param_24h_Target = U6_VD_24h_Target
+    Param_Transfer_Margin = U6_VD_Transfer_Margin
+    Param_Safety_Margin = U6_VD_Prep_Safety_Margin
     Param_ExpTarget = U6_VD_ExperimentTarget
     Param_PreMixTime = U6_VD_PreMixTime
-    Param_PreMixTime_MinSafe = U6_VD_PreMixTime_MinSafe
-    Param_RestTime = U6_VD_RestTime
-    Param_RestTime_Min = U6_VD_RestTime_Min
-    Param_CycleExtend_Max = U6_VD_CycleExtend_Max
     Param_Timeout_ValveA = U6_VD_Timeout_ValveA
     Param_Timeout_ValveB = U6_VD_Timeout_ValveB
     Param_Timeout_ValveC = U6_VD_Timeout_ValveC
     Param_Delay_ValveA_Verify = U6_VD_Delay_ValveA_Verify
+    Param_ManualDose_Target = U6_VD_ManualDose_Target/1000
+    Param_ManualDose_Mode = U6_VD_ManualDose_Mode
+    Param_AlarmAckMode = U6_M_AlarmAckMode
+    Param_TargetInletVolume = U6_VD_TargetInletVolume
+    Param_VD_Vol_Target = U6_VD_Vol_Target/1000
+    Param_S4WaitTimeout = U6_VD_S4WaitTimeout
 EndIf
 
 If SelectedUnit = 7 Then
     Param_StepRes = U7_VD_StepResolution
-    Param_CycleSet = U7_VD_CycleSetpoint
+    Param_24h_Target = U7_VD_24h_Target
+    Param_Transfer_Margin = U7_VD_Transfer_Margin
+    Param_Safety_Margin = U7_VD_Prep_Safety_Margin
     Param_ExpTarget = U7_VD_ExperimentTarget
     Param_PreMixTime = U7_VD_PreMixTime
-    Param_PreMixTime_MinSafe = U7_VD_PreMixTime_MinSafe
-    Param_RestTime = U7_VD_RestTime
-    Param_RestTime_Min = U7_VD_RestTime_Min
-    Param_CycleExtend_Max = U7_VD_CycleExtend_Max
     Param_Timeout_ValveA = U7_VD_Timeout_ValveA
     Param_Timeout_ValveB = U7_VD_Timeout_ValveB
     Param_Timeout_ValveC = U7_VD_Timeout_ValveC
     Param_Delay_ValveA_Verify = U7_VD_Delay_ValveA_Verify
+    Param_ManualDose_Target = U7_VD_ManualDose_Target/1000
+    Param_ManualDose_Mode = U7_VD_ManualDose_Mode
+    Param_AlarmAckMode = U7_M_AlarmAckMode
+    Param_TargetInletVolume = U7_VD_TargetInletVolume
+    Param_VD_Vol_Target = U7_VD_Vol_Target/1000
+    Param_S4WaitTimeout = U7_VD_S4WaitTimeout
 EndIf
 
 If SelectedUnit = 8 Then
     Param_StepRes = U8_VD_StepResolution
-    Param_CycleSet = U8_VD_CycleSetpoint
+    Param_24h_Target = U8_VD_24h_Target
+    Param_Transfer_Margin = U8_VD_Transfer_Margin
+    Param_Safety_Margin = U8_VD_Prep_Safety_Margin
     Param_ExpTarget = U8_VD_ExperimentTarget
     Param_PreMixTime = U8_VD_PreMixTime
-    Param_PreMixTime_MinSafe = U8_VD_PreMixTime_MinSafe
-    Param_RestTime = U8_VD_RestTime
-    Param_RestTime_Min = U8_VD_RestTime_Min
-    Param_CycleExtend_Max = U8_VD_CycleExtend_Max
     Param_Timeout_ValveA = U8_VD_Timeout_ValveA
     Param_Timeout_ValveB = U8_VD_Timeout_ValveB
     Param_Timeout_ValveC = U8_VD_Timeout_ValveC
     Param_Delay_ValveA_Verify = U8_VD_Delay_ValveA_Verify
+    Param_ManualDose_Target = U8_VD_ManualDose_Target/1000
+    Param_ManualDose_Mode = U8_VD_ManualDose_Mode
+    Param_AlarmAckMode = U8_M_AlarmAckMode
+    Param_TargetInletVolume = U8_VD_TargetInletVolume
+    Param_VD_Vol_Target = U8_VD_Vol_Target/1000
+    Param_S4WaitTimeout = U8_VD_S4WaitTimeout
 EndIf
 
 ParamTargetUnit = SelectedUnit
@@ -2257,34 +2286,47 @@ ParamSrcUnit = SelectedUnit
 !OpenSubWnd(子窗口_单元选择, 240, 180, 400, 240, 17)
 ```
 
-### 脚本 30:恢复默认按钮
+### 脚本 30:读取默认设置按钮
 
 - **编号**: 30
-- **用途**: 二次确认后重置参数为默认值(需管理员组权限)
-- **位置**: 用户窗口 → 画面4_参数设置 → 恢复默认按钮构件 → Click 事件
+- **用途**: 从用户默认存储区读取默认参数到编辑缓冲区(需维护组权限)
+- **位置**: 用户窗口 → 画面4_参数设置 → 读取默认设置按钮构件 → Click 事件
 - **触发方式**: 按钮单击
 
 ```
 ' ============================================
-' 恢复默认按钮脚本
-' 功能: 权限校验 → 弹出恢复默认确认子窗口(脚本53负责执行)
-' 默认值清单(参考 McgsPro变量导入_单元1.csv ~ 单元8.csv 备注):
-' StepRes=4.1667  CycleSet=30.0  (出厂默认值参考FC0)
-'   ExpTarget=5.0  PreMixTime=12.0  PreMixTime_MinSafe=3.0
-'   RestTime=6.0  RestTime_Min=1.5  CycleExtend_Max=0.5
-' Timeout_ValveA/B/C=60.0s  (出厂默认值参考FC0)
-'   Delay_ValveA_Verify=0.5
+' 读取默认设置按钮脚本
+' 功能: 从用户默认存储区(U1_UD_*)读取默认参数到编辑缓冲区
 ' ============================================
 
-' --- 1. 校验管理员组权限 ---
-If !CheckUserGroup("管理员组") = 1 Then
-    !Beep()
-    !LogOn()
-    Exit
+' --- 1. 校验维护组权限 ---
+If !CheckUserGroup("维护组") = 1 Then
+    If !CheckUserGroup("管理员组") = 1 Then
+        !Beep()
+        !LogOn()
+        Exit
+    EndIf
 EndIf
 
-' --- 2. 打开恢复默认确认子窗口(脚本53) ---
-!OpenSubWnd(子窗口_恢复默认确认, 240, 180, 400, 180, 17)
+' --- 2. 从用户默认区读取到 Param_* 缓冲区 ---
+Param_ExpTarget           = U1_UD_VD24_ExpTarget
+Param_PreMixTime          = U1_UD_VD28_PreMixTime
+Param_Timeout_ValveC      = U1_UD_VD54_TimeoutC
+Param_Delay_ValveA_Verify = U1_UD_VD66_DelayA
+Param_TargetInletVolume   = U1_UD_VD316_InletVol
+Param_StepRes             = U1_UD_VD350_StepRes
+Param_Timeout_ValveA      = U1_UD_VD358_TimeoutA
+Param_Timeout_ValveB      = U1_UD_VD362_TimeoutB
+Param_VD_Vol_Target       = U1_UD_VD584_VolTarget/1000
+Param_ManualDose_Target   = U1_UD_VD452_ManualDose/1000
+Param_ManualDose_Mode     = U1_UD_VW388_ManualDoseMode
+Param_AlarmAckMode        = U1_V200_AlarmAckMode
+Param_24h_Target          = U1_UD_VD414_24h_Target
+Param_Transfer_Margin     = U1_UD_VD426_Transfer_Margin
+Param_Safety_Margin       = U1_UD_VD430_Safety_Margin
+Param_S4WaitTimeout       = U1_UD_VD448_S4WaitTimeout
+
+!Beep()
 ```
 
 
@@ -2375,31 +2417,25 @@ Param_Confirm_Text = "将参数" + "保存为1号默认设置，确认保存？"
 ' ============================================
 ' 保存默认二次确认 - 确认按钮
 ' 功能: 把 Param_* 编辑缓冲变量 → U1_UD_* 用户存储区 + 置标志=1
-' FC0 冷启动检测 VB456=1 时自动用这些值覆盖出厂硬编码默认值
 ' ============================================
 
 IF Param_Pending_Save = 1 THEN
     U1_UD_VD24_ExpTarget     = Param_ExpTarget
     U1_UD_VD28_PreMixTime    = Param_PreMixTime
-    U1_UD_VD32_PreMixMin     = Param_PreMixTime_MinSafe
-    U1_UD_VD36_RestTime      = Param_RestTime
-    U1_UD_VD40_RestMin       = Param_RestTime_Min
-    U1_UD_VD44_CycleExtend   = Param_CycleExtend_Max
     U1_UD_VD54_TimeoutC      = Param_Timeout_ValveC
     U1_UD_VD66_DelayA        = Param_Delay_ValveA_Verify
-    U1_UD_VD108_S6Default    = Param_S6_Default
-    U1_UD_VD144_TDefault     = Param_T_Default
     U1_UD_VD316_InletVol     = Param_TargetInletVolume
     U1_UD_VD350_StepRes      = Param_StepRes
-    U1_UD_VD354_CycleSet     = Param_CycleSet
     U1_UD_VD358_TimeoutA     = Param_Timeout_ValveA
     U1_UD_VD362_TimeoutB     = Param_Timeout_ValveB
-    U1_UD_VD370_VolTarget    = Param_VD_Vol_Target
-    U1_UD_VD448_WaitTimeout  = Param_S4WaitTimeout
-    U1_UD_VD452_ManualDose   = Param_ManualDose_Target
-    U1_UD_VW388_Mode         = Param_ManualDose_Mode
-    U1_UD_V200_0_AckMode     = Param_AlarmAckMode
-
+    U1_UD_VD584_VolTarget    = Param_VD_Vol_Target*1000
+    U1_UD_VD448_S4WaitTimeout  = Param_S4WaitTimeout
+    U1_UD_VD452_ManualDose   = Param_ManualDose_Target*1000
+    U1_UD_VW388_ManualDoseMode         = Param_ManualDose_Mode
+    U1_V200_AlarmAckMode      = Param_AlarmAckMode
+    U1_UD_VD414_24h_Target             = Param_24h_Target
+    U1_UD_VD426_Transfer_Margin        = Param_Transfer_Margin
+    U1_UD_VD430_Safety_Margin          = Param_Safety_Margin
     U1_UD_Flag = 1
 ENDIF
 
@@ -3906,6 +3942,50 @@ EndIf
 !CloseAllSubWnd()
 ```
 
+### 脚本 58:参数设置确认子窗口
+
+- **编号**: 58
+- **用途**: 参数设置保存二次确认。确认→把 Param_* 写回当前单元 VD 参数 + 关闭;取消→关闭
+- **位置**: 用户窗口 → 子窗口_参数设置确认 → 确认按钮 / 取消按钮 → Click 事件
+- **触发方式**: 按钮单击
+
+**确认按钮**:
+```
+' ============================================
+' 参数设置二次确认 - 确认按钮
+' 功能: 把 Param_* 编辑缓冲变量写回 PLC VD 参数区
+' ============================================
+
+IF Param_Pending_Save = 1 THEN
+    U1_VD_StepResolution = Param_StepRes
+    U1_VD_ExperimentTarget = Param_ExpTarget
+    U1_VD_PreMixTime = Param_PreMixTime
+    U1_VD_Timeout_ValveA = Param_Timeout_ValveA
+    U1_VD_Timeout_ValveB = Param_Timeout_ValveB
+    U1_VD_Timeout_ValveC = Param_Timeout_ValveC
+    U1_VD_Delay_ValveA_Verify = Param_Delay_ValveA_Verify
+    U1_VD_ManualDose_Target = Param_ManualDose_Target*1000
+    U1_VD_ManualDose_Mode = Param_ManualDose_Mode
+    U1_M_AlarmAckMode = Param_AlarmAckMode
+    U1_VD_S4WaitTimeout = Param_S4WaitTimeout
+    U1_VD_TargetInletVolume = Param_TargetInletVolume
+    U1_VD_Vol_Target = Param_VD_Vol_Target*1000
+    U1_VD_24h_Target = Param_24h_Target
+    U1_VD_Transfer_Margin = Param_Transfer_Margin
+    U1_VD_Prep_Safety_Margin = Param_Safety_Margin
+ENDIF
+
+Param_Pending_Save = 0
+!SetWindow(用户窗口.参数设置二次确认, 3)
+```
+
+**取消按钮**:
+```
+Param_Pending_Save = 0
+!SetWindow(用户窗口.参数设置二次确认, 3)
+```
+
+
 ---
 
 ## 十二、组态实施注意事项
@@ -3970,9 +4050,10 @@ McgsPro 用户管理需在组态环境中预先建立 3 个用户组:
 
 ### 5. 二次确认子窗口组态
 
-8个二次确认子窗口(脚本50~57)需在 McgsPro 用户窗口中分别创建:
+9个二次确认子窗口(脚本50~58)需在 McgsPro 用户窗口中分别创建:
 - 子窗口_启动确认 / 子窗口_停止确认 / 子窗口_急停确认
 - 子窗口_恢复默认确认 / 子窗口_清除日志确认 / 子窗口_退出系统确认
+- 子窗口_参数设置确认
 - 子窗口_单元选择 / 子窗口_复制参数确认 / 子窗口_日志浏览
 
 每个子窗口内组态"确认"和"取消"两个标准按钮构件,分别绑定对应 Click 脚本。子窗口尺寸建议 400×180(确认类)或 400×240(选择类)。
