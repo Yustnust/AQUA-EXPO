@@ -2286,7 +2286,7 @@ Param_S4WaitTimeout       = U1_UD_VD448_S4WaitTimeout
 ' 存为默认按钮脚本
 ' 功能: 范围校验(和保存参数一致) → 二次确认弹窗 → Param缓冲写U1_UD_*存储区
 ' 存储位置: PLC VB456~VB539 (断电保持)
-'   VB456=用户默认有效标志, VD460~VD528=18个REAL, VB532=VW388, VB536=V200.0
+'   VB456=用户默认有效标志, VD460起为当前16个参数REAL, VB532=VW388, VB536=V200.0
 ' ============================================
 
 ' --- 范围校验 ---
@@ -2300,48 +2300,6 @@ ENDIF
 
 IF  Param_VD_Vol_Target < 0  THEN
     Param_Confirm_Text = "错误：加药量设定值范围>0"
-    Param_Pending_Save = 0
-    !OpenSubWnd(用户窗口.保存默认二次确认, 400, 300, 400, 200, 0)
-    EXIT
-ENDIF
-
-IF Param_CycleSet < 1 OR Param_CycleSet > 14400 THEN
-    Param_Confirm_Text = "错误：换水周期超范围(1~14400min)"
-    Param_Pending_Save = 0
-    !OpenSubWnd(用户窗口.保存默认二次确认, 400, 300, 400, 200, 0)
-    EXIT
-ENDIF
-
-IF Param_PreMixTime_MinSafe > Param_PreMixTime THEN
-    Param_Confirm_Text = "错误：预循环压缩下限不得大于标称时长"
-    Param_Pending_Save = 0
-    !OpenSubWnd(用户窗口.保存默认二次确认, 400, 300, 400, 200, 0)
-    EXIT
-ENDIF
-
-IF Param_RestTime_Min > Param_RestTime THEN
-    Param_Confirm_Text = "错误：静止等候压缩下限不得大于标称时长"
-    Param_Pending_Save = 0
-    !OpenSubWnd(用户窗口.保存默认二次确认, 400, 300, 400, 200, 0)
-    EXIT
-ENDIF
-
-IF Param_CycleExtend_Max > Param_CycleSet THEN
-    Param_Confirm_Text = "错误：换水周期顺延上限不得大于换水周期"
-    Param_Pending_Save = 0
-    !OpenSubWnd(用户窗口.保存默认二次确认, 400, 300, 400, 200, 0)
-    EXIT
-ENDIF
-
-IF Param_T_Default < 1 OR Param_T_Default > 600 THEN
-    Param_Confirm_Text = "错误：首轮配液总时长T超范围(1~600min)"
-    Param_Pending_Save = 0
-    !OpenSubWnd(用户窗口.保存默认二次确认, 400, 300, 400, 200, 0)
-    EXIT
-ENDIF
-
-IF Param_S6_Default < 1 OR Param_S6_Default > 600 THEN
-    Param_Confirm_Text = "错误：首轮S6排水时长超范围(1~600min)"
     Param_Pending_Save = 0
     !OpenSubWnd(用户窗口.保存默认二次确认, 400, 300, 400, 200, 0)
     EXIT
@@ -2402,13 +2360,9 @@ Param_Pending_Save = 0
 ' 参数范围校验脚本
 ' 功能: 校验 Param_* 编辑缓冲变量范围,失败置 ParamValid=0
 ' 校验规则(参考 HMI画面架构规划文档 + PLC设计文档):
-' 浓度参数已移除 (VD10/VD14 -> RTC DT10)
 '   步进: 0 < StepRes <= 5
-'   周期: 0.5 <= CycleSet <= 60
 '   实验目标: 1 <= ExpTarget <= 120
-'   预循环: PreMixTime_MinSafe(3.0) <= PreMixTime <= 60
-'   静止: RestTime_Min(1.5) <= RestTime <= 30
-'   顺延上限: 0 < CycleExtend_Max <= 2
+'   预循环: 0 < PreMixTime <= 60
 '   超时: 0.5 <= Timeout_* <= 30
 '   阀A关闭延时验证: 0 < Delay_ValveA_Verify <= 5
 ' ============================================
@@ -2416,7 +2370,7 @@ Param_Pending_Save = 0
 ParamValid = 1
 ParamInvalidStr = ""
 
-' --- 1. 步进/周期/目标 ---
+' --- 1. 步进/实验目标 ---
 If Param_StepRes <= 0 Then
     ParamValid = 0
     ParamInvalidStr = "步进分辨率必须>0"
@@ -2424,14 +2378,6 @@ EndIf
 If Param_StepRes > 5 Then
     ParamValid = 0
     ParamInvalidStr = "步进分辨率上限5"
-EndIf
-If Param_CycleSet < 0.5 Then
-    ParamValid = 0
-    ParamInvalidStr = "换水周期下限0.5min"
-EndIf
-If Param_CycleSet > 60 Then
-    ParamValid = 0
-    ParamInvalidStr = "换水周期上限60min"
 EndIf
 If Param_ExpTarget < 1 Then
     ParamValid = 0
@@ -2442,35 +2388,17 @@ If Param_ExpTarget > 120 Then
     ParamInvalidStr = "实验目标上限120min"
 EndIf
 
-' --- 2. 预循环/静止 ---
-If Param_PreMixTime < Param_PreMixTime_MinSafe Then
+' --- 2. 预循环 ---
+If Param_PreMixTime <= 0 Then
     ParamValid = 0
-    ParamInvalidStr = "预循环时间低于最小安全值"
+    ParamInvalidStr = "预循环时间必须>0"
 EndIf
 If Param_PreMixTime > 60 Then
     ParamValid = 0
     ParamInvalidStr = "预循环时间上限60min"
 EndIf
-If Param_RestTime < Param_RestTime_Min Then
-    ParamValid = 0
-    ParamInvalidStr = "静止时间低于最小值"
-EndIf
-If Param_RestTime > 30 Then
-    ParamValid = 0
-    ParamInvalidStr = "静止时间上限30min"
-EndIf
 
-' --- 3. 顺延上限 ---
-If Param_CycleExtend_Max <= 0 Then
-    ParamValid = 0
-    ParamInvalidStr = "顺延上限必须>0"
-EndIf
-If Param_CycleExtend_Max > 2 Then
-    ParamValid = 0
-    ParamInvalidStr = "顺延上限最大2min"
-EndIf
-
-' --- 4. 超时组校验 ---
+' --- 3. 超时组校验 ---
 If Param_Timeout_ValveA < 0.5 Then
     ParamValid = 0
     ParamInvalidStr = "阀A超时下限0.5s"
@@ -2495,20 +2423,8 @@ If Param_Timeout_ValveC > 30 Then
     ParamValid = 0
     ParamInvalidStr = "阀C超时上限30s"
 EndIf
-    ParamValid = 0
-    ParamInvalidStr = "泵1超时下限0.5s"
-EndIf
-    ParamValid = 0
-    ParamInvalidStr = "泵1超时上限30s"
-EndIf
-    ParamValid = 0
-    ParamInvalidStr = "泵2超时下限0.5s"
-EndIf
-    ParamValid = 0
-    ParamInvalidStr = "泵2超时上限30s"
-EndIf
 
-' --- 5. 阀A关闭延时验证 ---
+' --- 4. 阀A关闭延时验证 ---
 If Param_Delay_ValveA_Verify <= 0 Then
     ParamValid = 0
     ParamInvalidStr = "阀A关闭延时验证必须>0"
@@ -2518,7 +2434,7 @@ If Param_Delay_ValveA_Verify > 5 Then
     ParamInvalidStr = "阀A关闭延时验证上限5s"
 EndIf
 
-' --- 6. 校验失败蜂鸣 ---
+' --- 5. 校验失败蜂鸣 ---
 If ParamValid = 0 Then
     !Beep()
 EndIf
