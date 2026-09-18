@@ -69,9 +69,6 @@ LDW=   VW6, 0
 A      V301.0
 MOVW   30, VW6
 LDW=   VW6, 0
-A      V301.1
-MOVW   31, VW6
-LDW=   VW6, 0
 A      V301.2
 MOVW   32, VW6
 LDW=   VW6, 0

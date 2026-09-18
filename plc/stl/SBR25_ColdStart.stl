@@ -88,6 +88,15 @@ S      V200.0, 1              // VB536 == 1 → 置 V200.0
 // LBL 9 汇合 → TODR读RTC + 合法性检查 (LBL 88/89)
 LBL    9                     // ====== 覆盖后汇合点 ======
 
+// 实验总换水次数目标计算(v2.2新增)
+// VW8 = VD414(24h换水目标次数) × VD24(实验总时长min) / 1440
+LD     SM0.0
+MOVR   VD414, AC0
+*R     VD24, AC0
+/R     1440.0, AC0
+ROUND  AC0, AC0
+DTI    AC0, VW8
+
 // ★ 2026-09-13: 冷启动也要读PLC内部RTC到VB900~VB907
 LD     SM0.1
 TODR   VB900
@@ -145,9 +154,6 @@ R      M11.2, 1           // M_PrevAlarm=0
 // 冷启动必须清 VB0,防止 V0.x 命令位断电保持后卡1
 MOVB   0, VB0             // V0.0~V0.7 全部清0
 R      V1.0, 6            // V1.0~V1.5=0
-
-// 实验轮次清零
-MOVW   0, VW8             // VW8=0
 
 // 本次实验累计流量清零
 MOVR   0.0, VD364         // VD_ExpTotal_Flow=0(L)
