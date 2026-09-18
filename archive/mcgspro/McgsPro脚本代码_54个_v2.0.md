@@ -3942,8 +3942,8 @@ EndIf
 
 IF Param_Pending_Save = 1 THEN
     U1_VD_StepResolution = Param_StepRes
-    U1_VD_ExperimentTarget = Param_ExpTarget
-    U1_VD_PreMixTime = Param_PreMixTime
+    U1_VD_ExperimentTarget = Param_ExpTarget*24*60
+    U1_VD_PreMixTime = Param_PreMixTime*60
     U1_VD_Timeout_ValveA = Param_Timeout_ValveA
     U1_VD_Timeout_ValveB = Param_Timeout_ValveB
     U1_VD_Timeout_ValveC = Param_Timeout_ValveC
@@ -3955,8 +3955,8 @@ IF Param_Pending_Save = 1 THEN
     U1_VD_TargetInletVolume = Param_TargetInletVolume
     U1_VD_Vol_Target = Param_VD_Vol_Target*1000
     U1_VD_24h_Target = Param_24h_Target
-    U1_VD_Transfer_Margin = Param_Transfer_Margin
-    U1_VD_Prep_Safety_Margin = Param_Safety_Margin
+    U1_VD_Transfer_Margin = Param_Transfer_Margin*60
+    U1_VD_Prep_Safety_Margin = Param_Safety_Margin*60
 ENDIF
 
 Param_Pending_Save = 0
