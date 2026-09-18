@@ -45,7 +45,7 @@
 | VW2    | U1\_VW2\_StateMachine                | SINGLE  | 只读 | 下缸主状态机当前状态               | PLC代码读写          |
 | VW4    | U1\_VW4\_PumpStatus                  | SINGLE  | 只读 | 注射泵状态码                   | PLC代码读写          |
 | VW6    | U1\_VW6\_AlarmCode                   | SINGLE  | 只读 | 当前最高优先级报警码               | PLC代码读写          |
-| VW8    | U1\_VW8\_RoundCount                  | SINGLE  | 只读 | 实验轮次计数                   | PLC代码写           |
+| VW8    | U1\_VW8\_RoundCount                  | SINGLE  | 只读 | 实验总换水次数目标(=VD414×VD24/1440) | PLC代码写           |
 | VW304  | U1\_???\_VW304                       | -       | -  | 上缸配液子流程状态                | 需新增到HMI；PLC代码读写  |
 | VW306  | U1\_???\_VW306                       | -       | -  | 已完成下缸换水次数                | 需新增到HMI；PLC代码读写  |
 | VD10   | U1\_???\_VD10                        | -       | -  | 目标浓度设定值（v2.0新增）          | 需新增到HMI；PLC代码未使用 |

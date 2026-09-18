@@ -46,7 +46,7 @@
 | VW2                        | 下缸主状态机当前状态                  | WORD      | 是    |
 | VW4                        | 注射泵状态码                      | WORD      | 否    |
 | VW6                        | 当前报警码                       | WORD      | 是    |
-| VW8                        | 实验轮次计数                      | WORD      | 是    |
+| VW8                        | 实验总换水次数目标(=VD414×VD24/1440) | WORD      | 是    |
 | VW304                      | 上缸配液子流程状态                   | WORD      | 是    |
 | VW306                      | 已完成下缸换水次数                   | WORD      | 是    |
 | VD24 \~ VD66               | HMI设定参数                     | REAL      | 是    |
@@ -186,7 +186,7 @@
 | 地址    | HMI变量名                | 说明                  |
 | ----- | --------------------- | ------------------- |
 | VW6   | U1\_VW6\_AlarmCode    | 当前最高优先级未确认报警码，0=无报警 |
-| VW8   | U1\_VW8\_RoundCount   | 当前实验轮次计数            |
+| VW8   | U1\_VW8\_RoundCount   | 实验总换水次数目标(=VD414×VD24/1440) |
 | VW306 | U1\_VW306\_CycleCount | 已完成下缸换水次数（v2.2新增）   |
 
 ***
@@ -429,7 +429,7 @@ PLC在SBR25冷启动时读取以下镜像值作为HMI参数的断电保持默认
 | VW2    | U1\_VW2\_StateMachine                | SINGLE  | 只读    | 下缸主状态机            | —              |
 | VW4    | U1\_VW4\_PumpStatus                  | SINGLE  | 只读    | 注射泵状态码            | —              |
 | VW6    | U1\_VW6\_AlarmCode                   | SINGLE  | 只读    | 当前报警码             | —              |
-| VW8    | U1\_VW8\_RoundCount                  | SINGLE  | 只读    | 实验轮次计数            | —              |
+| VW8    | U1\_VW8\_RoundCount                  | SINGLE  | 只读    | 实验总换水次数目标         | =VD414×VD24/1440 |
 | VW304  | U1\_VW304\_State\_UpTank             | SINGLE  | 只读    | 上缸配液子流程状态         | v2.2新增         |
 | VW306  | U1\_VW306\_CycleCount                | SINGLE  | 只读    | 已完成下缸换水次数         | v2.2新增         |
 | V200.0 | U1\_M\_AlarmAckMode                  | INTEGER | 读写    | 报警确认模式            | 0=自动/1=人工      |
