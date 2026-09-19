@@ -70,10 +70,15 @@ TON    T53, VW274                  // PT=VD_Timeout_ValveB(VD362)×10
 TON    T54, VW274                  // 流量开关超时(同参数，独立计时)
 
 // 开到位=ON → 转S2
+// [已修复 v2.2] 用 V63.1 缓存 EU 结果,避免 R 指令链栈空
 LD     I8.2
 EU
+=      V63.1
+LD     V63.1
 MOVW   2, VW262
+LD     V63.1
 R      T53, 1
+LD     V63.1
 R      T54, 1
 JMP    1
 

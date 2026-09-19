@@ -12,52 +12,56 @@ NETWORK 1
 // 触发条件: VW2=5 (下缸 S4 入口) + V1.7=0 (下缸已排空) + VW304=3 (上缸配完等待) + VW6=0 (无报警)
 // 启动动作: 开阀B + 下缸NC球阀 + 启动 T49 计时 + 置 VW304=4 (上缸标记"已转移")
 
+// [已修复 v2.2] 用 V61.5 缓存 S4 启动条件,避免 LPS/LPP+NOT 配合下的 S/R 链栈空
 LD     SM0.0
 AW=    VW2, 5                       // 仅在 S4 状态(VW2=5)生效
-LPS
-// v2.2 启动条件门控:V1.7=0(下缸空) + VW304=3(上缸配完)
 AN     V1.7
 AW=    VW304, 3
 AW=    VW6, 0
-NOT
+=      V61.5
+LDN    V61.5
 JMP    1                           // 任一条件不满足 → 不启动
 // 条件满足 → 启动 S4 转液
-LD     SM0.0
+LD     V61.5
 S      Q0.3, 1                     // 开阀B
+LD     V61.5
 S      Q0.6, 1                     // 开下缸NC球阀
+LD     V61.5
 R      T49, 1
 TON    T49, VW290                  // S4 实测计时(PT 由 FC40 NETWORK 5 写入 VW290)
 // 置 VW304=4 (上缸已转移)
+LD     V61.5
 MOVW   4, VW304
 JMP    2
 
 LBL    1
 LBL    2
-LPP
 // 注: 条件不满足时 S/R/计时/赋值指令全部不执行, FC31 诊断空转, 等待下一周期
 
 
 // 【v2.2 兼容保留】S4 等待超时逻辑(下缸未排空时使用)
+// [已修复 v2.2] 用 V61.6 缓存 S4 等待条件,避免 LPS/LPP+NOT 配合下的栈空
 // v2.2 仍保留 V303.2 报警机制(仅提示不强制 S_ERROR)
 // 与 v2.1 区别: 增加"上缸配完"判断(原版只看 V1.7)
 LD     SM0.0
 AW=    VW2, 5
-LPS
 // 启动条件:V1.7=1(下缸未空) AND VW304=3(上缸配完)
 A      V1.7
 AW=    VW304, 3
-NOT
+=      V61.6
+LDN    V61.6
 JMP    3
 // 下缸未空,启动 T61 等待计时
-LD     SM0.0
+LD     V61.6
 MOVR   VD448, VD324                // VD_S4WaitTimeout
 *R     10.0, VD324
 ROUND  VD324, AC0
 MOVW   AC0, VW286                  // T61 PT
+LD     V61.6
 R      T61, 1
 TON    T61, VW286                  // S4 等待超时计时
 // 每秒累加 VD_S4Wait_Time (T62 1s 脉冲)
-LD     SM0.0
+LD     V61.6
 R      T62, 1
 TON    T62, 10
 LD     T62
@@ -71,7 +75,6 @@ JMP    4
 
 LBL    3
 LBL    4
-LPP
 
 
 // 调用阀B诊断
@@ -80,25 +83,28 @@ CALL ValveB_Diag
 
 
 // 检查阀B诊断结果 + S4 完成动作
+// [已修复 v2.2] 用 V61.7 缓存诊断完成条件,避免 LPS/LPP+NOT 配合下的 S/R 链栈空
 // v2.2 关键改动:完成时切 M16.0 = NOT M16.0(双倒计时器切换),写 VD116 (S6_actual 滚动)
 //   注: 首轮时 VD116 存 S4 实测时长,后续轮次存 S6 实测时长(用于 FC40 S6 触发阈值)
 LD     SM0.0
-LPS
 AB=    VB268, 1                    // 阀B诊断正常完成(VB268=1)
-LPP
-NOT
+=      V61.7
+LDN    V61.7
 JMP    10                          // 未完成 → 跳到 NETWORK 4 末尾
 // 诊断完成 → 执行 S4 完成动作
+LD     V61.7
 R      T49, 1
 // 记录 S4 实测时长到 VD116 (首轮时作为 S6_actual 默认值)
+LD     V61.7
 MOVW   T49, AC0                    // T49 当前值(100ms 时基)
 ITD    AC0, VD444                  // → DINT
 DTR    VD444, VD444                // → REAL(原值秒)
 MOVR   VD444, VD116                // VD116 = S4 实测秒(首轮作 S6 默认)
 // 置下缸状态=满
+LD     V61.7
 S      V1.7, 1
 // 记录下缸变满时间戳
-LD     SM0.0
+LD     V61.7
 TODR   VB900
 MOVB   VB900, VB10
 MOVB   VB901, VB11
@@ -109,19 +115,27 @@ MOVB   VB905, VB15
 MOVB   VB906, VB16
 MOVB   VB908, VB17
 // 下缸实验时长清零
+LD     V61.7
 MOVR   0.0, VD178                  // VD_S5_Elapsed 清零
+LD     V61.7
 R      M10.7, 1                    // 清预规划标志
 // S4 等待计时清零
+LD     V61.7
 R      T61, 2                     // 清 T61+T62 (连续2个定时器)
+LD     V61.7
 MOVR   0.0, VD444                  // VD_S4Wait_Time 清零(恢复原始中间变量用途)
+LD     V61.7
 R      V303.2, 1                   // 清 S4 等待超时报警
 // 【v2.2 新增】切双倒计时器标记(下一轮 S1 用另一个计时器)
+LD     V61.7
 LD     M16.0
 NOT
 =      M16.0                       // M16.0 = NOT M16.0
 // 【v2.2 新增】触发下一轮 S1 脉冲(上缸空闲时由 FC40 检测)
-S      M16.1, 1                    // 触发下一轮 S1 脉冲 (R+S冗余,直接S)
+LD     V61.7
+S      M16.1, 1                    // 触发下一轮 S1 脉冲
 // 状态转移 S4→S5
+LD     V61.7
 MOVW   6, VW2
 LBL    10
 

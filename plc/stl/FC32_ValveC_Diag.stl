@@ -28,8 +28,16 @@ NETWORK 1
 // 解决STEP7导入跨NETWORK跳转失效
 // ============================================================
 
+// 漫溢保护（全程，优先级最高）
+// [已修复 v2.2] 阀C增加下缸漫溢保护:液位计B高位=ON立即报警+关阀C+转S_ERROR
+LD     I0.7
+S      V300.1, 1                   // M_Alarm_Overflow_BHigh
+R      Q0.4, 1                     // 关阀C
+MOVW   99, VW2
+MOVB   2, VB270                    // 故障
+JMP    6
+
 // 诊断子状态调度
-// 注: 阀C无漫溢保护，直接进入状态调度
 LDW=   VW264, 0
 JMP    1
 LDW=   VW264, 1
@@ -56,10 +64,15 @@ TON    T56, VW276                  // PT=VD_Timeout_ValveC(VD54)×10
 TON    T57, VW276                  // 流量开关超时
 
 // 开到位=ON → 转S2
+// [已修复 v2.2] 用 V63.2 缓存 EU 结果,避免 R 指令链栈空
 LD     I8.4
 EU
+=      V63.2
+LD     V63.2
 MOVW   2, VW264
+LD     V63.2
 R      T56, 1
+LD     V63.2
 R      T57, 1
 JMP    6
 
@@ -126,10 +139,15 @@ LD     SM0.0
 TON    T58, VW276                  // PT=VD_Timeout_ValveC×10
 
 // 关到位=ON AND 流量开关=OFF → 正常完成
+// [已修复 v2.2] 用 V63.3 缓存条件,避免 R 指令链栈空
 LD     I8.5
 AN     I0.2
+=      V63.3
+LD     V63.3
 MOVW   0, VW264                    // VW264=0空闲
-MOVW   1, VW270                    // Diag_Result_C=1正常完成(已修正:用MOVW写完整WORD)
+LD     V63.3
+MOVW   1, VW270                    // Diag_Result_C=1正常完成
+LD     V63.3
 R      T58, 1
 JMP    6
 

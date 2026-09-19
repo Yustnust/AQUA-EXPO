@@ -122,15 +122,20 @@ MOVR   VD86, AC0                   // ★MOVR: 实数搬运
 MOVR   AC0, VD90                   // 当前进水量
 
 // 进水量达标 → 关阀A + 快照关阀瞬间流量计值 + 转子状态5
+// [已修复 v2.2] 用 V63.0 缓存达标条件,避免 LPS/LPP 内 R 指令链栈空
 LD     SM0.0
-LPS
 AR>=   VD90, VD316                 // 当前进水量 ≥ 目标进水量
+=      V63.0
+LD     V63.0
 R      Q0.2, 1                     // 关阀A
-R      Q0.5, 1                     // 关上缸NC球阀(★修复:之前只关阀A不关NC阀,导致S1→S2后Q0.5常开)
+LD     V63.0
+R      Q0.5, 1                     // 关上缸NC球阀
+LD     V63.0
 MOVR   VD86, VD308                 // VD_FlowMeter_CloseSnapshot
+LD     V63.0
 MOVW   5, VW260                    // VW260=5(关闭后验证)
+LD     V63.0
 R      T52, 1                      // 复位开到位无流确认计时
-LPP
 JMP    1
 
 

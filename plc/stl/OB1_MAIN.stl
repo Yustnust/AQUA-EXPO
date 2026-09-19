@@ -68,9 +68,10 @@ MOVW   0, VW304                     // 上缸配液子流程状态清零
 MOVW   0, VW306                     // 换水计数清零
 R      M16.0, 4                     // M16.0~M16.3 连续清零
 R      T38, 1                       // 清 S2 搅拌定时器
-R      T46, 1                       // 清 TimerA
-R      T48, 1                       // 清 TimerB
+R      T63, 1                       // [已修复 v2.2] 清 1s 脉冲定时器
 R      T49, 1                       // 清 S4 转移计时器
+MOVR   0.0, VD248                   // [已修复 v2.2] 清 TimerA_Elapsed
+MOVR   0.0, VD252                   // [已修复 v2.2] 清 TimerB_Elapsed
 MOVR   0.0, VD256                   // 清 TimerA 显示值
 MOVR   0.0, VD244                   // 清 TimerB 显示值
 MOVW   0, VW2                       // 回S0
