@@ -4146,63 +4146,45 @@ McgsPro 用户管理需在组态环境中预先建立 3 个用户组:
   - 弹窗仅作通知，显示"时间已同步为 xxx"，让操作员知晓
   - 脚本56手动校时按钮保留作为兜底（操作员发现 HMI 时间不对可手动触发）
   - 风险：HMI 时间错会污染 PLC RTC。对策：现场工控机开 Windows NTP 自动同步
+  - **关键修正**：旧版用 `!Date()`/`!Time()` + `/` 浮点除法，部分 McgsPro 版本不支持字符串函数且 `/` 会得到 2.6 而非 2。新版改用系统变量 `$Year`/`$Month`/`$Day`/`$Hour`/`$Minute`/`$Second` + `\` 整数除法。
 
 ```vb
 ' ============================================
-' RTC 自动校时循环策略 (方案C: 全自动+轻提示)
-' 1秒周期。PLC 冷启动 RTC 丢失 → V303.7=1 → 本脚本 1秒内自动 TODW 同步
+' RTC 自动校时循环策略 (RTC_Sync_Poll, 1秒周期)
+' 用 McgsPro 系统变量 + \整数除法做 BCD 转换
 ' ============================================
 
 IF U1_Need_RTC_Sync = 1 THEN
-    ' --- 1. 自动取 MCGS 本机时间 → BCD → VB900~VB905 ---
-    DIM dateStr, year, month, day
-    DIM yearHigh, yearLow, monthHigh, monthLow, dayHigh, dayLow
-    DIM timeStr, hour, minute, second
-    DIM hourHigh, hourLow, minHigh, minLow, secHigh, secLow
+    ' --- 十进制 → BCD 转换 ---
+    ' 年: 2026 → 26 → BCD(0x26)
+    y = $Year - 2000
+    U1_VB900_RTC_Year = (y \ 10) * 16 + (y - (y \ 10) * 10)
 
-    dateStr = !Date()
-    year  = !Str2I(!Left(dateStr, 4)) - 2000
-    month = !Str2I(!Mid(dateStr, 6, 2))
-    day   = !Str2I(!Mid(dateStr, 9, 2))
+    ' 月: 9 → BCD(0x09)
+    m = $Month
+    U1_VB901_RTC_Month = (m \ 10) * 16 + (m - (m \ 10) * 10)
 
-    timeStr = !Time()
-    hour   = !Str2I(!Left(timeStr, 2))
-    minute = !Str2I(!Mid(timeStr, 4, 2))
-    second = !Str2I(!Right(timeStr, 2))
+    ' 日: 13 → BCD(0x13)
+    d = $Day
+    U1_VB902_RTC_Day = (d \ 10) * 16 + (d - (d \ 10) * 10)
 
-    yearHigh = year / 10
-    yearLow  = year - yearHigh * 10
-    U1_VB900_RTC_Year = yearHigh * 16 + yearLow
+    ' 时
+    h = $Hour
+    U1_VB903_RTC_Hour = (h \ 10) * 16 + (h - (h \ 10) * 10)
 
-    monthHigh = month / 10
-    monthLow  = month - monthHigh * 10
-    U1_VB901_RTC_Month = monthHigh * 16 + monthLow
+    ' 分
+    mi = $Minute
+    U1_VB904_RTC_Minute = (mi \ 10) * 16 + (mi - (mi \ 10) * 10)
 
-    dayHigh = day / 10
-    dayLow  = day - dayHigh * 10
-    U1_VB902_RTC_Day = dayHigh * 16 + dayLow
+    ' 秒
+    s = $Second
+    U1_VB905_RTC_Second = (s \ 10) * 16 + (s - (s \ 10) * 10)
 
-    hourHigh = hour / 10
-    hourLow  = hour - hourHigh * 10
-    U1_VB903_RTC_Hour = hourHigh * 16 + hourLow
-
-    minHigh = minute / 10
-    minLow  = minute - minHigh * 10
-    U1_VB904_RTC_Minute = minHigh * 16 + minLow
-
-    secHigh = second / 10
-    secLow  = second - secHigh * 10
-    U1_VB905_RTC_Second = secHigh * 16 + secLow
-
-    ' --- 2. 触发 PLC FC22 TODW 写入 RTC ---
+    ' --- 触发 PLC FC22 TODW ---
     U1_CMD_RTC_Sync = 1
-
-    ' --- 3. 轻提示弹窗 (非阻塞,3秒后自动关闭由 U1_Need_RTC_Sync 变 0 触发) ---
-    !OpenSubWnd("RTC_Sync_Wnd", 200, 150, 400, 200)
 ELSE
-    ' 校时完成,关闭提示弹窗
-    !CloseSubWnd("RTC_Sync_Wnd")
-END IF
+    !CloseSubWnd(校时提示)
+ENDIF
 ```
 
 ---
@@ -4215,46 +4197,28 @@ END IF
 
 ```vb
 ' RTC 校时同步按钮脚本（AQEX-51）
-DIM dateStr, year, month, day
-DIM yearHigh, yearLow, monthHigh, monthLow, dayHigh, dayLow
+' 手动兜底：操作员发现 HMI 时间不对时点击同步
 
-DIM timeStr, hour, minute, second
-DIM hourHigh, hourLow, minHigh, minLow, secHigh, secLow
+' --- 十进制 → BCD 转换 ---
+y = $Year - 2000
+U1_VB900_RTC_Year = (y \ 10) * 16 + (y - (y \ 10) * 10)
 
-dateStr = !Date()
-year  = !Str2I(!Left(dateStr, 4)) - 2000
-month = !Str2I(!Mid(dateStr, 6, 2))
-day   = !Str2I(!Mid(dateStr, 9, 2))
+m = $Month
+U1_VB901_RTC_Month = (m \ 10) * 16 + (m - (m \ 10) * 10)
 
-timeStr = !Time()
-hour   = !Str2I(!Left(timeStr, 2))
-minute = !Str2I(!Mid(timeStr, 4, 2))
-second = !Str2I(!Right(timeStr, 2))
+d = $Day
+U1_VB902_RTC_Day = (d \ 10) * 16 + (d - (d \ 10) * 10)
 
-yearHigh = year / 10
-yearLow  = year - yearHigh * 10
-U1_VB900_RTC_Year = yearHigh * 16 + yearLow
+h = $Hour
+U1_VB903_RTC_Hour = (h \ 10) * 16 + (h - (h \ 10) * 10)
 
-monthHigh = month / 10
-monthLow  = month - monthHigh * 10
-U1_VB901_RTC_Month = monthHigh * 16 + monthLow
+mi = $Minute
+U1_VB904_RTC_Minute = (mi \ 10) * 16 + (mi - (mi \ 10) * 10)
 
-dayHigh = day / 10
-dayLow  = day - dayHigh * 10
-U1_VB902_RTC_Day = dayHigh * 16 + dayLow
+s = $Second
+U1_VB905_RTC_Second = (s \ 10) * 16 + (s - (s \ 10) * 10)
 
-hourHigh = hour / 10
-hourLow  = hour - hourHigh * 10
-U1_VB903_RTC_Hour = hourHigh * 16 + hourLow
-
-minHigh = minute / 10
-minLow  = minute - minHigh * 10
-U1_VB904_RTC_Minute = minHigh * 16 + minLow
-
-secHigh = second / 10
-secLow  = second - secHigh * 10
-U1_VB905_RTC_Second = secHigh * 16 + secLow
-
+' --- 触发 PLC FC22 TODW ---
 U1_CMD_RTC_Sync = 1
 ```
 
