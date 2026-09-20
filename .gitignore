@@ -21,3 +21,6 @@ __pycache__/
 *.bak
 *.user.bak
 *.ldb
+
+# Trae IDE caches
+.trae-html-share-packages/
