@@ -39,6 +39,7 @@ MOVR   60.0, VD358        // VD_Timeout_ValveA 阀A开/关到位超时(s)
 MOVR   60.0, VD362        // VD_Timeout_ValveB 阀B开/关到位超时(s)
 MOVR   60.0, VD54         // VD_Timeout_ValveC 阀C开/关到位超时(s)
 MOVR   5.0, VD66          // VD_Delay_ValveA_Verify 阀A关后延时验证(s)
+MOVR   5.0, VD60          // 【v10.4硬件变更新增】VD_Delay_ValveC_Verify 阀C液位B低位延时验证(s)
 
 // 7.4 其他超时阈值
 MOVR   1800.0, VD448      // VD_S4WaitTimeout S4等待超时阈值(s)

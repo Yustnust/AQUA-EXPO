@@ -19,6 +19,10 @@
 // VD244 : VD_TimerB_Display       TimerB 显示值(秒, DINT, HMI 读取)
 // T63   : T_1s_Pulse              1 秒脉冲发生器(100ms 时基,PT=10)
 // V63.4 : M_1s_Pulse              1 秒脉冲 EU 缓存
+// V63.5 : M_S6Trig_Cache          S6触发条件缓存(v2.3, 避免LPS/LPP/ALD栈消耗)
+// V63.6 : M_NextS1Trig_Cache      下一轮S1触发条件缓存(v2.3)
+// V63.7 : M_CycleTimeout_Cache    周期超时报警条件缓存(v2.3)
+// AC2   : 运算中间值(v2.3 NET5 T_cycle-Prep_Needed 阈值)
 // VW2   : 下缸主状态机
 // VW304 : 上缸配液子流程状态
 // VW6   : 当前报警码 (=0 才允许触发)
@@ -65,20 +69,31 @@ EU
 
 
 NETWORK 3
-// 双倒计时器累加:仅在 S1 期间(VW304=1),每秒给当前活动计时器 +1
+// 双倒计时器累加:本轮进行中,每秒给当前活动计时器 +1
+// 【v2.3修复】原门控"仅VW304=1(S1期间)"导致Elapsed只计到S1结束,
+//   NET4/NET5的T_cycle比较式永远无法触发;改为"本轮进行中"门控:
+//   VW304≠0(上缸子流程进行中) 且 VW2∉{0,8,99}(非S0/S7/S_ERROR)
+//   计时区间为 本轮S6完成→下一轮S6完成(排水到排水),与T_cycle语义对齐
 LD     V63.4                       // 1 秒脉冲
-AW=    VW304, 1                    // 上缸在 S1
+LDW<>  VW304, 0                    // 上缸子流程进行中(1/2/3/4)
+AW<>   VW2, 0                      // 非S0
+AW<>   VW2, 8                      // 非S7
+AW<>   VW2, 99                     // 非S_ERROR
 A      M16.0                       // TimerA 活动?
 +R     1.0, VD248                  // TimerA_Elapsed + 1
 LD     V63.4                       // 1 秒脉冲
-AW=    VW304, 1                    // 上缸在 S1
+LDW<>  VW304, 0                    // 上缸子流程进行中
+AW<>   VW2, 0                      // 非S0
+AW<>   VW2, 8                      // 非S7
+AW<>   VW2, 99                     // 非S_ERROR
 AN     M16.0                       // TimerB 活动?
 +R     1.0, VD252                  // TimerB_Elapsed + 1
 
 
 NETWORK 4
 // S6 触发条件
-// [已修复 v2.2] 当前活动 Elapsed >= S6_actual 时触发 S6 排水
+// 【v2.3修复】原实现"Elapsed <= VD116"比较方向与语义相反(且代码注释与指令矛盾),
+//   按设计语义改为: 本轮剩余 <= S6_actual ⇔ Elapsed >= T_cycle - VD116
 // S6_actual 统一使用 VD116:首轮为S4实测值(由FC15写入),后续为S6滚动实测值(由FC17写入)
 LD     SM0.0
 LPS
@@ -90,20 +105,24 @@ AN     M16.0                       // 当前 TimerB?
 MOVR   VD252, AC0                  // AC0 = TimerB_Elapsed
 LPP
 OLD                                // 选择当前活动 Elapsed
--R     VD116, AC0                  // AC0 = Elapsed - S6_actual
-AR<=   AC0, 0.0                    // Elapsed <= S6_actual ?
-LPS                                // 保存触发条件结果
-
-LDW=   VW2, 6                      // 当前在 S5
+MOVR   VD186, AC1                  // AC1 = T_cycle
+-R     VD116, AC1                  // AC1 = T_cycle - S6_actual (S6触发阈值)
+-R     AC1, AC0                    // AC0 = Elapsed - 阈值
+AR>=   AC0, 0.0                    // Elapsed >= T_cycle - S6_actual ?
+AW=    VW2, 6                      // 当前在 S5
 AW=    VW6, 0                      // 无报警
-LPP                                // 恢复触发条件结果
-ALD                                // 与 S5/无报警 条件合并
+=      V63.5                       // 缓存S6触发条件(避免LPS/LPP/ALD栈消耗丢弃门控)
+LD     V63.5
 MOVW   7, VW2                      // 转 S6 排水
+LD     V63.5
+S      M10.7, 1                    // 【v2.3修复】置S6首次进入脉冲(原FC16已删除置位,FC17无源可取)
 
 
 NETWORK 5
 // 下一轮 S1 触发条件
-// [已修复 v2.2] 当前活动 Elapsed >= Prep_Needed 时触发下一轮 S1
+// 【v2.3修复】原实现"Elapsed >= Prep_Needed"漏T_cycle项,且要求VW304=0(死条件);
+//   按设计语义改为: 本轮剩余 <= Prep_Needed ⇔ Elapsed >= T_cycle - Prep_Needed,
+//   门控改为 VW304=4(上缸已转移,可启动下一轮配液)
 // Prep_Needed = VD70 + VD28 + VD430 (S1 实测 + S2 固定 + 上缸安全余量)
 LD     SM0.0
 LPS
@@ -118,20 +137,21 @@ OLD                                // 选择当前活动 Elapsed
 MOVR   VD70, AC1                   // AC1 = S1_Actual
 +R     VD28, AC1                   // + S2 固定
 +R     VD430, AC1                  // + 安全余量 = Prep_Needed
--R     AC1, AC0                    // AC0 = Elapsed - Prep_Needed
-AR>=   AC0, 0.0                    // Elapsed >= Prep_Needed ?
-LPS                                // 保存触发条件结果
-
-LDW=   VW304, 0                    // 上缸空闲(可启动下一轮)
+MOVR   VD186, AC2                  // AC2 = T_cycle
+-R     AC1, AC2                    // AC2 = T_cycle - Prep_Needed (下一轮S1触发阈值)
+-R     AC2, AC0                    // AC0 = Elapsed - 阈值
+AR>=   AC0, 0.0                    // Elapsed >= T_cycle - Prep_Needed ?
+AW=    VW304, 4                    // 【v2.3修复】上缸已转移(原VW304=0为死状态)
 AW=    VW6, 0                      // 无报警
-LPP                                // 恢复触发条件结果
-ALD                                // 与上缸空闲/无报警合并
-S      M16.1, 1                    // 触发下一轮 S1 脉冲
+=      V63.6                       // 缓存触发条件
+LD     V63.6
+S      M16.1, 1                    // 触发下一轮 S1 脉冲(由OB1消费: VW304 4→1)
 
 
 NETWORK 6
 // 倒计时到 0 报警 (V303.6)
 // 当前活动 Elapsed >= T_cycle 且不在 S7 → 报警
+// 【v2.3修复】原LPS/LPP/ALD结构会丢弃"不在S7"门控,改用V位缓存
 LD     SM0.0
 LPS
 A      M16.0                       // 当前 TimerA?
@@ -144,12 +164,9 @@ LPP
 OLD                                // 选择当前活动 Elapsed
 -R     VD186, AC0                  // AC0 = Elapsed - T_cycle
 AR>=   AC0, 0.0                    // Elapsed >= T_cycle ?
-LPS                                // 保存触发条件结果
-
-LDW=   VW2, 8                      // 当前在 S7?
-NOT                                // 不在 S7
-LPP                                // 恢复触发条件结果
-ALD                                // 计时完成 AND 不在 S7
+AW<>   VW2, 8                      // 不在 S7
+=      V63.7                       // 缓存报警条件
+LD     V63.7
 S      V303.6, 1                   // 单轮换水周期超时报警
 
 
@@ -172,8 +189,9 @@ LBL    9
 // ============================================================
 // 说明:
 //   1. 调用时机: OB1 在 FC22(RTC Sync) 之后、FC1(状态调度) 之前调用
-//   2. 计数器清零: S1 开始时由 FC11 根据 M16.0 清零 VD248 或 VD252
-//   3. 计时器切换: S4 完成后由 FC17 切 M16.0 = NOT M16.0
+//   2. 计数器清零: FC11 在 S1 首次进入时清零【非活动】计数器
+//      (S1启动于本轮中段,活动计数器属于本轮,不能清;计时区间为 S6完成→S6完成)
+//   3. 计时器切换: S6 完成后由 FC17 切 M16.0 = NOT M16.0(全程序唯一切换点)
 //   4. 报警 V303.6: 不受 V200.0 模式影响,必须 V0.3 人工确认
 //   5. T_cycle <= 0: 直接报警并跳过本周期其他计算(跳到 LBL 9)
 //   6. 显示值 VD256/VD244: 真空闲区(原 VD442/VD446 与 VD440/444 字节重叠已迁移)

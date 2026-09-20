@@ -76,7 +76,7 @@
 | ----- | ------------------------------- | ------- | -------- | ----------------- |
 | I0.0  | U1\_DI\_FlowSwitch\_A\_Inlet    | 流量开关A   | 无源常开     | 上缸进水流量检测          |
 | I0.1  | U1\_DI\_FlowSwitch\_B\_UpToDown | 流量开关B   | 无源常开     | 上→下转移流量检测         |
-| I0.2  | U1\_DI\_FlowSwitch\_C\_Drain    | 流量开关C   | 无源常开     | 下缸排水流量检测          |
+| I0.2  | U1\_DI\_Reserved\_02            | —          | —           | 硬件变更：原流量开关C已去除，保留未使用 |
 | I0.3  | U1\_DI\_SystemReset             | 系统复位按钮  | 无源常开点动   | 急停解除后系统复位（v2.1新增） |
 | I0.4  | U1\_DI\_MuteBtn                 | 消音按钮    | 无源常开点动   | 就地面板消音（v2.1新增）    |
 | I0.5  | U1\_DI\_LevelA\_High            | 液位计A-高位 | 无源常开     | 上缸漫溢保护            |
@@ -92,7 +92,7 @@
 | I8.4  | U1\_DI\_ValveC\_Open            | 阀C开到位   | 有源→继电器转换 | 阀C全开确认            |
 | I8.5  | U1\_DI\_ValveC\_Close           | 阀C关到位   | 有源→继电器转换 | 阀C全关确认            |
 
-**容量**：本体12DI + DR32扩展8DI = 20DI，使用17点，I8.6/I8.7预留备用。
+**容量【硬件变更】**：本体12DI + DR32扩展8DI = 20DI，使用16点（I0.2 保留未使用），I0.2/I8.6/I8.7预留备用。
 
 ***
 
@@ -106,7 +106,7 @@
 | Q0.3  | U1\_DO\_ValveB          | 电动球阀B   | 上→下转移（v2.1新增）  |
 | Q0.4  | U1\_DO\_ValveC          | 电动球阀C   | 下缸排水（v2.1新增）   |
 | Q0.5  | U1\_DO\_NCValve\_Top    | NC球阀-上缸 | 阀A失效第二道保护      |
-| Q0.6  | U1\_DO\_NCValve\_Bottom | NC球阀-下缸 | 阀B/液位B高报警第二道保护 |
+| Q0.6  | U1\_DO\_Reserved\_06    | —          | 硬件变更：原下缸NC球阀已去除，保留未使用 |
 | Q0.7  | U1\_DO\_Alarm\_Sound    | 报警-声音   | 蜂鸣器输出（v2.1新增）  |
 | Q8.0  | U1\_DO\_Alarm\_Light    | 报警-灯光   | 报警灯输出（v2.1新增）  |
 
@@ -198,6 +198,7 @@
 | VD24  | U1\_VD\_ExperimentTarget      | min  | 实验时长目标设定值（默认10080.0，7天）         |
 | VD28  | U1\_VD\_PreMixTime            | s    | S2搅拌+加药固定时长（默认1800.0，30min）       |
 | VD54  | U1\_VD\_Timeout\_ValveC       | s    | 阀C动作超时保护时长        |
+| VD60  | U1\_VD\_Delay\_ValveC\_Verify | s    | 阀C液位B低位延时验证时长（硬件变更新增，默认5.0） |
 | VD66  | U1\_VD\_Delay\_ValveA\_Verify | s    | 阀A关闭后延时验证时长       |
 | VD316 | U1\_VD\_TargetInletVolume     | L    | 目标进水量             |
 | VD350 | U1\_VD\_StepResolution        | µL/步 | 注射泵单步分辨率          |
@@ -262,7 +263,7 @@
 | V300.0 | U1\_Alarm\_Overflow\_AHigh       | 上缸漫溢报警         |
 | V300.1 | U1\_Alarm\_Overflow\_BHigh       | 下缸漫溢报警         |
 | V300.2 | U1\_Alarm\_NCValve\_Top          | NC球阀-上缸动作报警    |
-| V300.3 | U1\_Alarm\_NCValve\_Bottom       | NC球阀-下缸动作报警    |
+| V300.3 | U1\_Alarm\_Reserved\_300\_3       | 硬件变更：原NC球阀-下缸动作报警已废弃，保留位 |
 | V300.4 | U1\_EStop\_Latch                 | 急停触发锁存         |
 | V300.5 | U1\_Alarm\_SafetyRelay           | 安全继电器故障        |
 | V300.6 | U1\_Alarm\_ScheduleLag           | 配液节奏严重滞后       |
@@ -278,11 +279,11 @@
 | V302.2 | U1\_Alarm\_ValveB\_OpenNoFlow    | 阀B开到位但无流       |
 | V302.3 | U1\_Alarm\_ValveB\_CloseTimeout  | 阀B关到位反馈超时      |
 | V302.4 | U1\_Alarm\_ValveB\_CloseLeak     | 阀B关到位但仍有流      |
-| V302.5 | U1\_Alarm\_ValveC\_Diag          | 阀C四态诊断异常       |
+| V302.5 | U1\_Alarm\_Reserved\_302\_5       | 硬件变更：原阀C四态诊断异常已废弃，保留位 |
 | V302.6 | U1\_Alarm\_ValveC\_OpenTimeout   | 阀C开到位反馈超时      |
-| V302.7 | U1\_Alarm\_ValveC\_OpenNoFlow    | 阀C开到位但无流       |
+| V302.7 | U1\_Alarm\_Reserved\_302\_7       | 硬件变更：原阀C开到位无流已废弃，保留位 |
 | V303.0 | U1\_Alarm\_ValveC\_CloseTimeout  | 阀C关到位反馈超时      |
-| V303.1 | U1\_Alarm\_ValveC\_CloseLeak     | 阀C关到位但仍有流      |
+| V303.1 | U1\_Alarm\_Reserved\_303\_1       | 硬件变更：原阀C关到位内漏已废弃，保留位 |
 | V303.2 | U1\_Alarm\_S4TransferWaitTimeout | S4等待超时报警       |
 | V303.4 | U1\_Alarm\_SyringePump           | 注射泵通讯/动作异常     |
 | V303.5 | U1\_Alarm\_RTC\_Lost             | RTC时钟丢失        |
@@ -389,7 +390,7 @@ PLC在SBR25冷启动时读取以下镜像值作为HMI参数的断电保持默认
 | ------ | ------------------------------------ | ------- | ----- | ----------------- | -------------- |
 | I0.0   | U1\_DI\_FlowSwitch\_A\_Inlet         | INTEGER | 只读    | 上缸进水流量开关          | —              |
 | I0.1   | U1\_DI\_FlowSwitch\_B\_UpToDown      | INTEGER | 只读    | 上→下转移流量开关         | —              |
-| I0.2   | U1\_DI\_FlowSwitch\_C\_Drain         | INTEGER | 只读    | 下缸排水流量开关          | —              |
+| I0.2   | U1\_DI\_Reserved\_02                 | INTEGER | 只读    | 硬件变更：保留未使用        | —              |
 | I0.3   | U1\_DI\_SystemReset                  | INTEGER | 只读    | 系统复位按钮            | v2.1新增         |
 | I0.4   | U1\_DI\_MuteBtn                      | INTEGER | 只读    | 消音按钮              | v2.1新增         |
 | I0.5   | U1\_DI\_LevelA\_High                 | INTEGER | 只读    | 上缸液位高位            | —              |
@@ -410,7 +411,7 @@ PLC在SBR25冷启动时读取以下镜像值作为HMI参数的断电保持默认
 | Q0.3   | U1\_DO\_ValveB                       | INTEGER | 只读    | 阀B输出              | v2.1新增         |
 | Q0.4   | U1\_DO\_ValveC                       | INTEGER | 只读    | 阀C输出              | v2.1新增         |
 | Q0.5   | U1\_DO\_NCValve\_Top                 | INTEGER | 读写    | 上缸NC球阀输出          | —              |
-| Q0.6   | U1\_DO\_NCValve\_Bottom              | INTEGER | 读写    | 下缸NC球阀输出          | —              |
+| Q0.6   | U1\_DO\_Reserved\_06                 | INTEGER | 读写    | 硬件变更：保留未使用        | —              |
 | Q0.7   | U1\_DO\_Alarm\_Sound                 | INTEGER | 只读    | 报警声音输出            | v2.1新增         |
 | Q8.0   | U1\_DO\_Alarm\_Light                 | INTEGER | 只读    | 报警灯光输出            | v2.1新增         |
 | V0.0   | U1\_CMD\_Start                       | INTEGER | 读写    | 启动命令              | —              |
@@ -436,6 +437,7 @@ PLC在SBR25冷启动时读取以下镜像值作为HMI参数的断电保持默认
 | VD24   | U1\_VD\_ExperimentTarget             | SINGLE  | 读写    | 实验时长目标(min)       | 默认10080.0(7天) |
 | VD28   | U1\_VD\_PreMixTime                   | SINGLE  | 读写    | S2搅拌固定时长(s)       | 默认1800.0(30min) |
 | VD54   | U1\_VD\_Timeout\_ValveC              | SINGLE  | 读写    | 阀C超时保护(s)         | —              |
+| VD60   | U1\_VD\_Delay\_ValveC\_Verify        | SINGLE  | 读写    | 阀C液位低位延时验证(s)    | 硬件变更新增      |
 | VD66   | U1\_VD\_Delay\_ValveA\_Verify        | SINGLE  | 读写    | 阀A关后验证延时(s)       | —              |
 | VD70   | U1\_VD\_S1\_Actual                   | SINGLE  | 只读    | S1实测时长(s)         | —              |
 | VD82   | U1\_VD\_FlowMeter\_Snapshot          | SINGLE  | 只读    | 流量计开启快照           | —              |
@@ -463,7 +465,7 @@ PLC在SBR25冷启动时读取以下镜像值作为HMI参数的断电保持默认
 | V300.0 | U1\_Alarm\_Overflow\_AHigh           | INTEGER | 只读    | 上缸漫溢报警            | —              |
 | V300.1 | U1\_Alarm\_Overflow\_BHigh           | INTEGER | 只读    | 下缸漫溢报警            | —              |
 | V300.2 | U1\_Alarm\_NCValve\_Top              | INTEGER | 只读    | NC球阀-上缸动作         | —              |
-| V300.3 | U1\_Alarm\_NCValve\_Bottom           | INTEGER | 只读    | NC球阀-下缸动作         | —              |
+| V300.3 | U1\_Alarm\_Reserved\_300\_3           | INTEGER | 只读    | 硬件变更：保留位         | —              |
 | V300.4 | U1\_EStop\_Latch                     | INTEGER | 只读    | 急停触发锁存            | —              |
 | V300.5 | U1\_Alarm\_SafetyRelay               | INTEGER | 只读    | 安全继电器故障           | —              |
 | V300.6 | U1\_Alarm\_ScheduleLag               | INTEGER | 只读    | 配液节奏严重滞后          | —              |
@@ -479,11 +481,11 @@ PLC在SBR25冷启动时读取以下镜像值作为HMI参数的断电保持默认
 | V302.2 | U1\_Alarm\_ValveB\_OpenNoFlow        | INTEGER | 只读    | 阀B开到位但无流          | —              |
 | V302.3 | U1\_Alarm\_ValveB\_CloseTimeout      | INTEGER | 只读    | 阀B关到位超时           | —              |
 | V302.4 | U1\_Alarm\_ValveB\_CloseLeak         | INTEGER | 只读    | 阀B关到位但仍有流         | —              |
-| V302.5 | U1\_Alarm\_ValveC\_Diag              | INTEGER | 只读    | 阀C四态诊断异常          | —              |
+| V302.5 | U1\_Alarm\_Reserved\_302\_5           | INTEGER | 只读    | 硬件变更：保留位         | —              |
 | V302.6 | U1\_Alarm\_ValveC\_OpenTimeout       | INTEGER | 只读    | 阀C开到位超时           | —              |
-| V302.7 | U1\_Alarm\_ValveC\_OpenNoFlow        | INTEGER | 只读    | 阀C开到位但无流          | —              |
+| V302.7 | U1\_Alarm\_Reserved\_302\_7           | INTEGER | 只读    | 硬件变更：保留位         | —              |
 | V303.0 | U1\_Alarm\_ValveC\_CloseTimeout      | INTEGER | 只读    | 阀C关到位超时           | —              |
-| V303.1 | U1\_Alarm\_ValveC\_CloseLeak         | INTEGER | 只读    | 阀C关到位但仍有流         | —              |
+| V303.1 | U1\_Alarm\_Reserved\_303\_1           | INTEGER | 只读    | 硬件变更：保留位         | —              |
 | V303.2 | U1\_Alarm\_S4TransferWaitTimeout     | INTEGER | 只读    | S4等待超时报警          | —              |
 | V303.4 | U1\_Alarm\_SyringePump               | INTEGER | 只读    | 注射泵通讯/动作异常        | —              |
 | V303.5 | U1\_Alarm\_RTC\_Lost                 | INTEGER | 只读    | RTC时钟丢失           | —              |

@@ -58,7 +58,7 @@ VD_PumpSpeed_Cutoff,REAL,VD140,RW,是,"注射泵截止速度(写入Modbus 40011,
 M_Alarm_Overflow_AHigh,BOOL,V300.0,R,是,"上缸漫溢(液位计A-高位触发,漫溢级)",5
 M_Alarm_Overflow_BHigh,BOOL,V300.1,R,是,"下缸漫溢(液位计B-高位触发,漫溢级)",5
 M_Alarm_NCValve_Top,BOOL,V300.2,R,是,"NC球阀-上缸动作(阀A失效保护触发,漫溢级)",5
-M_Alarm_NCValve_Bottom,BOOL,V300.3,R,是,"NC球阀-下缸动作(阀B/液位计B报警触发,漫溢级)",5
+U1_Alarm_Reserved_300_3,BOOL,V300.3,R,是,"保留位(硬件变更：原报警码13 NC球阀-下缸已废弃)",5
 M_EStop_Latch,BOOL,V300.4,R,是,"急停触发锁存(I1.1=OFF,漫溢级)",5
 M_Alarm_SafetyRelay,BOOL,V300.5,R,是,"安全继电器/接触器故障(最高级,I1.2反馈异常)",5
 M_Alarm_ScheduleLag,BOOL,V300.6,R,是,"配液节奏严重滞后(三层纠偏用尽,节奏级)",5
@@ -76,9 +76,9 @@ M_Alarm_ValveB_OpenTimeout,BOOL,V302.1,R,是,"阀B开到位反馈(I8.2)超时",5
 M_Alarm_ValveB_OpenNoFlow,BOOL,V302.2,R,是,"阀B开到位但无流",5
 M_Alarm_ValveB_CloseTimeout,BOOL,V302.3,R,是,"阀B关到位反馈(I8.3)超时",5
 M_Alarm_ValveB_CloseLeak,BOOL,V302.4,R,是,"阀B关到位但仍有流(内漏)",5
-M_Alarm_ValveC_Diag,BOOL,V302.5,R,是,"阀C四态诊断异常",5
+U1_Alarm_Reserved_302_5,BOOL,V302.5,R,是,"保留位(硬件变更：原报警码45阀C四态诊断异常已废弃)",5
 M_Alarm_ValveC_OpenTimeout,BOOL,V302.6,R,是,"阀C开到位反馈(I8.4)超时",5
-M_Alarm_ValveC_OpenNoFlow,BOOL,V302.7,R,是,"阀C开到位但无流",5
+U1_Alarm_Reserved_302_7,BOOL,V302.7,R,是,"保留位(硬件变更：原报警码47阀C开到位无流已废弃)",5
 M_Alarm_ValveC_CloseTimeout,BOOL,V303.0,R,是,"阀C关到位反馈(I8.5)超时",5
 M_Alarm_ValveC_CloseLeak,BOOL,V303.1,R,是,"阀C关到位但仍有流(内漏)",5
 M_Alarm_SyringePump,BOOL,V303.4,R,是,"注射泵通讯/动作异常(状态码报错或无响应)",5

@@ -432,18 +432,20 @@ Function GetAlarmTextByCode(code)
         Case 10: GetAlarmTextByCode = "上缸漫溢"
         Case 11: GetAlarmTextByCode = "下缸漫溢"
         Case 12: GetAlarmTextByCode = "NC球阀-上缸动作"
-        Case 13: GetAlarmTextByCode = "NC球阀-下缸动作"
+        ' Case 13 已废弃（v10.4 硬件变更：下缸 NC 球阀已去除）
         Case 14: GetAlarmTextByCode = "急停触发"
         Case 20: GetAlarmTextByCode = "配液节奏严重滞后"
         Case 21: GetAlarmTextByCode = "配液节奏滞后提示"
         Case 30 To 36: GetAlarmTextByCode = "阀A类故障(" & code & ")"
         Case 40 To 44: GetAlarmTextByCode = "阀B类故障(" & code & ")"
-        Case 45 To 47: GetAlarmTextByCode = "阀C开类故障(" & code & ")"
+        Case 46: GetAlarmTextByCode = "阀C开到位超时"
+        ' Case 45/47 已废弃（v10.4 硬件变更：流量开关C已去除）
+        Case 49: GetAlarmTextByCode = "S4转移等待超时"
         Case 60 To 61: GetAlarmTextByCode = "阀C关类故障(" & code & ")"
         Case 62 To 63: GetAlarmTextByCode = "潜水泵类故障(" & code & ")"
         Case 64: GetAlarmTextByCode = "注射泵故障"
         Case 65: GetAlarmTextByCode = "RTC时钟丢失"
-        Case 66: GetAlarmTextByCode = "流量开关瞬时异常"
+        Case 66: GetAlarmTextByCode = "单轮换水周期超时"
         Case Else: GetAlarmTextByCode = "未知报警(" & code & ")"
     End Select
 End Function
