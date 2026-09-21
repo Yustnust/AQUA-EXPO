@@ -1935,6 +1935,7 @@ If SelectedUnit = 1 Then
     Param_Timeout_ValveB = U1_VD_Timeout_ValveB
     Param_Timeout_ValveC = U1_VD_Timeout_ValveC
     Param_Delay_ValveA_Verify = U1_VD_Delay_ValveA_Verify
+    Param_Delay_ValveC_Verify = U1_VD_Delay_ValveC_Verify
     Param_ManualDose_Target = U1_VD_ManualDose_Target/1000
     Param_ManualDose_Mode = U1_VD_ManualDose_Mode
     Param_AlarmAckMode = U1_M_AlarmAckMode
@@ -1954,6 +1955,7 @@ If SelectedUnit = 2 Then
     Param_Timeout_ValveB = U2_VD_Timeout_ValveB
     Param_Timeout_ValveC = U2_VD_Timeout_ValveC
     Param_Delay_ValveA_Verify = U2_VD_Delay_ValveA_Verify
+    Param_Delay_ValveC_Verify = U2_VD_Delay_ValveC_Verify
     Param_ManualDose_Target = U2_VD_ManualDose_Target/1000
     Param_ManualDose_Mode = U2_VD_ManualDose_Mode
     Param_AlarmAckMode = U2_M_AlarmAckMode
@@ -1973,6 +1975,7 @@ If SelectedUnit = 3 Then
     Param_Timeout_ValveB = U3_VD_Timeout_ValveB
     Param_Timeout_ValveC = U3_VD_Timeout_ValveC
     Param_Delay_ValveA_Verify = U3_VD_Delay_ValveA_Verify
+    Param_Delay_ValveC_Verify = U3_VD_Delay_ValveC_Verify
     Param_ManualDose_Target = U3_VD_ManualDose_Target/1000
     Param_ManualDose_Mode = U3_VD_ManualDose_Mode
     Param_AlarmAckMode = U3_M_AlarmAckMode
@@ -1992,6 +1995,7 @@ If SelectedUnit = 4 Then
     Param_Timeout_ValveB = U4_VD_Timeout_ValveB
     Param_Timeout_ValveC = U4_VD_Timeout_ValveC
     Param_Delay_ValveA_Verify = U4_VD_Delay_ValveA_Verify
+    Param_Delay_ValveC_Verify = U4_VD_Delay_ValveC_Verify
     Param_ManualDose_Target = U4_VD_ManualDose_Target/1000
     Param_ManualDose_Mode = U4_VD_ManualDose_Mode
     Param_AlarmAckMode = U4_M_AlarmAckMode
@@ -2011,6 +2015,7 @@ If SelectedUnit = 5 Then
     Param_Timeout_ValveB = U5_VD_Timeout_ValveB
     Param_Timeout_ValveC = U5_VD_Timeout_ValveC
     Param_Delay_ValveA_Verify = U5_VD_Delay_ValveA_Verify
+    Param_Delay_ValveC_Verify = U5_VD_Delay_ValveC_Verify
     Param_ManualDose_Target = U5_VD_ManualDose_Target/1000
     Param_ManualDose_Mode = U5_VD_ManualDose_Mode
     Param_AlarmAckMode = U5_M_AlarmAckMode
@@ -2030,6 +2035,7 @@ If SelectedUnit = 6 Then
     Param_Timeout_ValveB = U6_VD_Timeout_ValveB
     Param_Timeout_ValveC = U6_VD_Timeout_ValveC
     Param_Delay_ValveA_Verify = U6_VD_Delay_ValveA_Verify
+    Param_Delay_ValveC_Verify = U6_VD_Delay_ValveC_Verify
     Param_ManualDose_Target = U6_VD_ManualDose_Target/1000
     Param_ManualDose_Mode = U6_VD_ManualDose_Mode
     Param_AlarmAckMode = U6_M_AlarmAckMode
@@ -2049,6 +2055,7 @@ If SelectedUnit = 7 Then
     Param_Timeout_ValveB = U7_VD_Timeout_ValveB
     Param_Timeout_ValveC = U7_VD_Timeout_ValveC
     Param_Delay_ValveA_Verify = U7_VD_Delay_ValveA_Verify
+    Param_Delay_ValveC_Verify = U7_VD_Delay_ValveC_Verify
     Param_ManualDose_Target = U7_VD_ManualDose_Target/1000
     Param_ManualDose_Mode = U7_VD_ManualDose_Mode
     Param_AlarmAckMode = U7_M_AlarmAckMode
@@ -2068,6 +2075,7 @@ If SelectedUnit = 8 Then
     Param_Timeout_ValveB = U8_VD_Timeout_ValveB
     Param_Timeout_ValveC = U8_VD_Timeout_ValveC
     Param_Delay_ValveA_Verify = U8_VD_Delay_ValveA_Verify
+    Param_Delay_ValveC_Verify = U8_VD_Delay_ValveC_Verify
     Param_ManualDose_Target = U8_VD_ManualDose_Target/1000
     Param_ManualDose_Mode = U8_VD_ManualDose_Mode
     Param_AlarmAckMode = U8_M_AlarmAckMode
@@ -2168,6 +2176,12 @@ ENDIF
 
 IF  Param_Delay_ValveA_Verify < 0  THEN
     Param_Confirm_Text = "错误：阀A关闭延时验证设定值不能为负数"
+    Param_Pending_Save = 0
+    !OpenSubWnd(用户窗口.参数设置二次确认, 400, 300, 400, 200, 0)
+    EXIT
+ENDIF
+IF  Param_Delay_ValveC_Verify < 0  THEN
+    Param_Confirm_Text = "错误：排液完成验证延时设定值不能为负数"
     Param_Pending_Save = 0
     !OpenSubWnd(用户窗口.参数设置二次确认, 400, 300, 400, 200, 0)
     EXIT
@@ -2276,6 +2290,7 @@ Param_ExpTarget           = U1_UD_VD24_ExpTarget
 Param_PreMixTime          = U1_UD_VD28_PreMixTime
 Param_Timeout_ValveC      = U1_UD_VD54_TimeoutC
 Param_Delay_ValveA_Verify = U1_UD_VD66_DelayA
+Param_Delay_ValveC_Verify = U1_UD_VD60_DelayC
 Param_TargetInletVolume   = U1_UD_VD316_InletVol
 Param_StepRes             = U1_UD_VD350_StepRes
 Param_Timeout_ValveA      = U1_UD_VD358_TimeoutA
@@ -2382,6 +2397,12 @@ IF  Param_Delay_ValveA_Verify < 0  THEN
     !OpenSubWnd(用户窗口.保存默认二次确认, 400, 300, 400, 200, 0)
     EXIT
 ENDIF
+IF  Param_Delay_ValveC_Verify < 0  THEN
+    Param_Confirm_Text = "错误：排液完成验证延时设定值不能为负数"
+    Param_Pending_Save = 0
+    !OpenSubWnd(用户窗口.保存默认二次确认, 400, 300, 400, 200, 0)
+    EXIT
+ENDIF
 
 IF  Param_ManualDose_Target < 0  THEN
     Param_Confirm_Text = "错误：手动加药量设定值不能为负数"
@@ -2430,6 +2451,7 @@ IF Param_Pending_Save = 1 THEN
     U1_UD_VD28_PreMixTime    = Param_PreMixTime
     U1_UD_VD54_TimeoutC      = Param_Timeout_ValveC
     U1_UD_VD66_DelayA        = Param_Delay_ValveA_Verify
+    U1_UD_VD60_DelayC        = Param_Delay_ValveC_Verify
     U1_UD_VD316_InletVol     = Param_TargetInletVolume
     U1_UD_VD350_StepRes      = Param_StepRes
     U1_UD_VD358_TimeoutA     = Param_Timeout_ValveA
@@ -2514,6 +2536,10 @@ EndIf
 If Param_Delay_ValveA_Verify < 0 Then
     ParamValid = 0
     ParamInvalidStr = "阀A关闭延时验证设定值不能为负数"
+EndIf
+If Param_Delay_ValveC_Verify < 0 Then
+    ParamValid = 0
+    ParamInvalidStr = "排液完成验证延时设定值不能为负数"
 EndIf
 
 ' --- 3. 手动/报警 ---
@@ -3810,101 +3836,101 @@ EndIf
 If ParamSrcUnit = 1 Then
     If ParamDstUnit = 2 Then
                 U2_VD_StepResolution = U1_VD_StepResolution
-        U2_VD_CycleSetpoint = U1_VD_CycleSetpoint
         U2_VD_ExperimentTarget = U1_VD_ExperimentTarget
         U2_VD_PreMixTime = U1_VD_PreMixTime
-        U2_VD_PreMixTime_MinSafe = U1_VD_PreMixTime_MinSafe
-        U2_VD_RestTime = U1_VD_RestTime
-        U2_VD_RestTime_Min = U1_VD_RestTime_Min
-        U2_VD_CycleExtend_Max = U1_VD_CycleExtend_Max
         U2_VD_Timeout_ValveA = U1_VD_Timeout_ValveA
         U2_VD_Timeout_ValveB = U1_VD_Timeout_ValveB
         U2_VD_Timeout_ValveC = U1_VD_Timeout_ValveC
         U2_VD_Delay_ValveA_Verify = U1_VD_Delay_ValveA_Verify
+        U2_VD_24h_Target = U1_VD_24h_Target
+        U2_VD_Transfer_Margin = U1_VD_Transfer_Margin
+        U2_VD_Prep_Safety_Margin = U1_VD_Prep_Safety_Margin
+        U2_VD_Delay_ValveC_Verify = U1_VD_Delay_ValveC_Verify
+        U2_VW288_S4_Transfer_PT = U1_VW288_S4_Transfer_PT
     EndIf
     If ParamDstUnit = 3 Then
                 U3_VD_StepResolution = U1_VD_StepResolution
-        U3_VD_CycleSetpoint = U1_VD_CycleSetpoint
         U3_VD_ExperimentTarget = U1_VD_ExperimentTarget
         U3_VD_PreMixTime = U1_VD_PreMixTime
-        U3_VD_PreMixTime_MinSafe = U1_VD_PreMixTime_MinSafe
-        U3_VD_RestTime = U1_VD_RestTime
-        U3_VD_RestTime_Min = U1_VD_RestTime_Min
-        U3_VD_CycleExtend_Max = U1_VD_CycleExtend_Max
         U3_VD_Timeout_ValveA = U1_VD_Timeout_ValveA
         U3_VD_Timeout_ValveB = U1_VD_Timeout_ValveB
         U3_VD_Timeout_ValveC = U1_VD_Timeout_ValveC
         U3_VD_Delay_ValveA_Verify = U1_VD_Delay_ValveA_Verify
+        U3_VD_24h_Target = U1_VD_24h_Target
+        U3_VD_Transfer_Margin = U1_VD_Transfer_Margin
+        U3_VD_Prep_Safety_Margin = U1_VD_Prep_Safety_Margin
+        U3_VD_Delay_ValveC_Verify = U1_VD_Delay_ValveC_Verify
+        U3_VW288_S4_Transfer_PT = U1_VW288_S4_Transfer_PT
     EndIf
     If ParamDstUnit = 4 Then
                 U4_VD_StepResolution = U1_VD_StepResolution
-        U4_VD_CycleSetpoint = U1_VD_CycleSetpoint
         U4_VD_ExperimentTarget = U1_VD_ExperimentTarget
         U4_VD_PreMixTime = U1_VD_PreMixTime
-        U4_VD_PreMixTime_MinSafe = U1_VD_PreMixTime_MinSafe
-        U4_VD_RestTime = U1_VD_RestTime
-        U4_VD_RestTime_Min = U1_VD_RestTime_Min
-        U4_VD_CycleExtend_Max = U1_VD_CycleExtend_Max
         U4_VD_Timeout_ValveA = U1_VD_Timeout_ValveA
         U4_VD_Timeout_ValveB = U1_VD_Timeout_ValveB
         U4_VD_Timeout_ValveC = U1_VD_Timeout_ValveC
         U4_VD_Delay_ValveA_Verify = U1_VD_Delay_ValveA_Verify
+        U4_VD_24h_Target = U1_VD_24h_Target
+        U4_VD_Transfer_Margin = U1_VD_Transfer_Margin
+        U4_VD_Prep_Safety_Margin = U1_VD_Prep_Safety_Margin
+        U4_VD_Delay_ValveC_Verify = U1_VD_Delay_ValveC_Verify
+        U4_VW288_S4_Transfer_PT = U1_VW288_S4_Transfer_PT
     EndIf
     If ParamDstUnit = 5 Then
                 U5_VD_StepResolution = U1_VD_StepResolution
-        U5_VD_CycleSetpoint = U1_VD_CycleSetpoint
         U5_VD_ExperimentTarget = U1_VD_ExperimentTarget
         U5_VD_PreMixTime = U1_VD_PreMixTime
-        U5_VD_PreMixTime_MinSafe = U1_VD_PreMixTime_MinSafe
-        U5_VD_RestTime = U1_VD_RestTime
-        U5_VD_RestTime_Min = U1_VD_RestTime_Min
-        U5_VD_CycleExtend_Max = U1_VD_CycleExtend_Max
         U5_VD_Timeout_ValveA = U1_VD_Timeout_ValveA
         U5_VD_Timeout_ValveB = U1_VD_Timeout_ValveB
         U5_VD_Timeout_ValveC = U1_VD_Timeout_ValveC
         U5_VD_Delay_ValveA_Verify = U1_VD_Delay_ValveA_Verify
+        U5_VD_24h_Target = U1_VD_24h_Target
+        U5_VD_Transfer_Margin = U1_VD_Transfer_Margin
+        U5_VD_Prep_Safety_Margin = U1_VD_Prep_Safety_Margin
+        U5_VD_Delay_ValveC_Verify = U1_VD_Delay_ValveC_Verify
+        U5_VW288_S4_Transfer_PT = U1_VW288_S4_Transfer_PT
     EndIf
     If ParamDstUnit = 6 Then
                 U6_VD_StepResolution = U1_VD_StepResolution
-        U6_VD_CycleSetpoint = U1_VD_CycleSetpoint
         U6_VD_ExperimentTarget = U1_VD_ExperimentTarget
         U6_VD_PreMixTime = U1_VD_PreMixTime
-        U6_VD_PreMixTime_MinSafe = U1_VD_PreMixTime_MinSafe
-        U6_VD_RestTime = U1_VD_RestTime
-        U6_VD_RestTime_Min = U1_VD_RestTime_Min
-        U6_VD_CycleExtend_Max = U1_VD_CycleExtend_Max
         U6_VD_Timeout_ValveA = U1_VD_Timeout_ValveA
         U6_VD_Timeout_ValveB = U1_VD_Timeout_ValveB
         U6_VD_Timeout_ValveC = U1_VD_Timeout_ValveC
         U6_VD_Delay_ValveA_Verify = U1_VD_Delay_ValveA_Verify
+        U6_VD_24h_Target = U1_VD_24h_Target
+        U6_VD_Transfer_Margin = U1_VD_Transfer_Margin
+        U6_VD_Prep_Safety_Margin = U1_VD_Prep_Safety_Margin
+        U6_VD_Delay_ValveC_Verify = U1_VD_Delay_ValveC_Verify
+        U6_VW288_S4_Transfer_PT = U1_VW288_S4_Transfer_PT
     EndIf
     If ParamDstUnit = 7 Then
                 U7_VD_StepResolution = U1_VD_StepResolution
-        U7_VD_CycleSetpoint = U1_VD_CycleSetpoint
         U7_VD_ExperimentTarget = U1_VD_ExperimentTarget
         U7_VD_PreMixTime = U1_VD_PreMixTime
-        U7_VD_PreMixTime_MinSafe = U1_VD_PreMixTime_MinSafe
-        U7_VD_RestTime = U1_VD_RestTime
-        U7_VD_RestTime_Min = U1_VD_RestTime_Min
-        U7_VD_CycleExtend_Max = U1_VD_CycleExtend_Max
         U7_VD_Timeout_ValveA = U1_VD_Timeout_ValveA
         U7_VD_Timeout_ValveB = U1_VD_Timeout_ValveB
         U7_VD_Timeout_ValveC = U1_VD_Timeout_ValveC
         U7_VD_Delay_ValveA_Verify = U1_VD_Delay_ValveA_Verify
+        U7_VD_24h_Target = U1_VD_24h_Target
+        U7_VD_Transfer_Margin = U1_VD_Transfer_Margin
+        U7_VD_Prep_Safety_Margin = U1_VD_Prep_Safety_Margin
+        U7_VD_Delay_ValveC_Verify = U1_VD_Delay_ValveC_Verify
+        U7_VW288_S4_Transfer_PT = U1_VW288_S4_Transfer_PT
     EndIf
     If ParamDstUnit = 8 Then
                 U8_VD_StepResolution = U1_VD_StepResolution
-        U8_VD_CycleSetpoint = U1_VD_CycleSetpoint
         U8_VD_ExperimentTarget = U1_VD_ExperimentTarget
         U8_VD_PreMixTime = U1_VD_PreMixTime
-        U8_VD_PreMixTime_MinSafe = U1_VD_PreMixTime_MinSafe
-        U8_VD_RestTime = U1_VD_RestTime
-        U8_VD_RestTime_Min = U1_VD_RestTime_Min
-        U8_VD_CycleExtend_Max = U1_VD_CycleExtend_Max
         U8_VD_Timeout_ValveA = U1_VD_Timeout_ValveA
         U8_VD_Timeout_ValveB = U1_VD_Timeout_ValveB
         U8_VD_Timeout_ValveC = U1_VD_Timeout_ValveC
         U8_VD_Delay_ValveA_Verify = U1_VD_Delay_ValveA_Verify
+        U8_VD_24h_Target = U1_VD_24h_Target
+        U8_VD_Transfer_Margin = U1_VD_Transfer_Margin
+        U8_VD_Prep_Safety_Margin = U1_VD_Prep_Safety_Margin
+        U8_VD_Delay_ValveC_Verify = U1_VD_Delay_ValveC_Verify
+        U8_VW288_S4_Transfer_PT = U1_VW288_S4_Transfer_PT
     EndIf
 EndIf
 
@@ -3948,6 +3974,7 @@ IF Param_Pending_Save = 1 THEN
     U1_VD_Timeout_ValveB = Param_Timeout_ValveB
     U1_VD_Timeout_ValveC = Param_Timeout_ValveC
     U1_VD_Delay_ValveA_Verify = Param_Delay_ValveA_Verify
+    U1_VD_Delay_ValveC_Verify = Param_Delay_ValveC_Verify
     U1_VD_ManualDose_Target = Param_ManualDose_Target*1000
     U1_VD_ManualDose_Mode = Param_ManualDose_Mode
     U1_M_AlarmAckMode = Param_AlarmAckMode
@@ -3997,6 +4024,7 @@ IF Param_Pending_Save = 1 THEN
     U1_VD_Timeout_ValveB     = 60.0
     U1_VD_Timeout_ValveC     = 60.0
     U1_VD_Delay_ValveA_Verify= 5.0
+    U1_VD_Delay_ValveC_Verify= 5.0
     U1_VD_S4WaitTimeout      = 1800.0
     U1_VD_ManualDose_Target  = 10000.0
     U1_VD_ManualDose_Mode    = 0
@@ -4014,6 +4042,7 @@ IF Param_Pending_Save = 1 THEN
     Param_Timeout_ValveB      = 60.0
     Param_Timeout_ValveC      = 60.0
     Param_Delay_ValveA_Verify = 5.0
+    Param_Delay_ValveC_Verify = 5.0
     Param_ManualDose_Target   = 10.0      ' 10000µL / 1000
     Param_ManualDose_Mode     = 0
     Param_AlarmAckMode        = 0
@@ -4228,3 +4257,728 @@ U1_CMD_RTC_Sync = 1
 
 **文档结束** — 共 57 段脚本（含脚本30.5存为默认按钮, L分区脚本55升级为全自动校时）,覆盖 A~L 12 个分区。
 
+
+---
+
+## M 分区：状态/报警文本查表脚本（v2.3.2 新增，编号 57~58，接续既有55退出确认/56）
+
+> **前置**：SOP 画面1/画面2 中 `U1_StateText`~`U8_StateText`、`U1_AlarmText`~`U8_AlarmText` 为 HMI 内部字符串变量（在"变量组→内部变量"中新建，初空串）。
+> **录入位置**：运行策略 → 循环策略"循环策略_1s"（与脚本 2 的 500ms 策略分开，或并入同策略尾部两段）。
+> **状态映射依据**：`docs/S2-S4流程重构设计方案_v2.2.md` v2.3.2（VW2 下缸主状态机 / VW304 上缸子流程）；报警码映射依据《报警字32位解析映射表》v10.4 版（码 13/31/45/47/61 已废弃，永不出现，不列查表分支）。
+
+### 脚本 57:1s 周期策略 — 单元状态文本查表（8单元显式展开，McgsPro 不支持 For...Next）
+
+- **编号**: 57
+- **用途**: 每 1 秒按 VW2（下缸）+ VW304（上缸）查表更新 U{n}_StateText
+- **触发方式**: 定时循环,周期 1000ms
+
+```
+' ============================================
+' 1s 周期策略: 单元状态文本查表 (脚本57)
+' VW2: 0=S0待命 5=S4转移 6=S5实验运行 7=S6排水 8=S7结束 99=急停/故障 (1~4为v2.2前旧状态,显示预留)
+' VW304: 0=空闲 1=S1进水 2=S2搅拌加药 3=配完待转移 4=已转移
+' ============================================
+
+
+' --- 1号单元 ---
+If U1_VW2_StateMachine = 0 Then
+    U1_StateText = "下缸:S0待命"
+ElseIf U1_VW2_StateMachine = 5 Then
+    U1_StateText = "下缸:S4转移"
+ElseIf U1_VW2_StateMachine = 6 Then
+    U1_StateText = "下缸:S5实验运行"
+ElseIf U1_VW2_StateMachine = 7 Then
+    U1_StateText = "下缸:S6排水"
+ElseIf U1_VW2_StateMachine = 8 Then
+    U1_StateText = "下缸:S7实验结束"
+ElseIf U1_VW2_StateMachine = 99 Then
+    U1_StateText = "下缸:急停/故障"
+Else
+    U1_StateText = "下缸:未知(" & U1_VW2_StateMachine & ")"
+End If
+If U1_VW304_State_UpTank = 0 Then
+    U1_StateText = U1_StateText & " / 上缸:空闲"
+ElseIf U1_VW304_State_UpTank = 1 Then
+    U1_StateText = U1_StateText & " / 上缸:S1进水"
+ElseIf U1_VW304_State_UpTank = 2 Then
+    U1_StateText = U1_StateText & " / 上缸:S2搅拌加药"
+ElseIf U1_VW304_State_UpTank = 3 Then
+    U1_StateText = U1_StateText & " / 上缸:配完待转移"
+ElseIf U1_VW304_State_UpTank = 4 Then
+    U1_StateText = U1_StateText & " / 上缸:已转移"
+Else
+    U1_StateText = U1_StateText & " / 上缸:未知(" & U1_VW304_State_UpTank & ")"
+End If
+
+' --- 2号单元 ---
+If U2_VW2_StateMachine = 0 Then
+    U2_StateText = "下缸:S0待命"
+ElseIf U2_VW2_StateMachine = 5 Then
+    U2_StateText = "下缸:S4转移"
+ElseIf U2_VW2_StateMachine = 6 Then
+    U2_StateText = "下缸:S5实验运行"
+ElseIf U2_VW2_StateMachine = 7 Then
+    U2_StateText = "下缸:S6排水"
+ElseIf U2_VW2_StateMachine = 8 Then
+    U2_StateText = "下缸:S7实验结束"
+ElseIf U2_VW2_StateMachine = 99 Then
+    U2_StateText = "下缸:急停/故障"
+Else
+    U2_StateText = "下缸:未知(" & U2_VW2_StateMachine & ")"
+End If
+If U2_VW304_State_UpTank = 0 Then
+    U2_StateText = U2_StateText & " / 上缸:空闲"
+ElseIf U2_VW304_State_UpTank = 1 Then
+    U2_StateText = U2_StateText & " / 上缸:S1进水"
+ElseIf U2_VW304_State_UpTank = 2 Then
+    U2_StateText = U2_StateText & " / 上缸:S2搅拌加药"
+ElseIf U2_VW304_State_UpTank = 3 Then
+    U2_StateText = U2_StateText & " / 上缸:配完待转移"
+ElseIf U2_VW304_State_UpTank = 4 Then
+    U2_StateText = U2_StateText & " / 上缸:已转移"
+Else
+    U2_StateText = U2_StateText & " / 上缸:未知(" & U2_VW304_State_UpTank & ")"
+End If
+
+' --- 3号单元 ---
+If U3_VW2_StateMachine = 0 Then
+    U3_StateText = "下缸:S0待命"
+ElseIf U3_VW2_StateMachine = 5 Then
+    U3_StateText = "下缸:S4转移"
+ElseIf U3_VW2_StateMachine = 6 Then
+    U3_StateText = "下缸:S5实验运行"
+ElseIf U3_VW2_StateMachine = 7 Then
+    U3_StateText = "下缸:S6排水"
+ElseIf U3_VW2_StateMachine = 8 Then
+    U3_StateText = "下缸:S7实验结束"
+ElseIf U3_VW2_StateMachine = 99 Then
+    U3_StateText = "下缸:急停/故障"
+Else
+    U3_StateText = "下缸:未知(" & U3_VW2_StateMachine & ")"
+End If
+If U3_VW304_State_UpTank = 0 Then
+    U3_StateText = U3_StateText & " / 上缸:空闲"
+ElseIf U3_VW304_State_UpTank = 1 Then
+    U3_StateText = U3_StateText & " / 上缸:S1进水"
+ElseIf U3_VW304_State_UpTank = 2 Then
+    U3_StateText = U3_StateText & " / 上缸:S2搅拌加药"
+ElseIf U3_VW304_State_UpTank = 3 Then
+    U3_StateText = U3_StateText & " / 上缸:配完待转移"
+ElseIf U3_VW304_State_UpTank = 4 Then
+    U3_StateText = U3_StateText & " / 上缸:已转移"
+Else
+    U3_StateText = U3_StateText & " / 上缸:未知(" & U3_VW304_State_UpTank & ")"
+End If
+
+' --- 4号单元 ---
+If U4_VW2_StateMachine = 0 Then
+    U4_StateText = "下缸:S0待命"
+ElseIf U4_VW2_StateMachine = 5 Then
+    U4_StateText = "下缸:S4转移"
+ElseIf U4_VW2_StateMachine = 6 Then
+    U4_StateText = "下缸:S5实验运行"
+ElseIf U4_VW2_StateMachine = 7 Then
+    U4_StateText = "下缸:S6排水"
+ElseIf U4_VW2_StateMachine = 8 Then
+    U4_StateText = "下缸:S7实验结束"
+ElseIf U4_VW2_StateMachine = 99 Then
+    U4_StateText = "下缸:急停/故障"
+Else
+    U4_StateText = "下缸:未知(" & U4_VW2_StateMachine & ")"
+End If
+If U4_VW304_State_UpTank = 0 Then
+    U4_StateText = U4_StateText & " / 上缸:空闲"
+ElseIf U4_VW304_State_UpTank = 1 Then
+    U4_StateText = U4_StateText & " / 上缸:S1进水"
+ElseIf U4_VW304_State_UpTank = 2 Then
+    U4_StateText = U4_StateText & " / 上缸:S2搅拌加药"
+ElseIf U4_VW304_State_UpTank = 3 Then
+    U4_StateText = U4_StateText & " / 上缸:配完待转移"
+ElseIf U4_VW304_State_UpTank = 4 Then
+    U4_StateText = U4_StateText & " / 上缸:已转移"
+Else
+    U4_StateText = U4_StateText & " / 上缸:未知(" & U4_VW304_State_UpTank & ")"
+End If
+
+' --- 5号单元 ---
+If U5_VW2_StateMachine = 0 Then
+    U5_StateText = "下缸:S0待命"
+ElseIf U5_VW2_StateMachine = 5 Then
+    U5_StateText = "下缸:S4转移"
+ElseIf U5_VW2_StateMachine = 6 Then
+    U5_StateText = "下缸:S5实验运行"
+ElseIf U5_VW2_StateMachine = 7 Then
+    U5_StateText = "下缸:S6排水"
+ElseIf U5_VW2_StateMachine = 8 Then
+    U5_StateText = "下缸:S7实验结束"
+ElseIf U5_VW2_StateMachine = 99 Then
+    U5_StateText = "下缸:急停/故障"
+Else
+    U5_StateText = "下缸:未知(" & U5_VW2_StateMachine & ")"
+End If
+If U5_VW304_State_UpTank = 0 Then
+    U5_StateText = U5_StateText & " / 上缸:空闲"
+ElseIf U5_VW304_State_UpTank = 1 Then
+    U5_StateText = U5_StateText & " / 上缸:S1进水"
+ElseIf U5_VW304_State_UpTank = 2 Then
+    U5_StateText = U5_StateText & " / 上缸:S2搅拌加药"
+ElseIf U5_VW304_State_UpTank = 3 Then
+    U5_StateText = U5_StateText & " / 上缸:配完待转移"
+ElseIf U5_VW304_State_UpTank = 4 Then
+    U5_StateText = U5_StateText & " / 上缸:已转移"
+Else
+    U5_StateText = U5_StateText & " / 上缸:未知(" & U5_VW304_State_UpTank & ")"
+End If
+
+' --- 6号单元 ---
+If U6_VW2_StateMachine = 0 Then
+    U6_StateText = "下缸:S0待命"
+ElseIf U6_VW2_StateMachine = 5 Then
+    U6_StateText = "下缸:S4转移"
+ElseIf U6_VW2_StateMachine = 6 Then
+    U6_StateText = "下缸:S5实验运行"
+ElseIf U6_VW2_StateMachine = 7 Then
+    U6_StateText = "下缸:S6排水"
+ElseIf U6_VW2_StateMachine = 8 Then
+    U6_StateText = "下缸:S7实验结束"
+ElseIf U6_VW2_StateMachine = 99 Then
+    U6_StateText = "下缸:急停/故障"
+Else
+    U6_StateText = "下缸:未知(" & U6_VW2_StateMachine & ")"
+End If
+If U6_VW304_State_UpTank = 0 Then
+    U6_StateText = U6_StateText & " / 上缸:空闲"
+ElseIf U6_VW304_State_UpTank = 1 Then
+    U6_StateText = U6_StateText & " / 上缸:S1进水"
+ElseIf U6_VW304_State_UpTank = 2 Then
+    U6_StateText = U6_StateText & " / 上缸:S2搅拌加药"
+ElseIf U6_VW304_State_UpTank = 3 Then
+    U6_StateText = U6_StateText & " / 上缸:配完待转移"
+ElseIf U6_VW304_State_UpTank = 4 Then
+    U6_StateText = U6_StateText & " / 上缸:已转移"
+Else
+    U6_StateText = U6_StateText & " / 上缸:未知(" & U6_VW304_State_UpTank & ")"
+End If
+
+' --- 7号单元 ---
+If U7_VW2_StateMachine = 0 Then
+    U7_StateText = "下缸:S0待命"
+ElseIf U7_VW2_StateMachine = 5 Then
+    U7_StateText = "下缸:S4转移"
+ElseIf U7_VW2_StateMachine = 6 Then
+    U7_StateText = "下缸:S5实验运行"
+ElseIf U7_VW2_StateMachine = 7 Then
+    U7_StateText = "下缸:S6排水"
+ElseIf U7_VW2_StateMachine = 8 Then
+    U7_StateText = "下缸:S7实验结束"
+ElseIf U7_VW2_StateMachine = 99 Then
+    U7_StateText = "下缸:急停/故障"
+Else
+    U7_StateText = "下缸:未知(" & U7_VW2_StateMachine & ")"
+End If
+If U7_VW304_State_UpTank = 0 Then
+    U7_StateText = U7_StateText & " / 上缸:空闲"
+ElseIf U7_VW304_State_UpTank = 1 Then
+    U7_StateText = U7_StateText & " / 上缸:S1进水"
+ElseIf U7_VW304_State_UpTank = 2 Then
+    U7_StateText = U7_StateText & " / 上缸:S2搅拌加药"
+ElseIf U7_VW304_State_UpTank = 3 Then
+    U7_StateText = U7_StateText & " / 上缸:配完待转移"
+ElseIf U7_VW304_State_UpTank = 4 Then
+    U7_StateText = U7_StateText & " / 上缸:已转移"
+Else
+    U7_StateText = U7_StateText & " / 上缸:未知(" & U7_VW304_State_UpTank & ")"
+End If
+
+' --- 8号单元 ---
+If U8_VW2_StateMachine = 0 Then
+    U8_StateText = "下缸:S0待命"
+ElseIf U8_VW2_StateMachine = 5 Then
+    U8_StateText = "下缸:S4转移"
+ElseIf U8_VW2_StateMachine = 6 Then
+    U8_StateText = "下缸:S5实验运行"
+ElseIf U8_VW2_StateMachine = 7 Then
+    U8_StateText = "下缸:S6排水"
+ElseIf U8_VW2_StateMachine = 8 Then
+    U8_StateText = "下缸:S7实验结束"
+ElseIf U8_VW2_StateMachine = 99 Then
+    U8_StateText = "下缸:急停/故障"
+Else
+    U8_StateText = "下缸:未知(" & U8_VW2_StateMachine & ")"
+End If
+If U8_VW304_State_UpTank = 0 Then
+    U8_StateText = U8_StateText & " / 上缸:空闲"
+ElseIf U8_VW304_State_UpTank = 1 Then
+    U8_StateText = U8_StateText & " / 上缸:S1进水"
+ElseIf U8_VW304_State_UpTank = 2 Then
+    U8_StateText = U8_StateText & " / 上缸:S2搅拌加药"
+ElseIf U8_VW304_State_UpTank = 3 Then
+    U8_StateText = U8_StateText & " / 上缸:配完待转移"
+ElseIf U8_VW304_State_UpTank = 4 Then
+    U8_StateText = U8_StateText & " / 上缸:已转移"
+Else
+    U8_StateText = U8_StateText & " / 上缸:未知(" & U8_VW304_State_UpTank & ")"
+End If
+
+```
+
+### 脚本 58:1s 周期策略 — 报警文本查表（8单元显式展开）
+
+- **编号**: 58
+- **用途**: 每 1 秒按 VW6（当前最高优先级报警码）查表更新 U{n}_AlarmText
+- **触发方式**: 定时循环,周期 1000ms（可与脚本55同策略串联）
+
+```
+' ============================================
+' 1s 周期策略: 报警文本查表 (脚本58)
+' 码13/31/45/47/61已废弃(v10.4),永不出现;未知码显示原值便于排查
+' ============================================
+
+
+' --- 1号单元 ---
+If U1_VW6_AlarmCode = 0 Then
+    U1_AlarmText = "无报警"
+ElseIf U1_VW6_AlarmCode = 10 Then
+    U1_AlarmText = "10 上缸漫溢-立即处理"
+ElseIf U1_VW6_AlarmCode = 11 Then
+    U1_AlarmText = "11 下缸漫溢-立即处理"
+ElseIf U1_VW6_AlarmCode = 12 Then
+    U1_AlarmText = "12 NC球阀上缸动作异常"
+ElseIf U1_VW6_AlarmCode = 14 Then
+    U1_AlarmText = "14 急停触发-需系统复位"
+ElseIf U1_VW6_AlarmCode = 20 Then
+    U1_AlarmText = "20 配液节奏严重滞后"
+ElseIf U1_VW6_AlarmCode = 21 Then
+    U1_AlarmText = "21 配液节奏滞后提示"
+ElseIf U1_VW6_AlarmCode = 30 Then
+    U1_AlarmText = "30 阀A关后仍有流"
+ElseIf U1_VW6_AlarmCode = 32 Then
+    U1_AlarmText = "32 阀A关到位超时"
+ElseIf U1_VW6_AlarmCode = 33 Then
+    U1_AlarmText = "33 阀A关到位仍有流"
+ElseIf U1_VW6_AlarmCode = 34 Then
+    U1_AlarmText = "34 阀A开到位超时"
+ElseIf U1_VW6_AlarmCode = 35 Then
+    U1_AlarmText = "35 阀A开到位无流"
+ElseIf U1_VW6_AlarmCode = 36 Then
+    U1_AlarmText = "36 上缸非空启动S1"
+ElseIf U1_VW6_AlarmCode = 40 Then
+    U1_AlarmText = "40 阀B四态诊断异常"
+ElseIf U1_VW6_AlarmCode = 41 Then
+    U1_AlarmText = "41 阀B开到位超时"
+ElseIf U1_VW6_AlarmCode = 42 Then
+    U1_AlarmText = "42 阀B开到位无流"
+ElseIf U1_VW6_AlarmCode = 43 Then
+    U1_AlarmText = "43 阀B关到位超时"
+ElseIf U1_VW6_AlarmCode = 44 Then
+    U1_AlarmText = "44 阀B关到位仍有流"
+ElseIf U1_VW6_AlarmCode = 46 Then
+    U1_AlarmText = "46 阀C开到位超时"
+ElseIf U1_VW6_AlarmCode = 49 Then
+    U1_AlarmText = "49 S4转移等待超时"
+ElseIf U1_VW6_AlarmCode = 60 Then
+    U1_AlarmText = "60 阀C关到位超时"
+ElseIf U1_VW6_AlarmCode = 64 Then
+    U1_AlarmText = "64 注射泵通讯/动作异常"
+ElseIf U1_VW6_AlarmCode = 65 Then
+    U1_AlarmText = "65 RTC时钟丢失-请校时"
+ElseIf U1_VW6_AlarmCode = 66 Then
+    U1_AlarmText = "66 单轮换水周期超时-检查24h目标与周期参数"
+ElseIf U1_VW6_AlarmCode = 99 Then
+    U1_AlarmText = "99 安全继电器故障"
+Else
+    U1_AlarmText = "未定义报警码:" & U1_VW6_AlarmCode
+End If
+
+' --- 2号单元 ---
+If U2_VW6_AlarmCode = 0 Then
+    U2_AlarmText = "无报警"
+ElseIf U2_VW6_AlarmCode = 10 Then
+    U2_AlarmText = "10 上缸漫溢-立即处理"
+ElseIf U2_VW6_AlarmCode = 11 Then
+    U2_AlarmText = "11 下缸漫溢-立即处理"
+ElseIf U2_VW6_AlarmCode = 12 Then
+    U2_AlarmText = "12 NC球阀上缸动作异常"
+ElseIf U2_VW6_AlarmCode = 14 Then
+    U2_AlarmText = "14 急停触发-需系统复位"
+ElseIf U2_VW6_AlarmCode = 20 Then
+    U2_AlarmText = "20 配液节奏严重滞后"
+ElseIf U2_VW6_AlarmCode = 21 Then
+    U2_AlarmText = "21 配液节奏滞后提示"
+ElseIf U2_VW6_AlarmCode = 30 Then
+    U2_AlarmText = "30 阀A关后仍有流"
+ElseIf U2_VW6_AlarmCode = 32 Then
+    U2_AlarmText = "32 阀A关到位超时"
+ElseIf U2_VW6_AlarmCode = 33 Then
+    U2_AlarmText = "33 阀A关到位仍有流"
+ElseIf U2_VW6_AlarmCode = 34 Then
+    U2_AlarmText = "34 阀A开到位超时"
+ElseIf U2_VW6_AlarmCode = 35 Then
+    U2_AlarmText = "35 阀A开到位无流"
+ElseIf U2_VW6_AlarmCode = 36 Then
+    U2_AlarmText = "36 上缸非空启动S1"
+ElseIf U2_VW6_AlarmCode = 40 Then
+    U2_AlarmText = "40 阀B四态诊断异常"
+ElseIf U2_VW6_AlarmCode = 41 Then
+    U2_AlarmText = "41 阀B开到位超时"
+ElseIf U2_VW6_AlarmCode = 42 Then
+    U2_AlarmText = "42 阀B开到位无流"
+ElseIf U2_VW6_AlarmCode = 43 Then
+    U2_AlarmText = "43 阀B关到位超时"
+ElseIf U2_VW6_AlarmCode = 44 Then
+    U2_AlarmText = "44 阀B关到位仍有流"
+ElseIf U2_VW6_AlarmCode = 46 Then
+    U2_AlarmText = "46 阀C开到位超时"
+ElseIf U2_VW6_AlarmCode = 49 Then
+    U2_AlarmText = "49 S4转移等待超时"
+ElseIf U2_VW6_AlarmCode = 60 Then
+    U2_AlarmText = "60 阀C关到位超时"
+ElseIf U2_VW6_AlarmCode = 64 Then
+    U2_AlarmText = "64 注射泵通讯/动作异常"
+ElseIf U2_VW6_AlarmCode = 65 Then
+    U2_AlarmText = "65 RTC时钟丢失-请校时"
+ElseIf U2_VW6_AlarmCode = 66 Then
+    U2_AlarmText = "66 单轮换水周期超时-检查24h目标与周期参数"
+ElseIf U2_VW6_AlarmCode = 99 Then
+    U2_AlarmText = "99 安全继电器故障"
+Else
+    U2_AlarmText = "未定义报警码:" & U2_VW6_AlarmCode
+End If
+
+' --- 3号单元 ---
+If U3_VW6_AlarmCode = 0 Then
+    U3_AlarmText = "无报警"
+ElseIf U3_VW6_AlarmCode = 10 Then
+    U3_AlarmText = "10 上缸漫溢-立即处理"
+ElseIf U3_VW6_AlarmCode = 11 Then
+    U3_AlarmText = "11 下缸漫溢-立即处理"
+ElseIf U3_VW6_AlarmCode = 12 Then
+    U3_AlarmText = "12 NC球阀上缸动作异常"
+ElseIf U3_VW6_AlarmCode = 14 Then
+    U3_AlarmText = "14 急停触发-需系统复位"
+ElseIf U3_VW6_AlarmCode = 20 Then
+    U3_AlarmText = "20 配液节奏严重滞后"
+ElseIf U3_VW6_AlarmCode = 21 Then
+    U3_AlarmText = "21 配液节奏滞后提示"
+ElseIf U3_VW6_AlarmCode = 30 Then
+    U3_AlarmText = "30 阀A关后仍有流"
+ElseIf U3_VW6_AlarmCode = 32 Then
+    U3_AlarmText = "32 阀A关到位超时"
+ElseIf U3_VW6_AlarmCode = 33 Then
+    U3_AlarmText = "33 阀A关到位仍有流"
+ElseIf U3_VW6_AlarmCode = 34 Then
+    U3_AlarmText = "34 阀A开到位超时"
+ElseIf U3_VW6_AlarmCode = 35 Then
+    U3_AlarmText = "35 阀A开到位无流"
+ElseIf U3_VW6_AlarmCode = 36 Then
+    U3_AlarmText = "36 上缸非空启动S1"
+ElseIf U3_VW6_AlarmCode = 40 Then
+    U3_AlarmText = "40 阀B四态诊断异常"
+ElseIf U3_VW6_AlarmCode = 41 Then
+    U3_AlarmText = "41 阀B开到位超时"
+ElseIf U3_VW6_AlarmCode = 42 Then
+    U3_AlarmText = "42 阀B开到位无流"
+ElseIf U3_VW6_AlarmCode = 43 Then
+    U3_AlarmText = "43 阀B关到位超时"
+ElseIf U3_VW6_AlarmCode = 44 Then
+    U3_AlarmText = "44 阀B关到位仍有流"
+ElseIf U3_VW6_AlarmCode = 46 Then
+    U3_AlarmText = "46 阀C开到位超时"
+ElseIf U3_VW6_AlarmCode = 49 Then
+    U3_AlarmText = "49 S4转移等待超时"
+ElseIf U3_VW6_AlarmCode = 60 Then
+    U3_AlarmText = "60 阀C关到位超时"
+ElseIf U3_VW6_AlarmCode = 64 Then
+    U3_AlarmText = "64 注射泵通讯/动作异常"
+ElseIf U3_VW6_AlarmCode = 65 Then
+    U3_AlarmText = "65 RTC时钟丢失-请校时"
+ElseIf U3_VW6_AlarmCode = 66 Then
+    U3_AlarmText = "66 单轮换水周期超时-检查24h目标与周期参数"
+ElseIf U3_VW6_AlarmCode = 99 Then
+    U3_AlarmText = "99 安全继电器故障"
+Else
+    U3_AlarmText = "未定义报警码:" & U3_VW6_AlarmCode
+End If
+
+' --- 4号单元 ---
+If U4_VW6_AlarmCode = 0 Then
+    U4_AlarmText = "无报警"
+ElseIf U4_VW6_AlarmCode = 10 Then
+    U4_AlarmText = "10 上缸漫溢-立即处理"
+ElseIf U4_VW6_AlarmCode = 11 Then
+    U4_AlarmText = "11 下缸漫溢-立即处理"
+ElseIf U4_VW6_AlarmCode = 12 Then
+    U4_AlarmText = "12 NC球阀上缸动作异常"
+ElseIf U4_VW6_AlarmCode = 14 Then
+    U4_AlarmText = "14 急停触发-需系统复位"
+ElseIf U4_VW6_AlarmCode = 20 Then
+    U4_AlarmText = "20 配液节奏严重滞后"
+ElseIf U4_VW6_AlarmCode = 21 Then
+    U4_AlarmText = "21 配液节奏滞后提示"
+ElseIf U4_VW6_AlarmCode = 30 Then
+    U4_AlarmText = "30 阀A关后仍有流"
+ElseIf U4_VW6_AlarmCode = 32 Then
+    U4_AlarmText = "32 阀A关到位超时"
+ElseIf U4_VW6_AlarmCode = 33 Then
+    U4_AlarmText = "33 阀A关到位仍有流"
+ElseIf U4_VW6_AlarmCode = 34 Then
+    U4_AlarmText = "34 阀A开到位超时"
+ElseIf U4_VW6_AlarmCode = 35 Then
+    U4_AlarmText = "35 阀A开到位无流"
+ElseIf U4_VW6_AlarmCode = 36 Then
+    U4_AlarmText = "36 上缸非空启动S1"
+ElseIf U4_VW6_AlarmCode = 40 Then
+    U4_AlarmText = "40 阀B四态诊断异常"
+ElseIf U4_VW6_AlarmCode = 41 Then
+    U4_AlarmText = "41 阀B开到位超时"
+ElseIf U4_VW6_AlarmCode = 42 Then
+    U4_AlarmText = "42 阀B开到位无流"
+ElseIf U4_VW6_AlarmCode = 43 Then
+    U4_AlarmText = "43 阀B关到位超时"
+ElseIf U4_VW6_AlarmCode = 44 Then
+    U4_AlarmText = "44 阀B关到位仍有流"
+ElseIf U4_VW6_AlarmCode = 46 Then
+    U4_AlarmText = "46 阀C开到位超时"
+ElseIf U4_VW6_AlarmCode = 49 Then
+    U4_AlarmText = "49 S4转移等待超时"
+ElseIf U4_VW6_AlarmCode = 60 Then
+    U4_AlarmText = "60 阀C关到位超时"
+ElseIf U4_VW6_AlarmCode = 64 Then
+    U4_AlarmText = "64 注射泵通讯/动作异常"
+ElseIf U4_VW6_AlarmCode = 65 Then
+    U4_AlarmText = "65 RTC时钟丢失-请校时"
+ElseIf U4_VW6_AlarmCode = 66 Then
+    U4_AlarmText = "66 单轮换水周期超时-检查24h目标与周期参数"
+ElseIf U4_VW6_AlarmCode = 99 Then
+    U4_AlarmText = "99 安全继电器故障"
+Else
+    U4_AlarmText = "未定义报警码:" & U4_VW6_AlarmCode
+End If
+
+' --- 5号单元 ---
+If U5_VW6_AlarmCode = 0 Then
+    U5_AlarmText = "无报警"
+ElseIf U5_VW6_AlarmCode = 10 Then
+    U5_AlarmText = "10 上缸漫溢-立即处理"
+ElseIf U5_VW6_AlarmCode = 11 Then
+    U5_AlarmText = "11 下缸漫溢-立即处理"
+ElseIf U5_VW6_AlarmCode = 12 Then
+    U5_AlarmText = "12 NC球阀上缸动作异常"
+ElseIf U5_VW6_AlarmCode = 14 Then
+    U5_AlarmText = "14 急停触发-需系统复位"
+ElseIf U5_VW6_AlarmCode = 20 Then
+    U5_AlarmText = "20 配液节奏严重滞后"
+ElseIf U5_VW6_AlarmCode = 21 Then
+    U5_AlarmText = "21 配液节奏滞后提示"
+ElseIf U5_VW6_AlarmCode = 30 Then
+    U5_AlarmText = "30 阀A关后仍有流"
+ElseIf U5_VW6_AlarmCode = 32 Then
+    U5_AlarmText = "32 阀A关到位超时"
+ElseIf U5_VW6_AlarmCode = 33 Then
+    U5_AlarmText = "33 阀A关到位仍有流"
+ElseIf U5_VW6_AlarmCode = 34 Then
+    U5_AlarmText = "34 阀A开到位超时"
+ElseIf U5_VW6_AlarmCode = 35 Then
+    U5_AlarmText = "35 阀A开到位无流"
+ElseIf U5_VW6_AlarmCode = 36 Then
+    U5_AlarmText = "36 上缸非空启动S1"
+ElseIf U5_VW6_AlarmCode = 40 Then
+    U5_AlarmText = "40 阀B四态诊断异常"
+ElseIf U5_VW6_AlarmCode = 41 Then
+    U5_AlarmText = "41 阀B开到位超时"
+ElseIf U5_VW6_AlarmCode = 42 Then
+    U5_AlarmText = "42 阀B开到位无流"
+ElseIf U5_VW6_AlarmCode = 43 Then
+    U5_AlarmText = "43 阀B关到位超时"
+ElseIf U5_VW6_AlarmCode = 44 Then
+    U5_AlarmText = "44 阀B关到位仍有流"
+ElseIf U5_VW6_AlarmCode = 46 Then
+    U5_AlarmText = "46 阀C开到位超时"
+ElseIf U5_VW6_AlarmCode = 49 Then
+    U5_AlarmText = "49 S4转移等待超时"
+ElseIf U5_VW6_AlarmCode = 60 Then
+    U5_AlarmText = "60 阀C关到位超时"
+ElseIf U5_VW6_AlarmCode = 64 Then
+    U5_AlarmText = "64 注射泵通讯/动作异常"
+ElseIf U5_VW6_AlarmCode = 65 Then
+    U5_AlarmText = "65 RTC时钟丢失-请校时"
+ElseIf U5_VW6_AlarmCode = 66 Then
+    U5_AlarmText = "66 单轮换水周期超时-检查24h目标与周期参数"
+ElseIf U5_VW6_AlarmCode = 99 Then
+    U5_AlarmText = "99 安全继电器故障"
+Else
+    U5_AlarmText = "未定义报警码:" & U5_VW6_AlarmCode
+End If
+
+' --- 6号单元 ---
+If U6_VW6_AlarmCode = 0 Then
+    U6_AlarmText = "无报警"
+ElseIf U6_VW6_AlarmCode = 10 Then
+    U6_AlarmText = "10 上缸漫溢-立即处理"
+ElseIf U6_VW6_AlarmCode = 11 Then
+    U6_AlarmText = "11 下缸漫溢-立即处理"
+ElseIf U6_VW6_AlarmCode = 12 Then
+    U6_AlarmText = "12 NC球阀上缸动作异常"
+ElseIf U6_VW6_AlarmCode = 14 Then
+    U6_AlarmText = "14 急停触发-需系统复位"
+ElseIf U6_VW6_AlarmCode = 20 Then
+    U6_AlarmText = "20 配液节奏严重滞后"
+ElseIf U6_VW6_AlarmCode = 21 Then
+    U6_AlarmText = "21 配液节奏滞后提示"
+ElseIf U6_VW6_AlarmCode = 30 Then
+    U6_AlarmText = "30 阀A关后仍有流"
+ElseIf U6_VW6_AlarmCode = 32 Then
+    U6_AlarmText = "32 阀A关到位超时"
+ElseIf U6_VW6_AlarmCode = 33 Then
+    U6_AlarmText = "33 阀A关到位仍有流"
+ElseIf U6_VW6_AlarmCode = 34 Then
+    U6_AlarmText = "34 阀A开到位超时"
+ElseIf U6_VW6_AlarmCode = 35 Then
+    U6_AlarmText = "35 阀A开到位无流"
+ElseIf U6_VW6_AlarmCode = 36 Then
+    U6_AlarmText = "36 上缸非空启动S1"
+ElseIf U6_VW6_AlarmCode = 40 Then
+    U6_AlarmText = "40 阀B四态诊断异常"
+ElseIf U6_VW6_AlarmCode = 41 Then
+    U6_AlarmText = "41 阀B开到位超时"
+ElseIf U6_VW6_AlarmCode = 42 Then
+    U6_AlarmText = "42 阀B开到位无流"
+ElseIf U6_VW6_AlarmCode = 43 Then
+    U6_AlarmText = "43 阀B关到位超时"
+ElseIf U6_VW6_AlarmCode = 44 Then
+    U6_AlarmText = "44 阀B关到位仍有流"
+ElseIf U6_VW6_AlarmCode = 46 Then
+    U6_AlarmText = "46 阀C开到位超时"
+ElseIf U6_VW6_AlarmCode = 49 Then
+    U6_AlarmText = "49 S4转移等待超时"
+ElseIf U6_VW6_AlarmCode = 60 Then
+    U6_AlarmText = "60 阀C关到位超时"
+ElseIf U6_VW6_AlarmCode = 64 Then
+    U6_AlarmText = "64 注射泵通讯/动作异常"
+ElseIf U6_VW6_AlarmCode = 65 Then
+    U6_AlarmText = "65 RTC时钟丢失-请校时"
+ElseIf U6_VW6_AlarmCode = 66 Then
+    U6_AlarmText = "66 单轮换水周期超时-检查24h目标与周期参数"
+ElseIf U6_VW6_AlarmCode = 99 Then
+    U6_AlarmText = "99 安全继电器故障"
+Else
+    U6_AlarmText = "未定义报警码:" & U6_VW6_AlarmCode
+End If
+
+' --- 7号单元 ---
+If U7_VW6_AlarmCode = 0 Then
+    U7_AlarmText = "无报警"
+ElseIf U7_VW6_AlarmCode = 10 Then
+    U7_AlarmText = "10 上缸漫溢-立即处理"
+ElseIf U7_VW6_AlarmCode = 11 Then
+    U7_AlarmText = "11 下缸漫溢-立即处理"
+ElseIf U7_VW6_AlarmCode = 12 Then
+    U7_AlarmText = "12 NC球阀上缸动作异常"
+ElseIf U7_VW6_AlarmCode = 14 Then
+    U7_AlarmText = "14 急停触发-需系统复位"
+ElseIf U7_VW6_AlarmCode = 20 Then
+    U7_AlarmText = "20 配液节奏严重滞后"
+ElseIf U7_VW6_AlarmCode = 21 Then
+    U7_AlarmText = "21 配液节奏滞后提示"
+ElseIf U7_VW6_AlarmCode = 30 Then
+    U7_AlarmText = "30 阀A关后仍有流"
+ElseIf U7_VW6_AlarmCode = 32 Then
+    U7_AlarmText = "32 阀A关到位超时"
+ElseIf U7_VW6_AlarmCode = 33 Then
+    U7_AlarmText = "33 阀A关到位仍有流"
+ElseIf U7_VW6_AlarmCode = 34 Then
+    U7_AlarmText = "34 阀A开到位超时"
+ElseIf U7_VW6_AlarmCode = 35 Then
+    U7_AlarmText = "35 阀A开到位无流"
+ElseIf U7_VW6_AlarmCode = 36 Then
+    U7_AlarmText = "36 上缸非空启动S1"
+ElseIf U7_VW6_AlarmCode = 40 Then
+    U7_AlarmText = "40 阀B四态诊断异常"
+ElseIf U7_VW6_AlarmCode = 41 Then
+    U7_AlarmText = "41 阀B开到位超时"
+ElseIf U7_VW6_AlarmCode = 42 Then
+    U7_AlarmText = "42 阀B开到位无流"
+ElseIf U7_VW6_AlarmCode = 43 Then
+    U7_AlarmText = "43 阀B关到位超时"
+ElseIf U7_VW6_AlarmCode = 44 Then
+    U7_AlarmText = "44 阀B关到位仍有流"
+ElseIf U7_VW6_AlarmCode = 46 Then
+    U7_AlarmText = "46 阀C开到位超时"
+ElseIf U7_VW6_AlarmCode = 49 Then
+    U7_AlarmText = "49 S4转移等待超时"
+ElseIf U7_VW6_AlarmCode = 60 Then
+    U7_AlarmText = "60 阀C关到位超时"
+ElseIf U7_VW6_AlarmCode = 64 Then
+    U7_AlarmText = "64 注射泵通讯/动作异常"
+ElseIf U7_VW6_AlarmCode = 65 Then
+    U7_AlarmText = "65 RTC时钟丢失-请校时"
+ElseIf U7_VW6_AlarmCode = 66 Then
+    U7_AlarmText = "66 单轮换水周期超时-检查24h目标与周期参数"
+ElseIf U7_VW6_AlarmCode = 99 Then
+    U7_AlarmText = "99 安全继电器故障"
+Else
+    U7_AlarmText = "未定义报警码:" & U7_VW6_AlarmCode
+End If
+
+' --- 8号单元 ---
+If U8_VW6_AlarmCode = 0 Then
+    U8_AlarmText = "无报警"
+ElseIf U8_VW6_AlarmCode = 10 Then
+    U8_AlarmText = "10 上缸漫溢-立即处理"
+ElseIf U8_VW6_AlarmCode = 11 Then
+    U8_AlarmText = "11 下缸漫溢-立即处理"
+ElseIf U8_VW6_AlarmCode = 12 Then
+    U8_AlarmText = "12 NC球阀上缸动作异常"
+ElseIf U8_VW6_AlarmCode = 14 Then
+    U8_AlarmText = "14 急停触发-需系统复位"
+ElseIf U8_VW6_AlarmCode = 20 Then
+    U8_AlarmText = "20 配液节奏严重滞后"
+ElseIf U8_VW6_AlarmCode = 21 Then
+    U8_AlarmText = "21 配液节奏滞后提示"
+ElseIf U8_VW6_AlarmCode = 30 Then
+    U8_AlarmText = "30 阀A关后仍有流"
+ElseIf U8_VW6_AlarmCode = 32 Then
+    U8_AlarmText = "32 阀A关到位超时"
+ElseIf U8_VW6_AlarmCode = 33 Then
+    U8_AlarmText = "33 阀A关到位仍有流"
+ElseIf U8_VW6_AlarmCode = 34 Then
+    U8_AlarmText = "34 阀A开到位超时"
+ElseIf U8_VW6_AlarmCode = 35 Then
+    U8_AlarmText = "35 阀A开到位无流"
+ElseIf U8_VW6_AlarmCode = 36 Then
+    U8_AlarmText = "36 上缸非空启动S1"
+ElseIf U8_VW6_AlarmCode = 40 Then
+    U8_AlarmText = "40 阀B四态诊断异常"
+ElseIf U8_VW6_AlarmCode = 41 Then
+    U8_AlarmText = "41 阀B开到位超时"
+ElseIf U8_VW6_AlarmCode = 42 Then
+    U8_AlarmText = "42 阀B开到位无流"
+ElseIf U8_VW6_AlarmCode = 43 Then
+    U8_AlarmText = "43 阀B关到位超时"
+ElseIf U8_VW6_AlarmCode = 44 Then
+    U8_AlarmText = "44 阀B关到位仍有流"
+ElseIf U8_VW6_AlarmCode = 46 Then
+    U8_AlarmText = "46 阀C开到位超时"
+ElseIf U8_VW6_AlarmCode = 49 Then
+    U8_AlarmText = "49 S4转移等待超时"
+ElseIf U8_VW6_AlarmCode = 60 Then
+    U8_AlarmText = "60 阀C关到位超时"
+ElseIf U8_VW6_AlarmCode = 64 Then
+    U8_AlarmText = "64 注射泵通讯/动作异常"
+ElseIf U8_VW6_AlarmCode = 65 Then
+    U8_AlarmText = "65 RTC时钟丢失-请校时"
+ElseIf U8_VW6_AlarmCode = 66 Then
+    U8_AlarmText = "66 单轮换水周期超时-检查24h目标与周期参数"
+ElseIf U8_VW6_AlarmCode = 99 Then
+    U8_AlarmText = "99 安全继电器故障"
+Else
+    U8_AlarmText = "未定义报警码:" & U8_VW6_AlarmCode
+End If
+```
+
+
+> **实施注意**：
+> 1. 两个脚本共 8 单元 × (7+6+26) 个分支，直接复制进 McgsPro 策略编辑器即可；若运行时卡顿，可降为 2s 周期（状态文本无需秒级刷新）。
+> 2. 字符串拼接用 `&`（VBScript 标准），不要用 `+`。
+> 3. `U{n}_StateText`/`U{n}_AlarmText` 必须在内部变量表中预先创建（字符型，长度 64）。
+> 4. 废弃码（13/31/45/47/61）不在查表分支中：PLC 已不置位，出现即说明 PLC/HMI 版本不匹配，走 Else 分支显示原码值。

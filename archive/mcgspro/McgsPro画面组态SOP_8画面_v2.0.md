@@ -1,4 +1,6 @@
-# McgsPro 3.3.6 画面组态SOP — 两级菜单版 v3.0
+# McgsPro 3.3.6 画面组态SOP — 两级菜单版 v3.1
+
+> **v3.1 修订（2026-09-20）**：按 v10.4 硬件变更 + v2.3.2 代码修订——①画面4参数页删除 VD_CycleSetpoint/VD_RestTime/泵超时(VD58/62 已废弃)，新增 VD414/VD426/VD430/VD60/VW288 输入框；②画面2时长区改绑双倒计时器 VD244/VD256 + VD116 + VW400（原 VD_S2/S3/S6_Actual 通道已不存在）；③画面5报警阵列按《报警指示灯阵列调整建议 v1.1》灰化废弃码 13/31/45/47/61/62/63，[66]改"周期超时"；④状态/报警文本查表改用脚本库 M 分区脚本57/58。配套导入 CSV 以 `McgsPro变量导入_单元1.csv`（158通道，2026-09-20 与工程对齐）为准，取代《McgsPro变量导入_8单元_v2.0.csv》。
 
 **项目**：药液配置与加注控制系统（AQUA-EXPO）
 **HMI平台**：昆仑通态 McgsPro 3.3.6（TPC12寸触摸屏 1280×800 横屏）
@@ -919,10 +921,12 @@ CurrentMenuGroup = 0
 | 2-021 | 标签 | lblStateText | (320,130,500,40) | U{SelectedUnit}_StateText | 状态文字（查表） |
 | 2-022 | 百分比填充 | pfStateProgress | (820,130,440,40) | U{SelectedUnit}_StateProgress | 状态进度0~100% |
 | **时长显示区（4元素）** | | | | | |
-| 2-023 | 标签 | lblS1_Duration | (20,180,300,30) | U{SelectedUnit}_VD_S1_Actual | S1实测 |
-| 2-024 | 标签 | lblS2_Duration | (320,180,300,30) | U{SelectedUnit}_VD_S2_Actual | S2实测 |
-| 2-025 | 标签 | lblS3_Duration | (620,180,300,30) | U{SelectedUnit}_VD_S3_Actual | S3实测 |
-| 2-026 | 标签 | lblS6_Round | (920,180,340,30) | U{SelectedUnit}_VD_S6_Actual + VW8_RoundCount | S6实测+轮次 |
+| 2-023 | 标签 | lblS1_Duration | (20,180,300,30) | U{SelectedUnit}_VD_S1_Actual | S1进水实测(s) |
+| 2-024 | 标签 | lblTimerA | (320,180,300,30) | U{SelectedUnit}_VD_TimerA_Display | 倒计时器A(s) v3.1 |
+| 2-025 | 标签 | lblTimerB | (620,180,300,30) | U{SelectedUnit}_VD_TimerB_Display | 倒计时器B(s) v3.1 |
+| 2-026 | 标签 | lblS6_Round | (920,180,340,30) | U{SelectedUnit}_VD116_S6_Rolling + U{SelectedUnit}_VW400_CycleCount | S6滚动实测+已完成换水次数 v3.1 |
+
+> v3.1 注：原 VD_S2_Actual/VD_S3_Actual/VD_S6_Actual 通道在 v2.2 流程重构后已不存在（S2/S3 合并、S6 滚动值在 VD116），绑定会报错，必须按上表改绑。
 | **缸状态+流量区（4元素）** | | | | | |
 | 2-027 | 标签 | lblTankA | (20,230,300,30) | U{SelectedUnit}_STA_TankA_State | 上缸满/空 |
 | 2-028 | 标签 | lblTankB | (320,230,300,30) | U{SelectedUnit}_STA_TankB_State | 下缸满/空 |
@@ -1293,17 +1297,20 @@ CurrentMenuGroup = 0
 | 4-020 | 输入框 | txtC_Set | (300,130,200,40) | U{SelectedUnit}_VD_C_Set | 0~100 |
 | 4-021 | 输入框 | txtC_Stock | (300,170,200,40) | U{SelectedUnit}_VD_C_Stock | 0~100 |
 | 4-022 | 输入框 | txtStepRes | (300,210,200,40) | U{SelectedUnit}_VD_StepRes | 0.0001~10 |
-| **时间参数组（4输入框）** | | | | | |
-| 4-023 | 输入框 | txtCycleSetpoint | (300,260,200,40) | U{SelectedUnit}_VD_CycleSetpoint | 1~1440 |
+| **时间参数组（6输入框）** | | | | | |
+| 4-023 | 输入框 | txt24hTarget | (300,260,200,40) | U{SelectedUnit}_VD_24h_Target | 1~48 v3.1(原VD_CycleSetpoint已废弃) |
 | 4-024 | 输入框 | txtExperimentTarget | (300,300,200,40) | U{SelectedUnit}_VD_ExperimentTarget | 1~10000 |
 | 4-025 | 输入框 | txtPreMixTime | (300,340,200,40) | U{SelectedUnit}_VD_PreMixTime | 1~600 |
-| 4-026 | 输入框 | txtRestTime | (300,380,200,40) | U{SelectedUnit}_VD_RestTime | 1~300 |
+| 4-026 | 输入框 | txtTransferMargin | (300,380,200,40) | U{SelectedUnit}_VD_Transfer_Margin | 0~3600 v3.1(原VD_RestTime已废弃) |
+| 4-026a | 输入框 | txtPrepMargin | (300,410,200,40) | U{SelectedUnit}_VD_Prep_Safety_Margin | 0~3600 v3.1新增 |
+| 4-026b | 输入框 | txtDelayCVerify | (300,440,200,40) | U{SelectedUnit}_VD_Delay_ValveC_Verify | 0~60 v3.1新增(阀C液位低位延时验证s) |
+| 4-026c | （v3.1修订：不上参数页） | — | — | U{SelectedUnit}_VW288_S4_Transfer_PT | v3.1曾列入后撤销:S4完成由FC31阀B诊断判定(流量开关B+阀B到位+VD362超时),T49仅实测计时写VD116供S6默认值,VW288非控制参数,SBR25冷启动已给初值1800(180s),通道保留作调试不设输入框 |
 | **超时参数组（5输入框）** | | | | | |
 | 4-027 | 输入框 | txtTimeout_ValveA | (300,440,200,40) | U{SelectedUnit}_VD_Timeout_ValveA | 1~120 |
 | 4-028 | 输入框 | txtTimeout_ValveB | (300,470,200,40) | U{SelectedUnit}_VD_Timeout_ValveB | 1~120 |
 | 4-029 | 输入框 | txtTimeout_ValveC | (300,500,200,40) | U{SelectedUnit}_VD_Timeout_ValveC | 1~120 |
-| 4-030 | 输入框 | txtTimeout_Pump1 | (300,530,200,40) | U{SelectedUnit}_VD_Timeout_Pump1 | 1~120 |
-| 4-031 | 输入框 | txtTimeout_Pump2 | (300,560,200,40) | U{SelectedUnit}_VD_Timeout_Pump2 | 1~120 |
+| ~~4-030~~ | ~~输入框~~ | ~~txtTimeout_Pump1~~ | — | ~~U{SelectedUnit}_VD_Timeout_Pump1~~ | v3.1删除(VD58废弃,水流开关取消) |
+| ~~4-031~~ | ~~输入框~~ | ~~txtTimeout_Pump2~~ | — | ~~U{SelectedUnit}_VD_Timeout_Pump2~~ | v3.1删除(VD62废弃,水流开关取消) |
 | **报警模式（1组合框）** | | | | | |
 | 4-032 | 组合框 | cmbAlarmMode | (300,590,200,40) | U{SelectedUnit}_M_AlarmAckMode | 0/1 |
 | **命令按钮组（4按钮）** | | | | | |
@@ -1496,17 +1503,17 @@ ENDIF
 │                                                                 │
 │  ┌──────32位报警字指示灯阵列(1240×220px)────────┐             │
 │  │ 报警字1 V300:                                 │             │
-│  │ [10]上缸漫溢 [11]下缸漫溢 [12]NC上 [13]NC下 │             │
+│  │ [10]上缸漫溢 [11]下缸漫溢 [12]NC上 [预留]   │             │
 │  │ [14]急停锁存 [99]继电器 [20]节奏严重 [21]节奏│             │
 │  │                                                │             │
 │  │ 报警字2 V301: 阀A类                           │             │
-│  │ [30]关后流 [31]内漏 [32]关超时 [33]关漏 [34]开超时 [35]开无流 [36]S1启动│
+│  │ [30]关后流 [预留]  [32]关超时 [33]关漏 [34]开超时 [35]开无流 [36]S1启动│
 │  │                                                │             │
 │  │ 报警字3 V302: 阀B/C类                         │             │
-│  │ [40]B诊断 [41]B开超时 [42]B开无流 [43]B关超时 [44]B关漏 [45]C诊断 [46]C开超时 [47]C开无流│
+│  │ [40]B诊断 [41]B开超时 [42]B开无流 [43]B关超时 [44]B关漏 [预留]   [46]C开超时 [预留]    │
 │  │                                                │             │
 │  │ 报警字4 V303: 其他类                          │             │
-│  │ [60]C关超时 [61]C关漏 [62]泵1 [63]泵2 [64]注射泵 [65]RTC [66]流量│
+│  │ [60]C关超时 [预留]   [预留]  [预留]  [64]注射泵 [65]RTC [66]周期超时│
 │  └─────────────────────────────────────────────┘             │
 │                                                                 │
 │  [返回]                                                        │
@@ -2441,9 +2448,9 @@ ENDIF
 > 
 > **推荐做法 — 用 PLC 侧字符串变量或 McgsPro 构件直接绑定**:
 > 
-> **方案1（推荐）**: PLC 侧维护 8 个单元的状态文本字符串写入 DB，HMI 标签直接绑定 `U1_StateText` ~ `U8_StateText`，无需任何 HMI 脚本。
+> ~~方案1（PLC侧字符串DB）~~：S7-200 SMART 无便捷字符串DB维护机制，放弃。**v3.1 定稿：采用脚本库 M 分区脚本57（状态文本，VW2+VW304查表）/ 脚本58（报警文本，VW6查表），8单元已全量展开。**
 > 
-> **方案2（HMI 侧显式）**: 以下为**单单元**显式写法示例（仅作参考，8个单元×10个状态码=80行，建议移至PLC）:
+> **单单元写法示例（脚本57节选，完整版见《McgsPro脚本代码》M分区）**:
 
 ```
 ' 单元1状态文本 - 显式嵌套If (仅展示U1, U2~U8同理)

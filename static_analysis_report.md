@@ -42,17 +42,17 @@
 | FC40_RhythmCorrection | 53 | 18 |
 | FC4_ModbusPolling | 96 | 23 |
 | OB1_MAIN | 32 | 16 |
-| SBR25_ColdStart | 95 | 68 |
+| SBR25_ColdStart | 98 | 70 |
 | SBR26_WarmRecovery | 89 | 35 |
-| **合计** | **1195** | **456** |
+| **合计** | **1198** | **458** |
 
 ## 三、变量定义统计
 
 - VB(字节): 1 个
-- VW(字): 21 个
+- VW(字): 22 个
 - VD(双字): 21 个
 - Vbit(位): 35 个
-- **合计**: 78 个变量定义
+- **合计**: 79 个变量定义
 
 ## 四、问题清单
 
@@ -61,18 +61,18 @@
 #### VD编址冲突(3个)
 
 1. **[严重]** VD362(VB362~VB365) 与 VD364(VB364~VB367) 地址重叠
-   - VD362引用: ['SBR25_ColdStart:L68(VD362)', 'SBR25_ColdStart:L39(VD362)']
-   - VD364引用: ['SBR25_ColdStart:L160(VD364)', 'FC11_State_S1_Inlet:L102(VD364)', 'FC18_State_S7_End:L44(VD364)']
+   - VD362引用: ['SBR25_ColdStart:L39(VD362)', 'SBR25_ColdStart:L71(VD362)']
+   - VD364引用: ['FC11_State_S1_Inlet:L102(VD364)', 'FC18_State_S7_End:L44(VD364)', 'SBR25_ColdStart:L163(VD364)']
    - 重叠字节: VB364~VB365
 
 2. **[严重]** VD364(VB364~VB367) 与 VD366(VB366~VB369) 地址重叠
-   - VD364引用: ['SBR25_ColdStart:L160(VD364)', 'FC11_State_S1_Inlet:L102(VD364)', 'FC18_State_S7_End:L44(VD364)']
+   - VD364引用: ['FC11_State_S1_Inlet:L102(VD364)', 'FC18_State_S7_End:L44(VD364)', 'SBR25_ColdStart:L163(VD364)']
    - VD366引用: ['FC17_State_S6_Drain:L80(VD366)', 'FC16_State_S5_Run:L29(VD366)', 'FC16_State_S5_Run:L40(VD366)']
    - 重叠字节: VB366~VB367
 
 3. **[严重]** VD372(VB372~VB375) 与 VD374(VB374~VB377) 地址重叠
-   - VD372引用: ['SBR25_ColdStart:L169(VD372)', 'FC18_State_S7_End:L46(VD372)', 'FC13_State_S3_Dosing:L104(VD372)', 'FC13_State_S3_Dosing:L61(VD372)', 'FC13_State_S3_Dosing:L304(VD372)', 'FC1A_State_S2_MixDose:L46(VD372)']
-   - VD374引用: ['SBR25_ColdStart:L197(VD374)']
+   - VD372引用: ['FC13_State_S3_Dosing:L304(VD372)', 'FC18_State_S7_End:L46(VD372)', 'FC1A_State_S2_MixDose:L49(VD372)', 'FC13_State_S3_Dosing:L61(VD372)', 'FC13_State_S3_Dosing:L104(VD372)', 'SBR25_ColdStart:L172(VD372)']
+   - VD374引用: ['SBR25_ColdStart:L200(VD374)']
    - 重叠字节: VB374~VB375
 
 ### 警告(77个)
@@ -253,7 +253,7 @@
 58. **[警告]** 变量 VW290 被 2 个FC写入: ['FC4_ModbusPolling', 'SBR25_ColdStart']
    - 同一变量被多个FC写入可能导致时序冲突,需确认调用顺序与互斥性
 
-59. **[警告]** 变量 VW306 被 3 个FC写入: ['OB1_MAIN', 'SBR25_ColdStart', 'SBR26_WarmRecovery']
+59. **[警告]** 变量 VW400 被 3 个FC写入: ['OB1_MAIN', 'SBR25_ColdStart', 'SBR26_WarmRecovery']
    - 同一变量被多个FC写入可能导致时序冲突,需确认调用顺序与互斥性
 
 60. **[警告]** 变量 VD24 被 2 个FC写入: ['OB1_MAIN', 'SBR25_ColdStart']
@@ -322,11 +322,11 @@
 
 15. **[警告]** FC直接写入HMI参数区 VD54(VD54)
    - VD10~VD140为HMI设定参数区,FC直接写入可能覆盖操作员设定
-   - 位置: SBR25_ColdStart 第63行
+   - 位置: SBR25_ColdStart 第65行
 
 16. **[警告]** FC直接写入HMI参数区 VD66(VD66)
    - VD10~VD140为HMI设定参数区,FC直接写入可能覆盖操作员设定
-   - 位置: SBR25_ColdStart 第64行
+   - 位置: SBR25_ColdStart 第66行
 
 ### 提示(188个)
 
@@ -598,47 +598,47 @@
 
 67. **[提示]** VD地址非4字节对齐: VD54(地址54)
    - VD建议从4倍数字节地址起始(非强制)
-   - 位置: SBR25_ColdStart 第63行
+   - 位置: SBR25_ColdStart 第65行
 
 68. **[提示]** VD地址非4字节对齐: VD66(地址66)
    - VD建议从4倍数字节地址起始(非强制)
-   - 位置: SBR25_ColdStart 第64行
+   - 位置: SBR25_ColdStart 第66行
 
 69. **[提示]** VD地址非4字节对齐: VD350(地址350)
    - VD建议从4倍数字节地址起始(非强制)
-   - 位置: SBR25_ColdStart 第66行
+   - 位置: SBR25_ColdStart 第69行
 
 70. **[提示]** VD地址非4字节对齐: VD358(地址358)
    - VD建议从4倍数字节地址起始(非强制)
-   - 位置: SBR25_ColdStart 第67行
+   - 位置: SBR25_ColdStart 第70行
 
 71. **[提示]** VD地址非4字节对齐: VD362(地址362)
    - VD建议从4倍数字节地址起始(非强制)
-   - 位置: SBR25_ColdStart 第68行
+   - 位置: SBR25_ColdStart 第71行
 
 72. **[提示]** VD地址非4字节对齐: VD414(地址414)
    - VD建议从4倍数字节地址起始(非强制)
-   - 位置: SBR25_ColdStart 第72行
+   - 位置: SBR25_ColdStart 第75行
 
 73. **[提示]** VD地址非4字节对齐: VD426(地址426)
    - VD建议从4倍数字节地址起始(非强制)
-   - 位置: SBR25_ColdStart 第73行
+   - 位置: SBR25_ColdStart 第76行
 
 74. **[提示]** VD地址非4字节对齐: VD430(地址430)
    - VD建议从4倍数字节地址起始(非强制)
-   - 位置: SBR25_ColdStart 第74行
+   - 位置: SBR25_ColdStart 第77行
 
 75. **[提示]** VD地址非4字节对齐: VD414(地址414)
    - VD建议从4倍数字节地址起始(非强制)
-   - 位置: SBR25_ColdStart 第95行
+   - 位置: SBR25_ColdStart 第98行
 
 76. **[提示]** VD地址非4字节对齐: VD178(地址178)
    - VD建议从4倍数字节地址起始(非强制)
-   - 位置: SBR25_ColdStart 第172行
+   - 位置: SBR25_ColdStart 第175行
 
 77. **[提示]** VD地址非4字节对齐: VD374(地址374)
    - VD建议从4倍数字节地址起始(非强制)
-   - 位置: SBR25_ColdStart 第197行
+   - 位置: SBR25_ColdStart 第200行
 
 78. **[提示]** VD地址非4字节对齐: VD178(地址178)
    - VD建议从4倍数字节地址起始(非强制)
@@ -890,196 +890,196 @@
    - 位置: FC17_State_S6_Drain 第53行
 
 46. **[提示]** 变量 VD336 在STL中引用但变量表/注释未定义
-   - FC: FC1A_State_S2_MixDose, 行: 35
-   - 位置: FC1A_State_S2_MixDose 第35行
-
-47. **[提示]** 变量 VW252 在STL中引用但变量表/注释未定义
    - FC: FC1A_State_S2_MixDose, 行: 38
    - 位置: FC1A_State_S2_MixDose 第38行
 
-48. **[提示]** 变量 VD392 在STL中引用但变量表/注释未定义
+47. **[提示]** 变量 VD392 在STL中引用但变量表/注释未定义
    - FC: FC21_ManualSyringePump, 行: 26
    - 位置: FC21_ManualSyringePump 第26行
 
-49. **[提示]** 变量 VD452 在STL中引用但变量表/注释未定义
+48. **[提示]** 变量 VD452 在STL中引用但变量表/注释未定义
    - FC: FC21_ManualSyringePump, 行: 28
    - 位置: FC21_ManualSyringePump 第28行
 
-50. **[提示]** 变量 VD396 在STL中引用但变量表/注释未定义
+49. **[提示]** 变量 VD396 在STL中引用但变量表/注释未定义
    - FC: FC21_ManualSyringePump, 行: 28
    - 位置: FC21_ManualSyringePump 第28行
 
-51. **[提示]** 变量 VW388 在STL中引用但变量表/注释未定义
+50. **[提示]** 变量 VW388 在STL中引用但变量表/注释未定义
    - FC: FC21_ManualSyringePump, 行: 283
    - 位置: FC21_ManualSyringePump 第283行
 
-52. **[提示]** 变量 VW510 在STL中引用但变量表/注释未定义
+51. **[提示]** 变量 VW510 在STL中引用但变量表/注释未定义
    - FC: FC21_ManualSyringePump, 行: 339
    - 位置: FC21_ManualSyringePump 第339行
 
-53. **[提示]** 变量 VW274 在STL中引用但变量表/注释未定义
+52. **[提示]** 变量 VW274 在STL中引用但变量表/注释未定义
    - FC: FC31_ValveB_Diag, 行: 68
    - 位置: FC31_ValveB_Diag 第68行
 
-54. **[提示]** 变量 VB378 在STL中引用但变量表/注释未定义
+53. **[提示]** 变量 VB378 在STL中引用但变量表/注释未定义
    - FC: FC4_ModbusPolling, 行: 9
    - 位置: FC4_ModbusPolling 第9行
 
-55. **[提示]** 变量 VW290 在STL中引用但变量表/注释未定义
+54. **[提示]** 变量 VW290 在STL中引用但变量表/注释未定义
    - FC: FC4_ModbusPolling, 行: 20
    - 位置: FC4_ModbusPolling 第20行
 
-56. **[提示]** 变量 VB410 在STL中引用但变量表/注释未定义
+55. **[提示]** 变量 VB410 在STL中引用但变量表/注释未定义
    - FC: FC4_ModbusPolling, 行: 26
    - 位置: FC4_ModbusPolling 第26行
 
-57. **[提示]** 变量 VB379 在STL中引用但变量表/注释未定义
+56. **[提示]** 变量 VB379 在STL中引用但变量表/注释未定义
    - FC: FC4_ModbusPolling, 行: 26
    - 位置: FC4_ModbusPolling 第26行
 
-58. **[提示]** 变量 VB380 在STL中引用但变量表/注释未定义
+57. **[提示]** 变量 VB380 在STL中引用但变量表/注释未定义
    - FC: FC4_ModbusPolling, 行: 35
    - 位置: FC4_ModbusPolling 第35行
 
-59. **[提示]** 变量 VB381 在STL中引用但变量表/注释未定义
+58. **[提示]** 变量 VB381 在STL中引用但变量表/注释未定义
    - FC: FC4_ModbusPolling, 行: 44
    - 位置: FC4_ModbusPolling 第44行
 
-60. **[提示]** 变量 VB382 在STL中引用但变量表/注释未定义
+59. **[提示]** 变量 VB382 在STL中引用但变量表/注释未定义
    - FC: FC4_ModbusPolling, 行: 53
    - 位置: FC4_ModbusPolling 第53行
 
-61. **[提示]** 变量 VW410 在STL中引用但变量表/注释未定义
+60. **[提示]** 变量 VW410 在STL中引用但变量表/注释未定义
    - FC: FC4_ModbusPolling, 行: 59
    - 位置: FC4_ModbusPolling 第59行
 
-62. **[提示]** 变量 VW292 在STL中引用但变量表/注释未定义
+61. **[提示]** 变量 VW292 在STL中引用但变量表/注释未定义
    - FC: FC4_ModbusPolling, 行: 61
    - 位置: FC4_ModbusPolling 第61行
 
-63. **[提示]** 变量 VD410 在STL中引用但变量表/注释未定义
+62. **[提示]** 变量 VD410 在STL中引用但变量表/注释未定义
    - FC: FC4_ModbusPolling, 行: 91
    - 位置: FC4_ModbusPolling 第91行
 
-64. **[提示]** 变量 VW294 在STL中引用但变量表/注释未定义
+63. **[提示]** 变量 VW294 在STL中引用但变量表/注释未定义
    - FC: FC4_ModbusPolling, 行: 93
    - 位置: FC4_ModbusPolling 第93行
 
-65. **[提示]** 变量 VW222 在STL中引用但变量表/注释未定义
+64. **[提示]** 变量 VW222 在STL中引用但变量表/注释未定义
    - FC: FC4_ModbusPolling, 行: 121
    - 位置: FC4_ModbusPolling 第121行
 
-66. **[提示]** 变量 VW296 在STL中引用但变量表/注释未定义
+65. **[提示]** 变量 VW296 在STL中引用但变量表/注释未定义
    - FC: FC4_ModbusPolling, 行: 123
    - 位置: FC4_ModbusPolling 第123行
 
-67. **[提示]** 变量 VD94 在STL中引用但变量表/注释未定义
+66. **[提示]** 变量 VD94 在STL中引用但变量表/注释未定义
    - FC: FC4_ModbusPolling, 行: 150
    - 位置: FC4_ModbusPolling 第150行
 
-68. **[提示]** 变量 VW298 在STL中引用但变量表/注释未定义
+67. **[提示]** 变量 VW298 在STL中引用但变量表/注释未定义
    - FC: FC4_ModbusPolling, 行: 152
    - 位置: FC4_ModbusPolling 第152行
 
-69. **[提示]** 变量 VB383 在STL中引用但变量表/注释未定义
+68. **[提示]** 变量 VB383 在STL中引用但变量表/注释未定义
    - FC: FC4_ModbusPolling, 行: 198
    - 位置: FC4_ModbusPolling 第198行
 
-70. **[提示]** 变量 VB305 在STL中引用但变量表/注释未定义
+69. **[提示]** 变量 VB305 在STL中引用但变量表/注释未定义
    - FC: OB1_MAIN, 行: 176
    - 位置: OB1_MAIN 第176行
 
-71. **[提示]** 变量 VD362 在STL中引用但变量表/注释未定义
+70. **[提示]** 变量 VD362 在STL中引用但变量表/注释未定义
    - FC: SBR25_ColdStart, 行: 39
    - 位置: SBR25_ColdStart 第39行
 
-72. **[提示]** 变量 VB456 在STL中引用但变量表/注释未定义
-   - FC: SBR25_ColdStart, 行: 50
-   - 位置: SBR25_ColdStart 第50行
+71. **[提示]** 变量 VB456 在STL中引用但变量表/注释未定义
+   - FC: SBR25_ColdStart, 行: 52
+   - 位置: SBR25_ColdStart 第52行
 
-73. **[提示]** 变量 VD460 在STL中引用但变量表/注释未定义
-   - FC: SBR25_ColdStart, 行: 61
-   - 位置: SBR25_ColdStart 第61行
-
-74. **[提示]** 变量 VD464 在STL中引用但变量表/注释未定义
-   - FC: SBR25_ColdStart, 行: 62
-   - 位置: SBR25_ColdStart 第62行
-
-75. **[提示]** 变量 VD484 在STL中引用但变量表/注释未定义
+72. **[提示]** 变量 VD460 在STL中引用但变量表/注释未定义
    - FC: SBR25_ColdStart, 行: 63
    - 位置: SBR25_ColdStart 第63行
 
-76. **[提示]** 变量 VD488 在STL中引用但变量表/注释未定义
+73. **[提示]** 变量 VD464 在STL中引用但变量表/注释未定义
    - FC: SBR25_ColdStart, 行: 64
    - 位置: SBR25_ColdStart 第64行
 
-77. **[提示]** 变量 VD500 在STL中引用但变量表/注释未定义
+74. **[提示]** 变量 VD484 在STL中引用但变量表/注释未定义
    - FC: SBR25_ColdStart, 行: 65
    - 位置: SBR25_ColdStart 第65行
 
-78. **[提示]** 变量 VD504 在STL中引用但变量表/注释未定义
+75. **[提示]** 变量 VD488 在STL中引用但变量表/注释未定义
    - FC: SBR25_ColdStart, 行: 66
    - 位置: SBR25_ColdStart 第66行
 
-79. **[提示]** 变量 VD512 在STL中引用但变量表/注释未定义
+76. **[提示]** 变量 VD492 在STL中引用但变量表/注释未定义
    - FC: SBR25_ColdStart, 行: 67
    - 位置: SBR25_ColdStart 第67行
 
-80. **[提示]** 变量 VD516 在STL中引用但变量表/注释未定义
+77. **[提示]** 变量 VD500 在STL中引用但变量表/注释未定义
    - FC: SBR25_ColdStart, 行: 68
    - 位置: SBR25_ColdStart 第68行
 
-81. **[提示]** 变量 VD520 在STL中引用但变量表/注释未定义
+78. **[提示]** 变量 VD504 在STL中引用但变量表/注释未定义
    - FC: SBR25_ColdStart, 行: 69
    - 位置: SBR25_ColdStart 第69行
 
-82. **[提示]** 变量 VD524 在STL中引用但变量表/注释未定义
+79. **[提示]** 变量 VD512 在STL中引用但变量表/注释未定义
    - FC: SBR25_ColdStart, 行: 70
    - 位置: SBR25_ColdStart 第70行
 
-83. **[提示]** 变量 VD528 在STL中引用但变量表/注释未定义
+80. **[提示]** 变量 VD516 在STL中引用但变量表/注释未定义
    - FC: SBR25_ColdStart, 行: 71
    - 位置: SBR25_ColdStart 第71行
 
-84. **[提示]** 变量 VD468 在STL中引用但变量表/注释未定义
+81. **[提示]** 变量 VD520 在STL中引用但变量表/注释未定义
    - FC: SBR25_ColdStart, 行: 72
    - 位置: SBR25_ColdStart 第72行
 
-85. **[提示]** 变量 VD476 在STL中引用但变量表/注释未定义
+82. **[提示]** 变量 VD524 在STL中引用但变量表/注释未定义
    - FC: SBR25_ColdStart, 行: 73
    - 位置: SBR25_ColdStart 第73行
 
-86. **[提示]** 变量 VD480 在STL中引用但变量表/注释未定义
+83. **[提示]** 变量 VD528 在STL中引用但变量表/注释未定义
    - FC: SBR25_ColdStart, 行: 74
    - 位置: SBR25_ColdStart 第74行
 
-87. **[提示]** 变量 VB532 在STL中引用但变量表/注释未定义
+84. **[提示]** 变量 VD468 在STL中引用但变量表/注释未定义
+   - FC: SBR25_ColdStart, 行: 75
+   - 位置: SBR25_ColdStart 第75行
+
+85. **[提示]** 变量 VD476 在STL中引用但变量表/注释未定义
+   - FC: SBR25_ColdStart, 行: 76
+   - 位置: SBR25_ColdStart 第76行
+
+86. **[提示]** 变量 VD480 在STL中引用但变量表/注释未定义
    - FC: SBR25_ColdStart, 行: 77
    - 位置: SBR25_ColdStart 第77行
+
+87. **[提示]** 变量 VB532 在STL中引用但变量表/注释未定义
+   - FC: SBR25_ColdStart, 行: 80
+   - 位置: SBR25_ColdStart 第80行
 
 88. **[提示]** 变量 VB388 在STL中引用但变量表/注释未定义
-   - FC: SBR25_ColdStart, 行: 77
-   - 位置: SBR25_ColdStart 第77行
+   - FC: SBR25_ColdStart, 行: 80
+   - 位置: SBR25_ColdStart 第80行
 
 89. **[提示]** 变量 VB389 在STL中引用但变量表/注释未定义
-   - FC: SBR25_ColdStart, 行: 78
-   - 位置: SBR25_ColdStart 第78行
-
-90. **[提示]** 变量 VB536 在STL中引用但变量表/注释未定义
    - FC: SBR25_ColdStart, 行: 81
    - 位置: SBR25_ColdStart 第81行
 
+90. **[提示]** 变量 VB536 在STL中引用但变量表/注释未定义
+   - FC: SBR25_ColdStart, 行: 84
+   - 位置: SBR25_ColdStart 第84行
+
 91. **[提示]** 变量 VW300 在STL中引用但变量表/注释未定义
-   - FC: SBR25_ColdStart, 行: 148
-   - 位置: SBR25_ColdStart 第148行
+   - FC: SBR25_ColdStart, 行: 151
+   - 位置: SBR25_ColdStart 第151行
 
 92. **[提示]** 变量 VB0 在STL中引用但变量表/注释未定义
-   - FC: SBR25_ColdStart, 行: 156
-   - 位置: SBR25_ColdStart 第156行
+   - FC: SBR25_ColdStart, 行: 159
+   - 位置: SBR25_ColdStart 第159行
 
 93. **[提示]** 变量 VD374 在STL中引用但变量表/注释未定义
-   - FC: SBR25_ColdStart, 行: 197
-   - 位置: SBR25_ColdStart 第197行
+   - FC: SBR25_ColdStart, 行: 200
+   - 位置: SBR25_ColdStart 第200行
 
 94. **[提示]** 变量 VD190 在STL中引用但变量表/注释未定义
    - FC: SBR26_WarmRecovery, 行: 118
@@ -1130,9 +1130,9 @@
 | VW270 | 2 | FC17_State_S6_Drain, FC32_ValveC_Diag |
 | VW290 | 2 | FC4_ModbusPolling, SBR25_ColdStart |
 | VW304 | 7 | FC10_State_S0_Init, FC11_State_S1_Inlet, FC15_State_S4_Transfer, FC1A_State_S2_MixDose, OB1_MAIN, SBR25_ColdStart, SBR26_WarmRecovery |
-| VW306 | 3 | OB1_MAIN, SBR25_ColdStart, SBR26_WarmRecovery |
 | VW378 | 2 | FC0_SysInit, SBR25_ColdStart |
 | VW390 | 4 | FC0_SysInit, FC21_ManualSyringePump, OB1_MAIN, SBR25_ColdStart |
+| VW400 | 3 | OB1_MAIN, SBR25_ColdStart, SBR26_WarmRecovery |
 | V300.0 | 3 | FC19_State_Error, FC30_ValveA_Diag, FC3_AlarmHandling |
 | V300.1 | 3 | FC31_ValveB_Diag, FC32_ValveC_Diag, FC3_AlarmHandling |
 | V300.4 | 4 | FC19_State_Error, FC2_EStopHandling, SBR25_ColdStart, SBR26_WarmRecovery |
@@ -1157,21 +1157,21 @@
 
 | 字节地址 | 引用次数 |
 |---|---|
-| VB61 | 73 |
+| VB61 | 74 |
 | VB6 | 66 |
 | VB7 | 66 |
 | VB2 | 63 |
 | VB3 | 63 |
-| VB62 | 50 |
+| VB62 | 51 |
 | VB226 | 45 |
 | VB227 | 45 |
+| VB60 | 45 |
 | VB303 | 44 |
-| VB60 | 44 |
 | VB390 | 42 |
 | VB391 | 42 |
 | VB64 | 41 |
 | VB300 | 34 |
-| VB63 | 30 |
+| VB63 | 31 |
 | VB65 | 28 |
 | VB301 | 27 |
 | VB1 | 25 |

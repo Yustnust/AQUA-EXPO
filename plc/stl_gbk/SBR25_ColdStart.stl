@@ -32,7 +32,7 @@ MOVR   180.0, VD430       // 【v2.2新增】VD_Prep_Safety_Margin 上缸配液安全余量(
 
 // 6.2.1 工艺目标参数
 MOVR   10.0, VD316        // 目标进水量(L,默认10L)
-MOVR   5000.0, VD584      // VD_Vol_Target 默认加药量(μL,默认5mL)
+MOVR   5000.0, VD584      // VD_Vol_Target 默认加药量(µL,默认5mL)
 
 // 6.3 超时保护参数
 MOVR   60.0, VD358        // VD_Timeout_ValveA 阀A开/关到位超时(s)
@@ -40,10 +40,12 @@ MOVR   60.0, VD362        // VD_Timeout_ValveB 阀B开/关到位超时(s)
 MOVR   60.0, VD54         // VD_Timeout_ValveC 阀C开/关到位超时(s)
 MOVR   5.0, VD66          // VD_Delay_ValveA_Verify 阀A关后延时验证(s)
 MOVR   5.0, VD60          // 【v10.4硬件变更新增】VD_Delay_ValveC_Verify 阀C液位B低位延时验证(s)
+MOVW   1800, VW288        // 【v2.3.2新增】VW_S4_Transfer_PT S4转移计时T49的PT(100ms单位,1800=180s)
+                          //   PLC侧无运行时写入方(FC15只读用),此处给冷启动初值,HMI参数页可改
 
 // 7.4 其他超时阈值
 MOVR   1800.0, VD448      // VD_S4WaitTimeout S4等待超时阈值(s)
-MOVR   10000.0, VD452     // VD_ManualDose_Target 手动总加药量(μL,默认10mL)
+MOVR   10000.0, VD452     // VD_ManualDose_Target 手动总加药量(µL,默认10mL)
 MOVW   0, VW388           // VW_ManualDose_Mode 手动模式(0=单次,1=循环)
 
 // ===== 用户默认参数覆盖 =====
@@ -62,6 +64,7 @@ MOVR   VD460, VD24           // VD_ExperimentTarget
 MOVR   VD464, VD28           // VD_PreMixTime (S2搅拌固定时长)
 MOVR   VD484, VD54           // VD_Timeout_ValveC
 MOVR   VD488, VD66           // VD_Delay_ValveA_Verify
+MOVR   VD492, VD60           // 【v3.1新增】UD_VD60_DelayC → VD_Delay_ValveC_Verify 排液完成验证延时(VD492经字节/字/双字核实无占用)
 MOVR   VD500, VD316          // VD_TargetInletVolume
 MOVR   VD504, VD350          // VD_StepResolution
 MOVR   VD512, VD358          // VD_Timeout_ValveA
@@ -160,13 +163,13 @@ R      V1.0, 6            // V1.0~V1.5=0
 MOVR   0.0, VD364         // VD_ExpTotal_Flow=0(L)
 
 // 本次实验累计加药量清零
-MOVR   0.0, VD440         // VD_Dosed_Volume_Total=0(μL)
+MOVR   0.0, VD440         // VD_Dosed_Volume_Total=0(µL)
 
 // S4等待时长清零
 MOVR   0.0, VD444
 
 // S3剩余待加药量清零
-MOVR   0.0, VD372         // VD_Remaining_Vol=0(μL)
+MOVR   0.0, VD372         // VD_Remaining_Vol=0(µL)
 
 // 清下缸满计时器+预规划标志
 MOVR   0.0, VD178         // VD_S5_Elapsed=0
@@ -203,7 +206,7 @@ MOVW   0, VW230
 
 // 【v2.2 新增】冷启动时初始化上缸子流程 + 双倒计时器显示值清零
 MOVW   0, VW304                     // 上缸配液子流程状态清零(防御性)
-MOVW   0, VW306                     // 换水计数清零
+MOVW   0, VW400                     // 换水计数清零 【v2.3.2迁移: 原VW306与手动命令位V306.0~V307.3重叠】
 R      M16.0, 4                     // M16.0~M16.3 连续清零
 R      T63, 1                       // [已修复 v2.2] 清 1s 脉冲定时器
 MOVR   0.0, VD248                   // TimerA_Elapsed 清零

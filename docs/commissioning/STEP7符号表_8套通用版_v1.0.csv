@@ -84,6 +84,7 @@ VD_Timeout_Pump1,VD58,REAL,预留未用（原潜水泵1超时保护，水流开�
 VD_Delay_ValveC_Verify,VD60,REAL,阀C液位B低位延时验证时长(s,v10.4硬件变更新增,默认5s)
 VD_Timeout_Pump2,VD62,REAL,预留未用（原潜水泵2超时保护，水流开关取消）
 VW288_S4_Transfer_PT,VW288,WORD,S4转移计时器T49 PT值(v2.3从VW290迁出,原地址被FC4轮询计数器每周期改写)
+VW400_CycleCount,VW400,WORD,已完成换水次数(v2.3.2由VW306迁入,避让手动命令位V306.0~307.3;VB400~401经全源核查零占用)
 VD_Delay_ValveA_Verify,VD66,REAL,阀A关闭后延时验证时长(s)
 // === AQEX-36迁移参数区 VD350~VD370 (原VD18/20/48/50/96/98, 断电保持) ===
 VD_StepResolution,VD350,REAL,注射泵单步分辨率(µL/步,原VD18)
@@ -178,7 +179,7 @@ VW240_ValveB_SubState,VW240,WORD,阀B诊断子状态
 VW242_ValveB_Result,VW242,WORD,阀B诊断结果
 VW244_ValveB_PT,VW244,WORD,阀B当前PT定时值
 VW250_ValveC_SubState,VW250,WORD,阀C诊断子状态
-VW252_ValveC_Result,VW252,WORD,阀C诊断结果
+VW252_ValveC_Result_OLD,VW252,WORD,阀C诊断结果(陈旧:v2.1实际已迁VW270;v2.3前被VD252 TimerB_Elapsed低字覆盖,FC1A的T38 PT已迁VW402,本行勿复用)
 VW254_ValveC_PT,VW254,WORD,阀C当前PT定时值
 // === VD308~VD344 诊断数据迁移区 (AQEX-36, 断电保持) ===
 VD308_Diag_Spare1,VD308,REAL,诊断数据迁移区1

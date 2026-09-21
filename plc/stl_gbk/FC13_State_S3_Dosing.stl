@@ -1,4 +1,4 @@
-// ============================================================
+﻿// ============================================================
 // 文件: FC13_State_S3_Dosing.stl
 // 功能: S3加药 (VW2=3)
 // Story: AQEX-6 状态机骨架 + 注射泵控制(AQEX-50)
@@ -29,8 +29,8 @@
 //          7=写强停恢复  8=等强停完成+计算/循环
 //          9=完成转S3.5
 // VD90  : VD_Current_InletVolume 本次进水量(S1差值法结果)
-// VD584 : VD_Vol_Target    目标抽取母液体积(μL)
-// VD372 : VD_Remaining_Vol 本轮剩余待加药量(μL),S3进入时=VD_Vol_Target
+// VD584 : VD_Vol_Target    目标抽取母液体积(µL)
+// VD372 : VD_Remaining_Vol 本轮剩余待加药量(µL),S3进入时=VD_Vol_Target
 // VD102 : VD_Dose_Steps    本次循环目标步数(REAL)
 // VW204 : MB_Pump_Aspirate 抽液步数缓冲(映射40006)
 // VW206 : MB_Pump_Dispense 排液步数缓冲(映射40007)
@@ -56,7 +56,7 @@ NETWORK 1
 LD     SM0.0
 AW=    VW226, 0
 =      V61.4
-// ? v2.0 浓度参数删除: 目标加药量由用户直接输入VD370(HMI设定)
+// ✅ v2.0 浓度参数删除: 目标加药量由用户直接输入VD370(HMI设定)
 LD     V61.4
 MOVR   VD584, VD372                  // VD_Remaining_Vol = 目标加药量
 LD     V61.4
@@ -101,7 +101,7 @@ AN     M11.6
 AN     M11.7
 AN     M12.0
 // 计算本次循环步数 = VD_Remaining_Vol / VD_StepResolution
-MOVR   VD372, VD346                  // VD346 = VD_Remaining_Vol(μL)
+MOVR   VD372, VD346                  // VD346 = VD_Remaining_Vol(µL)
 /R     VD350, VD346                  // VD346 = steps(REAL)
 // 限制最大6000步(25ml注射器容量)
 LD     SM0.0
@@ -297,7 +297,7 @@ AW=    VW4, 0
 LPS
 // 计算本次循环实际排出药量 = VD_Dose_Steps × VD_StepResolution
 MOVR   VD102, AC0                    // AC0 = 本次循环步数(REAL)
-*R     VD350, AC0                    // AC0 = 本次循环体积(μL)
+*R     VD350, AC0                    // AC0 = 本次循环体积(µL)
 // 累加本次循环排出药量到累计加药量
 +R     AC0, VD440                    // VD_Dosed_Volume_Total += 本次循环体积
 // 扣减剩余待加药量

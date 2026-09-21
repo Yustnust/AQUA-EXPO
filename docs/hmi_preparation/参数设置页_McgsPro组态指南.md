@@ -456,6 +456,7 @@ Param_Timeout_ValveA    = U1_UD_VD358_TimeoutA          ' VD358 阀A动作超时
 Param_Timeout_ValveB    = U1_UD_VD362_TimeoutB          ' VD362 阀B动作超时 (s)
 Param_Timeout_ValveC    = U1_UD_VD54_TimeoutC           ' VD54  阀C动作超时 (s)
 Param_Delay_ValveA      = U1_UD_VD66_DelayA             ' VD66  阀A关闭延时验证 (s)
+Param_Delay_ValveC      = U1_UD_VD60_DelayC             ' VD60  排液完成验证延时 (s) (v3.1新增, UD存VD492)
 
 ' 手动模式
 Param_ManualDose_Target = U1_UD_VD452_ManualDose         ' VD452 手动注射泵总加药量 (µL)
@@ -580,6 +581,12 @@ IF Param_Delay_ValveA < 1 OR Param_Delay_ValveA > 30 THEN
     pnlConfirmBG.Visible = 1 : lblConfirmText.Visible = 1
     EXIT
 ENDIF
+IF Param_Delay_ValveC < 0 OR Param_Delay_ValveC > 60 THEN
+    lblConfirmText.Caption = "错误：排液完成验证延时超范围(0~60s)"
+    btnConfirmOK.Visible = 0 : btnConfirmCancel.Visible = 1
+    pnlConfirmBG.Visible = 1 : lblConfirmText.Visible = 1
+    EXIT
+ENDIF
 
 ' 手动加药
 IF Param_ManualDose_Target < 0 OR Param_ManualDose_Target > 50000 THEN
@@ -621,6 +628,7 @@ U1_UD_VD358_TimeoutA     = Param_Timeout_ValveA
 U1_UD_VD362_TimeoutB     = Param_Timeout_ValveB
 U1_UD_VD54_TimeoutC      = Param_Timeout_ValveC
 U1_UD_VD66_DelayA        = Param_Delay_ValveA
+U1_UD_VD60_DelayC        = Param_Delay_ValveC
 
 ' 手动加药
 U1_UD_VD452_ManualDose   = Param_ManualDose_Target
@@ -697,6 +705,7 @@ U1_UD_VD358_TimeoutA = 60.0   ' s   阀A动作超时
 U1_UD_VD362_TimeoutB = 60.0   ' s   阀B动作超时
 U1_UD_VD54_TimeoutC  = 60.0   ' s   阀C动作超时
 U1_UD_VD66_DelayA    = 5.0    ' s   阀A关闭延时验证
+U1_UD_VD60_DelayC    = 5.0    ' s   排液完成验证延时 (v3.1新增)
 
 ' 手动加药 (1 项)
 U1_UD_VD452_ManualDose = 10000.0 ' µL  手动注射泵总加药量
@@ -733,7 +742,7 @@ ret = !MsgBox("将" + Str(SelectedUnit) + "号单元参数复制到其他使能�
 If ret <> 1 Then Exit Sub
 
 ' 15 项镜像名参数列表 (v2.9: 仅含 v2.2 实际有效项, 共 14 个真实镜像 + 1 个标志位)
-Dim paramList(14) As String
+Dim paramList(15) As String
 paramList(0)  = "UD_VD24_ExpTarget"
 paramList(1)  = "UD_VD28_PreMixTime"
 paramList(2)  = "UD_VD316_InletVol"
@@ -748,7 +757,8 @@ paramList(10) = "UD_VD362_TimeoutB"
 paramList(11) = "UD_VD54_TimeoutC"
 paramList(12) = "UD_VD66_DelayA"
 paramList(13) = "UD_VD452_ManualDose"
-paramList(14) = "UD_Flag"
+paramList(14) = "UD_VD60_DelayC"
+paramList(15) = "UD_Flag"
 
 ' 复制到其他所有使能单元
 For i = 1 To 8
@@ -827,6 +837,7 @@ Sub RefreshParamBuffer(unitNum)
     Param_Timeout_ValveB  = GetValue(pfx + "UD_VD362_TimeoutB")
     Param_Timeout_ValveC  = GetValue(pfx + "UD_VD54_TimeoutC")
     Param_Delay_ValveA    = GetValue(pfx + "UD_VD66_DelayA")
+    Param_Delay_ValveC    = GetValue(pfx + "UD_VD60_DelayC")
 
     ' 手动加药
     Param_ManualDose_Target = GetValue(pfx + "UD_VD452_ManualDose")
@@ -922,6 +933,7 @@ ENDIF
 | Param_Timeout_ValveB | REAL | 阀B动作超时编辑缓冲 (s) |
 | Param_Timeout_ValveC | REAL | 阀C动作超时编辑缓冲 (s) |
 | Param_Delay_ValveA | REAL | 阀A关闭延时验证编辑缓冲 (s) |
+| Param_Delay_ValveC | REAL | 排液完成验证延时编辑缓冲 (s) (v3.1) |
 
 **手动与报警模式 (2 项)**
 
@@ -1025,6 +1037,7 @@ LoginLevel >= X AND U{N}_VW2_StateMachine == 0
 | VD_Timeout_ValveB | 60.0 | s | VD362 | VD516 |
 | VD_Timeout_ValveC | 60.0 | s | VD54 | VD484 |
 | VD_Delay_ValveA | 5.0 | s | VD66 | VD488 |
+| VD_Delay_ValveC | 5.0 | s | VD60 | VD492 |
 | **手动与报警模式** |  |  |  |  |
 | VD_ManualDose_Target | 10000.0 | µL | VD452 | VD528 |
 | VW_ManualDose_Mode | 0 | — | VW388 | VB532 |
