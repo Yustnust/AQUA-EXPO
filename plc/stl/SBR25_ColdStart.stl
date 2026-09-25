@@ -39,7 +39,7 @@ MOVR   60.0, VD358        // VD_Timeout_ValveA 阀A开/关到位超时(s)
 MOVR   60.0, VD362        // VD_Timeout_ValveB 阀B开/关到位超时(s)
 MOVR   60.0, VD54         // VD_Timeout_ValveC 阀C开/关到位超时(s)
 MOVR   5.0, VD66          // VD_Delay_ValveA_Verify 阀A关后延时验证(s)
-MOVR   5.0, VD60          // 【v10.4硬件变更新增】VD_Delay_ValveC_Verify 阀C液位B低位延时验证(s)
+MOVR   5.0, VD472         // 【v10.4新增,2026-09-24由VD60迁来】VD_Delay_ValveC_Verify 阀C液位B低位延时验证(s)
 MOVW   1800, VW288        // 【v2.3.2新增】VW_S4_Transfer_PT S4转移计时T49的PT(100ms单位,1800=180s)
                           //   PLC侧无运行时写入方(FC15只读用),此处给冷启动初值,HMI参数页可改
 
@@ -59,12 +59,15 @@ LBL    8                     // ====== 用户默认覆盖区 ======
 // 【v2.2.1 修订 2026-09-17】VD468/VD476/VD480 重新分配为 v2.2 时间参数 (VD414/426/430)
 //                         的用户默认镜像 (经字节级 + 字级 + 双字级 + 间接访问四维核实,
 //                         VW236 (bytes 472-473) / VW252 (bytes 504-505) 不与新地址重叠);
-//                         VD472/VD496/VD508 仍保留为空 (待未来扩展)
+//                         VD496/VD508 仍保留为空 (待未来扩展); VD472 已于 2026-09-24 分配给 VD_Delay_ValveC_Verify
 MOVR   VD460, VD24           // VD_ExperimentTarget
 MOVR   VD464, VD28           // VD_PreMixTime (S2搅拌固定时长)
 MOVR   VD484, VD54           // VD_Timeout_ValveC
 MOVR   VD488, VD66           // VD_Delay_ValveA_Verify
-MOVR   VD492, VD60           // 【v3.1新增】UD_VD60_DelayC → VD_Delay_ValveC_Verify 排液完成验证延时(VD492经字节/字/双字核实无占用)
+// 【2026-09-24决策】恢复无条件覆盖：出厂默认防0的责任在HMI侧——HMI首次运行/参数页打开时
+//   须把出厂默认值写入整个镜像区(VD460~VD536)并置VB456=1，PLC不做非0门控
+MOVR   VD492, VD472          // 【v3.1新增,2026-09-24由VD60迁来】UD_VD60_DelayC → VD_Delay_ValveC_Verify 排液完成验证延时
+                             //   (原VD60因与V60.x~V63.x EU缓存位区重叠而废弃; VD472经字节/字/双字/位四维核实无占用)
 MOVR   VD500, VD316          // VD_TargetInletVolume
 MOVR   VD504, VD350          // VD_StepResolution
 MOVR   VD512, VD358          // VD_Timeout_ValveA

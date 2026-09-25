@@ -19,6 +19,12 @@ NETWORK 1
 
 // LBL 1: 入口 (FC0 通过 CALL WarmRecovery 进入,从 LBL 1 开始执行)
 LBL    1
+// 【2026-09-24新增】暖启动参数NaN自愈: 新PLC未清除V区/异常写入可能使REAL为NaN,
+//   暖启动不执行SBR25出厂默认段, NaN会永久残留, 并导致HMI参数页"应用设置"把NaN缓冲
+//   往返写回(表现为改了参数值不变)。利用IEEE754规则"NaN与自身不等"检测, 命中即恢复出厂默认
+LD     SM0.0
+AR<>   VD472, VD472                  // VD472是NaN ? (NaN<>NaN恒真)
+MOVR   5.0, VD472                    // 是 → 恢复出厂默认5.0
 LD     SM0.1
 TODR VB900                // 读RTC到VB900~VB907(BCD)
 

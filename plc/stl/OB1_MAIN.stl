@@ -20,7 +20,7 @@
 // V0.0    : CMD_Start (HMI→PLC启动命令)
 // V0.2    : CMD_Stop  (HMI→PLC停止命令)
 // V1.0    : STA_StartAck (PLC→HMI启动确认)
-// I1.1    : DI_EStop (急停反馈，常闭，ON=正常)
+// I1.1    : DI_EStop (急停反馈，常开NO，OFF=正常/ON=急停触发)  v1.3 改NO接法(原"常闭,ON=正常"注释已过期)
 // I0.3    : DI_Btn_SystemReset (系统复位按钮)
 
 
@@ -123,9 +123,13 @@ CALL StateDispatcher
 // VW304=0/3/4 → 无动作(空闲/配完等待/已转移由其他 FC 处理)
 LD     SM0.0
 AW=    VW304, 1
+AW>    VW2, 0                       // 【2026-09-24修复】非S0(上缸随下缸运行才允许执行)
+AW<    VW2, 99                      // 【2026-09-24修复】非S_ERROR(故障锁定禁止上缸动作)
 CALL   State_S1_Inlet
 LD     SM0.0
 AW=    VW304, 2
+AW>    VW2, 0                       // 【2026-09-24修复】同上
+AW<    VW2, 99                      // 【2026-09-24修复】同上
 CALL   State_S2_MixDose
 
 
@@ -168,21 +172,22 @@ LD     M16.6
 
 
 // 系统总状态 → VB305 (0=良好,1=故障,2=急停)
-// 急停: I1.1=OFF OR V300.4 OR V300.5
+// 急停: I1.1=ON(NO触点,ON=急停触发) OR V300.4 OR V300.5
 // 故障: VW6≠0 AND 非急停
 // 良好: 非急停 AND VW6=0 (默认值)
+// 【2026-09-24修复】v1.3改NO接法后此处漏改: 原"LD I1.1 / NOT"把I1.1=OFF(正常)误判为急停,
+//   导致急停释放后HMI标题栏永久显示"急停"; 故障分支的"A I1.1"同步改为"AN I1.1"
 
 LD     SM0.0
 MOVB   0, VB305                    // 默认良好
 // 急停 → 2
-LD     I1.1
-NOT
+LD     I1.1                        // NO触点: ON=急停触发
 O      V300.4
 O      V300.5
 MOVB   2, VB305
 // 非急停 + 有报警 → 1
 LDW<>  VW6, 0
-A      I1.1
+AN     I1.1                        // 急停未触发(NO触点OFF=正常)
 AN     V300.4
 AN     V300.5
 MOVB   1, VB305

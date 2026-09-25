@@ -4,7 +4,7 @@
 // Story: AQEX-7 阀门诊断 + v10.4 硬件变更(去流量开关C)
 // 调用方: FC17(S6下缸排水)
 // 说明: 【v10.4 硬件变更 2026-09-20】去除流量开关C(I0.2,保留未使用)
-//       排水完成判定改为「液位计B低位(I1.0)持续ON达VD_Delay_ValveC_Verify(VD60)」
+//       排水完成判定改为「液位计B低位(I1.0)持续ON达VD_Delay_ValveC_Verify(VD472)」
 //       报警码45/47/61废弃(V302.5/V302.7/V303.1改为保留位,不再置位)
 //       排水超时(液位低位未到)与关到位超时统一由报警码60(V303.0)覆盖
 //       诊断子状态VW264: 0空闲/1等开到位/2排水中/3延时验证/4等关到位
@@ -14,7 +14,7 @@
 // VW264 : Diag_State_C     阀C诊断子状态
 // VW270 : Diag_Result_C    阀C诊断结果(0/1/2)
 // VW276 : VD_Timeout_ValveC(VD54)×10 转换值(FC17计算写入)
-// VW284 : VD_Delay_ValveC_Verify(VD60)×10 转换值(FC17计算写入)【v10.4新增】
+// VW284 : VD_Delay_ValveC_Verify(VD472)×10 转换值(FC17计算写入)【v10.4新增】
 // T56   : 阀C开到位超时
 // T57   : 阀C排水超时(液位低位到达超时)【v10.4改制: 原流量开关超时】
 // T58   : 阀C关到位超时
@@ -111,7 +111,7 @@ LBL    4
 // I1.0持续ON达VD_Delay_ValveC_Verify → 排水完成,关阀C
 // 注: I1.0中途OFF时TON输入断开,T101自动清零,液位低位须连续保持
 LD     I1.0
-TON    T101, VW284                  // PT=VD_Delay_ValveC_Verify(VD60)×10
+TON    T101, VW284                  // PT=VD_Delay_ValveC_Verify(VD472)×10
 LD     T101
 R      Q0.4, 1                     // 关阀C
 MOVW   4, VW264                    // 转S4等关到位
@@ -158,7 +158,7 @@ LBL    6
 //   1. FC17调用本FC前置VW264=1启动
 //   2. FC17检查VW270: 0等待, 1正常完成转S5/S7, 2故障
 //   3. VW276=VD_Timeout_ValveC(VD54)×10转换值
-//      VW284=VD_Delay_ValveC_Verify(VD60)×10转换值【v10.4新增】
+//      VW284=VD_Delay_ValveC_Verify(VD472)×10转换值【v10.4新增】
 //   4. 【v10.4硬件变更】I0.2保留未使用
 //      V302.5/V302.7/V303.1改为保留位(报警码45/47/61废弃,不再置位)
 //      T57由"流量开关超时"改制为"排水超时"(液位低位到达超时)
