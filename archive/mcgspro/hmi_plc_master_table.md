@@ -52,7 +52,7 @@
 | VD24 | U1_VD_ExperimentTarget | SINGLE | 读写 | 实验时长目标设定值(min) | PLC代码读写 |
 | VD28 | U1_VD_PreMixTime | SINGLE | 读写 | S2搅拌+加药固定时长(s) | PLC代码写 |
 | VD54 | U1_VD_Timeout_ValveC | SINGLE | 读写 | 阀C动作超时保护时长(s) | PLC代码写 |
-| VD60 | U1_VD_Delay_ValveC_Verify | SINGLE | 读写 | 阀C液位B低位延时验证时长(s)（v10.4新增，默认5） | PLC代码写 |
+| VD472 | U1_VD_Delay_ValveC_Verify | SINGLE | 读写 | 阀C液位B低位延时验证时长(s)（v10.4新增，默认5；2026-09-24由VD60迁来，原VD60与V60.x~V63.x位缓存区冲突废弃） | PLC代码写 |
 | VD66 | U1_VD_Delay_ValveA_Verify | SINGLE | 读写 | 阀A关闭后延时验证时长(s) | PLC代码写 |
 | VD350 | U1_VD_StepResolution | SINGLE | 读写 | 注射泵单步分辨率(uL/步) | PLC代码写 |
 | VD358 | U1_VD_Timeout_ValveA | SINGLE | 读写 | 阀A动作超时保护时长(s) | PLC代码写 |

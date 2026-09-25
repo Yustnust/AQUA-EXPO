@@ -1,4 +1,4 @@
-﻿import os,re,csv
+import os,re,csv
 from collections import defaultdict
 
 # Load PLC usage
@@ -99,7 +99,7 @@ hmi_vars = [
     ("VD24", "实验时长目标设定值(min)"),
     ("VD28", "S2搅拌+加药固定时长(s)"),
     ("VD54", "阀C动作超时保护时长(s)"),
-    ("VD60", "阀C液位B低位延时验证时长(s)（v10.4新增，默认5）"),
+    ("VD472", "阀C液位B低位延时验证时长(s)（v10.4新增，默认5；2026-09-24由VD60迁来）"),
     ("VD66", "阀A关闭后延时验证时长(s)"),
     ("VD350", "注射泵单步分辨率(uL/步)"),
     ("VD358", "阀A动作超时保护时长(s)"),

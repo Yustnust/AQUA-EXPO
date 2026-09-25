@@ -130,7 +130,7 @@ VB17	写	FC15_State_S4_Transfer.stl
 VD24	读写	FC16_State_S5_Run.stl, FC17_State_S6_Drain.stl, OB1_MAIN.stl, SBR25_ColdStart.stl
 VD28	写	FC1A_State_S2_MixDose.stl, FC40_RhythmCorrection.stl, SBR25_ColdStart.stl
 VD54	写	FC17_State_S6_Drain.stl, FC32_ValveC_Diag.stl, SBR25_ColdStart.stl
-VD60	写	FC17_State_S6_Drain.stl, FC32_ValveC_Diag.stl, SBR25_ColdStart.stl
+VD472	写	FC17_State_S6_Drain.stl, FC32_ValveC_Diag.stl, SBR25_ColdStart.stl	(2026-09-24由VD60迁来: 原VD60与V60.x~V63.x EU缓存位区重叠, 废弃禁用)
 V60.4	读	FC21_ManualSyringePump.stl
 V60.5	读	FC3_AlarmHandling.stl
 V60.1	读	FC4_ModbusPolling.stl

@@ -50,7 +50,7 @@
 44,U3_VD_ExperimentTarget,SINGLE,读写VDF024,读写,V数据寄存器,32位 浮点数,24,,1,
 45,U3_VD_PreMixTime,SINGLE,读写VDF028,读写,V数据寄存器,32位 浮点数,28,,1,
 46,U3_VD_Timeout_ValveC,SINGLE,读写VDF054,读写,V数据寄存器,32位 浮点数,54,,1,
-47,U3_VD_Delay_ValveC_Verify,SINGLE,读写VDF060,读写,V数据寄存器,32位 浮点数,60,,1,
+47,U3_VD_Delay_ValveC_Verify,SINGLE,读写VDF472,读写,V数据寄存器,32位 浮点数,60,,1,
 48,U3_VD_Delay_ValveA_Verify,SINGLE,读写VDF066,读写,V数据寄存器,32位 浮点数,66,,1,
 49,U3_VD_S1_Actual,SINGLE,只读VDF070,只读,V数据寄存器,32位 浮点数,70,,1,
 50,U3_VD_FlowMeter_Snapshot,SINGLE,只读VDF082,只读,V数据寄存器,32位 浮点数,82,,1,
