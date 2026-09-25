@@ -456,7 +456,7 @@ Param_Timeout_ValveA    = U1_UD_VD358_TimeoutA          ' VD358 阀A动作超时
 Param_Timeout_ValveB    = U1_UD_VD362_TimeoutB          ' VD362 阀B动作超时 (s)
 Param_Timeout_ValveC    = U1_UD_VD54_TimeoutC           ' VD54  阀C动作超时 (s)
 Param_Delay_ValveA      = U1_UD_VD66_DelayA             ' VD66  阀A关闭延时验证 (s)
-Param_Delay_ValveC      = U1_UD_VD60_DelayC             ' VD60  排液完成验证延时 (s) (v3.1新增, UD存VD492)
+Param_Delay_ValveC      = U1_UD_VD60_DelayC             ' VD472 排液完成验证延时 (s) (v3.1新增, UD存VD492; 工作地址2026-09-24由VD60迁VD472, 原地址与V6x位缓存区冲突)
 
 ' 手动模式
 Param_ManualDose_Target = U1_UD_VD452_ManualDose         ' VD452 手动注射泵总加药量 (µL)
@@ -1037,7 +1037,7 @@ LoginLevel >= X AND U{N}_VW2_StateMachine == 0
 | VD_Timeout_ValveB | 60.0 | s | VD362 | VD516 |
 | VD_Timeout_ValveC | 60.0 | s | VD54 | VD484 |
 | VD_Delay_ValveA | 5.0 | s | VD66 | VD488 |
-| VD_Delay_ValveC | 5.0 | s | VD60 | VD492 |
+| VD_Delay_ValveC | 5.0 | s | VD472 | VD492 |
 | **手动与报警模式** |  |  |  |  |
 | VD_ManualDose_Target | 10000.0 | µL | VD452 | VD528 |
 | VW_ManualDose_Mode | 0 | — | VW388 | VB532 |

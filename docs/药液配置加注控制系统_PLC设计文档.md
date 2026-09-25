@@ -171,7 +171,7 @@
 | VD354 | VD_CycleSetpoint【v2.2废弃】 | 原换水周期设定值，v2.2改为由VD414计算周期，本变量不再使用 |
 | — | VD_Timeout_ValveA/B/C | 阀A/B/C各自的动作超时保护时长（HMI独立可调） |
 | — | VD_Delay_ValveA_Verify | 阀A关闭后延时验证时长（HMI可调） |
-| VD60 | VD_Delay_ValveC_Verify【硬件变更新增】 | 阀C开启后液位B低位延时验证时长（HMI可调），下缸排水完成判定用 |
+| VD472 | VD_Delay_ValveC_Verify【硬件变更新增,2026-09-24由VD60迁来】 | 阀C开启后液位B低位延时验证时长（HMI可调），下缸排水完成判定用；原VD60与V60.x~V63.x EU缓存位区重叠已废弃 |
 | VD28 | VD_PreMixTime【v2.2更新】 | S2搅拌+加药合并阶段固定时长（HMI可调，严格固定，不再压缩） |
 | VD32 | VD_PreMixTime_MinSafe【v2.2废弃】 | 原S2压缩下限，v2.2已删除三层纠偏，本变量不再使用 |
 | VD36 | VD_RestTime【v2.2废弃】 | 原静止等候标称时长，v2.2已取消静止等候S3.5，本变量不再使用 |

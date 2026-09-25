@@ -198,7 +198,7 @@
 | VD24  | U1\_VD\_ExperimentTarget      | min  | 实验时长目标设定值（默认10080.0，7天）         |
 | VD28  | U1\_VD\_PreMixTime            | s    | S2搅拌+加药固定时长（默认1800.0，30min）       |
 | VD54  | U1\_VD\_Timeout\_ValveC       | s    | 阀C动作超时保护时长        |
-| VD60  | U1\_VD\_Delay\_ValveC\_Verify | s    | 阀C液位B低位延时验证时长（硬件变更新增，默认5.0） |
+| VD472  | U1\_VD\_Delay\_ValveC\_Verify | s    | 阀C液位B低位延时验证时长（硬件变更新增，默认5.0） |
 | VD66  | U1\_VD\_Delay\_ValveA\_Verify | s    | 阀A关闭后延时验证时长       |
 | VD316 | U1\_VD\_TargetInletVolume     | L    | 目标进水量             |
 | VD350 | U1\_VD\_StepResolution        | µL/步 | 注射泵单步分辨率          |
@@ -437,7 +437,7 @@ PLC在SBR25冷启动时读取以下镜像值作为HMI参数的断电保持默认
 | VD24   | U1\_VD\_ExperimentTarget             | SINGLE  | 读写    | 实验时长目标(min)       | 默认10080.0(7天) |
 | VD28   | U1\_VD\_PreMixTime                   | SINGLE  | 读写    | S2搅拌固定时长(s)       | 默认1800.0(30min) |
 | VD54   | U1\_VD\_Timeout\_ValveC              | SINGLE  | 读写    | 阀C超时保护(s)         | —              |
-| VD60   | U1\_VD\_Delay\_ValveC\_Verify        | SINGLE  | 读写    | 阀C液位低位延时验证(s)    | 硬件变更新增      |
+| VD472   | U1\_VD\_Delay\_ValveC\_Verify        | SINGLE  | 读写    | 阀C液位低位延时验证(s)    | 硬件变更新增      |
 | VD66   | U1\_VD\_Delay\_ValveA\_Verify        | SINGLE  | 读写    | 阀A关后验证延时(s)       | —              |
 | VD70   | U1\_VD\_S1\_Actual                   | SINGLE  | 只读    | S1实测时长(s)         | —              |
 | VD82   | U1\_VD\_FlowMeter\_Snapshot          | SINGLE  | 只读    | 流量计开启快照           | —              |
@@ -538,7 +538,7 @@ PLC在SBR25冷启动时读取以下镜像值作为HMI参数的断电保持默认
 
 ## 十六、待确认事项
 
-1. **McgsPro导入CSV**：当前最新CSV为`McgsPro变量导入_单元1.csv`（160通道，2026-09-20 与工程回导对齐），已删除VD354/VD_RestTime等v2.2废弃变量，新增VW304/VW400、VD244/VD256/VD248/VD252、VD414/VD426/VD430、VD60、VW288、V303.6周期超时报警、UD用户默认区13个等通道。注意：工程内通道仍以回导为准，VWB306→VWB400改名需同步在McgsPro工程中操作。
+1. **McgsPro导入CSV**：当前最新CSV为`McgsPro变量导入_单元1.csv`（160通道，2026-09-20 与工程回导对齐），已删除VD354/VD_RestTime等v2.2废弃变量，新增VW304/VW400、VD244/VD256/VD248/VD252、VD414/VD426/VD430、VD472、VW288、V303.6周期超时报警、UD用户默认区13个等通道。注意：工程内通道仍以回导为准，VWB306→VWB400改名需同步在McgsPro工程中操作。
 2. **HMI画面绑定更新**：
 
    - 单元详情/趋势曲线中原绑定到VD74（S4\_Actual）的元素改为VD116（S6\_Rolling）。
