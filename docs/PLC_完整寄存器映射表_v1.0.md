@@ -640,30 +640,52 @@ V 区（会重叠）�
 
 粘贴位置：McgsPro **主控窗口（启动窗口）的"打开"事件脚本**（或新建启动策略，只执行一次）。
 触发条件：`U1_UD_Flag`(VB456)=0 —— 即 V 区被清（下装 SOP）或从未保存过默认参数。
-效果：出厂默认值写回整个镜像区 → 参数页立即恢复正常显示 → 置 Flag=1 本周期不再重复执行。
+效果（v2 增强）：出厂默认值写回**两级**——①镜像区 VD460~536（参数页显示源）②工作参数（PLC 运行值，立即生效，不等 PLC 冷启动）→ 置 Flag=1 本次不再重复执行。
 
 ```
-// ===== 出厂默认自愈: 清V区后自动恢复用户默认镜像区 (2026-09-29) =====
-// PLC侧VB456=0时本就用出厂值工作, 此脚本只为让参数页显示恢复正常
+// ===== 出厂默认自愈 v2: 清V区后自动恢复镜像区+工作参数 (2026-09-29) =====
+// 触发: U1_UD_Flag(VB456)=0, 即V区被清(下装SOP)或从未保存过默认参数
+// 恢复两级: ①用户默认镜像区VD460~536(参数页显示源) ②工作参数(PLC运行值,立即生效)
+// 单位均为PLC工作单位(时长min/s, 体积L/µL), 与SBR25冷启动出厂硬编码逐一对应
 IF U1_UD_Flag = 0 THEN
-    U1_UD_VD24_ExpTarget        = 10080.0   // 实验总时长(min, 默认7天)
-    U1_UD_VD28_PreMixTime       = 1800.0    // S2搅拌固定时长(s, 默认30min)
-    U1_UD_VD414_24h_Target      = 6.0       // 24h换水目标次数
-    U1_UD_VD426_Transfer_Margin = 180.0     // 周期尾端转移余量(s)
-    U1_UD_VD430_Safety_Margin   = 180.0     // 上缸配液安全余量(s)
-    U1_UD_VD54_TimeoutC         = 60.0      // 阀C超时(s)
-    U1_UD_VD66_DelayA           = 5.0       // 阀A关后延时验证(s)
-    U1_UD_VD472_DelayC          = 5.0       // 排液完成验证延时(s)
-    U1_UD_VD316_InletVol        = 10.0      // 目标进水量(L)
-    U1_UD_VD350_StepRes         = 4.1667    // 注射泵单步分辨率(uL/步)
-    U1_UD_VD358_TimeoutA        = 60.0      // 阀A超时(s)
-    U1_UD_VD362_TimeoutB        = 60.0      // 阀B超时(s)
-    U1_UD_VD584_VolTarget       = 5000.0    // 目标加药量(uL, 默认5mL)
-    U1_UD_VD448_S4WaitTimeout   = 1800.0    // S4等待超时(s)
-    U1_UD_VD452_ManualDose      = 10000.0   // 手动总加药量(uL, 默认10mL)
-    U1_UD_VW388_ManualDoseMode  = 0         // 手动模式(0=单次)
-    U1_V200_AlarmAckMode        = 0         // 报警确认模式(0=自动)
-    U1_UD_Flag                  = 1         // 置"用户默认有效"标志(最后写)
+    // ---- ① 用户默认镜像区(参数页显示源) ----
+    U1_UD_VD24_ExpTarget        = 10080.0
+    U1_UD_VD28_PreMixTime       = 1800.0
+    U1_UD_VD414_24h_Target      = 6.0
+    U1_UD_VD426_Transfer_Margin = 180.0
+    U1_UD_VD430_Safety_Margin   = 180.0
+    U1_UD_VD54_TimeoutC         = 60.0
+    U1_UD_VD66_DelayA           = 5.0
+    U1_UD_VD472_DelayC          = 5.0
+    U1_UD_VD316_InletVol        = 10.0
+    U1_UD_VD350_StepRes         = 4.1667
+    U1_UD_VD358_TimeoutA        = 60.0
+    U1_UD_VD362_TimeoutB        = 60.0
+    U1_UD_VD584_VolTarget       = 5000.0
+    U1_UD_VD448_S4WaitTimeout   = 1800.0
+    U1_UD_VD452_ManualDose      = 10000.0
+    U1_UD_VW388_ManualDoseMode  = 0
+    U1_V200_AlarmAckMode        = 0
+    // ---- ② 工作参数(PLC运行值, 立即生效, 不等PLC冷启动) ----
+    U1_VD_ExperimentTarget      = 10080.0   // 实验总时长(min, 默认7天)
+    U1_VD_PreMixTime            = 1800.0    // S2搅拌固定时长(s, 默认30min)
+    U1_VD_24h_Target            = 6.0       // 24h换水目标次数
+    U1_VD_Transfer_Margin       = 180.0     // 周期尾端转移余量(s)
+    U1_VD_Prep_Safety_Margin    = 180.0     // 上缸配液安全余量(s)
+    U1_VD_TargetInletVolume     = 10.0      // 目标进水量(L)
+    U1_VD_Vol_Target            = 5000.0    // 目标加药量(µL, 默认5mL)
+    U1_VD_Timeout_ValveA        = 60.0      // 阀A超时(s)
+    U1_VD_Timeout_ValveB        = 60.0      // 阀B超时(s)
+    U1_VD_Timeout_ValveC        = 60.0      // 阀C超时(s)
+    U1_VD_Delay_ValveA_Verify   = 5.0       // 阀A关后延时验证(s)
+    U1_VD_Delay_ValveC_Verify   = 5.0       // 排液完成验证延时(s)
+    U1_VD_S4WaitTimeout         = 1800.0    // S4等待超时(s)
+    U1_VD_ManualDose_Target     = 10000.0   // 手动总加药量(µL)
+    U1_VD_ManualDose_Mode       = 0         // 手动模式(0=单次)
+    U1_VD_StepResolution        = 4.1667    // 注射泵单步分辨率(uL/步)
+    U1_M_AlarmAckMode           = 0         // 报警确认模式(0=自动)
+    // ---- ③ 最后置"用户默认有效"标志, 防PLC读到写了一半的镜像区 ----
+    U1_UD_Flag                  = 1
 ENDIF
 ```
 
