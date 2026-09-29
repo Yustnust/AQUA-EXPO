@@ -99,7 +99,7 @@ R      M16.3, 1                    // 清 S2 首次进入标志(防御性)
 // (FC40 已删除三层纠偏, 不再有"人工介入→S_ERROR"分支)
 // 累加本次进水量到本次实验累计流量
 MOVR   VD90, AC0                   // AC0 = VD_Current_InletVolume
-+R     AC0, VD364                  // VD_ExpTotal_Flow += 本次进水量
++R     AC0, VD406                  // VD_ExpTotal_Flow += 本次进水量 (原VD364,2026-09-29迁移:与VD366重叠2字节;VD402槽被VW402(T38_PT)占)
 MOVW   2, VW304                    // 状态转移 S1→S2 (v2.2: VW304 上缸子流程而非 VW2)
 R      M10.2, 1                    // 清S1首次进入标志
 R      T38, 1                      // 进入S2前复位T38(防御性,FC1A 首次进入会再次启动 T38)

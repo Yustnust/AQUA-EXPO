@@ -233,7 +233,7 @@ R      V1.0, 6            // V1.0~V1.5=0
 MOVW   0, VW8             // VW8=0
 
 // 本次实验累计流量清零
-MOVR   0.0, VD364         // VD_ExpTotal_Flow=0(L)
+MOVR   0.0, VD406         // VD_ExpTotal_Flow=0(L) (原VD364,2026-09-29迁移:与VD366重叠2字节;VD402槽被VW402(T38_PT)占)
 
 // 本次实验累计加药量清零
 MOVR   0.0, VD440         // VD_Dosed_Volume_Total=0(µL)
