@@ -44,7 +44,7 @@
 | VW4 | U1_VW4_PumpStatus | SINGLE | 只读 | 注射泵状态码 | PLC代码读写 |
 | VW6 | U1_VW6_AlarmCode | SINGLE | 只读 | 当前最高优先级报警码 | PLC代码读写 |
 | VW8 | U1_VW8_RoundCount | SINGLE | 只读 | 实验总换水次数目标(=VD414×VD24/1440) | PLC代码读 |
-| VW304 | U1_VW304_State_UpTank | SINGLE | 只读 | 上缸配液子流程状态 | PLC代码读写 |
+| VW418 | U1_VW304_State_UpTank | SINGLE | 只读 | 上缸配液子流程状态（v2.3.3由VW304迁入） | PLC代码读写 |
 | VW400 | U1_VW400_CycleCount | SINGLE | 读写 | 已完成下缸换水次数（v2.3.2由VW306迁入，避让手动命令位） | PLC代码写 |
 | VW288 | U1_VW288_S4_Transfer_PT | SINGLE | 读写 | S4转移计时T49的PT(100ms单位，v2.3.1迁入) | PLC代码写 |
 | VD10 | U1_???_VD10 | - | - | 目标浓度设定值（v2.0新增） | 需新增到HMI；PLC代码未使用 |

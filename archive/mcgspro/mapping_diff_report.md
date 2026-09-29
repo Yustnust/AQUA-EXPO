@@ -215,7 +215,7 @@
 | VW292 | VWB292 | 读写 | FC4_ModbusPolling.stl |
 | VW298 | VWB298 | 写 | FC4_ModbusPolling.stl |
 | VW300 | VWB300 | 读 | SBR25_ColdStart.stl |
-| VW304 | VWB304 | 读写 | FC10_State_S0_Init.stl, FC11_State_S1_Inlet.stl, FC15_State_S4_Transfer.stl, FC17_State_S6_Drain.stl, FC1A_State_S2_MixDose.stl, FC40_RhythmCorrection.stl, OB1_MAIN.stl, SBR25_ColdStart.stl, SBR26_WarmRecovery.stl |
+| VW418 | VWB418 | 读写 | FC10_State_S0_Init.stl, FC11_State_S1_Inlet.stl, FC15_State_S4_Transfer.stl, FC17_State_S6_Drain.stl, FC1A_State_S2_MixDose.stl, FC40_RhythmCorrection.stl, OB1_MAIN.stl, SBR25_ColdStart.stl, SBR26_WarmRecovery.stl |
 | VW306 | VWB306 | 读写 | FC16_State_S5_Run.stl, FC17_State_S6_Drain.stl, FC40_RhythmCorrection.stl, OB1_MAIN.stl, SBR25_ColdStart.stl, SBR26_WarmRecovery.stl |
 | VW378 | VWB378 | 读 | FC0_SysInit.stl, SBR25_ColdStart.stl |
 | VW410 | VWB410 | 写 | FC4_ModbusPolling.stl |

@@ -96,7 +96,7 @@
 90,U7_Alarm_RTC_Lost,INTEGER,只读V303.5,只读,V数据寄存器,通道的第05位,303,,1,
 91,U7_Alarm_CycleTimeout,INTEGER,只读V303.6,只读,V数据寄存器,通道的第06位,303,,1,
 92,U7_Need_RTC_Sync,INTEGER,只读V303.7,只读,V数据寄存器,通道的第07位,303,,1,
-93,U7_VW304_State_UpTank,SINGLE,只读VWB304,只读,V数据寄存器,16位 有符号二进制,304,,1,
+93,U7_VW304_State_UpTank,SINGLE,只读VWB418,只读,V数据寄存器,16位 有符号二进制,418,,1,
 94,U7_VB_SystemStatus,SINGLE,只读VBUB305,只读,V数据寄存器,8位 无符号二进制,305,,1,
 95,U7_CMD_Manual_ValveA_Open,INTEGER,读写V306.0,读写,V数据寄存器,通道的第00位,306,,1,
 96,U7_CMD_Manual_ValveA_Close,INTEGER,读写V306.1,读写,V数据寄存器,通道的第01位,306,,1,

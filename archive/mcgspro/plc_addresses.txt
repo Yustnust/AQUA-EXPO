@@ -252,7 +252,7 @@ V303.5	读写	FC19_State_Error.stl, FC22_RTC_Sync.stl, FC3_AlarmHandling.stl
 V303.7	读写	FC22_RTC_Sync.stl, SBR25_ColdStart.stl, SBR26_WarmRecovery.stl
 V303.0	读写	FC32_ValveC_Diag.stl, FC3A_AlarmReset_Common.stl, FC3_AlarmHandling.stl
 V303.6	读写	FC3_AlarmHandling.stl, FC40_RhythmCorrection.stl, FC4_ModbusPolling.stl
-VW304	读写	FC10_State_S0_Init.stl, FC11_State_S1_Inlet.stl, FC15_State_S4_Transfer.stl, FC17_State_S6_Drain.stl, FC1A_State_S2_MixDose.stl, FC40_RhythmCorrection.stl, OB1_MAIN.stl, SBR25_ColdStart.stl, SBR26_WarmRecovery.stl
+VW418	读写	(原VW304,v2.3.3迁入) FC10_State_S0_Init.stl, FC11_State_S1_Inlet.stl, FC15_State_S4_Transfer.stl, FC17_State_S6_Drain.stl, FC1A_State_S2_MixDose.stl, FC40_RhythmCorrection.stl, OB1_MAIN.stl, SBR25_ColdStart.stl, SBR26_WarmRecovery.stl
 VB305	写	OB1_MAIN.stl
 V306.0	读写	FC20_ManualControl.stl
 V306.1	读写	FC20_ManualControl.stl
