@@ -135,6 +135,8 @@ MOVR   VD86, VD308                 // VD_FlowMeter_CloseSnapshot
 LD     V63.0
 MOVW   5, VW260                    // VW260=5(关闭后验证)
 LD     V63.0
+R      T51, 1                      // ★修复2026-09-30: 进关阀验证前清T51残留done位(上轮报警退出后T51保持done,会跳过验证窗口立即误判)
+LD     V63.0
 R      T52, 1                      // 复位开到位无流确认计时
 JMP    1
 
@@ -193,6 +195,7 @@ O      V301.3
 A      T51                         // RLO=(任意报警) AND T51
 MOVW   99, VW2                     // 转S_ERROR
 MOVB   2, VB266                    // 故障
+R      T51, 1                      // ★修复2026-09-30: 报警退出同步复位T51,防残留done位污染下一轮S1
 JMP    1
 
 
