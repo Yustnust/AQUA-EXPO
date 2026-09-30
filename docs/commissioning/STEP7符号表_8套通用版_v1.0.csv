@@ -72,7 +72,7 @@ VW2_State,VW2,WORD,状态机当前状态(0=S0...8=S7,99=S_ERROR)
 VW4_PumpStatus,VW4,WORD,注射泵状态码(0空闲/1运行/2抽液/3排液/其他错误)
 VW6_AlarmCode,VW6,WORD,当前最高优先级未确认报警码(0=无)
 VW8_CycleCount,VW8,WORD,实验轮次计数(每完成S1→S6累加1)
-State_UpTank,VW304,INT,上缸配液子流程状态
+State_UpTank,VW418,INT,上缸配液子流程状态
 VW_CycleCount,VW306,INT,已完成下缸换水次数
 // === HMI设定参数 VD区 (REAL, 断电保持) ===
 VD_C_Set,VD10,REAL,目标浓度设定值(%)

@@ -1083,7 +1083,7 @@ LoginLevel >= X AND U{N}_VW2_StateMachine == 0
 | VD244 | VD_TimerB_Display | s | T48_PV/10（每周期更新） | TimerB 当前显示值，HMI 只读 |
 | VD116 | VD_S6_Rolling | s | FC15/FC17 实测后赋值 | S6 滚动实测（首轮 = S4 实测），HMI 只读显示 |
 | VD444 | VD_S4Wait_Time | s | S4 等待期间 PLC 自动累加（每秒+1），S4 完成时清零 | S4 入口 V1.7=1 持续时间，HMI 只读显示 |
-| VW304 | State_UpTank | — | FC1A/FC10/FC15/FC17 维护 | 上缸配液子流程状态（0~4 五态），HMI 只读显示 |
+| VW418 | State_UpTank | — | FC1A/FC10/FC15/FC17 维护 | 上缸配液子流程状态（0~4 五态），HMI 只读显示 |
 | VW306 | CycleCount | — | FC17 转 S4 时累加 | 已完成下缸换水次数，HMI 只读显示 |
 
 **v2.9 说明**：

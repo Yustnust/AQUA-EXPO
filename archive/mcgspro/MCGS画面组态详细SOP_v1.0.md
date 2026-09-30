@@ -605,7 +605,7 @@ End If
 | 9 | 文本显示 | lbl24h_CycleCount | (600,460,300,32) | 24h已换水:X 次 | U{X}_VW306_CycleCount (VW306) |
 | 10 | 文本显示 | lblVolTarget | (60,500,300,32) | 母液目标:xxx.x µL | U{X}_VD_Vol_Target |
 | 11 | 文本显示 | lblDoseSteps | (380,500,300,32) | 加药步数:XXXX 步 | U{X}_VD_Dose_Steps |
-| 12 | 文本显示 | lblState_UpTank | (60,530,300,32) | 上缸子状态:0/1/2/3/4 | U{X}_VW304_State_UpTank (VW304) |
+| 12 | 文本显示 | lblState_UpTank | (60,530,300,32) | 上缸子状态:0/1/2/3/4 | U{X}_VW304_State_UpTank (VW418) |
 | 13 | 文本显示 | lblState_DownTank | (380,530,300,32) | 下缸主状态:0/5/6/7/8/99 | U{X}_VW2_StateMachine (VW2) |
 | 14 | 文本显示 | lblCycleTimeout | (700,530,300,32) | 周期超时报警 | U{X}_V303_6_CycleTimeout (V303.6) |
 

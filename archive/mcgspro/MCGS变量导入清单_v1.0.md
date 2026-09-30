@@ -10,7 +10,7 @@
 > **【v2.2 修订说明】** 本文档已按 v2.2 流程重构方案同步更新：
 > - VD_CycleSetpoint (VD354) → VD_24h_Target (VD414,24h目标换水次数)
 > - 删除纠偏参数组 (4.6 节):VD_T_Rolling/VD_S2_Target/VD_RestTime_Target/VD_CycleExtend_Target
-> - 新增 v2.2 状态组 (4.6b):VW304/306/VD442/446
+> - 新增 v2.2 状态组 (4.6b):VW418/306/VD442/446
 > - V303.6 报警码66 周期超时报警
 > - 详见 docs/v2.2_HMI档案文档影响评估报告_v1.0.md
 
@@ -131,7 +131,7 @@ U1_VD_S1_Actual, U1_VD_S4_Actual, U1_VD_S6_Actual, U1_VD_FlowMeter_Snapshot, U1_
 U1_VD_T_Default, U1_VD_S6_Default, U1_VD_S6_Rolling, U1_VD_PumpSpeed_Start, U1_VD_PumpSpeed_Max, U1_VD_PumpSpeed_Cutoff
 （v2.2 删除三层纠偏参数 VD_T_Rolling/VD_S2_Target/VD_RestTime_Target/VD_CycleExtend_Target）
 
-### 4.6b v2.2 新增实测值/状态组(VW304/VW306/VD442/446,4个/单元)
+### 4.6b v2.2 新增实测值/状态组(VW418/VW306/VD442/446,4个/单元)
 
 U1_VW304_State_UpTank (上缸子流程状态机 0/1/2/3/4), U1_VW306_CycleCount (24h已换水轮次), U1_VD_TimerA_Display (双倒计时A,VD442), U1_VD_TimerB_Display (双倒计时B,VD446)
 
@@ -153,7 +153,7 @@ U1_DT_TankB_FullTime等(由S7协议DT数据类型映射)
 
 ### 5.1 变量数量验证
 
-- v2.2 导入后实时数据库应显示: 696(PLC变量) + 18(HMI内部) = **714个变量** (新增 VW304/306/VD414/426/430/442/446/V303.6/M16.0~6 共 15×8=120,减去删除 VD32/36/40/44/112/120/124/128/150/154/158/174/354 共 13×8=104,净增 16×8=128,584+128=712,加 V303.6+ M16.x = 696,实际 714 包含 HMI 内部变量)
+- v2.2 导入后实时数据库应显示: 696(PLC变量) + 18(HMI内部) = **714个变量** (新增 VW418/306/VD414/426/430/442/446/V303.6/M16.0~6 共 15×8=120,减去删除 VD32/36/40/44/112/120/124/128/150/154/158/174/354 共 13×8=104,净增 16×8=128,584+128=712,加 V303.6+ M16.x = 696,实际 714 包含 HMI 内部变量)
 - 若数量不符,检查CSV是否有空行或格式错误
 
 ### 5.2 连接验证

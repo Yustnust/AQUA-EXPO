@@ -89,7 +89,7 @@ M_InitDone,BOOL,V304.0,R,是,"初始化完成标志(Story1.7新增,开机初始�
 M_AlarmAckMode,BOOL,V200.0,RW,是,"报警确认模式(0=自动恢复,1=人工确认;漫溢/节奏滞后/继电器故障不受此模式影响)",4
 DT_TankB_FullTime,DT,DT10,R,是,"下缸变满时刻时间戳(阀B正常关闭完成后写入,用于换水周期计算与断电恢复重算)",2
 M_Alarm_CycleTimeout,BOOL,V303.6,R,是,"单轮换水周期超时(v2.2复用原流量开关瞬时异常位,FC40 NET 5触发,强制人工确认)",5
-State_UpTank,INT,VW304,R,是,"上缸配液子流程状态(0=空闲,1=S1进水,2=S2搅拌+加药,3=S3配完等待转移,4=已转移;v2.2新增)",2
+State_UpTank,INT,VW418,R,是,"上缸配液子流程状态(0=空闲,1=S1进水,2=S2搅拌+加药,3=S3配完等待转移,4=已转移;v2.2新增)",2
 VW_CycleCount,INT,VW306,R,是,"已完成下缸换水次数(断电保持,v2.2新增)",4
 VD_24h_Target,REAL,VD414,RW,是,"HMI设定:24小时内下缸换水目标次数(默认24.0,v2.2新增)",4
 VD_Transfer_Margin,REAL,VD426,RW,是,"HMI设定:周期尾端转移余量s(默认30.0,v2.2新增)",4

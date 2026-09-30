@@ -94,7 +94,7 @@ U1_CMD_Manual_Pump2_Off,Bool,PLC_01,V307.1,RW,是,手动停止泵2,3
 U1_CMD_Manual_SyringePump_Start,Bool,PLC_01,V307.2,RW,是,手动注射泵启动,3
 U1_CMD_Manual_SyringePump_Stop,Bool,PLC_01,V307.3,RW,是,手动注射泵停止/回零,3
 U1_M_DebugMode_BypassInterlock,Bool,PLC_01,V309.0,RW,是,调试模式-跳过阀B/阀C液位联锁(0=生产/1=调试),3
-U1_VW304_State_UpTank,Int,PLC_01,VW304,R,是,上缸子流程状态机(0/1/2/3/4),1
+U1_VW304_State_UpTank,Int,PLC_01,VW418,R,是,上缸子流程状态机(0/1/2/3/4),1
 U1_VW306_CycleCount,Int,PLC_01,VW306,R,是,24h已换水轮次计数,1
 U1_VD_24h_Target,Float,PLC_01,VD414,RW,是,24h目标换水次数(次),4
 U1_VD_Transfer_Margin,Float,PLC_01,VD426,RW,是,S4转移宽限时长(s),4
@@ -201,7 +201,7 @@ U2_CMD_Manual_Pump2_Off,Bool,PLC_02,V307.1,RW,是,手动停止泵2,3
 U2_CMD_Manual_SyringePump_Start,Bool,PLC_02,V307.2,RW,是,手动注射泵启动,3
 U2_CMD_Manual_SyringePump_Stop,Bool,PLC_02,V307.3,RW,是,手动注射泵停止/回零,3
 U2_M_DebugMode_BypassInterlock,Bool,PLC_02,V309.0,RW,是,调试模式-跳过阀B/阀C液位联锁(0=生产/1=调试),3
-U2_VW304_State_UpTank,Int,PLC_02,VW304,R,是,上缸子流程状态机(0/1/2/3/4),1
+U2_VW304_State_UpTank,Int,PLC_02,VW418,R,是,上缸子流程状态机(0/1/2/3/4),1
 U2_VW306_CycleCount,Int,PLC_02,VW306,R,是,24h已换水轮次计数,1
 U2_VD_24h_Target,Float,PLC_02,VD414,RW,是,24h目标换水次数(次),4
 U2_VD_Transfer_Margin,Float,PLC_02,VD426,RW,是,S4转移宽限时长(s),4
@@ -310,7 +310,7 @@ U3_CMD_Manual_Pump2_Off,Bool,PLC_03,V307.1,RW,是,手动停止泵2,3
 U3_CMD_Manual_SyringePump_Start,Bool,PLC_03,V307.2,RW,是,手动注射泵启动,3
 U3_CMD_Manual_SyringePump_Stop,Bool,PLC_03,V307.3,RW,是,手动注射泵停止/回零,3
 U3_M_DebugMode_BypassInterlock,Bool,PLC_03,V309.0,RW,是,调试模式-跳过阀B/阀C液位联锁(0=生产/1=调试),3
-U3_VW304_State_UpTank,Int,PLC_03,VW304,R,是,上缸子流程状态机(0/1/2/3/4),1
+U3_VW304_State_UpTank,Int,PLC_03,VW418,R,是,上缸子流程状态机(0/1/2/3/4),1
 U3_VW306_CycleCount,Int,PLC_03,VW306,R,是,24h已换水轮次计数,1
 U3_VD_24h_Target,Float,PLC_03,VD414,RW,是,24h目标换水次数(次),4
 U3_VD_Transfer_Margin,Float,PLC_03,VD426,RW,是,S4转移宽限时长(s),4
@@ -419,7 +419,7 @@ U4_CMD_Manual_Pump2_Off,Bool,PLC_04,V307.1,RW,是,手动停止泵2,3
 U4_CMD_Manual_SyringePump_Start,Bool,PLC_04,V307.2,RW,是,手动注射泵启动,3
 U4_CMD_Manual_SyringePump_Stop,Bool,PLC_04,V307.3,RW,是,手动注射泵停止/回零,3
 U4_M_DebugMode_BypassInterlock,Bool,PLC_04,V309.0,RW,是,调试模式-跳过阀B/阀C液位联锁(0=生产/1=调试),3
-U4_VW304_State_UpTank,Int,PLC_04,VW304,R,是,上缸子流程状态机(0/1/2/3/4),1
+U4_VW304_State_UpTank,Int,PLC_04,VW418,R,是,上缸子流程状态机(0/1/2/3/4),1
 U4_VW306_CycleCount,Int,PLC_04,VW306,R,是,24h已换水轮次计数,1
 U4_VD_24h_Target,Float,PLC_04,VD414,RW,是,24h目标换水次数(次),4
 U4_VD_Transfer_Margin,Float,PLC_04,VD426,RW,是,S4转移宽限时长(s),4
@@ -528,7 +528,7 @@ U5_CMD_Manual_Pump2_Off,Bool,PLC_05,V307.1,RW,是,手动停止泵2,3
 U5_CMD_Manual_SyringePump_Start,Bool,PLC_05,V307.2,RW,是,手动注射泵启动,3
 U5_CMD_Manual_SyringePump_Stop,Bool,PLC_05,V307.3,RW,是,手动注射泵停止/回零,3
 U5_M_DebugMode_BypassInterlock,Bool,PLC_05,V309.0,RW,是,调试模式-跳过阀B/阀C液位联锁(0=生产/1=调试),3
-U5_VW304_State_UpTank,Int,PLC_05,VW304,R,是,上缸子流程状态机(0/1/2/3/4),1
+U5_VW304_State_UpTank,Int,PLC_05,VW418,R,是,上缸子流程状态机(0/1/2/3/4),1
 U5_VW306_CycleCount,Int,PLC_05,VW306,R,是,24h已换水轮次计数,1
 U5_VD_24h_Target,Float,PLC_05,VD414,RW,是,24h目标换水次数(次),4
 U5_VD_Transfer_Margin,Float,PLC_05,VD426,RW,是,S4转移宽限时长(s),4
@@ -637,7 +637,7 @@ U6_CMD_Manual_Pump2_Off,Bool,PLC_06,V307.1,RW,是,手动停止泵2,3
 U6_CMD_Manual_SyringePump_Start,Bool,PLC_06,V307.2,RW,是,手动注射泵启动,3
 U6_CMD_Manual_SyringePump_Stop,Bool,PLC_06,V307.3,RW,是,手动注射泵停止/回零,3
 U6_M_DebugMode_BypassInterlock,Bool,PLC_06,V309.0,RW,是,调试模式-跳过阀B/阀C液位联锁(0=生产/1=调试),3
-U6_VW304_State_UpTank,Int,PLC_06,VW304,R,是,上缸子流程状态机(0/1/2/3/4),1
+U6_VW304_State_UpTank,Int,PLC_06,VW418,R,是,上缸子流程状态机(0/1/2/3/4),1
 U6_VW306_CycleCount,Int,PLC_06,VW306,R,是,24h已换水轮次计数,1
 U6_VD_24h_Target,Float,PLC_06,VD414,RW,是,24h目标换水次数(次),4
 U6_VD_Transfer_Margin,Float,PLC_06,VD426,RW,是,S4转移宽限时长(s),4
@@ -746,7 +746,7 @@ U7_CMD_Manual_Pump2_Off,Bool,PLC_07,V307.1,RW,是,手动停止泵2,3
 U7_CMD_Manual_SyringePump_Start,Bool,PLC_07,V307.2,RW,是,手动注射泵启动,3
 U7_CMD_Manual_SyringePump_Stop,Bool,PLC_07,V307.3,RW,是,手动注射泵停止/回零,3
 U7_M_DebugMode_BypassInterlock,Bool,PLC_07,V309.0,RW,是,调试模式-跳过阀B/阀C液位联锁(0=生产/1=调试),3
-U7_VW304_State_UpTank,Int,PLC_07,VW304,R,是,上缸子流程状态机(0/1/2/3/4),1
+U7_VW304_State_UpTank,Int,PLC_07,VW418,R,是,上缸子流程状态机(0/1/2/3/4),1
 U7_VW306_CycleCount,Int,PLC_07,VW306,R,是,24h已换水轮次计数,1
 U7_VD_24h_Target,Float,PLC_07,VD414,RW,是,24h目标换水次数(次),4
 U7_VD_Transfer_Margin,Float,PLC_07,VD426,RW,是,S4转移宽限时长(s),4
@@ -876,7 +876,7 @@ CommStatus_05,Bool,(内部),,,否,5号连接通讯状态,1
 CommStatus_06,Bool,(内部),,,否,6号连接通讯状态,1
 CommStatus_07,Bool,(内部),,,否,7号连接通讯状态,1
 CommStatus_08,Bool,(内部),,,否,8号连接通讯状态,1
-U8_VW304_State_UpTank,Int,PLC_08,VW304,R,是,上缸子流程状态机(0/1/2/3/4),1
+U8_VW304_State_UpTank,Int,PLC_08,VW418,R,是,上缸子流程状态机(0/1/2/3/4),1
 U8_VW306_CycleCount,Int,PLC_08,VW306,R,是,24h已换水轮次计数,1
 U8_VD_24h_Target,Float,PLC_08,VD414,RW,是,24h目标换水次数(次),4
 U8_VD_Transfer_Margin,Float,PLC_08,VD426,RW,是,S4转移宽限时长(s),4
