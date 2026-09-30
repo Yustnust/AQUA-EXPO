@@ -21,6 +21,7 @@ LD     V62.0
 S      Q0.4, 1                      // 开阀C
 LD     V62.0
 R      T42, 1
+LD     SM0.0
 TON    T42, 32767
 LD     V62.0
 MOVB   1, VB264
@@ -58,7 +59,8 @@ JMP    10                          // 未完成 → 跳过
 LD     V62.1
 MOVW   T42, AC0
 ITD    AC0, VD444                  // → DINT
-DTR    VD444, VD444                // → REAL(原值秒)
+DTR    VD444, VD444
+/R     10.0, VD444                  // 【v2.3.6】100ms时基→秒                // → REAL(原值秒)
 LD     V62.1
 MOVR   VD444, VD116                // VD116 = S6 实测秒(后续轮次用)
 LD     V62.1

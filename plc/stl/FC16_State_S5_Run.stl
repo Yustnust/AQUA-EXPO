@@ -21,11 +21,9 @@ NETWORK 1
 
 // 实验时长累加(仅下缸=满期间,每分钟+1)
 // VD_ExperimentDuration_Accum(VD366)每分钟+1
-LD     V1.7                         // 下缸=满
-R      T47, 1
-TON    T47, 600                     // 60秒(600×100ms)
-LD     T47
-EU
+LD     SM0.4                        // 系统分时钟(1min周期)
+A      V1.7                         // 且下缸=满
+EU                                  // 【v2.3.6修复2026-09-30】每满1分钟一脉冲; 原T47每扫描被R复位实测100Hz,VD366快100倍
 +R     1.0, VD366                    // VD_ExperimentDuration_Accum + 1(分钟)
 
 

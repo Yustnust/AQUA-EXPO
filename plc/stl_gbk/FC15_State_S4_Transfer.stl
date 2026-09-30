@@ -36,6 +36,7 @@ LD     V61.5
 S      Q0.3, 1                     // 开阀B
 LD     V61.5
 R      T49, 1
+LD     SM0.0
 TON    T49, VW288                  // 【v2.3修复】S4 实测计时,PT=VW288独立地址
                                    // (原VW290被FC4 Modbus任务状态机占用,每周期改写,计时不确定)
 // 置 VW418=4 (上缸已转移)
@@ -68,10 +69,12 @@ ROUND  VD324, AC0
 MOVW   AC0, VW286                  // T61 PT
 LD     V61.6
 R      T61, 1
+LD     SM0.0
 TON    T61, VW286                  // S4 等待超时计时
 // 每秒累加 VD_S4Wait_Time (T62 1s 脉冲)
 LD     V61.6
 R      T62, 1
+LD     SM0.0
 TON    T62, 10
 LD     T62
 EU
@@ -105,7 +108,8 @@ JMP    10                          // 未完成 → 跳到 NETWORK 4 末尾
 LD     V61.7
 MOVW   T49, AC0                    // T49 当前值(100ms 时基)
 ITD    AC0, VD444                  // → DINT
-DTR    VD444, VD444                // → REAL(原值秒)
+DTR    VD444, VD444
+/R     10.0, VD444                  // 【v2.3.6】100ms时基→秒                // → REAL(原值秒)
 MOVR   VD444, VD116                // VD116 = S4 实测秒(首轮作 S6 默认)
 LD     V61.7
 R      T49, 1
