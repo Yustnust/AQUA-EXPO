@@ -330,15 +330,15 @@ LBL    31
 LD     SM0.0
 AW=    VW226, 9
 LPS
-R      Q0.0, 1
-R      Q0.1, 1
+// [v2.3.4] R Q0.0 removed (pump lifecycle owned by FC1A)
+// [v2.3.4] R Q0.1 removed (pump lifecycle owned by FC1A)
 R      M12.0, 1
 R      M12.1, 1
 R      M12.2, 1
 R      M11.6, 1
 R      M11.7, 1
 R      T102, 1
-MOVW   0, VW226
+// [v2.3.4] MOVW 0,VW226 removed (VW226=9 latched as done flag; FC1A resets it at next S2 entry)
 // [v2.3.4 2026-09-30] MOVW 4, VW2 deleted (legacy S3.5 write, see FC13.stl)
 LD     SM0.0
 R      T39, 1                        // 进入S3.5前复位T39,避免FC14每周期R导致TON不累计
