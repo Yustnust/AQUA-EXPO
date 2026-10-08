@@ -135,7 +135,7 @@
 | VW294 | U1_VW294_PumpContFail | SINGLE | 只读 | 注射泵连续失败计数 | PLC代码读写 |
 | VW296 | U1_VW296_FlowContFail | SINGLE | 只读 | 流量计连续失败计数 | PLC代码读写 |
 | VW388 | U1_VD_ManualDose_Mode | SINGLE | 读写 | 手动注射泵模式(0=单次/1=循环) | PLC代码读写 |
-| VW390 | U1_VW_ManualDose_State | SINGLE | 只读 | 手动注射泵子状态(v2.4.1: 0空闲/1写抽液+等运动/3强停1/4等就绪1/5写排液+等运动/7强停2/8结算/9回零/90回零冷却/99错误, 2/6保留未用) | PLC代码读写 |
+| VW390 | U1_VW_ManualDose_State | SINGLE | 只读 | 手动注射泵子状态镜像=VW226(v2.5引擎化: 0空闲/1写抽液/2等抽液运动/3强停1/4等就绪1/5写排液/6等排液运动/7强停2/8结算/9完成闩锁(自动)/30回零/40回零冷却(手动)/99错误) | PLC代码读写 |
 | VD392 | U1_VD_ManualDose_Dosed | SINGLE | 只读 | 手动注射泵累计加药量(uL) | PLC代码读写 |
 | VD396 | U1_VD_ManualDose_Remaining | SINGLE | 只读 | 手动注射泵剩余加药量(uL) | PLC代码写 |
 | VB900 | U1_VB900_RTC_Year | SINGLE | 读写 | RTC年(BCD) | PLC代码读写 |

@@ -221,6 +221,7 @@ class VarTableParser:
             addr = int(match.group(2))
             bit = match.group(3)
             symbol = match.group(4)
+            bit_offset = None  # 修复: VB/VW/VD无位偏移时未初始化导致UnboundLocalError
 
             if bit is not None:
                 var_type = 'Vbit'
