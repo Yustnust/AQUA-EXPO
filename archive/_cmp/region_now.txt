@@ -1,0 +1,1388 @@
+) + AQEX-8
+//
+FC30
+//
+VW266: 0
+/1
+/2
+//
+FC40
+1)
+VD_T_Rolling
+S2
+// ============================================================
+//
+// VW260 : Diag_State_A
+// VW266 : Diag_Result_A
+// VW278 : VD_Timeout_ValveA
+10
+FC30
+T50
+FC32
+// VW280 : VD_Delay_ValveA_Verify
+10
+FC30
+T51
+// VD332 : VD358
+HMI
+VD358)
+// VD316 :
+(HMI
+,SBR25
+10L,
+VD500
+State_S2_MixDose
+// ============================================================
+//
+: FC1A_State_S2_MixDose.stl
+//
+: S2
+(VW418=2)
+// Story: v2.2
+FC12 + FC13
+//
+: v2.2
+S3
+//
+S2
+),T38
+VD28 (
+) + VW226=9 (
+//
+VW418=3 (
+//
+2026-10-08 v2.3.9
+T38
+SM0.0
+//
+//
+: OB1 NET 7
+VW418=2
+FC
+//
+FC:
+FC
+FC13(
+CALL FC23_PumpEngine
+//
+(v2.5
+; VW226 0~9
+FC
+//
+//
+v2.2
+//   -
+FC12(
+: S2
++ T38
+FC NETWORK 1
+//   -
+FC13(
+: VW226 0~9
+(15
+NETWORK)
+FC
+CALL FC13
+//   -
+FC14(S3.5
+(v2.2
+// ============================================================
+//
+// VW402 : T38_PT  S2
+PT(VD28
+10, v2.3.2
+VW252
+VD252 TimerB_Elapsed
+// VW226 :
+(0~9, FC13
+State_S3_Dosing
+// ============================================================
+//
+: FC13_State_S3_Dosing.stl
+//
+(v2.5)
+FC23
+//
+// Story: v2.5
+// PLC: S7-200 SMART CPU ST20
+//
+(STL)
+STEP 7-Micro/WIN SMART
+//
+//
+2026-10-08 v2.5
+FC13
+VW226
+(0~9)
+FC23_PumpEngine,
+//
+//     1.
+M17.0=0(
+//     2.
+Q0.0/Q0.1
+FC1A: S2
+S/
+R,
+//
+FC13 NET1
+//     3. CALL PumpEngine
+//
+v2.4.0
+NETWORK
+0~9
+//
+"VW418=2"
+"VW226
+99",
+VW418=2
+//
+//
+: FC1A_State_S2_MixDose (VW418=2
+CALL State_S3_Dosing)
+//
+VW226=9
+, FC1A
+"9 AND T38"
+VW418=3,
+v2.2~v2.4
+// ============================================================
+PumpEngine
+// ============================================================
+//
+: FC23_PumpEngine.stl
+//
+(v2.5)
+//
+// Story: v2.5
+plc/spec/v2.5_
+_v1.0.md)
+// PLC: S7-200 SMART CPU ST20
+//
+(STL)
+STEP 7-Micro/WIN SMART
+//
+//
+v2.5
+FC13(
+FC21(
+//
+//     FC13(
+,~35
+):
++ CALL
+//     FC21(
+,~60
+):
++ HMI
++ CALL
+//
+(v2.4.1
+//
+//
+//
+):
+//
+: OB1
+FC1A(VW418=2)
+FC13
+CALL PumpEngine
+//
+: OB1
+FC21
+(VW2=0)
+CALL PumpEngine
+//
+VW226/M11.6/M11.7/M12.0~12.2/T102/T104
+//
+//
+//
+(VW226):
+//   0
+: VD372=VD584,VD440
+//
+v2.5.1
+FC21
+V307.2
+//
+(VD372=VD452/VD440=0/
+v2.4.1
+//
+v2.5
+//   1
+(40006=16#9C46;
+=VD372/VD350
+6000;
+//
+9 /
+30)
+//   2
+(M12.1
++T102 30s
+3)
+//   3
+1(40002=1,
+4)
+//   4
+1(VW4=0;
+M13.7
+30(
+),
+5)
+//   5
+(40007=16#9C47;
+6)
+//   6
+(M12.2+T102;
+7)
+//   7
+2(40002=1;
+8)
+//   8
+2+
+: VD440+=VD102
+VD350,VD372-=
+//
+: VD440
+VD584
+9,
+1;
+//
+: M13.7
+30 / VW388=0
+30 / VD440
+VD452
+30 /
+1)
+//   9
++T102;
+FC1A
+//      "VW226=9 AND T38
+VW418=3",
+FC1A
+VW226)
+//   30
+(40003=1,
+;T102
+30s
+99;
+VW4=0
+//      VW510=0,
+T104
+//   40
+(T104 5s;
+99;
+M13.7/
+0)
+//   99
+;1
+0)
+//   NET1
+{0~9,30,40,99},
+0+
+//
+//
+v2.5.1
+2026-10-09
+):
+//
+(1/4/5/8)
+VW4
+0(64
+100
+//
+(16#9C42,
+//
+96
+64
+2026-10-09
+//   VB383=0
+60s
+(T105)
+//   (
+40026=1,
+//
+v2.5.1
+//
+//
+v2.5.2
+2026-10-09
+30
+30 NETWORK):
+//
+: M12.0(Done)
+AN M12.0
+30
+//
+, VW226
+30
+: VW226=30/M12.0=1
+//
+30
+M12.0=1
+//
+"O T104"
+T104=1
+//
+; T104
+VW510
+),
+//
+//
+v2.5.3
+2026-10-09
+T104 NETWORK):
+//   T104
+40
+(VW510>0)
+30,
+//   (VW510=0
+T104)
+: VW510=1
+VW226=30
+//   "
+VW226
+30/40
+5s
+//
+//
+M17.0 (PumpEngine_ManualMode):
+//
+(FC13
+R,FC21
+S),
+//
+//   OB1"
+S0
+"NET
+M17.0
+VW226:
+//   (
+FC13
+M17.0
+0,
+//
+//
+FC13/FC21
+):
+// VW226 :
+;VW390
+FC21
+HMI
+// VD372 :
+=VD584
+=VD452
+;VD396
+FC21
+// VD440 :
+(VD392
+FC21
+// VD584 :
+(uL,HMI
+); VD452 :
+(uL,HMI
+// VD350 :
+(uL/
+); VD102 :
+(REAL)
+// VW204/VW206 :
+// VD232/VW230 : FC06
+(FC4
+// M11.6/11.7  :
+(FC4
+); M12.0 :
+(FC4
+// M12.1/12.2  :
+(VW4
+=2)
+// M13.7       :
+FC21
+4/8
+40
+// M17.0       :
+(0=
+,1=
+// VW4         :
+(0=
+96,1=
+64,2=
+100,>=4=
+// V303.4      :
+(FC4
+// VW510       :
+(FC4
+// T102        :
+(30s); T104 :
+(5s)
+// T105        :
+v2.5.1
+(60s),
+// V61.2~V61.7 :
+CALL
+//               FC1A
+CALL
+V61.3)
+// V62.2/V62.3 :
+v2.5.1
+; FC21
+V62.3/
+//               V62.4
+CALL
+// V62.5       :
+v2.5.1
+// ============================================================
+State_S4_Transfer
+// ============================================================
+//
+: FC15_State_S4_Transfer.stl
+//
+: S4
+(VW2=5)
+// Story: v2.2
+AQEX-6
++ AQEX-7
+//
+: v2.2 S4
+//
+: VW2=5 AND V1.7=0 (
+) AND VW418=3 (
+//
+VW418=4 (
+) +
+S6
+S5
+// ============================================================
+State_S5_Run
+// ============================================================
+//
+: FC16_State_S5_Run.stl
+//
+: S5
+(VW2=6)
+// Story: v2.2
+AQEX-6
++ AQEX-8
+//
+: v2.2 S5
+//       1.
+VD_S5_Elapsed
+//       2.
+VD_ExperimentDuration_Accum
+//       3.
+S6 (VD_S5_Elapsed >=
+= 86400/VD414 - VD426 - VD430)
+//       4.
+S7
+//   v2.2
+//       -
+(VD_CycleSetpoint
+60
+//       -
+VW2=1 (
+FC40
+S1)
+//       - VD354 / VW182 / VW184 / VD112 / VD150 / VD154
+//       - M10.7
+FC40 M16.1
+// ============================================================
+State_S6_Drain
+// ============================================================
+//
+: FC17_State_S6_Drain.stl
+//
+: S6
+(VW2=7)
+// Story: v2.2
+AQEX-6
++ AQEX-7
+//
+: v2.2 S6
+VW418
+//       - VW418=3 (
+) +
+S7
+//       - VW418=3 (
+) +
+S4 (VW2=5,
+) + VW400+1 + M16.0
+//       - VW418
+3 (
+//
+S1
+FC40 (M16.1
+FC15 S4
+M16.0
+//
+v10.4
+VW276=VD_Timeout_ValveC(VD54)
+10
+VW284=VD_Delay_ValveC_Verify(VD472)
+10
+2026-09-24
+VD60
+//
+FC
+FC32(
+T56/T57/T58/T101
+PT
+// ============================================================
+State_S7_End
+// ============================================================
+//
+: FC18_State_S7_End.stl
+//
+: S7
+(VW2=8)
+// Story: AQEX-6
+//
+S0
+//
+v10
+: S7
+V0.0(CMD_Start),
+I0.3(
+//
+V0.0
+S0,
+FC10
+//
+V0.0
+S7
+S0")
+//
+:S7
+I0.3
+S0
+V0.0
+//
+HMI
+VW2=8
+V301.7
+// ============================================================
+State_Error
+// ============================================================
+//
+: FC19_State_Error.stl
+//
+: S_ERROR
+(VW2=99)
+// Story: AQEX-6
++ AQEX-9
+) + AQEX-10
+(V0.5
+V0.7)
+//
+//
+(V300.5)
+HMI
+(V0.7)+I1.2
+//
+(I1.1=OFF,NO
+)+
+(I0.3)
+S0  v1.3
+NO
+// ============================================================
+//
+// I1.1  : DI_EStop
+NO,OFF=
+,ON=
+)  v1.3
+NO
+// I1.2  : DI_SafetyRelay_FB
+(ON=
+// I0.3  : DI_Btn_SystemReset
+// V0.7  : CMD_SafetyRelayAck HMI
+// V300.4: M_EStop_Latch
+// V300.5: M_Alarm_SafetyRelay
+// V1.6  : M_TankA_State
+(0=
+,1=
+// V1.7  : M_TankB_State
+(0=
+,1=
+// VW2   :
+(FC19
+S0)
+// VW6   :
+ManualControl
+// ============================================================
+//
+: FC20_ManualControl.stl
+//
+FC (
+OB1
+S0
+// Story: AQEX-60
+//
+//
+OB1
+S0
+S0
+//
+0),
+//
+NC
+(Q0.5),
+//
+v10.4
+NC
+Q0.6
+),
+NC
+//
+//   P1-
+FC10
+QB0
+//   P2-NC
+NC
+Q0.5)
+//   P3-
+2026-09-03
+V2.4~V3.7
+V306.0~V307.3
+//
+V2.4~V3.7
+VW2(
+(VB2+VB3),
+//
+VW2,
+V3.1=1
+VW2=2
+S2
+//
+V306.0~V307.3
+",
+VW2/VW6
+//   P4-
+2026-09-03
+V303.5
+,=1
+B/
+(V1.6/V1.7)
+//
+,V1.6/V1.7=0,
+B/
+//
+V303.5
+V303.5=0(
+// ============================================================
+//
+// V306.0 : CMD_Manual_ValveA_Open
+A   (
+V2.4,2026-09-03
+VW2
+// V306.1 : CMD_Manual_ValveA_Close
+A   (
+V2.5)
+// V306.2 : CMD_Manual_ValveB_Open
+B   (
+V2.6)
+// V306.3 : CMD_Manual_ValveB_Close
+B   (
+V2.7)
+// V306.4 : CMD_Manual_ValveC_Open
+C   (
+V3.0)
+// V306.5 : CMD_Manual_ValveC_Close
+C   (
+V3.1)
+// V306.6 : CMD_Manual_Pump1_On
+1   (
+V3.2)
+// V306.7 : CMD_Manual_Pump1_Off
+1   (
+V3.3)
+// V307.0 : CMD_Manual_Pump2_On
+2   (
+V3.4)
+// V307.1 : CMD_Manual_Pump2_Off
+2   (
+V3.5)
+// V309.0 : M_DebugMode_BypassInterlock
+(0=
+/1=
+0,
+0)
+// V1.6   : STA_TankA_State
+FC12
+1/FC15
+0)
+// V1.7   : STA_TankB_State
+FC15/FC16
+// Q0.2   : DO_ValveA
+// Q0.3   : DO_ValveB
+// Q0.4   : DO_ValveC
+// Q0.5   : DO_NCValve_Top NC
+// Q0.6   :
+v10.4
+NC
+// M13.0  :
+(=1
+A,=0
+A)
+// M13.1  :
+// M13.2  :
+// M13.3  :
+// M13.4  :
+// ============================================================
+ValveA_Diag
+// ============================================================
+//
+: FC30_ValveA_Diag.stl
+//
+// Story: AQEX-7
+//
+: FC11(S1
+//
+//
+VW260: 0
+/1
+/2
+/3
+/5
+//
+//
+//   P1 - MOVR/-R
+MOVD/-D:
+REAL
+VD90=NAN
+//   P2 -
+NETWORK
+JMP/LBL
+NETWORK
+STEP7
+NETWORK
+//   P3 - I8.0
+EU:
+,PLC
+//   P4 -
+MOVD
+MOVR:
+,REAL
+MOVR
+//   P5 -
+5 RLO
+(AR>/AR<=)
+RLO,
+LD T51 + LPS/ALD
+AND
+//   P6 -
+Q0.5(NC
+),
+S1
+S2
+NC
+//   P7 -
+v2.3.8(2026-09-30)
+JMP/LBL
+T51
+//
+//        PLC
+JMP
+),
+//
+LDW= VW260,x
+//
+: T50/T51/T52
+//        v2.3.5/v2.3.7
+R T51
+// ============================================================
+//
+// VW260 : Diag_State_A
+// VW266 : Diag_Result_A
+(0
+/1
+/2
+// VD308 : VD_FlowMeter_CloseSnapshot
+HMI
+// VD312 :
+,2026-09-14
+// VD316 :
+(HMI
+// T50   :
+(100ms
+=VW260=1
+// T51   :
+(100ms
+=VW260=5
+// T52   :
+2s
+(100ms
+=VW260=2
+// I0.0  :
+A(
+=ON)
+// I0.5  :
+=ON)
+// I8.0  :
+// I8.1  :
+// Q0.2  :
+A(
+// Q0.5  : NC
+ValveB_Diag
+// ============================================================
+//
+: FC31_ValveB_Diag.stl
+//
+// Story: AQEX-7
++ v10.4
+NC
+//
+: FC15(S4
+//
+B+
+//
+v10.4
+2026-09-20
+NC
+Q0.6
+),
+//
+NC
+B;
+13/V300.3
+//
+VW262: 0
+/1
+/2
+/3
+/4
+//
+v2.3.8 2026-09-30
+FC30
+JMP/LBL
+//       (
+FC30 P7
+// ============================================================
+//
+// VW262 : Diag_State_B
+// VW268 : Diag_Result_B
+(0/1/2)
+// T53   :
+=VW262=1
+// T54   :
+=VW262=1
+// T55   :
+=VW262=4
+// I0.1  :
+// I0.6  :
+// I0.7  :
+// I8.2  :
+// I8.3  :
+// Q0.3  :
+ValveC_Diag
+// ============================================================
+//
+: FC32_ValveC_Diag.stl
+//
+// Story: AQEX-7
++ v10.4
+C)
+//
+: FC17(S6
+//
+v10.4
+2026-09-20
+C(I0.2,
+//
+(I1.0)
+ON
+VD_Delay_ValveC_Verify(VD472)
+//
+45/47/61
+(V302.5/V302.7/V303.1
+//
+60(V303.0)
+//
+VW264: 0
+/1
+/2
+/3
+/4
+//
+v2.3.8 2026-09-30
+FC30
+JMP/LBL
+// ============================================================
+//
+// VW264 : Diag_State_C
+// VW270 : Diag_Result_C
+(0/1/2)
+// VW276 : VD_Timeout_ValveC(VD54)
+10
+(FC17
+// VW284 : VD_Delay_ValveC_Verify(VD472)
+10
+(FC17
+v10.4
+// T56   :
+=VW264=1
+// T57   :
+=VW264=1
+v10.4
+// T58   :
+=VW264=4
+// T101  :
+=VW264=3 AND I1.0
+v10.4
+// I1.0  :
+// I8.4  :
+// I8.5  :
+// Q0.4  :
+// V303.0: M_Alarm_ValveC_CloseTimeout(
+60,
+RhythmCorrection
+// ============================================================
+//
+: FC40_RhythmCorrection.stl
+//
+(v2.2
+// Story: v2.2
+AQEX-8
+//
+: v2.2
+FC40
+//
+32
+(VD248/VD252),
+24h
+//
+: OB1
+FC1
+//
+S6
+S1 /
+// ============================================================
+//
+// VD414 : VD_24h_Target           24h
+(HMI
+// VD426 : VD_Transfer_Margin
+30, HMI
+// VD430 : VD_Prep_Safety_Margin
+10, HMI
+// VD186 : VD_T_cycle
+// VD248 : VD_TimerA_Elapsed       TimerA
+(32
+REAL)
+// VD252 : VD_TimerB_Elapsed       TimerB
+(32
+REAL)
+// VD256 : VD_TimerA_Display       TimerA
+, DINT, HMI
+// VD244 : VD_TimerB_Display       TimerB
+, DINT, HMI
+// T63   : T_1s_Pulse              1
+(100ms
+,PT=10)
+// V63.4 : M_1s_Pulse              1
+EU
+// V63.5 : M_S6Trig_Cache          S6
+(v2.3,
+LPS/LPP/ALD
+// V63.6 : M_NextS1Trig_Cache
+S1
+(v2.3)
+// V63.7 : M_CycleTimeout_Cache
+(v2.3)
+// AC2   :
+(v2.3 NET5 T_cycle-Prep_Needed
+// VW2   :
+// VW418 :
+// VW6   :
+(=0
+// VW400 :
+(v2.3.2
+VW306
+V306.0~V307.3)
+// VD70  : S1
+// VD28  : S2
+// VD116 : S6
+S4
+// M16.0 : M_TimerA_Active
+TimerA
+// M16.1 : M_NextCycleTrigger
+S1
+// V303.6: M_Alarm_CycleTimeout
+MBUS_CTRL
+This code is property of Siemens Industry, Inc.
+MBUS_MSG
+This code is property of Siemens Industry, Inc.
+ManualSyringePump
+// ============================================================
+//
+: FC21_ManualSyringePump.stl
+//
+(v2.5)
+HMI
+FC23
+//
+// PLC: S7-200 SMART CPU ST20
+//
+(STL)
+STEP 7-Micro/WIN SMART
+//
+//
+2026-10-08 v2.5
+v2.4.1
+(VW390, 0/1/3/4/5/7/8/9/90/99)
+//
+FC23_PumpEngine(
+,VW226
+//
+HMI
+//     1.
+M17.0=1(
+99
+30
+//     2. HMI
+): VW390=VW226, VD392=VD440, VD396=VD372
+//
+HMI
+v2.4.1
+//     3.
+V307.2:
+(VD372=VD452/VD440=0/
+//
+VW510
+VW226=1(v2.5.1
+//
+; v2.5.3
+EU
+, HMI
+//     4.
+V307.3:
+M13.7,
+4/8
+//        (v2.5.3
+EU
+//     5. CALL PumpEngine
+//
+M13.5/M13.6
+(v2.4.1
+),M13.7
+//
+//
+: OB1_MAIN (VW2=0
+CALL ManualSyringePump)
+//
+FC23
+(v2.4.1/v2.3.9
+// ============================================================
+RTC_Sync
+// ============================================================
+//
+: FC22_RTC_Sync.stl
+//
+: RTC
+// Story: AQEX-51 PLC
+HMI
+//
+//   1. HMI
+McgsPro
+(BCD
+VB900~VB905
+//   2. HMI
+V0.6(CMD_RTC_Sync)
+//   3.
+FC
+V0.6
+TODW
+VB900~VB907
+PLC RTC
+//   4.
+V303.7(M_Need_RTC_Sync)
+V0.6
+//   5.
+V303.7=1
+(300
+V303.5
+S_ERROR
+// ============================================================
+//
+// V0.6  : CMD_RTC_Sync     HMI
+// V303.5: M_Alarm_RTC_Lost RTC
+// V303.7: M_Need_RTC_Sync
+HMI
+PLC
+// VB900~VB907: RTC
+(BCD
+// T59   :
+(100ms
+,5
+=3000
+100ms)
+ColdStart
+// ============================================================
+//
+: SBR25_ColdStart.stl
+//
++ TODR +
+//
+FC0_SysInit
+M16.4=0 (
+CALL
+//
+: SBR
+FC0,FC0
+LBL 2 (S M16.4,1)
+//
+v2.2
+2026-09-15
+M_InitDone
+V304.0
+M16.4
+// LBL
+: 8/9/10(
+88/89(RTC
+//
+FC0,
+SBR JMP/LBL
+//
+: S7-200 SMART STL
+JMP/LBL
+NETWORK
+//
+SBR
+NETWORK,
+JMP/LBL
+NETWORK
+// ============================================================
+WarmRecovery
+// ============================================================
+//
+: SBR26_WarmRecovery.stl
+//
+RTC
++ BCD
+//
+v2.5.1 2026-10-09
+Modbus
+LBL 1
+//
+FC0_SysInit
+M16.4=1 (
+CALL
+//
+: SBR
+FC0,FC0
+LBL 2 (S M16.4,1)
+//
+v2.2
+2026-09-15
+M_InitDone
+V304.0
+M16.4
+// LBL
+: 1(
+3(RTC
+4(RTC
+5(
+6(
+7(S_ERROR)
+10(S_ERROR
+S0
+S5
+//
+2026-09-29
+S5
+(V1.7=1
+VW418
+0),
+LBL10
+S0(
+S5
+//
+FC0,
+JMP 2(
+FC0
+SBR
+//
+,VW300~303/VW6/V300.x
+FC3/FC19
+//
+: S7-200 SMART STL
+JMP/LBL
+NETWORK
+//
+SBR
+NETWORK,
+JMP/LBL
+NETWORK
+// ============================================================
+PumpErrExit
+// ============================================================
+//
+: FC13A_PumpErrExit.stl
+//
+: FC13
+S_ERROR+
+// Story:
+FC13
+NETWORK 2/4/7/10/13
+//
+FC
+FC13
+CALL
+//       1.
+Q0.0/Q0.1
+//       2.
+V303.4
+//       3.
+S_ERROR(VW2=99)
+//       4.
+S3
+VW226=0
+//       5.
+M12.0/M11.6/M11.7
+//       6.
+M12.1/M12.2
+//       7.
+T102
+//
+: FC23_PumpEngine
+//         (v2.5
+"FC13 NETWORK 2/4/7"
+// ============================================================
+AlarmReset_Common
+// ============================================================
+//
+: FC3A_AlarmReset_Common.stl
+//
+: FC3
+// Story:
+FC3
+NETWORK 4/5
+//
+FC
+//
+(V300.0~3)
+(V300.4)
+(V300.5)
+//
+(V300.6/7)
+FC
+//       V303.6(
+FC3 NETWORK 4 (V0.3
+(2026-09-25):
+//       FC40
+V200.0
+FC
+//       NETWORK 5(
+//
+: FC3
+VD248/VD252,
+NET6
+//
+: FC3 NETWORK 4(
+FC3 NETWORK 5(
+// ============================================================
+MAIN
+// ============================================================
+//
+: OB1_MAIN.stl
+//
+: PLC
+//
+// Story: AQEX-6
++ AQEX-9
+// PLC: S7-200 SMART CPU ST20
+//
+(STL)
+STEP 7-Micro/WIN SMART
+//
+: FC0(
+FC2(
+FC4(Modbus)
+FC3(
+FC22(RTC
+//
+FC40(
+,v2.2
+FC1(
+//           FC2
+FC1
+S_ERROR
+//           FC40
+FC1
+M16.1
+S1
+//
+v2.2
+2026-09-15
+FC40
+FC1
+OB1
+// ============================================================
+//
+// VW2     :
+(0=S0,1=S1...8=S7,99=ERROR)
+// VW4     :
+// VW6     :
+// VW8     :
+(=VD414
+VD24/1440,
+// V0.0    : CMD_Start (HMI
+PLC
+// V0.2    : CMD_Stop  (HMI
+PLC
+// V1.0    : STA_StartAck (PLC
+HMI
+// I1.1    : DI_EStop (
+NO
+OFF=
+/ON=
+)  v1.3
+NO
+,ON=
+// I0.3    : DI_Btn_SystemReset (
+I/O
+CPU_
+CPU_
+CPU_
+CPU_
+CPU_
+CPU_
+CPU_
+CPU_
+CPU_
+CPU_
+CPU_
+10
+CPU_
+11
+EM0_
+EM0_
+EM0_
+EM0_
+EM0_
+EM0_
+EM0_
+EM0_
+EM0_
+EM0_
+EM0_
+10
+EM0_
+11
+EM0_
+12
+EM0_
+13
+EM0_
+14
+EM0_
+15
+CPU_
+CPU_
+CPU_
+CPU_
+CPU_
+CPU_
+CPU_
+CPU_
+EM0_
+EM0_
+EM0_
+EM0_
+EM0_
+EM0
