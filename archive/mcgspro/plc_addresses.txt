@@ -191,6 +191,10 @@ VW198	写	FC0_SysInit.stl, SBR25_ColdStart.stl, SBR26_WarmRecovery.stl
 V200.0	读写	FC3_AlarmHandling.stl, SBR25_ColdStart.stl
 VW204	写	FC13_State_S3_Dosing.stl, FC21_ManualSyringePump.stl
 VW206	写	FC13_State_S3_Dosing.stl, FC21_ManualSyringePump.stl
+VW208	写	FC23_PumpEngine.stl 【v2.5.10】泵位置锁存(抽液前,供完成条件B)
+VW210	写	FC23_PumpEngine.stl 【v2.5.10】泵位置锁存(排液前,供完成条件B)
+VW218	写	FC23_PumpEngine.stl 【v2.5.10】位移计算草稿(双向带符号)
+VW219	写	FC23_PumpEngine.stl 【v2.5.10】位移计算草稿(反向)
 VW222	写	FC4_ModbusPolling.stl
 VW226	读写	FC13A_PumpErrExit.stl, FC13_State_S3_Dosing.stl, FC1A_State_S2_MixDose.stl, SBR25_ColdStart.stl
 VW230	写	FC13_State_S3_Dosing.stl, FC21_ManualSyringePump.stl, FC4_ModbusPolling.stl, SBR25_ColdStart.stl
