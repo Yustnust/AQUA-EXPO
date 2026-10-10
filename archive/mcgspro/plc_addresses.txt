@@ -191,10 +191,14 @@ VW198	写	FC0_SysInit.stl, SBR25_ColdStart.stl, SBR26_WarmRecovery.stl
 V200.0	读写	FC3_AlarmHandling.stl, SBR25_ColdStart.stl
 VW204	写	FC13_State_S3_Dosing.stl, FC21_ManualSyringePump.stl
 VW206	写	FC13_State_S3_Dosing.stl, FC21_ManualSyringePump.stl
-VW208	写	FC23_PumpEngine.stl 【v2.5.10】泵位置锁存(抽液前,供完成条件B)
-VW210	写	FC23_PumpEngine.stl 【v2.5.10】泵位置锁存(排液前,供完成条件B)
-VW218	写	FC23_PumpEngine.stl 【v2.5.10】位移计算草稿(双向带符号)
-VW219	写	FC23_PumpEngine.stl 【v2.5.10】位移计算草稿(反向)
+VW208	勿用	【已废弃】v2.5.10曾规划为位置锁存但方案回退未落码; HMI旧变量表(McgsPro变量导入_单元1_备份_20260804/位报警CSV)仍登记为MB_Pump_SpeedStart(注射泵启动速度40009)——双登记冲突, 禁止分配
+VW210	勿用	【已废弃】v2.5.10曾规划为位置锁存但方案回退未落码; HMI旧变量表登记为MB_Pump_SpeedMax(最高速度40010)——双登记冲突, 禁止分配
+VW216	写	FC23_PumpEngine.stl 【v2.5.14】泵位置锁存(吸液前,供条件B'判定"变过")
+VW218	勿用	【已废弃】v2.5.10位移计算草稿, 方案回退未落码, 禁止分配
+VW219	勿用	【已废弃】v2.5.10位移计算草稿, 方案回退未落码, 禁止分配
+VW220	写	FC23_PumpEngine.stl 【v2.5.14】泵位置锁存(排液前,供条件B'判定"变过")
+VW238	写	FC4_ModbusPolling.stl 【v2.5.14】泵位置最新样本(任务2成功时=VW222, 全工程唯一写点)
+VW240	写	FC4_ModbusPolling.stl 【v2.5.14】泵位置上一样本(移位寄存, 与VW238配对判"停稳")
 VW222	写	FC4_ModbusPolling.stl
 VW226	读写	FC13A_PumpErrExit.stl, FC13_State_S3_Dosing.stl, FC1A_State_S2_MixDose.stl, SBR25_ColdStart.stl
 VW230	写	FC13_State_S3_Dosing.stl, FC21_ManualSyringePump.stl, FC4_ModbusPolling.stl, SBR25_ColdStart.stl
